@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Connect4Server.Hubs;
 
 namespace Connect4Server {
     public class Startup {
@@ -55,6 +56,8 @@ namespace Connect4Server {
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +75,8 @@ namespace Connect4Server {
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+
+            app.UseSignalR(route => { route.MapHub<GameHub>("/gamehub"); });
 
             app.UseMvc(routes => {
                 routes.MapRoute(
