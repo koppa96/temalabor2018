@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Connect4Server.Controllers {
-    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class AccountController : Controller {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -39,14 +39,22 @@ namespace Connect4Server.Controllers {
                 if (result.Succeeded) {
                     _logger.LogInformation(2, "User logged in.");
 
-                    var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4Key"));
-                    var token = new JwtSecurityToken();
+                    var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
+                    var securityToken = new JwtSecurityToken(
+                        issuer: "Connect4Server",
+                        audience: "Connect4Server",
+                        expires: DateTime.UtcNow.AddHours(1),
+                        signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                        );
 
-                    return Ok(token);
+                    return Ok(new {
+                        token = new JwtSecurityTokenHandler().WriteToken(securityToken),
+                        expiraton = securityToken.ValidTo
+                    });
                 }
             }
 
-            return BadRequest("Error occured");
+            return Unauthorized();
         }
 
         [HttpPost]
@@ -64,9 +72,18 @@ namespace Connect4Server.Controllers {
                     await _signInManager.SignInAsync(user, false);
                     _logger.LogInformation(1, "User created new account");
 
-                    //var token = _userManager.CreateSecurityTokenAsync(user);
+                    var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
+                    var securityToken = new JwtSecurityToken(
+                        issuer: "Connect4Server",
+                        audience: "Connect4Server",
+                        expires: DateTime.UtcNow.AddHours(1),
+                        signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                        );
 
-                    return Ok();
+                    return Ok(new {
+                        token = new JwtSecurityTokenHandler().WriteToken(securityToken),
+                        expiraton = securityToken.ValidTo
+                    });
                 }
             }
 

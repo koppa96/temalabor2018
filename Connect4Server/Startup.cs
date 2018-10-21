@@ -38,16 +38,19 @@ namespace Connect4Server {
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(cfg => {
-                cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options => {
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters() {
                     ValidateIssuer = true,
                     ValidIssuer = "Connect4Server",
                     ValidateAudience = true,
-                    ValidAudience = "Connect4Audience",
+                    ValidAudience = "Connect4Server",
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4Key"))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"))
                 };
             });
 
