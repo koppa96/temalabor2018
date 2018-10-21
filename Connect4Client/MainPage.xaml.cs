@@ -27,7 +27,7 @@ namespace Connect4Client
             this.InitializeComponent();
         }
 
-        private void hlbtnRegister_Click(object sender, RoutedEventArgs e) {
+        private void RegisterButton_Click(object sender, RoutedEventArgs e) {
             Frame.Navigate(typeof(RegisterPage));
         }
     }

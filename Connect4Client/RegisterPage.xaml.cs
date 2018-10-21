@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Connect4Client.Models;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
+using System.Text;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -22,6 +16,32 @@ namespace Connect4Client {
     public sealed partial class RegisterPage : Page {
         public RegisterPage() {
             this.InitializeComponent();
+        }
+
+        private async void RegisterButton_Click(object sender, RoutedEventArgs e) {
+            JObject jObject = new JObject {
+                { "Username", tbUsername.Text },
+                { "Email", tbEmail.Text },
+                { "Password", pwbPassword.Password },
+                { "ConfirmPassword", pwbConfirmPassword.Password }
+            };
+
+            string json = jObject.ToString();
+            string url = "https://localhost:44301/Account/Register";
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using (HttpClient client = new HttpClient()) {
+                HttpResponseMessage responseMessage = await client.PostAsync(url, content);
+
+                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
+                    string token = await responseMessage.Content.ReadAsStringAsync();
+
+                    MessageDialog dialog = new MessageDialog(token);
+                    dialog.Title = "Token received from server";
+
+                    await dialog.ShowAsync();
+                }
+            }
         }
     }
 }

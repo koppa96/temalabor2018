@@ -43,7 +43,7 @@
 
                 <HyperlinkButton x:Name="hlbtnRegister"
                                  Content="Click here to create a new account."
-                                 Grid.Column="0" Click="hlbtnRegister_Click" />
+                                 Grid.Column="0" Click="RegisterButton_Click" />
 
                 <Button x:Name="btnLogin"
                         Content="Log in"

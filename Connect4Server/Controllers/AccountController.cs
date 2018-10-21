@@ -17,7 +17,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Connect4Server.Controllers {
-    [Authorize]
     public class AccountController : Controller {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -32,7 +31,6 @@ namespace Connect4Server.Controllers {
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody]AppLoginModel model) {
             if (ModelState.IsValid) {
                 var user = await _userManager.FindByNameAsync(model.Username);
@@ -61,13 +59,20 @@ namespace Connect4Server.Controllers {
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Register([FromBody]AppRegisterModel model) {
             if (model.Password != model.ConfirmPassword) {
                 return BadRequest("The password and the confirmation do not match.");
             }
 
             if (ModelState.IsValid) {
+                if (await _userManager.FindByNameAsync(model.Username) != null) {
+                    return BadRequest("A user with the given username already exists.");
+                }
+
+                if (model.Password != model.ConfirmPassword) {
+                    return BadRequest("The password and the confirmation of password do not match.");
+                }
+
                 var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
 
