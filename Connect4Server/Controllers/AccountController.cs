@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Connect4Server.Areas.Identity.Pages.Account;
@@ -39,18 +40,20 @@ namespace Connect4Server.Controllers {
                 if (result.Succeeded) {
                     _logger.LogInformation(2, "User logged in.");
 
+                    var claims = new Claim[] {
+                        new Claim("UserClaims", model.Username)
+                    };
+
                     var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
                     var securityToken = new JwtSecurityToken(
                         issuer: "Connect4Server",
                         audience: "Connect4Server",
-                        expires: DateTime.UtcNow.AddHours(1),
+                        expires: DateTime.Now.AddSeconds(30),
+                        claims: claims,
                         signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                         );
 
-                    return Ok(new {
-                        token = new JwtSecurityTokenHandler().WriteToken(securityToken),
-                        expiraton = securityToken.ValidTo
-                    });
+                    return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
                 }
             }
 
@@ -80,18 +83,11 @@ namespace Connect4Server.Controllers {
                         signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                         );
 
-                    return Ok(new {
-                        token = new JwtSecurityTokenHandler().WriteToken(securityToken),
-                        expiraton = securityToken.ValidTo
-                    });
+                    return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
                 }
             }
 
             return BadRequest("Something went wrong.");
-        }
-
-        public string GetString() {
-            return "Alma";
         }
     }
 }
