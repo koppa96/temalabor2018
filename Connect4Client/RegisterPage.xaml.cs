@@ -1,5 +1,4 @@
-﻿using Connect4Client.Models;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
 using System.Text;
@@ -36,8 +35,9 @@ namespace Connect4Client {
                 if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
                     string token = await responseMessage.Content.ReadAsStringAsync();
 
-                    MessageDialog dialog = new MessageDialog(token);
-                    dialog.Title = "Token received from server";
+                    MessageDialog dialog = new MessageDialog(token) {
+                        Title = "Token received from server"
+                    };
 
                     await dialog.ShowAsync();
                 }
