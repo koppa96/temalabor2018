@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Net.Http;
-using System.Text;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.Web.Http.Filters;
+using Windows.Web.Http;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -27,12 +27,18 @@ namespace Connect4Client {
 
             string json = jObject.ToString();
             string url = "https://localhost:44301/Account/Register";
-            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpStringContent content = new HttpStringContent(json, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
 
-            using (HttpClient client = new HttpClient()) {
-                HttpResponseMessage responseMessage = await client.PostAsync(url, content);
+            HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Untrusted);
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.InvalidName);
 
-                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
+            using (var client = new HttpClient(filter)) {
+                Uri uri = new Uri(url);
+                HttpResponseMessage responseMessage = await client.PostAsync(uri, content);
+
+                if (responseMessage.StatusCode == HttpStatusCode.Ok) {
                     string token = await responseMessage.Content.ReadAsStringAsync();
 
                     MessageDialog dialog = new MessageDialog(token) {

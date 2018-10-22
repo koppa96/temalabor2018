@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -12,6 +14,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -29,6 +33,36 @@ namespace Connect4Client
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e) {
             Frame.Navigate(typeof(RegisterPage));
+        }
+
+        private async void LoginButton_Click(object sender, RoutedEventArgs e) {
+            JObject jObject = new JObject();
+            jObject.Add("Username", tbUsername.Text);
+            jObject.Add("Password", pwbPassword.Password);
+
+            string json = jObject.ToString();
+            string url = "https://localhost:44301/Account/Login";
+            HttpStringContent content = new HttpStringContent(json, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
+
+            HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Untrusted);
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.InvalidName);
+
+            using (var client = new HttpClient(filter)) {
+                Uri uri = new Uri(url);
+                HttpResponseMessage responseMessage = await client.PostAsync(uri, content);
+
+                if (responseMessage.StatusCode == HttpStatusCode.Ok) {
+                    string token = await responseMessage.Content.ReadAsStringAsync();
+
+                    MessageDialog dialog = new MessageDialog(token) {
+                        Title = "Token received from server"
+                    };
+
+                    await dialog.ShowAsync();
+                }
+            }
         }
     }
 }
