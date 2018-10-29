@@ -1,11 +1,25 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.Resources;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.Web.Http.Filters;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
-using Windows.ApplicationModel.Resources;
+using Windows.Web.Http.Filters;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -13,9 +27,9 @@ namespace Connect4Client {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class RegisterPage : Page {
+    public sealed partial class LoginPage : Page {
         private ContentDialog loadingDialog;
-        public RegisterPage() {
+        public LoginPage() {
             this.InitializeComponent();
 
             loadingDialog = new ContentDialog() {
@@ -25,19 +39,27 @@ namespace Connect4Client {
                     VerticalAlignment = VerticalAlignment.Stretch
                 },
             };
+
+            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
+
+            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
         }
 
-        private async void RegisterButton_Click(object sender, RoutedEventArgs e) {
+        private void RegisterButton_Click(object sender, RoutedEventArgs e) {
+            Frame.Navigate(typeof(RegisterPage));
+        }
+
+        private async void LoginButton_Click(object sender, RoutedEventArgs e) {
             loadingDialog.ShowAsync();
-            JObject jObject = new JObject {
-                { "Username", tbUsername.Text },
-                { "Email", tbEmail.Text },
-                { "Password", pwbPassword.Password },
-                { "ConfirmPassword", pwbConfirmPassword.Password }
-            };
+
+            JObject jObject = new JObject();
+            jObject.Add("Username", tbUsername.Text);
+            jObject.Add("Password", pwbPassword.Password);
 
             string json = jObject.ToString();
-            string url = "https://localhost:44301/Account/Register";
+            string url = "https://localhost:44301/Account/Login";
             HttpStringContent content = new HttpStringContent(json, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
 
             HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
@@ -52,12 +74,12 @@ namespace Connect4Client {
                 if (responseMessage.StatusCode == HttpStatusCode.Ok) {
                     App.Token = await responseMessage.Content.ReadAsStringAsync();
 
-                    OnSuccessfulRegister();
+                    OnSuccessfulLogin();
                     loadingDialog.Hide();
                 } else {
                     var resourceLoader = ResourceLoader.GetForViewIndependentUse();
 
-                    MessageDialog dialog = new MessageDialog(resourceLoader.GetString("RegisterError")) {
+                    MessageDialog dialog = new MessageDialog(resourceLoader.GetString("LoginError")) {
                         Title = resourceLoader.GetString("Error")
                     };
 
@@ -67,7 +89,7 @@ namespace Connect4Client {
             }
         }
 
-        private void OnSuccessfulRegister() {
+        private void OnSuccessfulLogin() {
             Frame.Navigate(typeof(MainPage));
         }
     }

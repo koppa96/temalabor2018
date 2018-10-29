@@ -60,10 +60,6 @@ namespace Connect4Server.Controllers {
 
         [HttpPost]
         public async Task<ActionResult> Register([FromBody]AppRegisterModel model) {
-            if (model.Password != model.ConfirmPassword) {
-                return BadRequest("The password and the confirmation do not match.");
-            }
-
             if (ModelState.IsValid) {
                 if (await _userManager.FindByNameAsync(model.Username) != null) {
                     return BadRequest("A user with the given username already exists.");

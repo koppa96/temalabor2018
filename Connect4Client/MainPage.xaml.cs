@@ -31,38 +31,8 @@ namespace Connect4Client
             this.InitializeComponent();
         }
 
-        private void RegisterButton_Click(object sender, RoutedEventArgs e) {
-            Frame.Navigate(typeof(RegisterPage));
-        }
+        private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e) {
-            JObject jObject = new JObject();
-            jObject.Add("Username", tbUsername.Text);
-            jObject.Add("Password", pwbPassword.Password);
-
-            string json = jObject.ToString();
-            string url = "https://localhost:44301/Account/Login";
-            HttpStringContent content = new HttpStringContent(json, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
-
-            HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
-            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
-            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Untrusted);
-            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.InvalidName);
-
-            using (var client = new HttpClient(filter)) {
-                Uri uri = new Uri(url);
-                HttpResponseMessage responseMessage = await client.PostAsync(uri, content);
-
-                if (responseMessage.StatusCode == HttpStatusCode.Ok) {
-                    string token = await responseMessage.Content.ReadAsStringAsync();
-
-                    MessageDialog dialog = new MessageDialog(token) {
-                        Title = "Token received from server"
-                    };
-
-                    await dialog.ShowAsync();
-                }
-            }
         }
     }
 }
