@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Popups;
@@ -26,13 +27,71 @@ namespace Connect4Client
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        ResourceLoader resourceLoader;
+        Dictionary<string, Type> pages;
         public MainPage()
         {
             this.InitializeComponent();
+            pages = new Dictionary<string, Type> {
+                { "HomeItem", typeof(HomePage) },
+                { "MatchesItem", typeof(MatchesPage) },
+                { "StatisticsItem", typeof(StatisticsPage) }
+            };
+
+            resourceLoader = ResourceLoader.GetForViewIndependentUse();
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
+            if (args.IsSettingsInvoked) {
+                ContentFrame.Navigate(typeof(SettingsPage));
+                return;
+            }          
+        }
 
+        private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e) {
+            ContentFrame.Navigate(typeof(HomePage));
+        }
+
+        private void CommandInvokedHandler(IUICommand command) {
+            if ((int)command.Id == 1) {
+                LogoutAsync();
+            }
+        }
+
+        private async void LogoutAsync() {
+            string url = App.AppUrl + "/Account/Logout";
+
+            HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Untrusted);
+            filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.InvalidName);
+
+            HttpStringContent content = new HttpStringContent("pénisz");
+
+            using (HttpClient client = new HttpClient(filter)) {
+                Uri uri = new Uri(url);
+                HttpResponseMessage message = await client.PostAsync(uri, content);
+
+                if (message.IsSuccessStatusCode) {
+                    Frame.Navigate(typeof(LoginPage));
+                } else {
+                    ContentDialog dialog = new ContentDialog() {
+                        Content = resourceLoader.GetString("LogoutFailed"),
+                        CloseButtonText = resourceLoader.GetString("Ok")
+                    };
+
+                    await dialog.ShowAsync();
+                }
+            }
+        }
+
+        private async void Logout_Tapped(object sender, TappedRoutedEventArgs e) {
+            MessageDialog logoutDialog = new MessageDialog(resourceLoader.GetString("LogoutDialogMessage"));
+
+            logoutDialog.Commands.Add(new UICommand(resourceLoader.GetString("Yes"), new UICommandInvokedHandler(CommandInvokedHandler), 1));
+            logoutDialog.Commands.Add(new UICommand(resourceLoader.GetString("No"), new UICommandInvokedHandler(CommandInvokedHandler), 2));
+
+            await logoutDialog.ShowAsync();
         }
     }
 }

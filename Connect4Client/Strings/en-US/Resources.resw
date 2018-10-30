@@ -135,8 +135,23 @@
   <data name="LoginError" xml:space="preserve">
     <value>An error occured when trying to log in.</value>
   </data>
+  <data name="LogoutDialogMessage" xml:space="preserve">
+    <value>Are you sure want to log out?</value>
+  </data>
+  <data name="LogoutFail" xml:space="preserve">
+    <value>Logout failed.</value>
+  </data>
+  <data name="LogoutItem.Content" xml:space="preserve">
+    <value>Log out</value>
+  </data>
   <data name="MatchesItem.Content" xml:space="preserve">
     <value>Matches</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>Ok</value>
   </data>
   <data name="PasswordBox.PlaceholderText" xml:space="preserve">
     <value>Password</value>
@@ -155,5 +170,8 @@
   </data>
   <data name="UsernameTextBox.PlaceholderText" xml:space="preserve">
     <value>Username</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

@@ -135,8 +135,23 @@
   <data name="LoginError" xml:space="preserve">
     <value>A bejelentkezés során hiba lépett fel.</value>
   </data>
+  <data name="LogoutDialogMessage" xml:space="preserve">
+    <value>Biztosan ki akarsz jelentkezni?</value>
+  </data>
+  <data name="LogoutFail" xml:space="preserve">
+    <value>Nem sikerült kijelentkezni.</value>
+  </data>
+  <data name="LogoutItem.Content" xml:space="preserve">
+    <value>Kijelentkezés</value>
+  </data>
   <data name="MatchesItem.Content" xml:space="preserve">
     <value>Meccsek</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nem</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>Oké Tehát</value>
   </data>
   <data name="PasswordBox.PlaceholderText" xml:space="preserve">
     <value>Jelszó</value>
@@ -155,5 +170,8 @@
   </data>
   <data name="UsernameTextBox.PlaceholderText" xml:space="preserve">
     <value>Felhasználónév</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Igen</value>
   </data>
 </root>

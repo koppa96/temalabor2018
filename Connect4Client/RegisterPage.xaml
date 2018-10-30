@@ -8,8 +8,10 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Grid VerticalAlignment="Center">
+    <RelativePanel>
+        <Grid RelativePanel.AlignVerticalCenterWithPanel="True"
+              RelativePanel.AlignLeftWithPanel="True"
+              RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -56,5 +58,5 @@
                     HorizontalAlignment="Center"
                     Width="250" Click="RegisterButton_Click"/>
         </Grid>
-    </Grid>
+    </RelativePanel>
 </Page>

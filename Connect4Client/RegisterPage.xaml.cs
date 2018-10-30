@@ -6,6 +6,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http;
 using Windows.ApplicationModel.Resources;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,6 +26,11 @@ namespace Connect4Client {
                     VerticalAlignment = VerticalAlignment.Stretch
                 },
             };
+
+            var currentView = SystemNavigationManager.GetForCurrentView();
+            currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+            currentView.BackRequested += BackButton_Click;
         }
 
         private async void RegisterButton_Click(object sender, RoutedEventArgs e) {
@@ -37,7 +43,7 @@ namespace Connect4Client {
             };
 
             string json = jObject.ToString();
-            string url = "https://localhost:44301/Account/Register";
+            string url = App.AppUrl + "/Account/Register";
             HttpStringContent content = new HttpStringContent(json, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
 
             HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
@@ -57,6 +63,7 @@ namespace Connect4Client {
                 } else {
                     var resourceLoader = ResourceLoader.GetForViewIndependentUse();
 
+                    pwbPassword.Password = pwbConfirmPassword.Password = "";
                     MessageDialog dialog = new MessageDialog(resourceLoader.GetString("RegisterError")) {
                         Title = resourceLoader.GetString("Error")
                     };
@@ -69,6 +76,15 @@ namespace Connect4Client {
 
         private void OnSuccessfulRegister() {
             Frame.Navigate(typeof(MainPage));
+        }
+
+        private void BackButton_Click(object sender, BackRequestedEventArgs e) {
+            Frame.Navigate(typeof(LoginPage));
+
+            var currentView = SystemNavigationManager.GetForCurrentView();
+            currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Disabled;
+
+            currentView.BackRequested -= BackButton_Click;
         }
     }
 }

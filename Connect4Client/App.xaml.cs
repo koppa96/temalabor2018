@@ -23,6 +23,7 @@ namespace Connect4Client
     sealed partial class App : Application
     {
         public static string Token { get; set; }
+        public static readonly string AppUrl = "https://koppa96.sch.bme.hu/Connect4Server";
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -47,7 +48,9 @@ namespace Connect4Client
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                rootFrame = new Frame() {
+                    Name = "RootFrame"
+                };
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 

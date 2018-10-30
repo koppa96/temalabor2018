@@ -39,7 +39,7 @@ namespace Connect4Server.Controllers {
                     _logger.LogInformation(2, "User logged in.");
 
                     var claims = new Claim[] {
-                        new Claim("UserClaims", model.Username)
+                        new Claim(ClaimTypes.Name, model.Username),
                     };
 
                     var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
@@ -56,6 +56,13 @@ namespace Connect4Server.Controllers {
             }
 
             return Unauthorized();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Logout() {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation(3, "User logged out");
+            return Ok();
         }
 
         [HttpPost]

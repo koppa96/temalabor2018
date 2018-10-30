@@ -1,25 +1,15 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
+using Windows.System;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -51,7 +41,11 @@ namespace Connect4Client {
             Frame.Navigate(typeof(RegisterPage));
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e) {
+        private void LoginButton_Click(object sender, RoutedEventArgs e) {
+            LoginAsyc();
+        }
+
+        private async void LoginAsyc() {
             loadingDialog.ShowAsync();
 
             JObject jObject = new JObject();
@@ -59,7 +53,7 @@ namespace Connect4Client {
             jObject.Add("Password", pwbPassword.Password);
 
             string json = jObject.ToString();
-            string url = "https://localhost:44301/Account/Login";
+            string url = App.AppUrl + "/Account/Login";
             HttpStringContent content = new HttpStringContent(json, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
 
             HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
@@ -78,6 +72,7 @@ namespace Connect4Client {
                     loadingDialog.Hide();
                 } else {
                     var resourceLoader = ResourceLoader.GetForViewIndependentUse();
+                    pwbPassword.Password = "";
 
                     MessageDialog dialog = new MessageDialog(resourceLoader.GetString("LoginError")) {
                         Title = resourceLoader.GetString("Error")
@@ -91,6 +86,12 @@ namespace Connect4Client {
 
         private void OnSuccessfulLogin() {
             Frame.Navigate(typeof(MainPage));
+        }
+
+        private void pwbPassword_KeyDown(object sender, KeyRoutedEventArgs e) {
+            if (e.Key == VirtualKey.Enter) {
+                LoginAsyc();
+            }
         }
     }
 }

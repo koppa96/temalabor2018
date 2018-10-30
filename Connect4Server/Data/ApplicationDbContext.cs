@@ -6,8 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Connect4Server.Data {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
+        public DbSet<Match> Matches { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) {
+            
         }
     }
 }
