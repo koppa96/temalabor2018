@@ -12,7 +12,7 @@ namespace Connect4Server.Data {
         public ApplicationUser Player1 { get; set; }
         public ApplicationUser Player2 { get; set; }
 
+        public string BoardData { get; set; }
         public string State { get; set; }
-        public string Result { get; set; }
     }
 }

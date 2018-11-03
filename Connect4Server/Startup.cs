@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Connect4Server.Hubs;
+using Connect4Server.Services;
 
 namespace Connect4Server {
     public class Startup {
@@ -33,9 +34,18 @@ namespace Connect4Server {
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+			services.Configure<IdentityOptions>(options => {
+				options.Password.RequireDigit = true;
+				options.Password.RequireLowercase = true;
+				options.Password.RequireUppercase = true;
+				options.Password.RequireNonAlphanumeric = false;
+
+				options.User.RequireUniqueEmail = true;
+			});
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("SqlServerConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -58,6 +68,10 @@ namespace Connect4Server {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSignalR();
+
+			services.AddSingleton<LobbyService>();
+			services.AddSingleton<SoloQueueService>();
+			services.AddScoped<GameService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

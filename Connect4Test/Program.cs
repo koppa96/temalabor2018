@@ -18,21 +18,20 @@ namespace Connect4Test {
 
         static async void MainAsync() {
             token = await LoginAsync();
-            TestHub(token);
+			TestHub(token);
         }
 
         static async void TestHub(string token) {
             HubConnection connection = new HubConnectionBuilder()
                                        .WithUrl("https://localhost:44301/gamehub", options => {
-                                           options.AccessTokenProvider = () => Task.FromResult(token);
-                                       })
+										   options.AccessTokenProvider = () => Task.FromResult(token);
+									   })
                                        .Build();
+			connection.On<int>("LobbyCreated", (lobbyId) => { Console.WriteLine("Lobby Created with id: {0}", lobbyId); });
 
             await connection.StartAsync();
 
-            string response = (string) await connection.InvokeCoreAsync("Hello", typeof(string), new[] { "it's me" });
-
-            Console.WriteLine($"{response}");
+			await connection.InvokeAsync("CreateLobbyAsync", "Public");
         }
 
         static async Task<string> LoginAsync() {
@@ -49,18 +48,11 @@ namespace Connect4Test {
                 HttpResponseMessage responseMessage = await client.PostAsync(url, content);
 
                 if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
-                    string token = await responseMessage.Content.ReadAsStringAsync();
-
-                    Console.WriteLine("Logged in successfully. Access token: {0}", token);
-                    return token;
+                    return await responseMessage.Content.ReadAsStringAsync();
                 }
             }
 
             return "Something went wrong";
-        }
-
-        static async void PrintTokenAsync() {
-            string token = await RegisterAsync();
         }
 
         static async Task<string> RegisterAsync() {

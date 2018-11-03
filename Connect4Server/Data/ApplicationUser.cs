@@ -12,5 +12,5 @@ namespace Connect4Server.Data {
 
         [InverseProperty("Player2")]
         public List<Match> Player2Matches { get; set; }
-    }
+	}
 }

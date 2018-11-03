@@ -5,13 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Connect4Server.Areas.Identity.Pages.Account;
 using Connect4Server.Data;
 using Connect4Server.Models.Account;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -97,5 +94,24 @@ namespace Connect4Server.Controllers {
 
             return BadRequest("Something went wrong.");
         }
+
+		[HttpPost]
+		[Authorize]
+		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
+			if (model.Password != model.ConfirmPassword) {
+				return BadRequest("The username and password does not match.");
+			}
+
+			if (ModelState.IsValid) {
+				ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
+				var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
+
+				if (result.Succeeded) {
+					return Ok("Password change successful");
+				}
+			}
+
+			return BadRequest("Something went wrong.");
+		}
     }
 }
