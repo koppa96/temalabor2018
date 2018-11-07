@@ -126,6 +126,9 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="ErrorUserExists" xml:space="preserve">
+    <value>A user with the given username already exists.</value>
+  </data>
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Home</value>
   </data>

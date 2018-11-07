@@ -31,7 +31,7 @@ namespace Connect4Server.Hubs {
 			ApplicationUser user = await userManager.FindByNameAsync(Context.User.Identity.Name);
 			int lobbyId = lobbyService.CreateLobby(user, status);
 
-			await Clients.Caller.SendAsync("LobbyCreated", lobbyId);
+			Clients.Caller.SendAsync("LobbyCreated", lobbyId);
 		}
 
 		public void CreateMatch(int lobbyId) {
@@ -39,6 +39,7 @@ namespace Connect4Server.Hubs {
 
 			Clients.User(newMatch.Player1.UserName).SendAsync("MatchCreated", newMatch);
 			Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch);
+			//TODO Lobby lista frissítés
 		}
 
 		public void LobbySettingsChanged(int lobbyId, LobbySettings settings) {

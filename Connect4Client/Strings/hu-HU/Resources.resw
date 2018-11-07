@@ -126,6 +126,9 @@
   <data name="Error" xml:space="preserve">
     <value>Hiba</value>
   </data>
+  <data name="ErrorUserExists" xml:space="preserve">
+    <value>Már létezik felhasználó az adott felhasználónévvel.</value>
+  </data>
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Kezdőoldal</value>
   </data>

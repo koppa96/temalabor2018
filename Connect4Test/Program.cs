@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,9 @@ using System.Threading.Tasks;
 namespace Connect4Test {
     class Program {
         static string token;
+		static readonly string server = "https://koppa96.sch.bme.hu/Connect4Server";
 
-        static void Main(string[] args) {
+		static void Main(string[] args) {
             MainAsync();
             Console.ReadKey();
         }
@@ -23,7 +25,7 @@ namespace Connect4Test {
 
         static async void TestHub(string token) {
             HubConnection connection = new HubConnectionBuilder()
-                                       .WithUrl("https://localhost:44301/gamehub", options => {
+                                       .WithUrl(server + "/gamehub", options => {
 										   options.AccessTokenProvider = () => Task.FromResult(token);
 									   })
                                        .Build();
@@ -41,10 +43,13 @@ namespace Connect4Test {
             };
 
             string json = jObject.ToString();
-            string url = "https://localhost:44301/Account/Login";
+            string url = server + "/Account/Login";
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
+			HttpClientHandler handler = new HttpClientHandler();
+
             using (HttpClient client = new HttpClient()) {
+				ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, ssl) => true;
                 HttpResponseMessage responseMessage = await client.PostAsync(url, content);
 
                 if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -64,7 +69,7 @@ namespace Connect4Test {
             };
 
             string json = jObject.ToString();
-            string url = "https://localhost:44301/Account/Register";
+            string url = server + "/Account/Register";
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
             using (HttpClient client = new HttpClient()) {

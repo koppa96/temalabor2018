@@ -62,10 +62,11 @@ namespace Connect4Client {
                     loadingDialog.Hide();
                 } else {
                     var resourceLoader = ResourceLoader.GetForViewIndependentUse();
+					string response = await responseMessage.Content.ReadAsStringAsync();
 
                     pwbPassword.Password = pwbConfirmPassword.Password = "";
-                    MessageDialog dialog = new MessageDialog(resourceLoader.GetString("RegisterError")) {
-                        Title = resourceLoader.GetString("Error")
+					MessageDialog dialog = new MessageDialog(resourceLoader.GetString(response)) {
+						Title = resourceLoader.GetString("RegisterError")
                     };
 
                     loadingDialog.Hide();

@@ -45,12 +45,11 @@ namespace Connect4Server.Services {
 		}
 
 		public void DisconnectPlayerFromLobby(ApplicationUser player, int lobbyId) {
-			if (lobbies[lobbyId].Guest == null) {
-				lobbies.Remove(lobbyId);
-				return;
-			}
-
 			lobbies[lobbyId].DisconnectPlayer(player);
+
+			if (lobbies[lobbyId].Host == null) {
+				lobbies.Remove(lobbyId);
+			}			
 		}
 	}
 }

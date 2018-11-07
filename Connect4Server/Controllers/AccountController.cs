@@ -35,15 +35,15 @@ namespace Connect4Server.Controllers {
                 if (result.Succeeded) {
                     _logger.LogInformation(2, "User logged in.");
 
-                    var claims = new Claim[] {
-                        new Claim(ClaimTypes.Name, model.Username),
-                    };
+					var claims = new Claim[] {
+						new Claim(ClaimTypes.Name, model.Username),
+					};
 
-                    var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
+					var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
                     var securityToken = new JwtSecurityToken(
                         issuer: "Connect4Server",
                         audience: "Connect4Server",
-                        expires: DateTime.Now.AddSeconds(30),
+                        expires: DateTime.Now.AddHours(1),
                         claims: claims,
                         signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                         );
@@ -66,7 +66,7 @@ namespace Connect4Server.Controllers {
         public async Task<ActionResult> Register([FromBody]AppRegisterModel model) {
             if (ModelState.IsValid) {
                 if (await _userManager.FindByNameAsync(model.Username) != null) {
-                    return BadRequest("A user with the given username already exists.");
+                    return BadRequest("ErrorUserExists");
                 }
 
                 if (model.Password != model.ConfirmPassword) {
@@ -80,11 +80,16 @@ namespace Connect4Server.Controllers {
                     await _signInManager.SignInAsync(user, false);
                     _logger.LogInformation(1, "User created new account");
 
-                    var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
+					var claims = new Claim[] {
+						new Claim(ClaimTypes.Name, model.Username)
+					};
+
+					var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
                     var securityToken = new JwtSecurityToken(
                         issuer: "Connect4Server",
                         audience: "Connect4Server",
                         expires: DateTime.UtcNow.AddHours(1),
+						claims: claims,
                         signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                         );
 
