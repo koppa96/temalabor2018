@@ -29,7 +29,16 @@ namespace Connect4Test {
 										   options.AccessTokenProvider = () => Task.FromResult(token);
 									   })
                                        .Build();
-			connection.On<int>("LobbyCreated", (lobbyId) => { Console.WriteLine("Lobby Created with id: {0}", lobbyId); });
+			connection.On<string>("LobbyCreated", (lobby) => {
+				JObject obj = JObject.Parse(lobby);
+
+				Console.WriteLine("Lobby létrehozva a következő adatokkal:");
+				Console.WriteLine("Host: {0}", obj["host"]);
+				Console.WriteLine("Guest: {0}", obj["guest"]);
+				Console.WriteLine("Board width: {0}", obj["boardwidth"]);
+				Console.WriteLine("Board height: {0}", obj["boardheight"]);
+				Console.WriteLine("Status: {0}", obj["status"]);
+			});
 
             await connection.StartAsync();
 

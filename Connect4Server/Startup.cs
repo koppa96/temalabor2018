@@ -17,6 +17,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Connect4Server.Hubs;
 using Connect4Server.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Connect4Server {
     public class Startup {
@@ -72,6 +73,7 @@ namespace Connect4Server {
 			services.AddSingleton<LobbyService>();
 			services.AddSingleton<SoloQueueService>();
 			services.AddScoped<GameService>();
+			services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

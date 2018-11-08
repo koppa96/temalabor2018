@@ -5,6 +5,7 @@ using Connect4Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,29 +18,44 @@ namespace Connect4Server.Hubs {
 		private readonly LobbyService lobbyService;
 		private readonly UserManager<ApplicationUser> userManager;
 		private readonly SoloQueueService soloQueueService;
+		private readonly IHubContext<GameHub> hubContext;
 
-		public GameHub(LobbyService lobbyService, UserManager<ApplicationUser> userManager, GameService gameService, SoloQueueService soloQueueService) {
+		public GameHub(LobbyService lobbyService, UserManager<ApplicationUser> userManager, GameService gameService, 
+						SoloQueueService soloQueueService, IHubContext<GameHub> hubContext) {
 			this.lobbyService = lobbyService;
 			this.userManager = userManager;
 			this.gameService = gameService;
 			this.soloQueueService = soloQueueService;
+			this.hubContext = hubContext;
 		}
 
-		public async void CreateLobbyAsync(string statusCode) {
+		public async Task CreateLobbyAsync(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
 
 			ApplicationUser user = await userManager.FindByNameAsync(Context.User.Identity.Name);
-			int lobbyId = lobbyService.CreateLobby(user, status);
+			LobbyModel lobby = lobbyService.CreateLobby(user, status);
 
-			Clients.Caller.SendAsync("LobbyCreated", lobbyId);
+			JObject obj = new JObject() {
+				{ "host", lobby.Host.UserName },
+				{ "guest", lobby.Guest == null ? "null" : lobby.Guest.UserName },
+				{ "boardheight", lobby.Settings.BoardHeight },
+				{ "boardwidth", lobby.Settings.BoardWidth },
+				{ "status", lobby.Settings.Status.ToString() }
+			};
+
+			Clients.Caller.SendAsync("LobbyCreated", obj.ToString());
 		}
 
 		public void CreateMatch(int lobbyId) {
-			Match newMatch = gameService.CreateMatchFromLobby(lobbyService.Lobbies[lobbyId]);
-
-			Clients.User(newMatch.Player1.UserName).SendAsync("MatchCreated", newMatch);
-			Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch);
-			//TODO Lobby lista frissítés
+			try {
+				Match newMatch = gameService.CreateMatchFromLobby(lobbyService.Lobbies[lobbyId]);
+				lobbyService.DeleteLobby(lobbyId);
+				Clients.Caller.SendAsync("MatchCreated", newMatch);
+				Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch);
+				Clients.All.SendAsync("UpdateLobbyList", lobbyService.Lobbies);
+			} catch (ArgumentException) {
+				Clients.Caller.SendAsync("NotEnoughPlayersHandler");
+			}
 		}
 
 		public void LobbySettingsChanged(int lobbyId, LobbySettings settings) {

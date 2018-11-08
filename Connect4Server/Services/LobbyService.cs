@@ -26,7 +26,7 @@ namespace Connect4Server.Services {
 		/// <param name="host">The player that created the lobby</param>
 		/// <param name="status">Status whether the lobby is private or public</param>
 		/// <returns></returns>
-		public int CreateLobby(ApplicationUser host, LobbyStatus status) {
+		public LobbyModel CreateLobby(ApplicationUser host, LobbyStatus status) {
 			int newLobbyId = 0;
 			while (lobbies.ContainsKey(newLobbyId)) {
 				newLobbyId++;
@@ -37,7 +37,7 @@ namespace Connect4Server.Services {
 
 			lobbies.Add(newLobbyId, model);
 
-			return newLobbyId;
+			return model;
 		}
 
 		public bool JoinPlayerToLobby(ApplicationUser player, int lobbyId) {
@@ -50,6 +50,10 @@ namespace Connect4Server.Services {
 			if (lobbies[lobbyId].Host == null) {
 				lobbies.Remove(lobbyId);
 			}			
+		}
+
+		public void DeleteLobby(int lobbyId) {
+			lobbies.Remove(lobbyId);
 		}
 	}
 }
