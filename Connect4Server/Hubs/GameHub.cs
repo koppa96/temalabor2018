@@ -29,27 +29,27 @@ namespace Connect4Server.Hubs {
 			this.hubContext = hubContext;
 		}
 
-		public async Task CreateLobbyAsync(string statusCode) {
+		/// <summary>
+		/// Creates a new Lobby instance that is hosted by the player that called this method
+		/// </summary>
+		/// <param name="statusCode">Public or Private, depending on the desired lobby status</param>
+		/// <returns></returns>
+		public void CreateLobby(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
+			int lobby = lobbyService.CreateLobby(Context.User.Identity.Name, status);
 
-			ApplicationUser user = await userManager.FindByNameAsync(Context.User.Identity.Name);
-			LobbyModel lobby = lobbyService.CreateLobby(user, status);
-
-			JObject obj = new JObject() {
-				{ "host", lobby.Host.UserName },
-				{ "guest", lobby.Guest == null ? "null" : lobby.Guest.UserName },
-				{ "boardheight", lobby.Settings.BoardHeight },
-				{ "boardwidth", lobby.Settings.BoardWidth },
-				{ "status", lobby.Settings.Status.ToString() }
-			};
-
-			Clients.Caller.SendAsync("LobbyCreated", obj.ToString());
+			Clients.Caller.SendAsync("LobbyCreated", lobby);
+			Clients.All.SendAsync("UpdateLobbyList", lobbyService.Lobbies);
 		}
 
-		public void CreateMatch(int lobbyId) {
+		public async Task CreateMatchAsync(int lobbyId) {
 			try {
-				Match newMatch = gameService.CreateMatchFromLobby(lobbyService.Lobbies[lobbyId]);
+				LobbyModel lobby = lobbyService.Lobbies[lobbyId];
+				ApplicationUser player1 = await userManager.FindByNameAsync(lobby.Host);
+				ApplicationUser player2 = await userManager.FindByNameAsync(lobby.Guest);
+				Match newMatch = gameService.CreateMatch(player1, player2, lobby.BoardHeight, lobby.BoardWidth);
 				lobbyService.DeleteLobby(lobbyId);
+
 				Clients.Caller.SendAsync("MatchCreated", newMatch);
 				Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch);
 				Clients.All.SendAsync("UpdateLobbyList", lobbyService.Lobbies);
@@ -58,12 +58,14 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
-		public void LobbySettingsChanged(int lobbyId, LobbySettings settings) {
+		public void LobbySettingsChanged(int lobbyId, int newHeight, int newWidth, string newStatus) {
 			LobbyModel lobby = lobbyService.Lobbies[lobbyId];
-			lobby.Settings = settings;
+			lobby.BoardHeight = newHeight;
+			lobby.BoardWidth = newWidth;
+			lobby.Status = Enum.Parse<LobbyStatus>(newStatus);
 
 			if (lobby.Guest != null) {
-				Clients.User(lobby.Guest.UserName).SendAsync("LobbySettingsChanged", settings);
+				Clients.User(lobby.Guest).SendAsync("LobbySettingsChanged", newHeight, newWidth, newStatus);
 			}
 		}
 
@@ -71,21 +73,21 @@ namespace Connect4Server.Hubs {
 			Clients.User(user).SendAsync("GetInvitationTo", lobbyId);
 		}
 
-		public async void JoinLobbyAsync(int lobbyId) {
-			ApplicationUser user = await userManager.FindByNameAsync(Context.User.Identity.Name);
-
-			if (lobbyService.JoinPlayerToLobby(user, lobbyId)) {
+		public void JoinLobbyAsync(int lobbyId) {
+			if (lobbyService.JoinPlayerToLobby(Context.User.Identity.Name, lobbyId)) {
 				Clients.Caller.SendAsync("JoinedToLobby", lobbyService.Lobbies[lobbyId]);
 			} else {
 				Clients.Caller.SendAsync("FailedToJoinLobby");
 			}
 		}
 
-		public async void PlaceItemAsync(int column, int matchId) {
+		public async Task PlaceItemAsync(int column, int matchId) {
 			Match match = gameService.GetMatchById(matchId);
 			ApplicationUser player = await userManager.FindByNameAsync(Context.User.Identity.Name);
 
 			Board board = Board.Parse(match.BoardData);
+
+			//TODO
 		}
 	}
 }

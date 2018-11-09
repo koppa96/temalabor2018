@@ -6,43 +6,44 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Connect4Test {
     class Program {
         static string token;
 		static readonly string server = "https://koppa96.sch.bme.hu/Connect4Server";
+		static int lobbyId;
 
 		static void Main(string[] args) {
             MainAsync();
-            Console.ReadKey();
-        }
+			Console.ReadKey();
+		}
 
         static async void MainAsync() {
             token = await LoginAsync();
 			TestHub(token);
         }
 
-        static async void TestHub(string token) {
+        static async Task TestHub(string token) {
             HubConnection connection = new HubConnectionBuilder()
                                        .WithUrl(server + "/gamehub", options => {
 										   options.AccessTokenProvider = () => Task.FromResult(token);
 									   })
                                        .Build();
-			connection.On<string>("LobbyCreated", (lobby) => {
-				JObject obj = JObject.Parse(lobby);
 
-				Console.WriteLine("Lobby létrehozva a következő adatokkal:");
-				Console.WriteLine("Host: {0}", obj["host"]);
-				Console.WriteLine("Guest: {0}", obj["guest"]);
-				Console.WriteLine("Board width: {0}", obj["boardwidth"]);
-				Console.WriteLine("Board height: {0}", obj["boardheight"]);
-				Console.WriteLine("Status: {0}", obj["status"]);
+			connection.On<int>("LobbyCreated", (lobby) => {
+				lobbyId = lobby;
+				Console.WriteLine("Lobby létrehozva, id = {0}", lobbyId);
 			});
 
+			connection.On("NotEnoughPlayersHandler", () => { Console.WriteLine("Nincs elég játékos"); });
+			
             await connection.StartAsync();
 
-			await connection.InvokeAsync("CreateLobbyAsync", "Public");
+			await connection.InvokeAsync("CreateLobby", "Public");
+
+			await connection.InvokeAsync("CreateMatchAsync", lobbyId);
         }
 
         static async Task<string> LoginAsync() {
@@ -61,7 +62,7 @@ namespace Connect4Test {
 				ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, ssl) => true;
                 HttpResponseMessage responseMessage = await client.PostAsync(url, content);
 
-                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
+                if (responseMessage.StatusCode == HttpStatusCode.OK) {
                     return await responseMessage.Content.ReadAsStringAsync();
                 }
             }

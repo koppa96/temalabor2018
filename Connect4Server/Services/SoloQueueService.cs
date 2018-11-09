@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Connect4Server.Services {
 	public class SoloQueueService {
-		public List<ApplicationUser> QueingPlayers;
+		public List<string> QueingPlayers;
 
 		public SoloQueueService() {
-			QueingPlayers = new List<ApplicationUser>();
+			QueingPlayers = new List<string>();
 		}
 	}
 }

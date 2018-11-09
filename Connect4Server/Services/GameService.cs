@@ -32,13 +32,9 @@ namespace Connect4Server.Services {
 			return match;
 		}
 
-		public Match CreateMatchFromLobby(LobbyModel lobby) {
-			return CreateMatch(lobby.Host, lobby.Guest, lobby.Settings.BoardHeight, lobby.Settings.BoardWidth);
-		}
-
-		public List<Match> GetMatchesOf(ApplicationUser user) {
+		public List<Match> GetMatchesOf(string user) {
 			var qMatches = from m in context.Matches
-						   where m.Player1.Id == user.Id || m.Player2.Id == user.Id
+						   where m.Player1.UserName == user || m.Player2.UserName == user
 						   select m;
 
 			return qMatches.ToList();
