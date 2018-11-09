@@ -72,6 +72,7 @@ namespace Connect4Server.Services {
 				}
 
 				match.State = isPlayerOne ? "Player2Moves" : "Player1Moves";
+				context.SaveChanges();
 				return PlacementResult.Success;
 			}
 
