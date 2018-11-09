@@ -18,7 +18,6 @@ namespace Connect4Server.Hubs {
 		private readonly LobbyService lobbyService;
 		private readonly UserManager<ApplicationUser> userManager;
 		private readonly SoloQueueService soloQueueService;
-		private readonly IHubContext<GameHub> hubContext;
 
 		public GameHub(LobbyService lobbyService, UserManager<ApplicationUser> userManager, GameService gameService, 
 						SoloQueueService soloQueueService, IHubContext<GameHub> hubContext) {
@@ -26,7 +25,6 @@ namespace Connect4Server.Hubs {
 			this.userManager = userManager;
 			this.gameService = gameService;
 			this.soloQueueService = soloQueueService;
-			this.hubContext = hubContext;
 		}
 
 		/// <summary>
@@ -73,7 +71,7 @@ namespace Connect4Server.Hubs {
 			Clients.User(user).SendAsync("GetInvitationTo", lobbyId);
 		}
 
-		public void JoinLobbyAsync(int lobbyId) {
+		public void JoinLobby(int lobbyId) {
 			if (lobbyService.JoinPlayerToLobby(Context.User.Identity.Name, lobbyId)) {
 				Clients.Caller.SendAsync("JoinedToLobby", lobbyService.Lobbies[lobbyId]);
 			} else {
@@ -81,13 +79,35 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
-		public async Task PlaceItemAsync(int column, int matchId) {
+		public void PlaceItem(int matchId, int column) {
 			Match match = gameService.GetMatchById(matchId);
-			ApplicationUser player = await userManager.FindByNameAsync(Context.User.Identity.Name);
+			if (match == null) {
+				Clients.Caller.SendAsync("IncorrectMatchIdHandler");
+				return;
+			}
 
-			Board board = Board.Parse(match.BoardData);
-
-			//TODO
+			string otherPlayer = match.Player1.UserName == Context.User.Identity.Name
+				? match.Player2.UserName
+				: match.Player1.UserName;
+			switch (gameService.PlaceItemToColumn(matchId, column, Context.User.Identity.Name)) {
+				case PlacementResult.ColumnFull:
+					Clients.Caller.SendAsync("ColumnFullHandler");
+					break;
+				case PlacementResult.MatchNotRunning:
+					Clients.Caller.SendAsync("MatchFinishedHandler");
+					break;
+				case PlacementResult.NotYourTurn:
+					Clients.Caller.SendAsync("NotYourTurnHandler");
+					break;
+				case PlacementResult.Success:
+					Clients.Caller.SendAsync("SuccessfulPlacement", column);
+					Clients.User(otherPlayer).SendAsync("SuccessfulEnemyPlacement", column);
+					break;
+				case PlacementResult.Victory:
+					Clients.Caller.SendAsync("VictoryHandler", column);
+					Clients.User(otherPlayer).SendAsync("EnemyVictoryHandler", column);
+					break;
+			}
 		}
 	}
 }
