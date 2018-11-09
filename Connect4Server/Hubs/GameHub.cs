@@ -34,10 +34,11 @@ namespace Connect4Server.Hubs {
 		/// <returns></returns>
 		public void CreateLobby(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
-			int lobby = lobbyService.CreateLobby(Context.User.Identity.Name, status);
+			int lobbyId = lobbyService.CreateLobby(Context.User.Identity.Name, status);
+			LobbyModel model = lobbyService.Lobbies[lobbyId];
 
-			Clients.Caller.SendAsync("LobbyCreated", lobby);
-			Clients.All.SendAsync("UpdateLobbyList", lobbyService.Lobbies);
+			Clients.Caller.SendAsync("LobbyCreated", lobbyId);
+			Clients.All.SendAsync("LobbyAddedHandler", lobbyId, model.Host, model.Status.ToString());
 		}
 
 		public async Task CreateMatchAsync(int lobbyId) {
@@ -48,9 +49,9 @@ namespace Connect4Server.Hubs {
 				Match newMatch = gameService.CreateMatch(player1, player2, lobby.BoardHeight, lobby.BoardWidth);
 				lobbyService.DeleteLobby(lobbyId);
 
-				Clients.Caller.SendAsync("MatchCreated", newMatch);
-				Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch);
-				Clients.All.SendAsync("UpdateLobbyList", lobbyService.Lobbies);
+				Clients.Caller.SendAsync("MatchCreated", newMatch.MatchId);
+				Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch.MatchId);
+				Clients.All.SendAsync("LobbyDeletedHandler", lobbyId);
 			} catch (ArgumentException) {
 				Clients.Caller.SendAsync("NotEnoughPlayersHandler");
 			}
