@@ -45,13 +45,26 @@ namespace Connect4Server.Services {
 			foreach (Match m in qMatches) {
 				MatchDto dto = new MatchDto {
 					MatchId = m.MatchId,
-					OtherPlayer = m.Player1.UserName == user ? m.Player2.UserName : m.Player1.UserName
+					OtherPlayer = m.Player1.UserName == user ? m.Player2.UserName : m.Player1.UserName,
+					BoardData = m.BoardData
 				};
-				if (m.Player1.UserName == user && m.State == "Player1Moves" ||
-				    m.Player2.UserName == user && m.State == "Player2Moves") {
-					dto.State = "YourTurn";
-				} else {
-					dto.State = "EnemyTurn";
+
+				switch (m.State) {
+					case "Player1Moves":
+						dto.State = user == m.Player1.UserName ? "YourTurn" : "EnemyTurn";
+						break;
+					case "Player2Moves":
+						dto.State = user == m.Player2.UserName ? "YourTurn" : "EnemyTurn";
+						break;
+					case "Player1Won":
+						dto.State = user == m.Player1.UserName ? "YouWon" : "YouLost";
+						break;
+					case "Player2Won":
+						dto.State = user == m.Player2.UserName ? "YouWon" : "YouLost";
+						break;
+					default:
+						dto.State = "Unavailable";
+						break;
 				}
 
 				dtos.Add(dto);

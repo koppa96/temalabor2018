@@ -11,49 +11,38 @@ using System.Threading.Tasks;
 
 namespace Connect4Test {
     class Program {
-        static string token;
-		static readonly string server = "https://koppa96.sch.bme.hu/Connect4Server";
-		static int lobbyId;
+        private static string token;
+	    private const string Server = "https://koppa96.sch.bme.hu/Connect4Server";
+	    private static HubConnection connection;
+	    private static int lobbyId;
 
 		static void Main(string[] args) {
-            MainAsync();
-			Console.ReadKey();
+			MainAsync();
 		}
 
-        static async void MainAsync() {
-            token = await LoginAsync();
-			TestHub(token);
-        }
+	    private static async Task MainAsync() {
+		    Console.Write("Username: ");
+		    string username = Console.ReadLine();
+			Console.Write("Password: ");
+		    string password = Console.ReadLine();
 
-        static async Task TestHub(string token) {
-            HubConnection connection = new HubConnectionBuilder()
-                                       .WithUrl(server + "/gamehub", options => {
-										   options.AccessTokenProvider = () => Task.FromResult(token);
-									   })
-                                       .Build();
+		    token = await LoginAsync(username, password);
+		    connection = new HubConnectionBuilder().WithUrl(Server + "/gamehub", options => {
+			    options.AccessTokenProvider = () => Task.FromResult(token);
+		    }).Build();
 
-			connection.On<int>("LobbyCreated", (lobby) => {
-				lobbyId = lobby;
-				Console.WriteLine("Lobby létrehozva, id = {0}", lobbyId);
-			});
+		    connection.On<int>("LobbyCreated", LobbyCreatedHandler);
+			connection.On()
+	    }
 
-			connection.On("NotEnoughPlayersHandler", () => { Console.WriteLine("Nincs elég játékos"); });
-			
-            await connection.StartAsync();
-
-			await connection.InvokeAsync("CreateLobby", "Public");
-
-			await connection.InvokeAsync("CreateMatchAsync", lobbyId);
-        }
-
-        static async Task<string> LoginAsync() {
+        private static async Task<string> LoginAsync(string username, string password) {
             JObject jObject = new JObject {
-                { "Username", "testuser" },
-                { "Password", "Alma.123" }
+                { "Username", username },
+                { "Password", password }
             };
 
             string json = jObject.ToString();
-            string url = server + "/Account/Login";
+            string url = Server + "/Account/Login";
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
 			HttpClientHandler handler = new HttpClientHandler();
@@ -70,7 +59,7 @@ namespace Connect4Test {
             return "Something went wrong";
         }
 
-        static async Task<string> RegisterAsync() {
+        private static async Task<string> RegisterAsync() {
             JObject jObject = new JObject {
                 { "Username", "almaUser" },
                 { "Email", "alma@alma.alma" },
@@ -79,7 +68,7 @@ namespace Connect4Test {
             };
 
             string json = jObject.ToString();
-            string url = server + "/Account/Register";
+            string url = Server + "/Account/Register";
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
             using (HttpClient client = new HttpClient()) {
@@ -94,5 +83,10 @@ namespace Connect4Test {
 
             return "Something went wrong";
         }
+
+	    private static void LobbyCreatedHandler(int lobbyId) {
+		    Program.lobbyId = lobbyId;
+			Console.WriteLine("Lobby successfully created with id: {0}", lobbyId);
+	    }
     }
 }
