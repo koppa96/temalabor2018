@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Connect4Server.Models.Dto;
+using Microsoft.EntityFrameworkCore;
 using Match = Connect4Server.Data.Match;
 
 namespace Connect4Server.Services {
@@ -34,12 +36,38 @@ namespace Connect4Server.Services {
 			return match;
 		}
 
-		public List<Match> GetMatchesOf(string user) {
+		public List<MatchDto> GetMatchesOf(string user) {
 			var qMatches = from m in context.Matches
 						   where m.Player1.UserName == user || m.Player2.UserName == user
 						   select m;
 
-			return qMatches.ToList();
+			List<MatchDto> dtos = new List<MatchDto>();
+			foreach (Match m in qMatches) {
+				MatchDto dto = new MatchDto {
+					MatchId = m.MatchId,
+					OtherPlayer = m.Player1.UserName == user ? m.Player2.UserName : m.Player1.UserName
+				};
+				if (m.Player1.UserName == user && m.State == "Player1Moves" ||
+				    m.Player2.UserName == user && m.State == "Player2Moves") {
+					dto.State = "YourTurn";
+				} else {
+					dto.State = "EnemyTurn";
+				}
+
+				dtos.Add(dto);
+			}
+
+			return dtos;
+		}
+
+		public ApplicationUser GetOtherPlayer(int matchId, string player) {
+			Match match = GetMatchById(matchId);
+
+			if (match == null) {
+				throw new ArgumentException("Invalid match id.");
+			}
+
+			return match.Player1.UserName == player ? match.Player2 : match.Player1;
 		}
 
 		public Match GetMatchById(int id) {

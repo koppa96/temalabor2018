@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Connect4Server.Models.Dto;
 
 namespace Connect4Server.Hubs {
 	[Authorize]
@@ -50,7 +51,7 @@ namespace Connect4Server.Hubs {
 				lobbyService.DeleteLobby(lobbyId);
 
 				Clients.Caller.SendAsync("MatchCreated", newMatch.MatchId);
-				Clients.User(newMatch.Player2.UserName).SendAsync("MatchCreated", newMatch.MatchId);
+				Clients.User(lobby.Guest).SendAsync("MatchCreated", newMatch.MatchId);
 				Clients.All.SendAsync("LobbyDeletedHandler", lobbyId);
 			} catch (ArgumentException) {
 				Clients.Caller.SendAsync("NotEnoughPlayersHandler");
@@ -80,6 +81,10 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
+		public List<MatchDto> GetMatches() {
+			return gameService.GetMatchesOf(Context.User.Identity.Name);
+		}
+
 		public void PlaceItem(int matchId, int column) {
 			Match match = gameService.GetMatchById(matchId);
 			if (match == null) {
@@ -87,9 +92,7 @@ namespace Connect4Server.Hubs {
 				return;
 			}
 
-			string otherPlayer = match.Player1.UserName == Context.User.Identity.Name
-				? match.Player2.UserName
-				: match.Player1.UserName;
+			string otherPlayer = gameService.GetOtherPlayer(matchId, Context.User.Identity.Name).UserName;
 			switch (gameService.PlaceItemToColumn(matchId, column, Context.User.Identity.Name)) {
 				case PlacementResult.ColumnFull:
 					Clients.Caller.SendAsync("ColumnFullHandler");
