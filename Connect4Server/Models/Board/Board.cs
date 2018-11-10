@@ -22,7 +22,7 @@ namespace Connect4Server.Models.Board {
 		public Board(int width, int height) {
 			Width = width;
 			Height = height;
-			board = new Item[width, height];
+			board = new Item[height, width];
 
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < width; j++) {

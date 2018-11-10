@@ -106,5 +106,10 @@ namespace Connect4Server.Services {
 
 			return PlacementResult.ColumnFull;
 		}
+
+		public string GetBoardOfMatch(int matchId) {
+			Match match = GetMatchById(matchId);
+			return match.BoardData;
+		}
 	}
 }

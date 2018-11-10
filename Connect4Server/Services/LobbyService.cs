@@ -53,5 +53,18 @@ namespace Connect4Server.Services {
 		public void DeleteLobby(int lobbyId) {
 			lobbies.Remove(lobbyId);
 		}
+
+		public void InvitePlayerToLobby(int lobbyId, string player) {
+			lobbies[lobbyId].InvitedPlayers.Add(player);
+		}
+
+		public string KickGuest(int lobbyId) {
+			string guestName = lobbies[lobbyId].Guest;
+			if (lobbies[lobbyId].Guest != null) {
+				lobbies[lobbyId].DisconnectPlayer(lobbies[lobbyId].Guest);
+			}
+
+			return guestName;
+		}
 	}
 }
