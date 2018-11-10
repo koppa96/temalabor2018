@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Connect4Server.Models.Dto;
+using Connect4Dtos;
 
 namespace Connect4Server.Hubs {
 	[Authorize]
@@ -82,6 +82,8 @@ namespace Connect4Server.Hubs {
 		public void JoinLobby(int lobbyId) {
 			if (_lobbyService.JoinPlayerToLobby(Context.User.Identity.Name, lobbyId)) {
 				Clients.Caller.SendAsync("JoinedToLobby", _lobbyService.Lobbies[lobbyId]);
+				Clients.User(_lobbyService.Lobbies[lobbyId].Host)
+					.SendAsync("PlayerJoinedToLobby", Context.User.Identity.Name);
 			} else {
 				Clients.Caller.SendAsync("FailedToJoinLobby");
 			}

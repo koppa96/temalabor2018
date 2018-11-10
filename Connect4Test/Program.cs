@@ -8,16 +8,18 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Connect4Dtos;
+using Console = System.Console;
 
 namespace Connect4Test {
     class Program {
         private static string token;
-	    private const string Server = "https://koppa96.sch.bme.hu/Connect4Server";
+	    private const string Server = "https://localhost:44301";
 	    private static HubConnection connection;
 	    private static int lobbyId;
 
 		static void Main(string[] args) {
-			MainAsync();
+			MainAsync().Wait();
 		}
 
 	    private static async Task MainAsync() {
@@ -32,7 +34,14 @@ namespace Connect4Test {
 		    }).Build();
 
 		    connection.On<int>("LobbyCreated", LobbyCreatedHandler);
-			connection.On()
+		    connection.On<string>("PlayerJoinedToLobby", PlayerJoinedHandler);
+		    await connection.StartAsync();
+
+
+		    List<MatchDto> matches = await connection.InvokeAsync<List<MatchDto>>("GetMatches");
+
+		    Console.WriteLine("This player has {0} matches", matches.Count);
+		    Console.ReadKey();
 	    }
 
         private static async Task<string> LoginAsync(string username, string password) {
@@ -52,6 +61,7 @@ namespace Connect4Test {
                 HttpResponseMessage responseMessage = await client.PostAsync(url, content);
 
                 if (responseMessage.StatusCode == HttpStatusCode.OK) {
+	                Console.WriteLine("Successful login");
                     return await responseMessage.Content.ReadAsStringAsync();
                 }
             }
@@ -87,6 +97,10 @@ namespace Connect4Test {
 	    private static void LobbyCreatedHandler(int lobbyId) {
 		    Program.lobbyId = lobbyId;
 			Console.WriteLine("Lobby successfully created with id: {0}", lobbyId);
+	    }
+
+	    private static void PlayerJoinedHandler(string otherPlayer) {
+		    Console.WriteLine("{0} has joined your lobby.", otherPlayer);
 	    }
     }
 }

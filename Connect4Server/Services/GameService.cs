@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Connect4Server.Models.Dto;
+using Connect4Dtos;
 using Microsoft.EntityFrameworkCore;
 using Match = Connect4Server.Data.Match;
 
@@ -37,7 +37,7 @@ namespace Connect4Server.Services {
 		}
 
 		public List<MatchDto> GetMatchesOf(string user) {
-			var qMatches = from m in context.Matches
+			var qMatches = from m in context.Matches.Include("Player1").Include("Player2")
 						   where m.Player1.UserName == user || m.Player2.UserName == user
 						   select m;
 

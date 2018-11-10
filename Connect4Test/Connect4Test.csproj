@@ -126,5 +126,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Connect4Dtos\Connect4Dtos.csproj">
+      <Project>{1064a424-aece-423c-a925-1638db6dd596}</Project>
+      <Name>Connect4Dtos</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
