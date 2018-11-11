@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Connect4Server.Data;
 using Connect4Server.Models.Account;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,6 +32,7 @@ namespace Connect4Server.Controllers {
         public async Task<ActionResult> Login([FromBody]AppLoginModel model) {
             if (ModelState.IsValid) {
                 var user = await _userManager.FindByNameAsync(model.Username);
+
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
                 if (result.Succeeded) {
                     _logger.LogInformation(2, "User logged in.");
@@ -43,19 +45,22 @@ namespace Connect4Server.Controllers {
                     var securityToken = new JwtSecurityToken(
                         issuer: "Connect4Server",
                         audience: "Connect4Server",
-                        expires: DateTime.Now.AddHours(1),
                         claims: claims,
+						expires: DateTime.Now.AddHours(1),
                         signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                         );
 
                     return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
                 }
+
+	            return BadRequest("ErrorIncorrectLogin");
             }
 
-            return Unauthorized();
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         [HttpPost]
+		[Authorize]
         public async Task<ActionResult> Logout() {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(3, "User logged out");
@@ -70,7 +75,7 @@ namespace Connect4Server.Controllers {
                 }
 
                 if (model.Password != model.ConfirmPassword) {
-                    return BadRequest("The password and the confirmation of password do not match.");
+                    return BadRequest("ErrorPasswordsNotMatching");
                 }
 
                 var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
@@ -97,14 +102,14 @@ namespace Connect4Server.Controllers {
                 }
             }
 
-            return BadRequest("Something went wrong.");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
 		[HttpPost]
 		[Authorize]
 		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
 			if (model.Password != model.ConfirmPassword) {
-				return BadRequest("The username and password does not match.");
+				return BadRequest("ErrorPasswordsNotMatching");
 			}
 
 			if (ModelState.IsValid) {
@@ -112,11 +117,13 @@ namespace Connect4Server.Controllers {
 				var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
 
 				if (result.Succeeded) {
-					return Ok("Password change successful");
+					return Ok("SuccessfulPasswordChange");
 				}
+
+				return BadRequest("OldPasswordIncorrect");
 			}
 
-			return BadRequest("Something went wrong.");
+			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
     }
 }
