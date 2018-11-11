@@ -35,42 +35,49 @@ namespace Connect4Server.Hubs {
 		/// <returns></returns>
 		public void CreateLobby(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
-			int lobbyId = _lobbyService.CreateLobby(Context.User.Identity.Name, status);
-			LobbyModel model = _lobbyService.Lobbies[lobbyId];
+			LobbyModel lobby = _lobbyService.CreateLobby(Context.UserIdentifier, status);
 
-			Clients.Caller.SendAsync("LobbyCreated", lobbyId);
-			Clients.All.SendAsync("LobbyAddedHandler", lobbyId, model.Host, model.Status.ToString());
+			Clients.Caller.SendAsync("LobbyCreated", lobby.Data);
+			Clients.All.SendAsync("LobbyAddedHandler", lobby.Data);
 		}
 
 		public async Task CreateMatchAsync(int lobbyId) {
 			try {
-				LobbyModel lobby = _lobbyService.Lobbies[lobbyId];
-				ApplicationUser player1 = await _userManager.FindByNameAsync(lobby.Host);
-				ApplicationUser player2 = await _userManager.FindByNameAsync(lobby.Guest);
-				Match newMatch = _gameService.CreateMatch(player1, player2, lobby.BoardHeight, lobby.BoardWidth);
+				LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
+				ApplicationUser player1 = await _userManager.FindByNameAsync(lobby.Data.Host);
+				ApplicationUser player2 = await _userManager.FindByNameAsync(lobby.Data.Guest);
+				Match newMatch = _gameService.CreateMatch(player1, player2, lobby.Data.BoardHeight, lobby.Data.BoardWidth);
 				_lobbyService.DeleteLobby(lobbyId);
+				MatchDto dto = new MatchDto {
+					MatchId = newMatch.MatchId,
+					OtherPlayer = lobby.Data.Guest,
+					BoardData = newMatch.BoardData,
+					State = "YourTurn"
+				};
 
-				Clients.Caller.SendAsync("MatchCreated", newMatch.MatchId);
-				Clients.User(lobby.Guest).SendAsync("MatchCreated", newMatch.MatchId);
-				Clients.All.SendAsync("LobbyDeletedHandler", lobbyId);
+				await Clients.Caller.SendAsync("MatchCreated", dto);
+				dto.OtherPlayer = lobby.Data.Host;
+				dto.State = "EnemyTurn";
+				await Clients.User(lobby.Data.Guest).SendAsync("MatchCreated", dto);
+				await Clients.All.SendAsync("LobbyDeletedHandler", lobbyId);
 			} catch (ArgumentException) {
-				Clients.Caller.SendAsync("NotEnoughPlayersHandler");
+				await Clients.Caller.SendAsync("NotEnoughPlayersHandler");
 			}
 		}
 
-		public void LobbySettingsChanged(int lobbyId, int newHeight, int newWidth, string newStatus) {
-			LobbyModel lobby = _lobbyService.Lobbies[lobbyId];
-			if (Context.User.Identity.Name != lobby.Host) {
+		public void LobbySettingsChanged(LobbyData data) {
+			LobbyModel lobby = _lobbyService.FindLobbyById(data.LobbyId);
+			if (Context.User.Identity.Name != lobby.Data.Host) {
 				Clients.Caller.SendAsync("CannotSetOtherLobby");
 				return;
 			}
 
-			lobby.BoardHeight = newHeight;
-			lobby.BoardWidth = newWidth;
-			lobby.Status = Enum.Parse<LobbyStatus>(newStatus);
+			lobby.Data.BoardHeight = data.BoardHeight;
+			lobby.Data.BoardWidth = data.BoardWidth;
+			lobby.Data.Status = data.Status;
 
-			if (lobby.Guest != null) {
-				Clients.User(lobby.Guest).SendAsync("LobbySettingsChanged", newHeight, newWidth, newStatus);
+			if (lobby.Data.Guest != null) {
+				Clients.User(lobby.Data.Guest).SendAsync("LobbySettingsChanged", data);
 			}
 		}
 
@@ -80,17 +87,19 @@ namespace Connect4Server.Hubs {
 		}
 
 		public void JoinLobby(int lobbyId) {
-			if (_lobbyService.JoinPlayerToLobby(Context.User.Identity.Name, lobbyId)) {
-				Clients.Caller.SendAsync("JoinedToLobby", _lobbyService.Lobbies[lobbyId]);
-				Clients.User(_lobbyService.Lobbies[lobbyId].Host)
-					.SendAsync("PlayerJoinedToLobby", Context.User.Identity.Name);
+			if (_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId)) {
+				LobbyModel lobbyModel = _lobbyService.FindLobbyById(lobbyId);
+
+				Clients.Caller.SendAsync("JoinedToLobby", lobbyModel.Data);
+				Clients.User(lobbyModel.Data.Host)
+					.SendAsync("PlayerJoinedToLobby", Context.UserIdentifier);
 			} else {
 				Clients.Caller.SendAsync("FailedToJoinLobby");
 			}
 		}
 
 		public List<MatchDto> GetMatches() {
-			return _gameService.GetMatchesOf(Context.User.Identity.Name);
+			return _gameService.GetMatchesOf(Context.UserIdentifier);
 		}
 
 		public string GetBoardOfMatch(int matchId) {
@@ -137,24 +146,28 @@ namespace Connect4Server.Hubs {
 				_soloQueueService.QueingPlayers.Remove(player1.UserName);
 				_soloQueueService.QueingPlayers.Remove(player2.UserName);
 
-				Clients.User(player1.UserName).SendAsync("MatchCreated", match.MatchId);
-				Clients.User(player2.UserName).SendAsync("MatchCreated", match.MatchId);
+				MatchDto dto = new MatchDto {
+					MatchId = match.MatchId,
+					OtherPlayer = player2.UserName,
+					BoardData = match.BoardData,
+					State = "YourTurn"
+				};
+
+				await Clients.User(player1.UserName).SendAsync("MatchCreated", dto);
+				dto.State = "EnemyTurn";
+				dto.OtherPlayer = player1.UserName;
+				await Clients.User(player2.UserName).SendAsync("MatchCreated", dto);
 			}
 		}
 
 		public void LeaveSoloQue() {
-			_soloQueueService.QueingPlayers.Remove(Context.User.Identity.Name);
+			_soloQueueService.QueingPlayers.Remove(Context.UserIdentifier);
 		}
 
 		public void KickGuest(int lobbyId) {
-			LobbyModel model = _lobbyService.Lobbies[lobbyId];
+			LobbyModel model = _lobbyService.FindLobbyById(lobbyId);
 
-			if (Context.User.Identity.Name == model.Guest) {
-				Clients.Caller.SendAsync("CannotKickSelf");
-				return;
-			}
-
-			if (Context.User.Identity.Name != model.Host) {
+			if (Context.UserIdentifier != model.Data.Host) {
 				Clients.Caller.SendAsync("CannotSetOtherLobby");
 				return;
 			}
@@ -162,6 +175,10 @@ namespace Connect4Server.Hubs {
 			string kickedGuest = _lobbyService.KickGuest(lobbyId);
 			Clients.Caller.SendAsync("GuestKicked");
 			Clients.User(kickedGuest).SendAsync("YouHaveBeenKicked");
+		}
+
+		public List<LobbyData> GetLobbies() {
+			return _lobbyService.GetLobbyData();
 		}
 	}
 }

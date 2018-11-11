@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Connect4Server.Models.Lobby {
+namespace Connect4Dtos {
 	public enum LobbyStatus {
 		Public, Private
 	}

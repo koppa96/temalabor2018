@@ -5,19 +5,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Connect4Dtos;
+using LobbyModel = Connect4Server.Models.Lobby.LobbyModel;
 
 namespace Connect4Server.Services {
 	public class LobbyService {
-		private Dictionary<int, LobbyModel> lobbies;
-
-		public ReadOnlyDictionary<int, LobbyModel> Lobbies {
-			get {
-				return new ReadOnlyDictionary<int, LobbyModel>(lobbies);
-			}
-		}
+		public List<LobbyModel> Lobbies { get; }
 
 		public LobbyService() {
-			lobbies = new Dictionary<int, LobbyModel>();
+			Lobbies = new List<LobbyModel>();
 		}
 
 		/// <summary>
@@ -26,45 +22,69 @@ namespace Connect4Server.Services {
 		/// <param name="host">The player that created the lobby</param>
 		/// <param name="status">Status whether the lobby is private or public</param>
 		/// <returns></returns>
-		public int CreateLobby(string host, LobbyStatus status) {
+		public LobbyModel CreateLobby(string host, LobbyStatus status) {
 			int newLobbyId = 0;
-			while (lobbies.ContainsKey(newLobbyId)) {
+			while (Lobbies.SingleOrDefault(l => l.Data.LobbyId == newLobbyId) != null) {
 				newLobbyId++;
 			}
 
-			LobbyModel model = new LobbyModel(host, status);
-			lobbies.Add(newLobbyId, model);
+			LobbyModel model = new LobbyModel(newLobbyId, host, status);
+			Lobbies.Add(model);
 
-			return newLobbyId;
+			return model;
 		}
 
 		public bool JoinPlayerToLobby(string player, int lobbyId) {
-			return lobbies[lobbyId].JoinGuest(player);
+			FindLobbyById(lobbyId)?.JoinGuest(player);
+
+			return false;
 		}
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId) {
-			lobbies[lobbyId].DisconnectPlayer(player);
+			LobbyModel lobby = FindLobbyById(lobbyId);
+			lobby.DisconnectPlayer(player);
 
-			if (lobbies[lobbyId].Host == null) {
-				lobbies.Remove(lobbyId);
+			if (lobby.Data.Host == null) {
+				Lobbies.Remove(lobby);
 			}			
 		}
 
 		public void DeleteLobby(int lobbyId) {
-			lobbies.Remove(lobbyId);
+			Lobbies.Remove(FindLobbyById(lobbyId));
 		}
 
 		public void InvitePlayerToLobby(int lobbyId, string player) {
-			lobbies[lobbyId].InvitedPlayers.Add(player);
+			FindLobbyById(lobbyId)?.Data.InvitedPlayers.Add(player);
 		}
 
 		public string KickGuest(int lobbyId) {
-			string guestName = lobbies[lobbyId].Guest;
-			if (lobbies[lobbyId].Guest != null) {
-				lobbies[lobbyId].DisconnectPlayer(lobbies[lobbyId].Guest);
+			LobbyModel lobby = FindLobbyById(lobbyId);
+
+			string guestName = lobby.Data.Guest;
+			if (lobby.Data.Guest != null) {
+				lobby.DisconnectPlayer(guestName);
 			}
 
 			return guestName;
+		}
+
+		public List<LobbyData> GetLobbyData() {
+			List<LobbyData> data = new List<LobbyData>();
+			foreach (LobbyModel lobby in Lobbies) {
+				data.Add(lobby.Data);
+			}
+
+			return data;
+		}
+
+		public LobbyModel FindLobbyById(int lobbyId) {
+			foreach (LobbyModel lobby in Lobbies) {
+				if (lobby.Data.LobbyId == lobbyId) {
+					return lobby;
+				}
+			}
+
+			return null;
 		}
 	}
 }

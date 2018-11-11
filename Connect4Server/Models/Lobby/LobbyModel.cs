@@ -4,27 +4,26 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Connect4Dtos;
 
 namespace Connect4Server.Models.Lobby {
 	public class LobbyModel {
-		public string Host { get; private set; }
-		public string Guest { get; private set; }
-		public int BoardHeight { get; set; }
-		public int BoardWidth { get; set; }
-		public LobbyStatus Status { get; set; }
-		public List<string> InvitedPlayers { get; set; }
+		public LobbyData Data { get; }
 
-		public LobbyModel(string host, LobbyStatus status) {
-			Host = host;
-			InvitedPlayers = new List<string>();
-			BoardHeight = 6;
-			BoardWidth = 7;
-			Status = status;
+		public LobbyModel(int id, string host, LobbyStatus status) {
+			Data = new LobbyData {
+				LobbyId = id,
+				Host = host,
+				InvitedPlayers = new List<string>(),
+				BoardHeight = 6,
+				BoardWidth = 7,
+				Status = status
+			};
 		}
 
 		public bool JoinGuest(string player) {
-			if (Guest == null && (Status == LobbyStatus.Public || InvitedPlayers.Contains(player))) {
-				Guest = player;
+			if (Data.Guest == null && (Data.Status == LobbyStatus.Public || Data.InvitedPlayers.Contains(player))) {
+				Data.Guest = player;
 				return true;
 			}
 
@@ -32,10 +31,10 @@ namespace Connect4Server.Models.Lobby {
 		}
 
 		public void DisconnectPlayer(string player) {
-			if (Host == player) {
-				Host = Guest;
-			} else if (Guest == player) {
-				Guest = null;
+			if (Data.Host == player) {
+				Data.Host = Data.Guest;
+			} else if (Data.Guest == player) {
+				Data.Guest = null;
 			} else {
 				throw new ArgumentException("The player is not joined to the lobby");
 			}

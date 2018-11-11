@@ -23,7 +23,7 @@ namespace Connect4Server.Services {
 				throw new ArgumentException("Two players are needed for a game");
 			}
 
-			Match match = new Match() {
+			Match match = new Match {
 				Player1 = player1,
 				Player2 = player2,
 				State = "Player1Moves",
