@@ -9,6 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <Canvas Name="BoardCanvas" Background="Azure">
+        </Canvas>
     </Grid>
 </Page>
