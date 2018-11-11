@@ -35,7 +35,7 @@ namespace Connect4Server.Controllers {
 
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
                 if (result.Succeeded) {
-                    _logger.LogInformation(2, "User logged in.");
+                    _logger.LogInformation($"{model.Username} logged in.");
 
 					var claims = new Claim[] {
 						new Claim(ClaimTypes.Name, model.Username),
@@ -63,7 +63,7 @@ namespace Connect4Server.Controllers {
 		[Authorize]
         public async Task<ActionResult> Logout() {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation(3, "User logged out");
+            _logger.LogInformation($"{User.Identity.Name} logged out.");
             return Ok();
         }
 
@@ -83,7 +83,7 @@ namespace Connect4Server.Controllers {
 
                 if (result.Succeeded) {
                     await _signInManager.SignInAsync(user, false);
-                    _logger.LogInformation(1, "User created new account");
+                    _logger.LogInformation($"{model.Username} created new account");
 
 					var claims = new Claim[] {
 						new Claim(ClaimTypes.Name, model.Username)
@@ -117,6 +117,7 @@ namespace Connect4Server.Controllers {
 				var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
 
 				if (result.Succeeded) {
+					_logger.LogInformation($"{User.Identity.Name} changed their password.");
 					return Ok("SuccessfulPasswordChange");
 				}
 
