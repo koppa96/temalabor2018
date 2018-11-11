@@ -33,19 +33,29 @@ namespace Connect4Client
         {
             this.InitializeComponent();
             pages = new Dictionary<string, Type> {
-                { "HomeItem", typeof(HomePage) },
-                { "MatchesItem", typeof(MatchesPage) },
-                { "StatisticsItem", typeof(StatisticsPage) }
+                { "Home", typeof(HomePage) },
+                { "Matches", typeof(MatchesPage) },
+                { "Statistics", typeof(StatisticsPage) }
             };
 
             resourceLoader = ResourceLoader.GetForViewIndependentUse();
+
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
             if (args.IsSettingsInvoked) {
                 ContentFrame.Navigate(typeof(SettingsPage));
                 return;
-            }          
+            }
+            string menuName = (string)args.InvokedItem;
+            var invokedMenuItem = sender.MenuItems
+                            .OfType<NavigationViewItem>()
+                            .Where(item =>
+                                    item.Content.ToString() ==
+                                    args.InvokedItem.ToString())
+                            .First();
+            var pageTypeName = invokedMenuItem.Tag.ToString();
+            ContentFrame.Navigate(pages[pageTypeName]);
         }
 
         private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e) {

@@ -16,7 +16,7 @@
         <NavigationView.MenuItems>
             <NavigationViewItem x:Uid="HomeItem" x:Name="Home" Tag="Home" Icon="Home"/>
             <NavigationViewItem x:Uid="MatchesItem" x:Name="Matches" Tag="Matches" Icon="CellPhone"/>
-            <NavigationViewItem x:Uid="StatisticsItem" x:Name="Stats" Tag="Stats" Icon="List"/>
+            <NavigationViewItem x:Uid="StatisticsItem" x:Name="Stats" Tag="Statistics" Icon="List"/>
         </NavigationView.MenuItems>
 
         <NavigationView.PaneFooter>
