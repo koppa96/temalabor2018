@@ -12,10 +12,10 @@ using Match = Connect4Server.Data.Match;
 
 namespace Connect4Server.Services {
 	public class GameService {
-		ApplicationDbContext context;
+		private readonly ApplicationDbContext _context;
 
 		public GameService(ApplicationDbContext context) {
-			this.context = context;
+			_context = context;
 		}
 
 		public Match CreateMatch(ApplicationUser player1, ApplicationUser player2, int height, int width) {
@@ -30,14 +30,14 @@ namespace Connect4Server.Services {
 				BoardData = new Board(width, height).ToString()
 			};
 
-			context.Matches.Add(match);
-			context.SaveChanges();
+			_context.Matches.Add(match);
+			_context.SaveChanges();
 
 			return match;
 		}
 
 		public List<MatchDto> GetMatchesOf(string user) {
-			var qMatches = from m in context.Matches.Include("Player1").Include("Player2")
+			var qMatches = from m in _context.Matches.Include("Player1").Include("Player2")
 						   where m.Player1.UserName == user || m.Player2.UserName == user
 						   select m;
 
@@ -84,7 +84,7 @@ namespace Connect4Server.Services {
 		}
 
 		public Match GetMatchById(int id) {
-			return context.Matches.SingleOrDefault(m => m.MatchId == id);
+			return _context.Matches.SingleOrDefault(m => m.MatchId == id);
 		}
 
 		public PlacementResult PlaceItemToColumn(int matchId, int column, string player) {
@@ -108,21 +108,16 @@ namespace Connect4Server.Services {
 				if (board.CheckWinner() == item) {
 					match.State = isPlayerOne ? "Player1Won" : "Player2Won";
 
-					context.SaveChanges();
+					_context.SaveChanges();
 					return PlacementResult.Victory;
 				}
 
 				match.State = isPlayerOne ? "Player2Moves" : "Player1Moves";
-				context.SaveChanges();
+				_context.SaveChanges();
 				return PlacementResult.Success;
 			}
 
 			return PlacementResult.ColumnFull;
-		}
-
-		public string GetBoardOfMatch(int matchId) {
-			Match match = GetMatchById(matchId);
-			return match.BoardData;
 		}
 	}
 }

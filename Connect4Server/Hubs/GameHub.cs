@@ -5,10 +5,8 @@ using Connect4Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Connect4Dtos;
 using Microsoft.Extensions.Logging;
@@ -191,6 +189,11 @@ namespace Connect4Server.Hubs {
 
 		public List<LobbyData> GetLobbies() {
 			return _lobbyService.GetLobbyData();
+		}
+
+		public void DisconnectFromLobby(int lobbyId) {
+			_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobbyId);
+			_logger.LogInformation($"{Context.UserIdentifier} has disconnected from lobby #{lobbyId}");
 		}
 	}
 }
