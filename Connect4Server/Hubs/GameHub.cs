@@ -97,11 +97,18 @@ namespace Connect4Server.Hubs {
 		public void JoinLobby(int lobbyId) {
 			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
 			if (model != null) {
+				string originalHost = model.Data.Host;
 				_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, model.Data.LobbyId);
 				_logger.LogInformation($"{Context.UserIdentifier} has disconnected from lobby #{model.Data.LobbyId}");
 
 				if (model.Data.Host != null) {
-					Clients.User(model.Data.Host).SendAsync("GuestDisconnected");
+					if (model.Data.Host == originalHost) {
+						Clients.User(model.Data.Host).SendAsync("GuestDisconnected");
+					} else {
+						Clients.User(model.Data.Host).SendAsync("HostDisconnected");
+					}
+				} else {
+					Clients.All.SendAsync("LobbyDeleted", model.Data.LobbyId);
 				}
 			}
 
@@ -206,11 +213,16 @@ namespace Connect4Server.Hubs {
 		//TESTED
 		public void DisconnectFromLobby(int lobbyId) {
 			LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
+			string originalHost = lobby.Data.Host;
 			_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobbyId);
 			_logger.LogInformation($"{Context.UserIdentifier} has disconnected from lobby #{lobbyId}");
 
 			if (lobby.Data.Host != null) {
-				Clients.User(lobby.Data.Host).SendAsync("GuestDisconnected");
+				if (lobby.Data.Host == originalHost) {
+					Clients.User(lobby.Data.Host).SendAsync("GuestDisconnected");
+				} else {
+					Clients.User(lobby.Data.Host).SendAsync("HostDisconnected");
+				}
 			} else {
 				Clients.All.SendAsync("LobbyDeleted", lobby.Data.LobbyId);
 			}
