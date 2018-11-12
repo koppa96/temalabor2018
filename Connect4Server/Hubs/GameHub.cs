@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Connect4Server.Hubs {
 	[Authorize]
-    public class GameHub : Hub {
+    public class GameHub : Hub<IConnect4Client> {
 		private readonly GameService _gameService;
 		private readonly LobbyService _lobbyService;
 		private readonly UserManager<ApplicationUser> _userManager;
@@ -33,15 +33,15 @@ namespace Connect4Server.Hubs {
 		public void CreateLobby(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
 			if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null) {
-				Clients.Caller.SendAsync("CannotCreateLobbyFromOtherLobby");
+				Clients.Caller.CannotCreateLobbyFromOtherLobby();
 				return;
 			}
 
 			LobbyModel lobby = _lobbyService.CreateLobby(Context.UserIdentifier, status);
 			_logger.LogInformation($"Lobby created by {Context.UserIdentifier}. With Id: {lobby.Data.LobbyId}");
 
-			Clients.Caller.SendAsync("LobbyCreated", lobby.Data);
-			Clients.All.SendAsync("LobbyAddedHandler", lobby.Data);
+			Clients.Caller.LobbyCreated(lobby.Data);
+			Clients.All.LobbyAddedHandler(lobby.Data);
 		}
 
 		public async Task CreateMatchAsync(int lobbyId) {
@@ -60,20 +60,20 @@ namespace Connect4Server.Hubs {
 					State = "YourTurn"
 				};
 
-				await Clients.Caller.SendAsync("MatchCreated", dto);
+				await Clients.Caller.MatchCreated(dto);
 				dto.OtherPlayer = lobby.Data.Host;
 				dto.State = "EnemyTurn";
-				await Clients.User(lobby.Data.Guest).SendAsync("MatchCreated", dto);
-				await Clients.All.SendAsync("LobbyDeleted", lobbyId);
+				await Clients.User(lobby.Data.Guest).MatchCreated(dto);
+				await Clients.All.LobbyDeleted(lobbyId);
 			} catch (ArgumentException) {
-				await Clients.Caller.SendAsync("NotEnoughPlayersHandler");
+				await Clients.Caller.NotEnoughPlayersHandler();
 			}
 		}
 
 		public void LobbySettingsChanged(LobbyData data) {
 			LobbyModel lobby = _lobbyService.FindLobbyById(data.LobbyId);
 			if (Context.User.Identity.Name != lobby.Data.Host) {
-				Clients.Caller.SendAsync("CannotSetOtherLobby");
+				Clients.Caller.CannotSetOtherLobby();
 				return;
 			}
 
@@ -83,14 +83,14 @@ namespace Connect4Server.Hubs {
 			_logger.LogInformation($"The settings of lobby #{data.LobbyId} were updated.");
 
 			if (lobby.Data.Guest != null) {
-				Clients.User(lobby.Data.Guest).SendAsync("LobbySettingsChanged", data);
+				Clients.User(lobby.Data.Guest).LobbySettingsChanged(lobby.Data);
 			}
 		}
 
 		public void SendInvitationTo(int lobbyId, string user) {
 			_lobbyService.InvitePlayerToLobby(lobbyId, user);
 			_logger.LogInformation($"{user} was invited to lobby #{lobbyId} by {Context.UserIdentifier}.");
-			Clients.User(user).SendAsync("GetInvitationTo", lobbyId);
+			Clients.User(user).GetInvitationTo(lobbyId);
 		}
 
 		//TESTED
@@ -103,12 +103,12 @@ namespace Connect4Server.Hubs {
 
 				if (model.Data.Host != null) {
 					if (model.Data.Host == originalHost) {
-						Clients.User(model.Data.Host).SendAsync("GuestDisconnected");
+						Clients.User(model.Data.Host).GuestDisconnected();
 					} else {
-						Clients.User(model.Data.Host).SendAsync("HostDisconnected");
+						Clients.User(model.Data.Host).HostDisconnected();
 					}
 				} else {
-					Clients.All.SendAsync("LobbyDeleted", model.Data.LobbyId);
+					Clients.All.LobbyDeleted(lobbyId);
 				}
 			}
 
@@ -116,11 +116,10 @@ namespace Connect4Server.Hubs {
 				LobbyModel lobbyModel = _lobbyService.FindLobbyById(lobbyId);
 				_logger.LogInformation($"{Context.UserIdentifier} joined lobby #{lobbyId}");
 
-				Clients.Caller.SendAsync("JoinedToLobby", lobbyModel.Data);
-				Clients.User(lobbyModel.Data.Host)
-					.SendAsync("PlayerJoinedToLobby", Context.UserIdentifier);
+				Clients.Caller.JoinedToLobby(lobbyModel.Data);
+				Clients.User(lobbyModel.Data.Host).PlayerJoinedToLobby(Context.UserIdentifier);
 			} else {
-				Clients.Caller.SendAsync("FailedToJoinLobby");
+				Clients.Caller.FailedToJoinLobby();
 			}
 		}
 
@@ -131,31 +130,31 @@ namespace Connect4Server.Hubs {
 		public void PlaceItem(int matchId, int column) {
 			Match match = _gameService.GetMatchById(matchId);
 			if (match == null) {
-				Clients.Caller.SendAsync("IncorrectMatchIdHandler");
+				Clients.Caller.IncorrectMatchIdHandler();
 				return;
 			}
 
 			string otherPlayer = _gameService.GetOtherPlayer(matchId, Context.UserIdentifier).UserName;
 			switch (_gameService.PlaceItemToColumn(matchId, column, Context.UserIdentifier)) {
 				case PlacementResult.ColumnFull:
-					Clients.Caller.SendAsync("ColumnFullHandler");
+					Clients.Caller.ColumnFullHandler();
 					break;
 				case PlacementResult.MatchNotRunning:
-					Clients.Caller.SendAsync("MatchFinishedHandler");
+					Clients.Caller.MatchFinishedHandler();
 					break;
 				case PlacementResult.NotYourTurn:
-					Clients.Caller.SendAsync("NotYourTurnHandler");
+					Clients.Caller.NotEnoughPlayersHandler();
 					break;
 				case PlacementResult.Success:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
-					Clients.Caller.SendAsync("SuccessfulPlacement", column);
-					Clients.User(otherPlayer).SendAsync("SuccessfulEnemyPlacement", column);
+					Clients.Caller.SuccessfulPlacement(column);
+					Clients.User(otherPlayer).SuccessfulEnemyPlacement(column);
 					break;
 				case PlacementResult.Victory:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
 					_logger.LogInformation($"{Context.UserIdentifier} won match #{matchId}");
-					Clients.Caller.SendAsync("VictoryHandler", column);
-					Clients.User(otherPlayer).SendAsync("EnemyVictoryHandler", column);
+					Clients.Caller.VictoryHandler(column);
+					Clients.User(otherPlayer).EnemyVictoryHandler(column);
 					break;
 			}
 		}
@@ -180,10 +179,10 @@ namespace Connect4Server.Hubs {
 					State = "YourTurn"
 				};
 
-				await Clients.User(player1.UserName).SendAsync("MatchCreated", dto);
+				await Clients.User(player1.UserName).MatchCreated(dto);
 				dto.State = "EnemyTurn";
 				dto.OtherPlayer = player1.UserName;
-				await Clients.User(player2.UserName).SendAsync("MatchCreated", dto);
+				await Clients.User(player2.UserName).MatchCreated(dto);
 			}
 		}
 
@@ -196,14 +195,14 @@ namespace Connect4Server.Hubs {
 			LobbyModel model = _lobbyService.FindLobbyById(lobbyId);
 
 			if (Context.UserIdentifier != model.Data.Host) {
-				Clients.Caller.SendAsync("CannotSetOtherLobby");
+				Clients.Caller.CannotSetOtherLobby();
 				return;
 			}
 
 			string kickedGuest = _lobbyService.KickGuest(lobbyId);
 			_logger.LogInformation($"{kickedGuest} was kicked from lobby #{lobbyId}.");
-			Clients.Caller.SendAsync("GuestKicked");
-			Clients.User(kickedGuest).SendAsync("YouHaveBeenKicked");
+			Clients.Caller.GuestKicked();
+			Clients.User(kickedGuest).YouHaveBeenKicked();
 		}
 
 		public List<LobbyData> GetLobbies() {
@@ -219,12 +218,12 @@ namespace Connect4Server.Hubs {
 
 			if (lobby.Data.Host != null) {
 				if (lobby.Data.Host == originalHost) {
-					Clients.User(lobby.Data.Host).SendAsync("GuestDisconnected");
+					Clients.User(lobby.Data.Host).GuestDisconnected();
 				} else {
-					Clients.User(lobby.Data.Host).SendAsync("HostDisconnected");
+					Clients.User(lobby.Data.Host).HostDisconnected();
 				}
 			} else {
-				Clients.All.SendAsync("LobbyDeleted", lobby.Data.LobbyId);
+				Clients.All.LobbyDeleted(lobby.Data.LobbyId);
 			}
 		}
 
