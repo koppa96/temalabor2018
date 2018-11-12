@@ -35,9 +35,12 @@ namespace Connect4Server.Services {
 		}
 
 		public bool JoinPlayerToLobby(string player, int lobbyId) {
-			FindLobbyById(lobbyId)?.JoinGuest(player);
+			LobbyModel lobby = FindLobbyById(lobbyId);
+			if (lobby == null) {
+				throw new ArgumentException("Invalid lobby id");
+			}
 
-			return false;
+			return lobby.JoinGuest(player);
 		}
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId) {
@@ -80,6 +83,16 @@ namespace Connect4Server.Services {
 		public LobbyModel FindLobbyById(int lobbyId) {
 			foreach (LobbyModel lobby in Lobbies) {
 				if (lobby.Data.LobbyId == lobbyId) {
+					return lobby;
+				}
+			}
+
+			return null;
+		}
+
+		public LobbyModel FindUserLobby(string user) {
+			foreach (LobbyModel lobby in Lobbies) {
+				if (lobby.Data.Host == user || lobby.Data.Guest == user) {
 					return lobby;
 				}
 			}

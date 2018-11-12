@@ -29,13 +29,14 @@ namespace Connect4Server.Hubs {
 			_logger = loggerFactory.CreateLogger<GameHub>();
 		}
 
-		/// <summary>
-		/// Creates a new Lobby instance that is hosted by the player that called this method
-		/// </summary>
-		/// <param name="statusCode">Public or Private, depending on the desired lobby status</param>
-		/// <returns></returns>
+		//TESTED
 		public void CreateLobby(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
+			if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null) {
+				Clients.Caller.SendAsync("CannotCreateLobbyFromOtherLobby");
+				return;
+			}
+
 			LobbyModel lobby = _lobbyService.CreateLobby(Context.UserIdentifier, status);
 			_logger.LogInformation($"Lobby created by {Context.UserIdentifier}. With Id: {lobby.Data.LobbyId}");
 
@@ -92,7 +93,18 @@ namespace Connect4Server.Hubs {
 			Clients.User(user).SendAsync("GetInvitationTo", lobbyId);
 		}
 
+		//TESTED
 		public void JoinLobby(int lobbyId) {
+			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
+			if (model != null) {
+				_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, model.Data.LobbyId);
+				_logger.LogInformation($"{Context.UserIdentifier} has disconnected from lobby #{model.Data.LobbyId}");
+
+				if (model.Data.Host != null) {
+					Clients.User(model.Data.Host).SendAsync("GuestDisconnected");
+				}
+			}
+
 			if (_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId)) {
 				LobbyModel lobbyModel = _lobbyService.FindLobbyById(lobbyId);
 				_logger.LogInformation($"{Context.UserIdentifier} joined lobby #{lobbyId}");
@@ -191,9 +203,25 @@ namespace Connect4Server.Hubs {
 			return _lobbyService.GetLobbyData();
 		}
 
+		//TESTED
 		public void DisconnectFromLobby(int lobbyId) {
+			LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
 			_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobbyId);
 			_logger.LogInformation($"{Context.UserIdentifier} has disconnected from lobby #{lobbyId}");
+
+			if (lobby.Data.Host != null) {
+				Clients.User(lobby.Data.Host).SendAsync("GuestDisconnected");
+			} else {
+				Clients.All.SendAsync("LobbyDeleted", lobby.Data.LobbyId);
+			}
+		}
+
+		public override Task OnDisconnectedAsync(Exception exception) {
+			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
+			if (model != null) {
+				_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, model.Data.LobbyId);
+			}
+			return base.OnDisconnectedAsync(exception);
 		}
 	}
 }

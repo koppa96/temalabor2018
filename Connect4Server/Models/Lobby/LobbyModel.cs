@@ -33,6 +33,7 @@ namespace Connect4Server.Models.Lobby {
 		public void DisconnectPlayer(string player) {
 			if (Data.Host == player) {
 				Data.Host = Data.Guest;
+				Data.Guest = null;
 			} else if (Data.Guest == player) {
 				Data.Guest = null;
 			} else {
