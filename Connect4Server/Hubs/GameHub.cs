@@ -143,7 +143,7 @@ namespace Connect4Server.Hubs {
 					Clients.Caller.MatchFinishedHandler();
 					break;
 				case PlacementResult.NotYourTurn:
-					Clients.Caller.NotEnoughPlayersHandler();
+					Clients.Caller.NotYourTurnHandler();
 					break;
 				case PlacementResult.Success:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
@@ -159,17 +159,16 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
-		public async Task JoinSoloQueAsync() {
-			_soloQueueService.QueingPlayers.Add(Context.UserIdentifier);
+		public async Task JoinSoloQueueAsync() {
+			_soloQueueService.JoinSoloQueue(Context.UserIdentifier);
 			_logger.LogInformation($"{Context.UserIdentifier} joined the solo queue.");
 
-			if (_soloQueueService.QueingPlayers.Count >= 2) {
-				ApplicationUser player1 = await _userManager.FindByNameAsync(_soloQueueService.QueingPlayers[0]);
-				ApplicationUser player2 = await _userManager.FindByNameAsync(_soloQueueService.QueingPlayers[1]);
+			string[] players = _soloQueueService.PopFirstTwoPlayers();
+			if (players != null) { 
+				ApplicationUser player1 = await _userManager.FindByNameAsync(players[0]);
+				ApplicationUser player2 = await _userManager.FindByNameAsync(players[1]);
 
 				Match match = _gameService.CreateMatch(player1, player2, 6, 7);
-				_soloQueueService.QueingPlayers.Remove(player1.UserName);
-				_soloQueueService.QueingPlayers.Remove(player2.UserName);
 				_logger.LogInformation($"Match created from solo queue with {player1.UserName} and {player2.UserName}.");
 
 				MatchDto dto = new MatchDto {
@@ -186,8 +185,8 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
-		public void LeaveSoloQue() {
-			_soloQueueService.QueingPlayers.Remove(Context.UserIdentifier);
+		public void LeaveSoloQueue() {
+			_soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 			_logger.LogInformation($"{Context.UserIdentifier} left the solo queue.");
 		}
 

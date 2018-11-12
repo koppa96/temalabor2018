@@ -71,10 +71,26 @@ namespace Connect4Test {
 						}
 						break;
 					case "join":
-						await connection.InvokeAsync("JoinLobby", int.Parse(commandElements[2]));
+						switch (commandElements[1]) {
+							case "lobby":
+								await connection.InvokeAsync("JoinLobby", int.Parse(commandElements[2]));
+								break;
+							case "soloqueue":
+								await connection.InvokeAsync("JoinSoloQueueAsync");
+								Console.WriteLine("Joined solo queue.");
+								break;
+							default:
+								Console.WriteLine("Unknown command");
+								break;
+						}
 						break;
 					case "disconnect":
 						await connection.InvokeAsync("DisconnectFromLobby", myLobby.LobbyId);
+						Console.WriteLine("Disconnected from lobby");
+						break;
+					case "leave":
+						await connection.InvokeAsync("LeaveSoloQueue");
+						Console.WriteLine("Left solo queue");
 						break;
 					case "get":
 						switch (commandElements[1]) {
