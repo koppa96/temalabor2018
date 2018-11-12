@@ -19,6 +19,8 @@ namespace Connect4Test {
 	    private static HubConnection connection;
 	    private static LobbyData myLobby;
 	    private static List<LobbyData> lobbies = new List<LobbyData>();
+	    private static MatchDto currentMatch;
+	    private static List<MatchDto> myMatches;
 
 		static void Main(string[] args) {
 			MainAsync().Wait();
@@ -43,6 +45,8 @@ namespace Connect4Test {
 		    connection.On("GuestDisconnected", GuestDisconnectedHandler);
 		    connection.On<LobbyData>("LobbyAddedHandler", LobbyListChangedHandler);
 		    connection.On<int>("LobbyDeleted", LobbyDeletedHandler);
+		    connection.On<MatchDto>("MatchCreated", MatchCreatedHandler);
+		    connection.On("NotEnoughPlayersHandler", NotEnoughPlayersHandler);
 		    await connection.StartAsync();
 
 		    while (true) {
@@ -57,6 +61,9 @@ namespace Connect4Test {
 								commandElements[2] = commandElements[2].First().ToString().ToUpper() +
 								                     commandElements[2].Substring(1);
 								await connection.InvokeAsync("CreateLobby", commandElements[2]);
+								break;
+							case "match":
+								await connection.InvokeAsync("CreateMatchAsync", myLobby.LobbyId);
 								break;
 							default:
 								Console.WriteLine("Unknown command.");
@@ -78,6 +85,13 @@ namespace Connect4Test {
 									Console.WriteLine("Id: {0}\t Host: {1}\t Status: {2}", lobby.LobbyId, lobby.Host, lobby.Status);
 								}
 								break;
+							case "matches":
+								myMatches = await connection.InvokeAsync<List<MatchDto>>("GetMatches");
+								Console.WriteLine("Successfully queried matches from server. Your matches: ");
+								foreach (MatchDto match in myMatches) {
+									Console.WriteLine("Id: {0}\tOtherPlayer: {1}\tState: {2}", match.MatchId, match.OtherPlayer, match.State);
+								}
+								break;
 							default:
 								Console.WriteLine("Unknown command.");
 								break;
@@ -88,6 +102,18 @@ namespace Connect4Test {
 						break;
 			    }
 		    }
+	    }
+
+	    private static void NotEnoughPlayersHandler() {
+		    Console.WriteLine("Not enough players to start a match.");
+	    }
+
+	    private static void MatchCreatedHandler(MatchDto match) {
+		    currentMatch = match;
+		    Console.WriteLine("Match created.");
+		    Console.WriteLine("Id = {0}", match.MatchId);
+			Console.WriteLine("Other player = {0}", match.OtherPlayer);
+		    Console.WriteLine("Status = {0}", match.State);
 	    }
 
 	    private static void LobbyDeletedHandler(int lobbyId) {

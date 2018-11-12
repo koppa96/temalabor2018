@@ -64,7 +64,7 @@ namespace Connect4Server.Hubs {
 				dto.OtherPlayer = lobby.Data.Host;
 				dto.State = "EnemyTurn";
 				await Clients.User(lobby.Data.Guest).SendAsync("MatchCreated", dto);
-				await Clients.All.SendAsync("LobbyDeletedHandler", lobbyId);
+				await Clients.All.SendAsync("LobbyDeleted", lobbyId);
 			} catch (ArgumentException) {
 				await Clients.Caller.SendAsync("NotEnoughPlayersHandler");
 			}
