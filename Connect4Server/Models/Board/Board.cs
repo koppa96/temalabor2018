@@ -179,7 +179,7 @@ namespace Connect4Server.Models.Board {
 		/// </summary>
 		/// <returns>The serialized board</returns>
 		public override string ToString() {
-			StringBuilder builder = new StringBuilder(Width.ToString() + " " + Height.ToString() + " ");
+			StringBuilder builder = new StringBuilder(Width + " " + Height + " ");
 			for (int i = 0; i < Height; i++) {
 				for (int j = 0; j < Width; j++) {
 					switch (board[i, j]) {
@@ -212,7 +212,7 @@ namespace Connect4Server.Models.Board {
 
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < width; j++) {
-					switch (elements[width * i + height + 2]) {
+					switch (elements[width * i + j + 2]) {
 						case "0":
 							newBoard.board[i, j] = Item.None;
 							break;
