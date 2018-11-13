@@ -74,7 +74,9 @@ namespace Connect4Server.Services {
 		}
 
 		public ApplicationUser GetOtherPlayer(int matchId, string player) {
-			Match match = GetMatchById(matchId);
+			Match match = _context.Matches.Include("Player1")
+										  .Include("Player2")
+										  .SingleOrDefault(m => m.MatchId == matchId);
 
 			if (match == null) {
 				throw new ArgumentException("Invalid match id.");

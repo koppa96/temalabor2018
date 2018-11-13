@@ -47,6 +47,14 @@ namespace Connect4Test {
 		    connection.On<int>("LobbyDeleted", LobbyDeletedHandler);
 		    connection.On<MatchDto>("MatchCreated", MatchCreatedHandler);
 		    connection.On("NotEnoughPlayersHandler", NotEnoughPlayersHandler);
+		    connection.On("IncorrectMatchIdHandler", IncorrectMatchIdHandler);
+		    connection.On("ColumnFullHandler", ColumnFull);
+		    connection.On("MatchFinishedHandler", MatchFinished);
+		    connection.On("NotYourTurnHandler", NotYourTurnHandler);
+		    connection.On<int, int>("SuccessfulPlacement", SuccessfulPlacement);
+		    connection.On<int, int>("SuccessfulEnemyPlacement", SuccessfulEnemyPlacement);
+		    connection.On<int, int>("VictoryHandler", VictoryHandler);
+		    connection.On<int, int>("EnemyVictoryHandler", EnemyVictoryHandler);
 		    await connection.StartAsync();
 
 		    while (true) {
@@ -88,6 +96,10 @@ namespace Connect4Test {
 						await connection.InvokeAsync("DisconnectFromLobby", myLobby.LobbyId);
 						Console.WriteLine("Disconnected from lobby");
 						break;
+					case "place":
+						await connection.InvokeAsync("PlaceItem", int.Parse(commandElements[1]),
+							int.Parse(commandElements[2]));
+						break;
 					case "leave":
 						await connection.InvokeAsync("LeaveSoloQueue");
 						Console.WriteLine("Left solo queue");
@@ -118,6 +130,38 @@ namespace Connect4Test {
 						break;
 			    }
 		    }
+	    }
+
+	    private static void EnemyVictoryHandler(int matchId, int columnId) {
+		    Console.WriteLine("Your enemy has won Match #{0} by placing an item at Column #{1}", matchId, columnId);
+	    }
+
+	    private static void VictoryHandler(int matchId, int columnId) {
+		    Console.WriteLine("You won Match #{0} by placing an item at Column #{1}", matchId, columnId);
+	    }
+
+	    private static void SuccessfulEnemyPlacement(int matchId, int columnId) {
+		    Console.WriteLine("Your enemy successfully placed an item in Match #{0} at Column #{1}", matchId, columnId);
+	    }
+
+	    private static void SuccessfulPlacement(int matchId, int columnId) {
+		    Console.WriteLine("Successfully placed an item in Match #{0} at Column #{1}", matchId, columnId);
+	    }
+
+	    private static void NotYourTurnHandler() {
+		    Console.WriteLine("Not your turn.");
+	    }
+
+	    private static void MatchFinished() {
+		    Console.WriteLine("This match has already ended.");
+	    }
+
+	    private static void ColumnFull() {
+		    Console.WriteLine("This column is full.");
+	    }
+
+	    private static void IncorrectMatchIdHandler() {
+		    Console.WriteLine("No match exists with that id.");
 	    }
 
 	    private static void NotEnoughPlayersHandler() {

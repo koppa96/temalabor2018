@@ -147,14 +147,14 @@ namespace Connect4Server.Hubs {
 					break;
 				case PlacementResult.Success:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
-					Clients.Caller.SuccessfulPlacement(column);
-					Clients.User(otherPlayer).SuccessfulEnemyPlacement(column);
+					Clients.Caller.SuccessfulPlacement(matchId, column);
+					Clients.User(otherPlayer).SuccessfulEnemyPlacement(matchId, column);
 					break;
 				case PlacementResult.Victory:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
 					_logger.LogInformation($"{Context.UserIdentifier} won match #{matchId}");
-					Clients.Caller.VictoryHandler(column);
-					Clients.User(otherPlayer).EnemyVictoryHandler(column);
+					Clients.Caller.VictoryHandler(matchId, column);
+					Clients.User(otherPlayer).EnemyVictoryHandler(matchId, column);
 					break;
 			}
 		}

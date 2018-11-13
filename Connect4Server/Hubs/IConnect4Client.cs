@@ -24,10 +24,10 @@ namespace Connect4Server.Hubs {
 		Task ColumnFullHandler();
 		Task MatchFinishedHandler();
 		Task NotYourTurnHandler();
-		Task SuccessfulPlacement(int column);
-		Task SuccessfulEnemyPlacement(int column);
-		Task VictoryHandler(int column);
-		Task EnemyVictoryHandler(int column);
+		Task SuccessfulPlacement(int matchId, int column);
+		Task SuccessfulEnemyPlacement(int matchId, int column);
+		Task VictoryHandler(int matchId, int column);
+		Task EnemyVictoryHandler(int matchId, int column);
 		Task GuestKicked();
 		Task YouHaveBeenKicked();
 	}
