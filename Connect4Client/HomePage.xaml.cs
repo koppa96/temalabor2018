@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using Connect4Dtos;
+using System.Threading.Tasks;
+
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Connect4Client {
@@ -22,20 +25,28 @@ namespace Connect4Client {
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class HomePage : Page {
-
-        private ObservableCollection<LobbyData> _lobbies;
-        private ObservableCollection<LobbyData> Lobbies { get { return _lobbies; } }
-        private LobbyData selectedLobby;
+        
+        private ObservableCollection<LobbyData> Lobbies { get { return LobbyRepository.Instance.LobbyList; } }
+        private LobbyData SelectedLobby {
+            get { return LobbyRepository.Instance.SelectedLobby; }
+            set { LobbyRepository.Instance.SelectedLobby = value; }
+        }
 
         public HomePage() {
             this.InitializeComponent();
-            _lobbies = new ObservableCollection<LobbyData>();
-            _lobbies.Add(new LobbyData { Id = 213, Leader = "Maca", Open = true , InvitedPlayers = { "Laca", "Papa" } });
-            _lobbies.Add(new LobbyData { Id = 45, Leader = "RandomUser#123", Open = true });
-            _lobbies.Add(new LobbyData { Id = 2052, Leader = "PrivacyFan", Open = false, InvitedPlayers = {"Maca2" }});
-            _lobbies.Add(new LobbyData { Id = 21893, Leader = "Maca2", Open = true });
-
+            LobbyRepository.Instance.AddHomePage(this);
         }
-        
+
+        private void JoinButton_Click(object sender, RoutedEventArgs e) {
+            ConnectionManager.Instance.ConnectToLobby(LobbyRepository.Instance.SelectedLobby.LobbyId);
+        }
+
+        public void SuccessfulLobbyJoin() {
+            this.Frame.Navigate(typeof(LobbyPage));
+        }
+
+        private void CreateButton_Click(object sender, RoutedEventArgs e) {
+            ConnectionManager.Instance.CreateLobby(LobbyStatus.Public);
+        }
     }
 }

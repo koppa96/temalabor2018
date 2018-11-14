@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:x1="using:Connect4Client.DTOs"
+    xmlns:x1="using:Connect4Dtos"
     xmlns:converters="using:Connect4Client.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -12,40 +12,56 @@
     <Page.Resources>
         <converters:LobbyStatusConverter x:Key="LobbyStatusConverter"/>
         <converters:InvitedPlayersConverter x:Key="InvitedPlayersConverter"/>
+        <converters:SelectedLobbyVisibilityConverter x:Key="SelectedLobbyVisibilityConverter"/>
+        <converters:InvitedPlayerNotificationConverter x:Key="InvitedPlayerNotificationConverter"/>
     </Page.Resources>
-    <Grid>
+    <Grid >
         <SplitView IsPaneOpen="True" DisplayMode="Inline">
             <SplitView.Pane>
-                <ListView x:Name="LobbyList" ItemsSource="{x:Bind Lobbies}">
+                <ListView x:Name="LobbyList" ItemsSource="{x:Bind Lobbies}" SelectedItem="{x:Bind SelectedLobby, Mode=TwoWay}">
+                    <ListView.Header>
+                        <Border Height="48" Background="LightBlue" CornerRadius="16">
+                            <TextBlock Text="Currently available lobbys" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+                        </Border>
+                    </ListView.Header>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:LobbyData" x:Name="DoubleLineDataTemplate">
+                        <DataTemplate x:DataType="x1:LobbyData" x:Name="LobbyDataTemplate">
                             <StackPanel Orientation="Horizontal" Height="80">
                                 <Grid Width="30" Height="30">
-                                    <SymbolIcon Symbol="Permissions" Visibility="{Binding Open, Converter={StaticResource LobbyStatusConverter}}"/>
+                                    <SymbolIcon Symbol="Permissions" Visibility="{Binding Status, Converter={StaticResource LobbyStatusConverter}}"/>
                                 </Grid>
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
-                                    <TextBlock Text="{x:Bind Id}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
-                                    <TextBlock Text="{x:Bind Leader}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="{x:Bind LobbyId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                                    <TextBlock Text="{x:Bind Host}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <SymbolIcon Symbol="Mail" Visibility="{x:Bind InvitedPlayers, Converter={StaticResource InvitedPlayerNotificationConverter}}"/>
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray" Click="CreateButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Add" Margin="10,0,10,0" />
+                                <TextBlock Text="Create new lobby" Style="{ThemeResource TitleTextBlockStyle}"/>
+                            </StackPanel>
+                        </Button>   
+                    </ListView.Footer>
                 </ListView>
             </SplitView.Pane>
-            <StackPanel DataContext="{Binding SelectedItem, ElementName=LobbyList}" Padding="48, 24, 48, 48">
+            <StackPanel Name="LobbyContent"  DataContext="{Binding SelectedItem, ElementName=LobbyList}" Visibility="{Binding SelectedIndex, ElementName=LobbyList, Converter={StaticResource SelectedLobbyVisibilityConverter}}" Padding="48, 24, 48, 48">
 
                 <TextBlock Text="Lobby ID:" Style="{StaticResource TitleTextBlockStyle}"/>
-                <TextBlock Text="{Binding Id}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="10,0,0,24"/>
+                <TextBlock Text="{Binding LobbyId}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="10,0,0,24"/>
                 
                 <TextBlock Text="Lobby host:" Style="{StaticResource TitleTextBlockStyle}"/>
-                <TextBlock Text="{Binding Leader}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="10,0,0,24"/>
+                <TextBlock Text="{Binding Host}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="10,0,0,24"/>
                 
                 <TextBlock Text="Invited players:" Style="{StaticResource TitleTextBlockStyle}"/>
                 <TextBlock Text="{Binding InvitedPlayers, Converter={StaticResource InvitedPlayersConverter}}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="10,0,0,24"/>
 
-                <TextBlock Text="This is a private lobby" Visibility="{Binding Open, Converter={StaticResource LobbyStatusConverter}}" Style="{StaticResource TitleTextBlockStyle}" Foreground="DarkRed" Margin="0,0,0,24"/>
+                <TextBlock Text="This is a private lobby" Visibility="{Binding Status, Converter={StaticResource LobbyStatusConverter}}" Style="{StaticResource TitleTextBlockStyle}" Foreground="DarkRed" Margin="0,0,0,24"/>
 
-                <Button Margin="24,24,24,24" Height="64">
+                <Button Margin="24,24,24,24" Height="64" Click="JoinButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Play" Margin="10,10,10,10"/>
                         <TextBlock Text="Join this lobby" Foreground="DarkGreen" Style="{StaticResource TitleTextBlockStyle}" Margin="10,10,10,10"/>

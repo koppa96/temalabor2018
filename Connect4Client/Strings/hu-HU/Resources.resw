@@ -154,7 +154,7 @@
     <value>Nem</value>
   </data>
   <data name="Ok" xml:space="preserve">
-    <value>Oké Tehát</value>
+    <value>Igen</value>
   </data>
   <data name="PasswordBox.PlaceholderText" xml:space="preserve">
     <value>Jelszó</value>

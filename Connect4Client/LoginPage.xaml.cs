@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Input;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Windows.System;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -63,13 +64,27 @@ namespace Connect4Client {
 
             using (var client = new HttpClient(filter)) {
                 Uri uri = new Uri(url);
-                HttpResponseMessage responseMessage = await client.PostAsync(uri, content);
+                HttpResponseMessage responseMessage = new HttpResponseMessage();
+                try {
+                    responseMessage = await client.PostAsync(uri, content);
+                } catch (System.Runtime.InteropServices.COMException e) {
+                    loadingDialog.Hide();
+                    ContentDialog errorDialog = new ContentDialog() {
+                        Title = "Could not connect to the server!",
+                        Content = "The server can not be reached. Please check your internet connection or contact the developers.",
+                        CloseButtonText = "Ok",
+                    };
+                    errorDialog.ShowAsync();
+                    return;
+                }
+                
 
                 if (responseMessage.StatusCode == HttpStatusCode.Ok) {
                     App.Token = await responseMessage.Content.ReadAsStringAsync();
 
-                    OnSuccessfulLogin();
+                    await OnSuccessfulLogin();
                     loadingDialog.Hide();
+
                 } else {
                     var resourceLoader = ResourceLoader.GetForViewIndependentUse();
                     pwbPassword.Password = "";
@@ -84,7 +99,11 @@ namespace Connect4Client {
             }
         }
 
-        private void OnSuccessfulLogin() {
+        private async Task OnSuccessfulLogin() {
+            await ConnectionManager.Instance.CreateConnection();
+            var lobbyList = await ConnectionManager.Instance.GetLobbies();
+            LobbyRepository.Instance.LoadItems(lobbyList);
+            ConnectionManager.Instance.UserName = tbUsername.Text;
             Frame.Navigate(typeof(MainPage));
         }
 
