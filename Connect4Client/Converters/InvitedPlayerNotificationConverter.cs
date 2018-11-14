@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Data;
-using System.Diagnostics;
 using Windows.UI.Xaml;
-using Connect4Dtos;
+using Windows.UI.Xaml.Data;
 
 namespace Connect4Client.Converters {
-    public class LobbyStatusConverter : IValueConverter {
+    class InvitedPlayerNotificationConverter : IValueConverter{
         public object Convert(object value, Type targetType, object parameter, string language) {
-            LobbyStatus? v = value as LobbyStatus?;
-            if(v.Value == LobbyStatus.Public) {
-                return Visibility.Collapsed;
+            var invitedPlayers = value as List<String>;
+            if (invitedPlayers.Contains(ConnectionManager.Instance.UserName)) {
+                return Visibility.Visible;
             }
-            return Visibility.Visible;
-            
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {
