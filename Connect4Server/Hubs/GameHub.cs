@@ -116,7 +116,13 @@ namespace Connect4Server.Hubs {
 		/// <param name="lobbyId">The id of the lobby that the user is invited to</param>
 		/// <param name="user">The name of the invitee</param>
 		public void SendInvitationTo(int lobbyId, string user) {
-			if (Context.UserIdentifier != _lobbyService.FindLobbyById(lobbyId).Data.Host) {
+			LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
+			if (lobby == null) {
+				Clients.Caller.InvalidLobbyId();
+				return;
+			}
+
+			if (Context.UserIdentifier != lobby.Data.Host) {
 				Clients.Caller.OnlyHostCanInvite();
 				return;
 			}
@@ -125,6 +131,23 @@ namespace Connect4Server.Hubs {
 			_logger.LogInformation($"{user} was invited to lobby #{lobbyId} by {Context.UserIdentifier}.");
 			Clients.Caller.UserInvited(_lobbyService.FindLobbyById(lobbyId).Data);
 			Clients.User(user).GetInvitationTo(lobbyId);
+			Clients.All.LobbyChanged(lobby.Data);
+		}
+
+		public void CancelInvitationOf(int lobbyId, string user) {
+			LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
+			if (lobby == null) {
+				Clients.Caller.InvalidLobbyId();
+				return;
+			}
+
+			if (Context.UserIdentifier != lobby.Data.Host) {
+				Clients.Caller.OnlyHostCanInvite();
+				return;
+			}
+
+			lobby.Data.InvitedPlayers.Remove(user);
+			Clients.All.LobbyChanged(lobby.Data);
 		}
 
 		/// <summary>
@@ -307,9 +330,23 @@ namespace Connect4Server.Hubs {
 		/// <param name="exception"></param>
 		/// <returns></returns>
 		public override Task OnDisconnectedAsync(Exception exception) {
-			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
-			if (model != null) {
-				_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, model.Data.LobbyId);
+			LobbyModel lobby = _lobbyService.FindUserLobby(Context.UserIdentifier);
+
+			if (lobby != null) {
+				string originalHost = lobby.Data.Host;
+				_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobby.Data.LobbyId);
+
+				if (lobby.Data.Host == null) {
+					Clients.All.LobbyDeleted(lobby.Data.LobbyId);
+				} else {
+					if (lobby.Data.Host == originalHost) {
+						Clients.User(lobby.Data.Host).GuestDisconnected();
+					} else {
+						Clients.User(lobby.Data.Host).HostDisconnected();
+					}
+
+					Clients.All.LobbyChanged(lobby.Data);
+				}
 			}
 			return base.OnDisconnectedAsync(exception);
 		}

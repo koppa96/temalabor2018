@@ -42,6 +42,7 @@ namespace Connect4Test {
 		    connection.On("CannotCreateLobbyFromOtherLobby", () => Console.WriteLine("Cannot create new lobby while in lobby."));
 		    connection.On<LobbyData>("JoinedToLobby", JoinedToLobbyHandler);
 		    connection.On("FailedToJoinLobby", FailedToJoinLobbyHandler);
+		    connection.On("HostDisconnected", HostDisconnectedHandler);
 		    connection.On("GuestDisconnected", GuestDisconnectedHandler);
 		    connection.On<LobbyData>("LobbyAddedHandler", LobbyListChangedHandler);
 		    connection.On<int>("LobbyDeleted", LobbyDeletedHandler);
@@ -55,12 +56,14 @@ namespace Connect4Test {
 		    connection.On<int, int>("SuccessfulEnemyPlacement", SuccessfulEnemyPlacement);
 		    connection.On<int, int>("VictoryHandler", VictoryHandler);
 		    connection.On<int, int>("EnemyVictoryHandler", EnemyVictoryHandler);
-		    connection.On<LobbyData>("LobbySettingsChanged", LobbySettingsChangeHandler);
+		    connection.On<LobbyData>("LobbyChanged", LobbyChangeHandler);
 		    connection.On("CannotSetOtherLobby", () => Console.WriteLine("You can only set the lobby settings if you are the host."));
 		    connection.On("OnlyHostCanInvite", () => Console.WriteLine("Only the host of the lobby can invite."));
 		    connection.On<int>("GetInvitationTo", GetInvitationHandler);
+		    connection.On<LobbyData>("UserInvited", InvitationHandler);
 		    connection.On("NobodyToKick", () => Console.WriteLine("There is no guest in the lobby to be kicked."));
 		    connection.On("GuestKicked", GuestKickedHandler);
+		    connection.On("YouHaveBeenKicked", KickHandler);
 		    await connection.StartAsync();
 
 		    while (true) {
@@ -176,6 +179,9 @@ namespace Connect4Test {
 					case "invite":
 						await connection.InvokeAsync("SendInvitationTo", myLobby.LobbyId, commandElements[1]);
 						break;
+					case "cancelinvite":
+						await connection.InvokeAsync("CancelInvitationOf", myLobby.LobbyId, commandElements[1]);
+						break;
 					case "kick":
 						await connection.InvokeAsync("KickGuest", myLobby.LobbyId);
 						break;
@@ -186,18 +192,33 @@ namespace Connect4Test {
 		    }
 	    }
 
+	    private static void KickHandler() {
+		    Console.WriteLine("You have been kicked.");
+		    myLobby = null;
+	    }
+
+	    private static void HostDisconnectedHandler() {
+		    Console.WriteLine("The host has left your lobby. You have become the host");
+	    }
+
+	    private static void InvitationHandler(LobbyData lobby) {
+		    myLobby = lobby;
+		    Console.WriteLine("{0} was successfully invited to the lobby.", lobby.InvitedPlayers.Last());
+	    }
+
 	    private static void GuestKickedHandler() {
-		    Console.WriteLine("{0} was kicked from your lobby.");
+		    Console.WriteLine("{0} was kicked from your lobby.", myLobby.Guest);
 	    }
 
 	    private static void GetInvitationHandler(int lobbyId) {
 		    Console.WriteLine("You have been invited to Lobby #{0} by {1}.", lobbyId, lobbies.SingleOrDefault(l => l.LobbyId == lobbyId)?.Host);
 	    }
 
-	    private static void LobbySettingsChangeHandler(LobbyData lobby) {
-		    if (lobby.LobbyId == myLobby.LobbyId) {
+	    private static void LobbyChangeHandler(LobbyData lobby) {
+		    if (myLobby != null && lobby.LobbyId == myLobby.LobbyId) {
 			    myLobby = lobby;
-			    Console.WriteLine("Your Lobby's settings have changed. BoardWidth = {0} BoardHeight = {1} Status = {2}", lobby.BoardWidth, lobby.BoardHeight, lobby.Status);
+			    Console.WriteLine("Your Lobby has changed. Host = {0} Guest = {1} BoardWidth = {2} BoardHeight = {3} Status = {4} Number of Invited players = {5}",
+				    lobby.Host, lobby.Guest, lobby.BoardWidth, lobby.BoardHeight, lobby.Status, lobby.InvitedPlayers.Count);
 		    }
 
 		    for (int i = 0; i < lobbies.Count; i++) {
@@ -206,7 +227,7 @@ namespace Connect4Test {
 			    }
 		    }
 
-		    Console.WriteLine("The lobby settings of Lobby #{0} were updated", lobby.LobbyId);
+		    Console.WriteLine("Lobby #{0} has changed", lobby.LobbyId);
 	    }
 
 	    private static void EnemyVictoryHandler(int matchId, int columnId) {

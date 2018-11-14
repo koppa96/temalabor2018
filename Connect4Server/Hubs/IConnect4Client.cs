@@ -34,5 +34,6 @@ namespace Connect4Server.Hubs {
 		Task LobbyChanged(LobbyData lobby);
 		Task UserInvited(LobbyData lobby);
 		Task CannotStartOtherMatch();
+		Task InvalidLobbyId();
 	}
 }
