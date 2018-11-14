@@ -21,7 +21,7 @@ namespace Connect4Server.Hubs {
 		private readonly ILogger _logger;
 
 		public GameHub(LobbyService lobbyService, UserManager<ApplicationUser> userManager, GameService gameService, 
-						SoloQueueService soloQueueService, IHubContext<GameHub> hubContext, ILoggerFactory loggerFactory) {
+						SoloQueueService soloQueueService, ILoggerFactory loggerFactory) {
 			_lobbyService = lobbyService;
 			_userManager = userManager;
 			_gameService = gameService;
@@ -29,7 +29,12 @@ namespace Connect4Server.Hubs {
 			_logger = loggerFactory.CreateLogger<GameHub>();
 		}
 
-		//TESTED
+		/// <summary>
+		/// Creates a new lobby instance.
+		/// Notifies the caller that the lobby is ready.
+		/// Notifies everyone to update their lobby list.
+		/// </summary>
+		/// <param name="statusCode">The visibility of the lobby</param>
 		public void CreateLobby(string statusCode) {
 			LobbyStatus status = Enum.Parse<LobbyStatus>(statusCode);
 			if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null) {
@@ -44,9 +49,22 @@ namespace Connect4Server.Hubs {
 			Clients.All.LobbyAddedHandler(lobby.Data);
 		}
 
+		/// <summary>
+		/// Creates a match from the given lobby.
+		/// Notifies the players when the match is ready.
+		/// Notifies host if not enough players.
+		/// Notifies everyone to update their lobby list.
+		/// </summary>
+		/// <param name="lobbyId">The id of the lobby</param>
+		/// <returns></returns>
 		public async Task CreateMatchAsync(int lobbyId) {
 			try {
 				LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
+				if (lobby.Data.Host != Context.UserIdentifier) {
+					await Clients.Caller.CannotStartOtherMatch();
+					return;
+				}
+
 				ApplicationUser player1 = await _userManager.FindByNameAsync(lobby.Data.Host);
 				ApplicationUser player2 = await _userManager.FindByNameAsync(lobby.Data.Guest);
 				Match newMatch = _gameService.CreateMatch(player1, player2, lobby.Data.BoardHeight, lobby.Data.BoardWidth);
@@ -70,6 +88,11 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
+		/// <summary>
+		/// Changes the settings of the lobby to the desired settings given as parameter.
+		/// Notifies everyone to update their lobby list.
+		/// </summary>
+		/// <param name="data">The desired settings</param>
 		public void LobbySettingsChanged(LobbyData data) {
 			LobbyModel lobby = _lobbyService.FindLobbyById(data.LobbyId);
 			if (Context.User.Identity.Name != lobby.Data.Host) {
@@ -82,18 +105,32 @@ namespace Connect4Server.Hubs {
 			lobby.Data.Status = data.Status;
 			_logger.LogInformation($"The settings of lobby #{data.LobbyId} were updated.");
 
-			if (lobby.Data.Guest != null) {
-				Clients.User(lobby.Data.Guest).LobbySettingsChanged(lobby.Data);
-			}
+			Clients.All.LobbyChanged(lobby.Data);
 		}
 
+		/// <summary>
+		/// Adds the user with the given username to the invitation list.
+		/// Notifies the caller that the user has been invited.
+		/// Notifies the user that they have been invited.
+		/// </summary>
+		/// <param name="lobbyId">The id of the lobby that the user is invited to</param>
+		/// <param name="user">The name of the invitee</param>
 		public void SendInvitationTo(int lobbyId, string user) {
+			if (Context.UserIdentifier != _lobbyService.FindLobbyById(lobbyId).Data.Host) {
+				Clients.Caller.OnlyHostCanInvite();
+				return;
+			}
+
 			_lobbyService.InvitePlayerToLobby(lobbyId, user);
 			_logger.LogInformation($"{user} was invited to lobby #{lobbyId} by {Context.UserIdentifier}.");
+			Clients.Caller.UserInvited(_lobbyService.FindLobbyById(lobbyId).Data);
 			Clients.User(user).GetInvitationTo(lobbyId);
 		}
 
-		//TESTED
+		/// <summary>
+		/// Joins the player to the desired lobby if it is possible. If the player is already in a lobby they will be disconnected from there.
+		/// </summary>
+		/// <param name="lobbyId">The id of the desired lobby</param>
 		public void JoinLobby(int lobbyId) {
 			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
 			if (model != null) {
@@ -107,6 +144,8 @@ namespace Connect4Server.Hubs {
 					} else {
 						Clients.User(model.Data.Host).HostDisconnected();
 					}
+
+					Clients.All.LobbyChanged(model.Data);
 				} else {
 					Clients.All.LobbyDeleted(lobbyId);
 				}
@@ -118,15 +157,26 @@ namespace Connect4Server.Hubs {
 
 				Clients.Caller.JoinedToLobby(lobbyModel.Data);
 				Clients.User(lobbyModel.Data.Host).PlayerJoinedToLobby(Context.UserIdentifier);
+				Clients.All.LobbyChanged(lobbyModel.Data);
 			} else {
 				Clients.Caller.FailedToJoinLobby();
 			}
 		}
 
+		/// <summary>
+		/// Gets the list of matches that the caller has played or is playing at the moment.
+		/// </summary>
+		/// <returns>The list of matches</returns>
 		public List<MatchDto> GetMatches() {
 			return _gameService.GetMatchesOf(Context.UserIdentifier);
 		}
 
+		/// <summary>
+		/// Places an item in the selected match, in the selected column.
+		/// Notifies the caller and the other player from the result.
+		/// </summary>
+		/// <param name="matchId">The identifier of the match</param>
+		/// <param name="column">The index of the column</param>
 		public void PlaceItem(int matchId, int column) {
 			Match match = _gameService.GetMatchById(matchId);
 			if (match == null) {
@@ -159,6 +209,10 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
+		/// <summary>
+		/// Joins the caller to the solo queue. If there are more than 1 players on the list it creates a match with the first two.
+		/// </summary>
+		/// <returns></returns>
 		public async Task JoinSoloQueueAsync() {
 			_soloQueueService.JoinSoloQueue(Context.UserIdentifier);
 			_logger.LogInformation($"{Context.UserIdentifier} joined the solo queue.");
@@ -185,11 +239,18 @@ namespace Connect4Server.Hubs {
 			}
 		}
 
+		/// <summary>
+		/// The caller leaves the solo queue
+		/// </summary>
 		public void LeaveSoloQueue() {
 			_soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 			_logger.LogInformation($"{Context.UserIdentifier} left the solo queue.");
 		}
 
+		/// <summary>
+		/// Removes the guest of the given lobby
+		/// </summary>
+		/// <param name="lobbyId">The identifier of the lobby</param>
 		public void KickGuest(int lobbyId) {
 			LobbyModel model = _lobbyService.FindLobbyById(lobbyId);
 
@@ -198,17 +259,29 @@ namespace Connect4Server.Hubs {
 				return;
 			}
 
+			if (string.IsNullOrEmpty(model.Data.Guest)) {
+				Clients.Caller.NobodyToKick();
+			}
+
 			string kickedGuest = _lobbyService.KickGuest(lobbyId);
 			_logger.LogInformation($"{kickedGuest} was kicked from lobby #{lobbyId}.");
 			Clients.Caller.GuestKicked();
 			Clients.User(kickedGuest).YouHaveBeenKicked();
+			Clients.All.LobbyChanged(model.Data);
 		}
 
+		/// <summary>
+		/// Gets a list of the data of the currently existing lobbies
+		/// </summary>
+		/// <returns></returns>
 		public List<LobbyData> GetLobbies() {
 			return _lobbyService.GetLobbyData();
 		}
 
-		//TESTED
+		/// <summary>
+		/// Disconnects the caller from the given lobby.
+		/// </summary>
+		/// <param name="lobbyId">The identifier of the lobby</param>
 		public void DisconnectFromLobby(int lobbyId) {
 			LobbyModel lobby = _lobbyService.FindLobbyById(lobbyId);
 			string originalHost = lobby.Data.Host;
@@ -221,11 +294,18 @@ namespace Connect4Server.Hubs {
 				} else {
 					Clients.User(lobby.Data.Host).HostDisconnected();
 				}
+
+				Clients.All.LobbyChanged(lobby.Data);
 			} else {
 				Clients.All.LobbyDeleted(lobby.Data.LobbyId);
 			}
 		}
 
+		/// <summary>
+		/// Called when someone disconnects from the hub. If they are in a lobby, they will be disconnected from there.
+		/// </summary>
+		/// <param name="exception"></param>
+		/// <returns></returns>
 		public override Task OnDisconnectedAsync(Exception exception) {
 			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
 			if (model != null) {

@@ -13,7 +13,6 @@ namespace Connect4Server.Hubs {
 		Task LobbyDeleted(int lobbyId);
 		Task NotEnoughPlayersHandler();
 		Task CannotSetOtherLobby();
-		Task LobbySettingsChanged(LobbyData lobby);
 		Task GetInvitationTo(int lobbyId);
 		Task GuestDisconnected();
 		Task HostDisconnected();
@@ -30,5 +29,10 @@ namespace Connect4Server.Hubs {
 		Task EnemyVictoryHandler(int matchId, int column);
 		Task GuestKicked();
 		Task YouHaveBeenKicked();
+		Task OnlyHostCanInvite();
+		Task NobodyToKick();
+		Task LobbyChanged(LobbyData lobby);
+		Task UserInvited(LobbyData lobby);
+		Task CannotStartOtherMatch();
 	}
 }

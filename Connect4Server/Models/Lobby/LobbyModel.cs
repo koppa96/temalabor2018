@@ -23,6 +23,7 @@ namespace Connect4Server.Models.Lobby {
 
 		public bool JoinGuest(string player) {
 			if (Data.Guest == null && (Data.Status == LobbyStatus.Public || Data.InvitedPlayers.Contains(player))) {
+				Data.InvitedPlayers.Remove(player);
 				Data.Guest = player;
 				return true;
 			}

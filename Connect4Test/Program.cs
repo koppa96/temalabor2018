@@ -55,6 +55,12 @@ namespace Connect4Test {
 		    connection.On<int, int>("SuccessfulEnemyPlacement", SuccessfulEnemyPlacement);
 		    connection.On<int, int>("VictoryHandler", VictoryHandler);
 		    connection.On<int, int>("EnemyVictoryHandler", EnemyVictoryHandler);
+		    connection.On<LobbyData>("LobbySettingsChanged", LobbySettingsChangeHandler);
+		    connection.On("CannotSetOtherLobby", () => Console.WriteLine("You can only set the lobby settings if you are the host."));
+		    connection.On("OnlyHostCanInvite", () => Console.WriteLine("Only the host of the lobby can invite."));
+		    connection.On<int>("GetInvitationTo", GetInvitationHandler);
+		    connection.On("NobodyToKick", () => Console.WriteLine("There is no guest in the lobby to be kicked."));
+		    connection.On("GuestKicked", GuestKickedHandler);
 		    await connection.StartAsync();
 
 		    while (true) {
@@ -95,6 +101,7 @@ namespace Connect4Test {
 					case "disconnect":
 						await connection.InvokeAsync("DisconnectFromLobby", myLobby.LobbyId);
 						Console.WriteLine("Disconnected from lobby");
+						myLobby = null;
 						break;
 					case "place":
 						await connection.InvokeAsync("PlaceItem", int.Parse(commandElements[1]),
@@ -125,11 +132,81 @@ namespace Connect4Test {
 								break;
 						}
 						break;
+					case "set":
+						switch (commandElements[1]) {
+							case "boardsize":
+								if (myLobby == null) {
+									Console.WriteLine("You need to be in a lobby to change its settings.");
+									break;
+								}
+
+								LobbyData data = new LobbyData {
+									LobbyId = myLobby.LobbyId,
+									BoardWidth = int.Parse(commandElements[2]),
+									BoardHeight = int.Parse(commandElements[3]),
+									Status = myLobby.Status,
+									Host = myLobby.Host,
+									Guest = myLobby.Guest
+								};
+
+								await connection.InvokeAsync("LobbySettingsChanged", data);
+								break;
+							case "status":
+								if (myLobby == null) {
+									Console.WriteLine("You need to be in a lobby to change its settings.");
+									break;
+								}
+
+								data = new LobbyData {
+									LobbyId = myLobby.LobbyId,
+									BoardWidth = myLobby.BoardWidth,
+									BoardHeight = myLobby.BoardHeight,
+									Status = commandElements[2] == "public" ? LobbyStatus.Public : LobbyStatus.Private,
+									Host = myLobby.Host,
+									Guest = myLobby.Guest
+								};
+
+								await connection.InvokeAsync("LobbySettingsChanged", data);
+								break;
+							default:
+								Console.WriteLine("Unknown command.");
+								break;
+						}
+						break;
+					case "invite":
+						await connection.InvokeAsync("SendInvitationTo", myLobby.LobbyId, commandElements[1]);
+						break;
+					case "kick":
+						await connection.InvokeAsync("KickGuest", myLobby.LobbyId);
+						break;
 					default:
 						Console.WriteLine("Unknown command.");
 						break;
 			    }
 		    }
+	    }
+
+	    private static void GuestKickedHandler() {
+		    Console.WriteLine("{0} was kicked from your lobby.");
+	    }
+
+	    private static void GetInvitationHandler(int lobbyId) {
+		    Console.WriteLine("You have been invited to Lobby #{0} by {1}.", lobbyId, lobbies.SingleOrDefault(l => l.LobbyId == lobbyId)?.Host);
+	    }
+
+	    private static void LobbySettingsChangeHandler(LobbyData lobby) {
+		    if (lobby.LobbyId == myLobby.LobbyId) {
+			    myLobby = lobby;
+			    Console.WriteLine("Your Lobby's settings have changed. BoardWidth = {0} BoardHeight = {1} Status = {2}", lobby.BoardWidth, lobby.BoardHeight, lobby.Status);
+		    }
+
+		    for (int i = 0; i < lobbies.Count; i++) {
+			    if (lobbies[i].LobbyId == lobby.LobbyId) {
+				    lobbies[i] = lobby;
+			    }
+		    }
+
+		    Console.WriteLine("The lobby settings of Lobby #{0} were updated", lobby.LobbyId);
 	    }
 
 	    private static void EnemyVictoryHandler(int matchId, int columnId) {
@@ -192,7 +269,7 @@ namespace Connect4Test {
 		}
 
 	    private static void FailedToJoinLobbyHandler() {
-		    Console.WriteLine("Could not join lobby. It is private.");
+		    Console.WriteLine("Could not join lobby. It's either private or full.");
 		    Console.Write("Connect4Test> ");
 		}
 
