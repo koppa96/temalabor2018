@@ -15,7 +15,13 @@ namespace Connect4Client {
         private ObservableCollection<MatchDto> matchList;
         public ObservableCollection<MatchDto> MatchList { get { return matchList; } }
 
+        public MatchDto SelectedMatch { get; set; }
+
         private MatchRepository(){}
+
+        public void LoadItems(ICollection<MatchDto> matches) {
+            matchList = new ObservableCollection<MatchDto>(matches);
+        }
 
 #pragma warning disable CS4014
         public void AddItem(MatchDto match) {

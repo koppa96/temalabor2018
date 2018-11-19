@@ -5,11 +5,43 @@
     xmlns:local="using:Connect4Client"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x1="using:Connect4Dtos"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Canvas Name="BoardCanvas" Background="Azure">
-        </Canvas>
+        <SplitView IsPaneOpen="True" DisplayMode="Inline">
+            <SplitView.Pane>
+                <ListView x:Name="MatchList" ItemsSource="{x:Bind Matches}" SelectedItem="{x:Bind SelectedMatch, Mode=TwoWay}">
+                    <ListView.Header>
+                        <Border Height="48" Background="LightBlue" CornerRadius="16">
+                            <TextBlock Text="Currently running matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+                        </Border>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="x1:MatchDto" x:Name="MatchDtoTemplate">
+                            <StackPanel Orientation="Horizontal" Height="80">
+                                <Grid Width="30" Height="30">
+                                    
+                                </Grid>
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Bind MatchId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                                    <TextBlock Text="{x:Bind OtherPlayer}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <Grid>
+                        </Grid>
+                    </ListView.Footer>
+                </ListView>
+            </SplitView.Pane>
+            <Grid Name="MatchPanel">
+                <Canvas Name="BoardCanvas" Width="500" Height="500">
+                            
+                </Canvas>
+            </Grid>
+        </SplitView>
     </Grid>
 </Page>

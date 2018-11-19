@@ -102,7 +102,9 @@ namespace Connect4Client {
         private async Task OnSuccessfulLogin() {
             await ConnectionManager.Instance.CreateConnection();
             var lobbyList = await ConnectionManager.Instance.GetLobbies();
+            var matchList = await ConnectionManager.Instance.GetMatches();
             LobbyRepository.Instance.LoadItems(lobbyList);
+            MatchRepository.Instance.LoadItems(matchList);
             ConnectionManager.Instance.UserName = tbUsername.Text;
             Frame.Navigate(typeof(MainPage));
         }

@@ -43,7 +43,7 @@ namespace Connect4Client
             //hubConnection.On("ColumnFullHandler", );
             //hubConnection.On("MatchFinishedHandler", );
             //hubConnection.On("NotYourTurnHandler", );
-            //hubConnection.On<int, int>("SuccessfulPlacement", );
+            hubConnection.On<MatchDto>("SuccessfulPlacement", SuccessfulPlacement);
             //hubConnection.On<int, int>("SuccessfulEnemyPlacement", );
             //hubConnection.On<int, int>("EnemyVictoryHandler", );
             hubConnection.On("GuestKicked", () => ShowDialog("Guest kicked", "Your guest has been kicked."));
@@ -56,6 +56,10 @@ namespace Connect4Client
             hubConnection.On("InvalidLobbyId", () => ShowDialog("Invalid lobby ID", "The given lobby ID is invalid"));
 
             await hubConnection.StartAsync();
+        }
+
+        internal void PlaceItem(int matchId, int column) {
+            hubConnection.InvokeAsync("PlaceItem", matchId, column);
         }
 
         internal void KickGuest(int lobbyId) {
@@ -78,6 +82,7 @@ namespace Connect4Client
             hubConnection.InvokeAsync("CreateMatchAsync", lobby.LobbyId);
         }
 
+
         internal void CreateLobby(LobbyStatus status) {
             hubConnection.InvokeAsync("CreateLobby", status.ToString());
         }
@@ -94,6 +99,9 @@ namespace Connect4Client
             return await hubConnection.InvokeAsync<List<LobbyData>>("GetLobbies");
         }
 
+        public async Task<IList<MatchDto>> GetMatches() {
+            return await hubConnection.InvokeAsync<List<MatchDto>>("GetMatches");
+        }
         private async void ShowDialog(string errorTitle, string errorMessage) {
 #pragma warning disable CS4014
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
@@ -167,6 +175,10 @@ namespace Connect4Client
                 }
             });
 #pragma warning restore CS4014
+        }
+
+        private void SuccessfulPlacement(MatchDto) {
+            
         }
     }
 }
