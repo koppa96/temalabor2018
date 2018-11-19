@@ -58,9 +58,7 @@ namespace Connect4Server.Services {
 		}
 
 		public ApplicationUser GetOtherPlayer(int matchId, string player) {
-			Match match = _context.Matches.Include("Player1")
-										  .Include("Player2")
-										  .SingleOrDefault(m => m.MatchId == matchId);
+			Match match = GetMatchById(matchId);
 
 			if (match == null) {
 				throw new ArgumentException("Invalid match id.");
@@ -70,7 +68,21 @@ namespace Connect4Server.Services {
 		}
 
 		public Match GetMatchById(int id) {
-			return _context.Matches.SingleOrDefault(m => m.MatchId == id);
+			return _context.Matches.Include("Player1")
+								   .Include("Player2")
+								   .SingleOrDefault(m => m.MatchId == id);
+		}
+
+		public MatchDto GetMatchDtoFor(int id, string user) {
+			Match match = GetMatchById(id);
+
+			return new MatchDto {
+				MatchId = match.MatchId,
+				BoardData = match.BoardData,
+				OtherPlayer = match.Player1.UserName == user ? match.Player2.UserName : match.Player1.UserName,
+				State = match.State,
+				YourItem = match.Player1.UserName == user ? Item.Red : Item.Yellow
+			};
 		}
 
 		public PlacementResult PlaceItemToColumn(int matchId, int column, string player) {

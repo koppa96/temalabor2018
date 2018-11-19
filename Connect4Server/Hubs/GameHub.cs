@@ -232,14 +232,14 @@ namespace Connect4Server.Hubs {
 					break;
 				case PlacementResult.Success:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
-					Clients.Caller.SuccessfulPlacement(matchId, column);
-					Clients.User(otherPlayer).SuccessfulEnemyPlacement(matchId, column);
+					Clients.Caller.SuccessfulPlacement(_gameService.GetMatchDtoFor(matchId, Context.UserIdentifier));
+					Clients.User(otherPlayer).SuccessfulEnemyPlacement(_gameService.GetMatchDtoFor(matchId, otherPlayer));
 					break;
 				case PlacementResult.Victory:
 					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
 					_logger.LogInformation($"{Context.UserIdentifier} won match #{matchId}");
-					Clients.Caller.VictoryHandler(matchId, column);
-					Clients.User(otherPlayer).EnemyVictoryHandler(matchId, column);
+					Clients.Caller.VictoryHandler(_gameService.GetMatchDtoFor(matchId, Context.UserIdentifier));
+					Clients.User(otherPlayer).EnemyVictoryHandler(_gameService.GetMatchDtoFor(matchId, otherPlayer));
 					break;
 			}
 		}
