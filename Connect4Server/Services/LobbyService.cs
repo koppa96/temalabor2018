@@ -81,23 +81,11 @@ namespace Connect4Server.Services {
 		}
 
 		public LobbyModel FindLobbyById(int lobbyId) {
-			foreach (LobbyModel lobby in Lobbies) {
-				if (lobby.Data.LobbyId == lobbyId) {
-					return lobby;
-				}
-			}
-
-			return null;
+			return Lobbies.SingleOrDefault(l => l.Data.LobbyId == lobbyId);
 		}
 
 		public LobbyModel FindUserLobby(string user) {
-			foreach (LobbyModel lobby in Lobbies) {
-				if (lobby.Data.Host == user || lobby.Data.Guest == user) {
-					return lobby;
-				}
-			}
-
-			return null;
+			return Lobbies.SingleOrDefault(l => l.Data.Host == user || l.Data.Guest == user);
 		}
 	}
 }

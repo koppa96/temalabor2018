@@ -41,5 +41,11 @@ namespace Connect4Server.Services {
 
 			return players;
 		}
+
+		public bool IsQueuing(string user) {
+			lock (_syncObj) {
+				return _queuingPlayers.Contains(user);
+			}
+		}
 	}
 }

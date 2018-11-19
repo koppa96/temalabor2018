@@ -42,6 +42,11 @@ namespace Connect4Server.Hubs {
 				return;
 			}
 
+			if (_soloQueueService.IsQueuing(Context.UserIdentifier)) {
+				Clients.Caller.CannotJoinOrCreateWhileQueuing();
+				return;
+			}
+
 			LobbyModel lobby = _lobbyService.CreateLobby(Context.UserIdentifier, status);
 			_logger.LogInformation($"Lobby created by {Context.UserIdentifier}. With Id: {lobby.Data.LobbyId}");
 
@@ -156,6 +161,12 @@ namespace Connect4Server.Hubs {
 		/// <param name="lobbyId">The id of the desired lobby</param>
 		public void JoinLobby(int lobbyId) {
 			LobbyModel model = _lobbyService.FindUserLobby(Context.UserIdentifier);
+
+			if (_soloQueueService.IsQueuing(Context.UserIdentifier)) {
+				Clients.Caller.CannotJoinOrCreateWhileQueuing();
+				return;
+			}
+
 			if (model != null) {
 				string originalHost = model.Data.Host;
 				_lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, model.Data.LobbyId);
@@ -239,6 +250,11 @@ namespace Connect4Server.Hubs {
 		public async Task JoinSoloQueueAsync() {
 			_soloQueueService.JoinSoloQueue(Context.UserIdentifier);
 			_logger.LogInformation($"{Context.UserIdentifier} joined the solo queue.");
+
+			if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null) {
+				await Clients.Caller.CannotQueueWhileInLobby();
+				return;
+			}
 
 			string[] players = _soloQueueService.PopFirstTwoPlayers();
 			if (players != null) { 
