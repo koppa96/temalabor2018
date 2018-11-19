@@ -26,7 +26,7 @@ namespace Connect4Server.Services {
 			Match match = new Match {
 				Player1 = player1,
 				Player2 = player2,
-				State = "Player1Moves",
+				State = GameState.Player1Moves,
 				BoardData = new Board(width, height).ToString()
 			};
 
@@ -46,26 +46,10 @@ namespace Connect4Server.Services {
 				MatchDto dto = new MatchDto {
 					MatchId = m.MatchId,
 					OtherPlayer = m.Player1.UserName == user ? m.Player2.UserName : m.Player1.UserName,
-					BoardData = m.BoardData
+					BoardData = m.BoardData,
+					State = m.State,
+					YourItem = m.Player1.UserName == user ? Item.Red : Item.Yellow
 				};
-
-				switch (m.State) {
-					case "Player1Moves":
-						dto.State = user == m.Player1.UserName ? "YourTurn" : "EnemyTurn";
-						break;
-					case "Player2Moves":
-						dto.State = user == m.Player2.UserName ? "YourTurn" : "EnemyTurn";
-						break;
-					case "Player1Won":
-						dto.State = user == m.Player1.UserName ? "YouWon" : "YouLost";
-						break;
-					case "Player2Won":
-						dto.State = user == m.Player2.UserName ? "YouWon" : "YouLost";
-						break;
-					default:
-						dto.State = "Unavailable";
-						break;
-				}
 
 				dtos.Add(dto);
 			}
@@ -91,12 +75,12 @@ namespace Connect4Server.Services {
 			Match match = GetMatchById(matchId);
 			bool isPlayerOne = player == match.Player1.UserName;
 
-			if (match.State == "Player1Won" || match.State == "Player2Won") {
+			if (match.State == GameState.Player1Won || match.State == GameState.Player2Won) {
 				return PlacementResult.MatchNotRunning;
 			}
 
-			if (isPlayerOne && match.State == "Player2Moves" ||
-			    !isPlayerOne && match.State == "Player1Moves") {
+			if (isPlayerOne && match.State == GameState.Player2Moves ||
+			    !isPlayerOne && match.State == GameState.Player1Moves) {
 				return PlacementResult.NotYourTurn;
 			}
 
@@ -106,13 +90,13 @@ namespace Connect4Server.Services {
 				match.BoardData = board.ToString();
 
 				if (board.CheckWinner() == item) {
-					match.State = isPlayerOne ? "Player1Won" : "Player2Won";
+					match.State = isPlayerOne ? GameState.Player1Won : GameState.Player2Won;
 
 					_context.SaveChanges();
 					return PlacementResult.Victory;
 				}
 
-				match.State = isPlayerOne ? "Player2Moves" : "Player1Moves";
+				match.State = isPlayerOne ? GameState.Player2Moves : GameState.Player1Moves;
 				_context.SaveChanges();
 				return PlacementResult.Success;
 			}
