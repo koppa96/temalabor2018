@@ -102,14 +102,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DTOs\BoardData.cs" />
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="Converters\InvitedPlayerNotificationConverter.cs" />
     <Compile Include="Converters\InvitedPlayersConverter.cs" />
     <Compile Include="Converters\LobbyStatusConverter.cs" />
     <Compile Include="Converters\SelectedLobbyVisibilityConverter.cs" />
     <Compile Include="Converters\StatusToRadioConverter.cs" />
-    <Compile Include="DTOs\BoardData.cs" />
-    <Compile Include="DTOs\Item.cs" />
     <Compile Include="DTOs\NotifyingLobbyData.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>

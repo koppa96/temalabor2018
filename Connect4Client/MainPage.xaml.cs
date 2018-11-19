@@ -45,6 +45,7 @@ namespace Connect4Client
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
+            MatchRepository.Instance.SelectedMatch = null;
             if (args.IsSettingsInvoked) {
                 ContentFrame.Navigate(typeof(SettingsPage));
                 return;

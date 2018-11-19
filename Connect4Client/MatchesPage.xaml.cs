@@ -28,7 +28,7 @@ namespace Connect4Client {
         private ObservableCollection<MatchDto> Matches { get { return MatchRepository.Instance.MatchList; } }
         private MatchDto SelectedMatch {
             get { return MatchRepository.Instance.SelectedMatch; }
-            set { MatchRepository.Instance.SelectedMatch = value; DrawBoard(ParseToBoard(value)); }
+            set { MatchRepository.Instance.SelectedMatch = value; DrawBoard(); }
         }
        
 
@@ -39,11 +39,13 @@ namespace Connect4Client {
             string[] elements = match.BoardData.Split(" ");
             int width = int.Parse(elements[0]), height = int.Parse(elements[1]);
 
+            Item enemyItem = match.YourItem == Item.Yellow ? Item.Red : Item.Yellow;
+
             BoardData board = new BoardData(width, height);
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    switch (elements[width * i + height + 2]) {
+                    switch (elements[width * i + j + 2]) {
                         case "1":
                             board.SetItemAt(i, j, Item.Yellow);
                             break;
@@ -58,17 +60,24 @@ namespace Connect4Client {
 
         public MatchesPage() {
             this.InitializeComponent();
+            MatchRepository.Instance.AddMatchPage(this);
         }
         
-        private void DrawBoard(BoardData board) {
-            if(board == null) {
+        public void DrawBoard() {
+            if(SelectedMatch == null) {
+                return;
+            }
+            BoardData board = ParseToBoard(SelectedMatch);
+            if (board == null) {
                 return;
             }
             int width_px = (int) BoardCanvas.ActualWidth;
             int heigt_px = (int) BoardCanvas.ActualHeight;
 
             int radius = 20;
-            
+
+            BoardCanvas.Children.Clear();
+
             for(int i = 0; i < board.Width; i++) {
                 for (int j = 0; j < board.Height; j++) {
                     var ellipse = new Ellipse();

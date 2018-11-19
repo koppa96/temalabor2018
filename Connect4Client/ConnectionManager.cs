@@ -40,11 +40,11 @@ namespace Connect4Client
             hubConnection.On<string>("PlayerJoinedToLobby", PlayerJoinedToLobby);
             hubConnection.On("FailedToJoinLobby", () => ShowDialog("Failed to join lobby", "You cannot join this lobby as it is private and you are not invited."));
             //hubConnection.On("IncorrectMatchHandler", );
-            //hubConnection.On("ColumnFullHandler", );
+            hubConnection.On("ColumnFullHandler", () => ShowDialog("Failed to place item", "The selected column is full. Choose another column to place an item in."));
             //hubConnection.On("MatchFinishedHandler", );
-            //hubConnection.On("NotYourTurnHandler", );
+            hubConnection.On("NotYourTurnHandler", () => ShowDialog("Failed to place item", "You can only place items on your turn."));
             hubConnection.On<MatchDto>("SuccessfulPlacement", SuccessfulPlacement);
-            //hubConnection.On<int, int>("SuccessfulEnemyPlacement", );
+            hubConnection.On<MatchDto>("SuccessfulEnemyPlacement", SuccessfulEnemyPlacement);
             //hubConnection.On<int, int>("EnemyVictoryHandler", );
             hubConnection.On("GuestKicked", () => ShowDialog("Guest kicked", "Your guest has been kicked."));
             hubConnection.On("YouHaveBeenKicked", YouHaveBeenKicked);
@@ -57,7 +57,6 @@ namespace Connect4Client
 
             await hubConnection.StartAsync();
         }
-
         internal void PlaceItem(int matchId, int column) {
             hubConnection.InvokeAsync("PlaceItem", matchId, column);
         }
@@ -177,8 +176,13 @@ namespace Connect4Client
 #pragma warning restore CS4014
         }
 
-        private void SuccessfulPlacement(MatchDto) {
-            
+        private void SuccessfulPlacement(MatchDto match) {
+            MatchRepository.Instance.RefreshMatch(match);
         }
+
+        private void SuccessfulEnemyPlacement(MatchDto match) {
+            MatchRepository.Instance.RefreshMatch(match);
+        }
+
     }
 }

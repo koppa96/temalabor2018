@@ -1,34 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Connect4Dtos;
 
-namespace Connect4Client.DTOs {
-    class BoardData {
-        private Item[,] board;
+namespace Connect4Client {
+    public class BoardData {
+        private Item[] board;
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
         public BoardData(int width, int height) {
-            Width = width;
             Height = height;
-            board = new Item[height, width];
+            Width = width;
+            board = new Item[height * width];
 
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    board[i, j] = Item.None;
-                }
+            for (int i = 0; i < Height * Width; i++) {
+                board[i] = Item.None;
             }
         }
-        
-        public void SetItemAt(int row, int column, Item i) {
-            board[row, column] = i;
-        }
 
+        public void SetItemAt(int row, int column, Item item) {
+            board[Height * column + row] = item;
+        }
         public Item GetItemAt(int row, int column) {
-            return board[row, column];
+            return board[Height * column + row];
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Connect4Client {
         private static object lockObject = new object();
 
         private ObservableCollection<MatchDto> matchList;
+        private MatchesPage matchesPage;
+
         public ObservableCollection<MatchDto> MatchList { get { return matchList; } }
 
         public MatchDto SelectedMatch { get; set; }
@@ -28,6 +30,25 @@ namespace Connect4Client {
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 matchList.Add(match);
             });
+        }
+
+        public void RefreshMatch(MatchDto match) {
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                int MatchId = SelectedMatch.MatchId;
+
+                MatchDto matchInList = MatchList.SingleOrDefault(x => x.MatchId == match.MatchId);
+                int indexInList = MatchList.IndexOf(matchInList);
+                MatchList[indexInList] = match;
+
+                if(match.MatchId == MatchId) {
+                    SelectedMatch = match;
+                }
+                matchesPage.DrawBoard();
+            });
+        }
+
+        internal void AddMatchPage(MatchesPage matchesPage) {
+            this.matchesPage = matchesPage;
         }
     }
 #pragma warning restore CS4014
