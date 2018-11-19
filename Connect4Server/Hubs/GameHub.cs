@@ -78,14 +78,15 @@ namespace Connect4Server.Hubs {
 				_logger.LogInformation($"Lobby with Id: {lobbyId} was removed.");
 				MatchDto dto = new MatchDto {
 					MatchId = newMatch.MatchId,
+					YourItem = Item.Red,
 					OtherPlayer = lobby.Data.Guest,
 					BoardData = newMatch.BoardData,
-					State = "YourTurn"
+					State = newMatch.State
 				};
 
 				await Clients.Caller.MatchCreated(dto);
 				dto.OtherPlayer = lobby.Data.Host;
-				dto.State = "EnemyTurn";
+				dto.YourItem = Item.Yellow;
 				await Clients.User(lobby.Data.Guest).MatchCreated(dto);
 				await Clients.All.LobbyDeleted(lobbyId);
 			} catch (ArgumentException) {
@@ -266,13 +267,14 @@ namespace Connect4Server.Hubs {
 
 				MatchDto dto = new MatchDto {
 					MatchId = match.MatchId,
+					YourItem = Item.Red,
 					OtherPlayer = player2.UserName,
 					BoardData = match.BoardData,
-					State = "YourTurn"
+					State = match.State
 				};
 
 				await Clients.User(player1.UserName).MatchCreated(dto);
-				dto.State = "EnemyTurn";
+				dto.YourItem = Item.Yellow;
 				dto.OtherPlayer = player1.UserName;
 				await Clients.User(player2.UserName).MatchCreated(dto);
 			}

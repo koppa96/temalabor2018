@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Connect4Dtos;
 
 namespace Connect4Server.Models.Board {
 	/// <summary>

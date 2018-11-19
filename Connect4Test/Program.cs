@@ -271,7 +271,7 @@ namespace Connect4Test {
 		    Console.WriteLine("Match created.");
 		    Console.WriteLine("Id = {0}", match.MatchId);
 			Console.WriteLine("Other player = {0}", match.OtherPlayer);
-		    Console.WriteLine("Status = {0}", match.State);
+		    Console.WriteLine("Status = {0}", match.State.ToString());
 	    }
 
 	    private static void LobbyDeletedHandler(int lobbyId) {
