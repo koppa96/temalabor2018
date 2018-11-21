@@ -15,7 +15,7 @@ using Console = System.Console;
 namespace Connect4Test {
     class Program {
         private static string token;
-	    private const string Server = "https://koppa96.sch.bme.hu/Connect4Server";
+	    private const string Server = "https://localhost:44301";
 	    private static HubConnection connection;
 	    private static LobbyData myLobby;
 	    private static List<LobbyData> lobbies = new List<LobbyData>();

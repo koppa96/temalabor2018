@@ -76,18 +76,9 @@ namespace Connect4Server.Hubs {
 				_logger.LogInformation($"New match created from lobby: {lobbyId}");
 				_lobbyService.DeleteLobby(lobbyId);
 				_logger.LogInformation($"Lobby with Id: {lobbyId} was removed.");
-				MatchDto dto = new MatchDto {
-					MatchId = newMatch.MatchId,
-					YourItem = Item.Red,
-					OtherPlayer = lobby.Data.Guest,
-					BoardData = newMatch.BoardData,
-					State = newMatch.State
-				};
 
-				await Clients.Caller.MatchCreated(dto);
-				dto.OtherPlayer = lobby.Data.Host;
-				dto.YourItem = Item.Yellow;
-				await Clients.User(lobby.Data.Guest).MatchCreated(dto);
+				await Clients.Caller.MatchCreated(_gameService.GetMatchDtoFor(newMatch.MatchId, lobby.Data.Host));
+				await Clients.User(lobby.Data.Guest).MatchCreated(_gameService.GetMatchDtoFor(newMatch.MatchId, lobby.Data.Guest));
 				await Clients.All.LobbyDeleted(lobbyId);
 			} catch (ArgumentException) {
 				await Clients.Caller.NotEnoughPlayersHandler();
@@ -103,6 +94,11 @@ namespace Connect4Server.Hubs {
 			LobbyModel lobby = _lobbyService.FindLobbyById(data.LobbyId);
 			if (Context.User.Identity.Name != lobby.Data.Host) {
 				Clients.Caller.CannotSetOtherLobby();
+				return;
+			}
+
+			if (data.BoardWidth < 4 || data.BoardWidth > 15 || data.BoardHeight < 4 || data.BoardHeight > 10) {
+				Clients.Caller.InvalidBoardSize();
 				return;
 			}
 
@@ -241,6 +237,12 @@ namespace Connect4Server.Hubs {
 					Clients.Caller.VictoryHandler(_gameService.GetMatchDtoFor(matchId, Context.UserIdentifier));
 					Clients.User(otherPlayer).EnemyVictoryHandler(_gameService.GetMatchDtoFor(matchId, otherPlayer));
 					break;
+				case PlacementResult.Draw:
+					_logger.LogInformation($"{Context.UserIdentifier} placed an item at column #{column} in match #{matchId}");
+					_logger.LogInformation($"Match #{matchId} ended with a draw");
+					Clients.Caller.DrawHandler(_gameService.GetMatchDtoFor(matchId, Context.UserIdentifier));
+					Clients.User(otherPlayer).DrawHandler(_gameService.GetMatchDtoFor(matchId, otherPlayer));
+					break;
 			}
 		}
 
@@ -265,18 +267,8 @@ namespace Connect4Server.Hubs {
 				Match match = _gameService.CreateMatch(player1, player2, 6, 7);
 				_logger.LogInformation($"Match created from solo queue with {player1.UserName} and {player2.UserName}.");
 
-				MatchDto dto = new MatchDto {
-					MatchId = match.MatchId,
-					YourItem = Item.Red,
-					OtherPlayer = player2.UserName,
-					BoardData = match.BoardData,
-					State = match.State
-				};
-
-				await Clients.User(player1.UserName).MatchCreated(dto);
-				dto.YourItem = Item.Yellow;
-				dto.OtherPlayer = player1.UserName;
-				await Clients.User(player2.UserName).MatchCreated(dto);
+				await Clients.User(player1.UserName).MatchCreated(_gameService.GetMatchDtoFor(match.MatchId, player1.UserName));
+				await Clients.User(player2.UserName).MatchCreated(_gameService.GetMatchDtoFor(match.MatchId, player2.UserName));
 			}
 		}
 

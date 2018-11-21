@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Connect4Dtos;
+using Connect4Server.Models.Board;
 
 namespace Connect4Server.Data {
     public class Match {
@@ -14,6 +15,6 @@ namespace Connect4Server.Data {
         public ApplicationUser Player2 { get; set; }
 
         public string BoardData { get; set; }
-        public GameState State { get; set; }
+        public MatchState State { get; set; }
     }
 }

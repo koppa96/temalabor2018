@@ -37,5 +37,7 @@ namespace Connect4Server.Hubs {
 		Task InvalidLobbyId();
 		Task CannotJoinOrCreateWhileQueuing();
 		Task CannotQueueWhileInLobby();
+		Task InvalidBoardSize();
+		Task DrawHandler(MatchDto dto);
 	}
 }
