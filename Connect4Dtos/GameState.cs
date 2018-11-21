@@ -4,6 +4,6 @@ using System.Text;
 
 namespace Connect4Dtos {
 	public enum GameState {
-		Player1Moves, Player2Moves, Player1Won, Player2Won, Draw
+		YourTurn, EnemyTurn, YouWon, EnemyWon, Draw, NotYourMatch
 	}
 }

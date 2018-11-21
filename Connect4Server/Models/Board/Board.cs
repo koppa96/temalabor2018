@@ -15,6 +15,18 @@ namespace Connect4Server.Models.Board {
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
+		public bool Full {
+			get {
+				for (int i = 0; i < Width; i++) {
+					if (board[0, i] == Item.None) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
 		/// <summary>
 		/// Creates a Board with the desired height and width.
 		/// </summary>
