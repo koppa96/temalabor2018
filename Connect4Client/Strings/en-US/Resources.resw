@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangePasswordButton.Content" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangePasswordTextBlock.Text" xml:space="preserve">
+    <value>Password management</value>
+  </data>
   <data name="ConfirmPasswordBox.PlaceholderText" xml:space="preserve">
     <value>Confirm Password</value>
   </data>
@@ -128,6 +134,12 @@
   </data>
   <data name="ErrorUserExists" xml:space="preserve">
     <value>A user with the given username already exists.</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="FailMessage" xml:space="preserve">
+    <value>The password change failed. You either didn't enter your old password correctly or the new passwords don't match.</value>
   </data>
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Home</value>
@@ -150,11 +162,17 @@
   <data name="MatchesItem.Content" xml:space="preserve">
     <value>Matches</value>
   </data>
+  <data name="NewPasswordBox.PlaceholderText" xml:space="preserve">
+    <value>New Password</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
+  </data>
+  <data name="OldPasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Old password</value>
   </data>
   <data name="PasswordBox.PlaceholderText" xml:space="preserve">
     <value>Password</value>
@@ -170,6 +188,12 @@
   </data>
   <data name="StatisticsItem.Content" xml:space="preserve">
     <value>Statistics</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="SuccessMessage" xml:space="preserve">
+    <value>Successfully changed password. From now on you may log in with your new password.</value>
   </data>
   <data name="UsernameTextBox.PlaceholderText" xml:space="preserve">
     <value>Username</value>

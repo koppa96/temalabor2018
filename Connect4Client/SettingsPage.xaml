@@ -8,7 +8,58 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            x:Uid="ChangePasswordTextBlock"
+            Grid.Row="0"
+            Grid.Column="1"
+            FontSize="20"
+            Margin="0 0 0 20"
+            HorizontalAlignment="Center" />
+
+        <PasswordBox
+            x:Name="OldPasswordBox"
+            x:Uid="OldPasswordBox"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="0 5 0 5" />
+
+        <PasswordBox
+            x:Name="NewPasswordBox"
+            x:Uid="NewPasswordBox"
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="0 5 0 5" />
+
+        <PasswordBox
+            x:Name="ConfirmNewPasswordBox"
+            x:Uid="ConfirmPasswordBox"
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="0 5 0 5" />
+
+        <Button
+            x:Name="ChangePasswordButton"
+            x:Uid="ChangePasswordButton"
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="0 5 0 5"
+            HorizontalAlignment="Center"
+            Width="250"
+            Click="ChangePasswordButton_OnClick" />
     </Grid>
 </Page>
