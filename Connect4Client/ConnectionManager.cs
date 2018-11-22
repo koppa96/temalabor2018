@@ -148,6 +148,7 @@ namespace Connect4Client
         
         public void MatchCreated(MatchDto match) {
             MatchRepository.Instance.AddItem(match);
+            LobbyRepository.Instance.AfterMatchStarted();
         }
 
         public void YouHaveBeenKicked() {

@@ -102,6 +102,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
+    <Compile Include="Converters\PlayerColorConverter.cs" />
     <Compile Include="DTOs\BoardData.cs" />
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="Converters\InvitedPlayerNotificationConverter.cs" />

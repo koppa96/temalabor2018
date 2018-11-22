@@ -88,10 +88,13 @@ namespace Connect4Client
             filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Untrusted);
             filter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.InvalidName);
 
-            HttpStringContent content = new HttpStringContent("pénisz");
+            HttpStringContent content = new HttpStringContent("");
 
             using (HttpClient client = new HttpClient(filter)) {
                 Uri uri = new Uri(url);
+                client.DefaultRequestHeaders.TryAppendWithoutValidation(
+                    "Authorization",
+                    "bearer " + App.Token);
                 HttpResponseMessage message = await client.PostAsync(uri, content);
 
                 if (message.IsSuccessStatusCode) {

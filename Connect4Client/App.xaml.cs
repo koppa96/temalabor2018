@@ -23,7 +23,7 @@ namespace Connect4Client
     sealed partial class App : Application
     {
         public static string Token { get; set; }
-        public static readonly string AppUrl = "https://koppa96.sch.bme.hu/Connect4Server";
+        public static readonly string AppUrl = "https://localhost:44301"; //"https://koppa96.sch.bme.hu/Connect4Server";
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().

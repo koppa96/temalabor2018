@@ -5,10 +5,17 @@
     xmlns:local="using:Connect4Client"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Connect4Client.Converters"
     xmlns:x1="using:Connect4Dtos"
     mc:Ignorable="d"
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <converters:PlayerColorConverter x:Key="PlayerColorConverter"/>
+        <converters:MatchStatusVisibilityConverter x:Key="MatchStatusVisibilityConverter"/>
+    </Page.Resources>
+    
     <Grid>
         <SplitView IsPaneOpen="True" DisplayMode="Inline">
             <SplitView.Pane>
@@ -21,12 +28,23 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="x1:MatchDto" x:Name="MatchDtoTemplate">
                             <StackPanel Orientation="Horizontal" Height="80">
-                                <Grid Width="30" Height="30">
-                                    
+                                <Grid Width="50" Height="50">
+                                    <Ellipse Fill="{x:Bind YourItem, Converter={StaticResource PlayerColorConverter}}" Stroke="Black" StrokeThickness="2"/>
                                 </Grid>
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
-                                    <TextBlock Text="{x:Bind MatchId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
-                                    <TextBlock Text="{x:Bind OtherPlayer}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,12,0">
+
+                                    <TextBlock Text="It's your turn!" Visibility="{x:Bind State, Converter={StaticResource MatchStatusVisibilityConverter}}" FontWeight="Bold" Foreground="DarkMagenta"/>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Match id:" Padding="0, 0, 6, 0"/>
+                                        <TextBlock Text="{x:Bind MatchId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Opponent:" Padding="0, 0, 6, 0"/>
+                                        <TextBlock Text="{x:Bind OtherPlayer}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontWeight="Bold"/>
+                                    </StackPanel>
+
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
@@ -37,11 +55,11 @@
                     </ListView.Footer>
                 </ListView>
             </SplitView.Pane>
-            <Grid Name="MatchPanel">
-                <Canvas Name="BoardCanvas" Width="500" Height="500">
-                            
+            <Viewbox Stretch="UniformToFill" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Canvas Name="BoardCanvas" Width="500" Height="500" Margin="10, 10, 10, 10">
                 </Canvas>
-            </Grid>
+
+            </Viewbox>
         </SplitView>
     </Grid>
 </Page>

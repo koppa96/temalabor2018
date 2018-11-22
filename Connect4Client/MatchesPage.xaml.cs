@@ -32,6 +32,12 @@ namespace Connect4Client {
         }
        
 
+
+        public MatchesPage() {
+            this.InitializeComponent();
+            MatchRepository.Instance.AddMatchPage(this);
+        }
+        
         private BoardData ParseToBoard(MatchDto match) {
             if(match == null) {
                 return null;
@@ -58,11 +64,6 @@ namespace Connect4Client {
             return board;
         }
 
-        public MatchesPage() {
-            this.InitializeComponent();
-            MatchRepository.Instance.AddMatchPage(this);
-        }
-        
         public void DrawBoard() {
             if(SelectedMatch == null) {
                 return;
@@ -74,21 +75,27 @@ namespace Connect4Client {
             int width_px = (int) BoardCanvas.ActualWidth;
             int heigt_px = (int) BoardCanvas.ActualHeight;
 
-            int radius = 20;
+            float dotSpaceRatio = 1.3f;
+            int radius = Math.Min(
+                (int)(BoardCanvas.ActualWidth / (board.Width * dotSpaceRatio)),
+                (int)(BoardCanvas.ActualHeight / (board.Height* dotSpaceRatio))
+            );
+            int distance = (int)(0.2f * radius);
 
             BoardCanvas.Children.Clear();
-
+            
             for(int i = 0; i < board.Width; i++) {
                 for (int j = 0; j < board.Height; j++) {
                     var ellipse = new Ellipse();
                     ellipse.Width = radius;
                     ellipse.Height = radius;
                     ellipse.Tag = i.ToString();
-                    ellipse.Stroke = new SolidColorBrush(Windows.UI.Colors.Black);
                     Item item = board.GetItemAt(j, i);
+                    ellipse.Stroke = new SolidColorBrush(item == Item.Red ? Windows.UI.Colors.DarkRed : item == Item.Yellow ? Windows.UI.Color.FromArgb(255, 153, 153, 0) : Windows.UI.Colors.Black);
                     ellipse.Fill = new SolidColorBrush(item == Item.Red ? Windows.UI.Colors.Red : item == Item.Yellow ? Windows.UI.Colors.Yellow : Windows.UI.Colors.Gray);
-                    Canvas.SetLeft(ellipse, i * (radius + 10));
-                    Canvas.SetTop(ellipse, j * (radius + 10));
+                    ellipse.StrokeThickness = item == Item.None ? 1 : radius * 0.15f;
+                    Canvas.SetLeft(ellipse, i * (radius + distance));
+                    Canvas.SetTop(ellipse, j * (radius + distance));
                     BoardCanvas.Children.Add(ellipse);
                     ellipse.PointerReleased += Ellipse_PointerReleased;
                 }
