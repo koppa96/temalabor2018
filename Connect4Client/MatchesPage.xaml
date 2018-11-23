@@ -8,12 +8,12 @@
     xmlns:converters="using:Connect4Client.Converters"
     xmlns:x1="using:Connect4Dtos"
     mc:Ignorable="d"
-    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
         <converters:PlayerColorConverter x:Key="PlayerColorConverter"/>
         <converters:MatchStatusVisibilityConverter x:Key="MatchStatusVisibilityConverter"/>
+        <converters:MatchStatusSymbolConverter x:Key="MatchStatusSymbolConverter"/>
     </Page.Resources>
     
     <Grid>
@@ -30,6 +30,7 @@
                             <StackPanel Orientation="Horizontal" Height="80">
                                 <Grid Width="50" Height="50">
                                     <Ellipse Fill="{x:Bind YourItem, Converter={StaticResource PlayerColorConverter}}" Stroke="Black" StrokeThickness="2"/>
+                                    <SymbolIcon Symbol="{x:Bind State, Converter={StaticResource MatchStatusSymbolConverter}}" />
                                 </Grid>
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,12,0">
 
@@ -39,7 +40,7 @@
                                         <TextBlock Text="Match id:" Padding="0, 0, 6, 0"/>
                                         <TextBlock Text="{x:Bind MatchId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" FontWeight="Bold"/>
                                     </StackPanel>
-                                    
+
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Opponent:" Padding="0, 0, 6, 0"/>
                                         <TextBlock Text="{x:Bind OtherPlayer}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontWeight="Bold"/>

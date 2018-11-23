@@ -19,7 +19,7 @@ namespace Connect4Client {
         public static LobbyRepository Instance { get; } = new LobbyRepository();
 
         private static object lockObject = new object();
-        private HomePage homePage;
+        private LobbyBrowserPage homePage;
         private LobbyPage lobbyPage;
         private ObservableCollection<LobbyData> lobbyList;
         public ObservableCollection<LobbyData> LobbyList { get { return lobbyList; } }
@@ -34,7 +34,7 @@ namespace Connect4Client {
             lobbyList = new ObservableCollection<LobbyData>(lobbies);
         }
 
-        public void AddHomePage(HomePage page) {
+        public void AddHomePage(LobbyBrowserPage page) {
             homePage = page;
         }
 
@@ -46,16 +46,18 @@ namespace Connect4Client {
             JoinedLobby = null;
         }
 
-        public void AfterMatchStarted() {
-            lobbyPage?.SuccessfulMatchStart();
-        }
-
 #pragma warning disable CS4014
         public void AddItem(LobbyData lobby) {
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 if(lobbyList.Count(x => lobby.LobbyId == x.LobbyId) == 0) {
                     lobbyList.Add(lobby);   
                 }
+            });
+        }
+
+        public void AfterMatchStarted() {
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                lobbyPage?.SuccessfulMatchStart();
             });
         }
         

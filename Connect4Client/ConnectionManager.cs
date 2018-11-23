@@ -41,11 +41,12 @@ namespace Connect4Client
             hubConnection.On("FailedToJoinLobby", () => ShowDialog("Failed to join lobby", "You cannot join this lobby as it is private and you are not invited."));
             //hubConnection.On("IncorrectMatchHandler", );
             hubConnection.On("ColumnFullHandler", () => ShowDialog("Failed to place item", "The selected column is full. Choose another column to place an item in."));
-            //hubConnection.On("MatchFinishedHandler", );
+            hubConnection.On("MatchFinishedHandler", () => ShowDialog("Match Over", "This match is already over and you can not make any more moves."));
             hubConnection.On("NotYourTurnHandler", () => ShowDialog("Failed to place item", "You can only place items on your turn."));
             hubConnection.On<MatchDto>("SuccessfulPlacement", SuccessfulPlacement);
             hubConnection.On<MatchDto>("SuccessfulEnemyPlacement", SuccessfulEnemyPlacement);
-            //hubConnection.On<int, int>("EnemyVictoryHandler", );
+            hubConnection.On<MatchDto>("EnemyVictoryHandler", EnemyVictoryHandler);
+            hubConnection.On<MatchDto>("VictoryHandler", VictoryHandler);
             hubConnection.On("GuestKicked", () => ShowDialog("Guest kicked", "Your guest has been kicked."));
             hubConnection.On("YouHaveBeenKicked", YouHaveBeenKicked);
             hubConnection.On("OnlyHostCanInvite", () => ShowDialog("Failed to invite player", "Only the host of the lobby can invite players."));
@@ -57,6 +58,7 @@ namespace Connect4Client
 
             await hubConnection.StartAsync();
         }
+
         internal void PlaceItem(int matchId, int column) {
             hubConnection.InvokeAsync("PlaceItem", matchId, column);
         }
@@ -121,6 +123,16 @@ namespace Connect4Client
         }
 
         // --- RMI Functions ---
+
+        private void VictoryHandler(MatchDto match) {
+            MatchRepository.Instance.RefreshMatch(match);
+            ShowDialog("Match Over", "Congratulations! You have won this match!");
+        }
+
+        private void EnemyVictoryHandler(MatchDto match) {
+            MatchRepository.Instance.RefreshMatch(match);
+            ShowDialog("Match Over", "Oh no! It seems like you have lost a match.");
+        }
 
         private void LobbyChanged(LobbyData lobby) {
             LobbyRepository.Instance.RefreshLobbySettings(lobby);

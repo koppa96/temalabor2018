@@ -102,6 +102,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
     <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
     <Compile Include="Converters\PlayerColorConverter.cs" />
     <Compile Include="DTOs\BoardData.cs" />
@@ -114,6 +115,9 @@
     <Compile Include="DTOs\NotifyingLobbyData.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LobbyBrowserPage.xaml.cs">
+      <DependentUpon>LobbyBrowserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="LobbyPage.xaml.cs">
       <DependentUpon>LobbyPage.xaml</DependentUpon>
@@ -166,6 +170,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LobbyBrowserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

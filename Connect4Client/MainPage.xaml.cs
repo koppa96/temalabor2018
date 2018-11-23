@@ -37,6 +37,7 @@ namespace Connect4Client
             this.InitializeComponent();
             pages = new Dictionary<string, Type> {
                 { "Home", typeof(HomePage) },
+                { "LobbyBrowserPage", typeof(LobbyBrowserPage) },
                 { "Matches", typeof(MatchesPage) },
                 { "Statistics", typeof(StatisticsPage) }
             };
@@ -54,7 +55,7 @@ namespace Connect4Client
             var invokedMenuItem = sender.MenuItems
                             .OfType<NavigationViewItem>()
                             .Where(item =>
-                                    item.Content.ToString() ==
+                                    item.Tag.ToString() ==
                                     args.InvokedItem.ToString())
                             .First();
             var pageTypeName = invokedMenuItem.Tag.ToString();
@@ -62,7 +63,7 @@ namespace Connect4Client
         }
 
         private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e) {
-            ContentFrame.Navigate(typeof(HomePage));
+            ContentFrame.Navigate(typeof(LobbyBrowserPage));
         }
 
         private async void Logout_Tapped(object sender, TappedRoutedEventArgs e) {
