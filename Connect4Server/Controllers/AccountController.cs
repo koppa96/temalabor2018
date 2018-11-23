@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Connect4Server.Data;
 using Connect4Server.Models.Account;
+using Connect4Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +23,8 @@ namespace Connect4Server.Controllers {
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager,
-                                 ILoggerFactory loggerFactory) {
+                                 ILoggerFactory loggerFactory,
+								 LobbyService lobbyService) {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger<AccountController>();

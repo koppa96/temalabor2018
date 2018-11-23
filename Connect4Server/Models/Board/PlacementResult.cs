@@ -5,6 +5,6 @@ using System.Threading.Tasks;
 
 namespace Connect4Server.Models.Board {
 	public enum PlacementResult {
-		ColumnFull, NotYourTurn, Success, Victory, MatchNotRunning
+		ColumnFull, NotYourTurn, Success, Victory, MatchNotRunning, Draw
 	}
 }

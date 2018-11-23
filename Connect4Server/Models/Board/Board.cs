@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Connect4Dtos;
 
 namespace Connect4Server.Models.Board {
 	/// <summary>
@@ -13,6 +14,18 @@ namespace Connect4Server.Models.Board {
 
 		public int Width { get; private set; }
 		public int Height { get; private set; }
+
+		public bool Full {
+			get {
+				for (int i = 0; i < Width; i++) {
+					if (board[0, i] == Item.None) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
 
 		/// <summary>
 		/// Creates a Board with the desired height and width.
@@ -179,7 +192,7 @@ namespace Connect4Server.Models.Board {
 		/// </summary>
 		/// <returns>The serialized board</returns>
 		public override string ToString() {
-			StringBuilder builder = new StringBuilder(Width.ToString() + " " + Height.ToString() + " ");
+			StringBuilder builder = new StringBuilder(Width + " " + Height + " ");
 			for (int i = 0; i < Height; i++) {
 				for (int j = 0; j < Width; j++) {
 					switch (board[i, j]) {
@@ -212,7 +225,7 @@ namespace Connect4Server.Models.Board {
 
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < width; j++) {
-					switch (elements[width * i + height + 2]) {
+					switch (elements[width * i + j + 2]) {
 						case "0":
 							newBoard.board[i, j] = Item.None;
 							break;

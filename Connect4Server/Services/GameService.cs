@@ -26,7 +26,7 @@ namespace Connect4Server.Services {
 			Match match = new Match {
 				Player1 = player1,
 				Player2 = player2,
-				State = "Player1Moves",
+				State = MatchState.Player1Moves,
 				BoardData = new Board(width, height).ToString()
 			};
 
@@ -42,29 +42,38 @@ namespace Connect4Server.Services {
 						   select m;
 
 			List<MatchDto> dtos = new List<MatchDto>();
+
 			foreach (Match m in qMatches) {
+				bool isPlayer1 = m.Player1.UserName == user;
+				bool isPlayer2 = m.Player2.UserName == user;
+
 				MatchDto dto = new MatchDto {
 					MatchId = m.MatchId,
-					OtherPlayer = m.Player1.UserName == user ? m.Player2.UserName : m.Player1.UserName,
-					BoardData = m.BoardData
+					OtherPlayer = isPlayer1 ? m.Player2.UserName : m.Player1.UserName,
+					BoardData = m.BoardData,
+					YourItem = isPlayer1 ? Item.Red : Item.Yellow
 				};
 
-				switch (m.State) {
-					case "Player1Moves":
-						dto.State = user == m.Player1.UserName ? "YourTurn" : "EnemyTurn";
-						break;
-					case "Player2Moves":
-						dto.State = user == m.Player2.UserName ? "YourTurn" : "EnemyTurn";
-						break;
-					case "Player1Won":
-						dto.State = user == m.Player1.UserName ? "YouWon" : "YouLost";
-						break;
-					case "Player2Won":
-						dto.State = user == m.Player2.UserName ? "YouWon" : "YouLost";
-						break;
-					default:
-						dto.State = "Unavailable";
-						break;
+				if (!isPlayer1 && !isPlayer2) {
+					dto.State = GameState.NotYourMatch;
+				} else {
+					switch (m.State) {
+						case MatchState.Player1Moves:
+							dto.State = isPlayer1 ? GameState.YourTurn : GameState.EnemyTurn;
+							break;
+						case MatchState.Player2Moves:
+							dto.State = isPlayer2 ? GameState.YourTurn : GameState.EnemyTurn;
+							break;
+						case MatchState.Player1Won:
+							dto.State = isPlayer1 ? GameState.YouWon : GameState.EnemyWon;
+							break;
+						case MatchState.Player2Won:
+							dto.State = isPlayer2 ? GameState.YouWon : GameState.EnemyWon;
+							break;
+						case MatchState.Draw:
+							dto.State = GameState.Draw;
+							break;
+					}
 				}
 
 				dtos.Add(dto);
@@ -84,19 +93,63 @@ namespace Connect4Server.Services {
 		}
 
 		public Match GetMatchById(int id) {
-			return _context.Matches.SingleOrDefault(m => m.MatchId == id);
+			return _context.Matches.Include("Player1")
+								   .Include("Player2")
+								   .SingleOrDefault(m => m.MatchId == id);
+		}
+
+		public MatchDto GetMatchDtoFor(int id, string user) {
+			Match match = GetMatchById(id);
+
+			if (match == null) {
+				throw new ArgumentException("Invalid match identifier");
+			}
+
+			bool isPlayer1 = match.Player1.UserName == user;
+			bool isPlayer2 = match.Player2.UserName == user;
+
+			MatchDto dto = new MatchDto {
+				MatchId = match.MatchId,
+				OtherPlayer = isPlayer1 ? match.Player2.UserName : match.Player1.UserName,
+				BoardData = match.BoardData,
+				YourItem = isPlayer1 ? Item.Red : Item.Yellow
+			};
+
+			if (!isPlayer1 && !isPlayer2) {
+				dto.State = GameState.NotYourMatch;
+			} else {
+				switch (match.State) {
+					case MatchState.Player1Moves:
+						dto.State = isPlayer1 ? GameState.YourTurn : GameState.EnemyTurn;
+						break;
+					case MatchState.Player2Moves:
+						dto.State = isPlayer2 ? GameState.YourTurn : GameState.EnemyTurn;
+						break;
+					case MatchState.Player1Won:
+						dto.State = isPlayer1 ? GameState.YouWon : GameState.EnemyWon;
+						break;
+					case MatchState.Player2Won:
+						dto.State = isPlayer2 ? GameState.YouWon : GameState.EnemyWon;
+						break;
+					case MatchState.Draw:
+						dto.State = GameState.Draw;
+						break;
+				}
+			}
+
+			return dto;
 		}
 
 		public PlacementResult PlaceItemToColumn(int matchId, int column, string player) {
 			Match match = GetMatchById(matchId);
 			bool isPlayerOne = player == match.Player1.UserName;
 
-			if (match.State == "Player1Won" || match.State == "Player2Won") {
+			if (match.State == MatchState.Player1Won || match.State == MatchState.Player2Won) {
 				return PlacementResult.MatchNotRunning;
 			}
 
-			if (isPlayerOne && match.State == "Player2Moves" ||
-			    !isPlayerOne && match.State == "Player1Moves") {
+			if (isPlayerOne && match.State == MatchState.Player2Moves ||
+			    !isPlayerOne && match.State == MatchState.Player1Moves) {
 				return PlacementResult.NotYourTurn;
 			}
 
@@ -106,13 +159,20 @@ namespace Connect4Server.Services {
 				match.BoardData = board.ToString();
 
 				if (board.CheckWinner() == item) {
-					match.State = isPlayerOne ? "Player1Won" : "Player2Won";
+					match.State = isPlayerOne ? MatchState.Player1Won : MatchState.Player2Won;
 
 					_context.SaveChanges();
 					return PlacementResult.Victory;
 				}
 
-				match.State = isPlayerOne ? "Player2Moves" : "Player1Moves";
+				if (board.Full) {
+					match.State = MatchState.Draw;
+
+					_context.SaveChanges();
+					return PlacementResult.Draw;
+				}
+
+				match.State = isPlayerOne ? MatchState.Player2Moves : MatchState.Player1Moves;
 				_context.SaveChanges();
 				return PlacementResult.Success;
 			}

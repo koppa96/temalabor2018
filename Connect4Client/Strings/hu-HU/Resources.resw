@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangePasswordButton.Content" xml:space="preserve">
+    <value>Jelszó megváltoztatása</value>
+  </data>
+  <data name="ChangePasswordTextBlock.Text" xml:space="preserve">
+    <value>Jelszókezelés</value>
+  </data>
   <data name="ConfirmPasswordBox.PlaceholderText" xml:space="preserve">
     <value>Jelszó megerősítése</value>
   </data>
@@ -128,6 +134,12 @@
   </data>
   <data name="ErrorUserExists" xml:space="preserve">
     <value>Már létezik felhasználó az adott felhasználónévvel.</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>Hiba</value>
+  </data>
+  <data name="FailMessage" xml:space="preserve">
+    <value>A jelszóváltoztatás sikertelen. Vagy elírtad a régi jelszavad, vagy pedig nem egyezik meg a két új jelszó.</value>
   </data>
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Kezdőoldal</value>
@@ -150,11 +162,17 @@
   <data name="MatchesItem.Content" xml:space="preserve">
     <value>Meccsek</value>
   </data>
+  <data name="NewPasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Új jelszó</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>Nem</value>
   </data>
   <data name="Ok" xml:space="preserve">
     <value>Oké Tehát</value>
+  </data>
+  <data name="OldPasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Régi jelszó</value>
   </data>
   <data name="PasswordBox.PlaceholderText" xml:space="preserve">
     <value>Jelszó</value>
@@ -170,6 +188,12 @@
   </data>
   <data name="StatisticsItem.Content" xml:space="preserve">
     <value>Statisztikák</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Siker</value>
+  </data>
+  <data name="SuccessMessage" xml:space="preserve">
+    <value>A jelszóváltoztatás sikeres. Mostantól az új jelszavadddal tudsz bejelentkezni.</value>
   </data>
   <data name="UsernameTextBox.PlaceholderText" xml:space="preserve">
     <value>Felhasználónév</value>
