@@ -144,6 +144,9 @@
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Kezdőoldal</value>
   </data>
+  <data name="LobbyItem.Content" xml:space="preserve">
+    <value>Lobbik</value>
+  </data>
   <data name="LoginButton.Content" xml:space="preserve">
     <value>Bejelentkezés</value>
   </data>
