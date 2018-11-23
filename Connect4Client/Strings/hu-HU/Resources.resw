@@ -144,8 +144,14 @@
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Kezdőoldal</value>
   </data>
+  <data name="HomeItemContent" xml:space="preserve">
+    <value>Kezdőoldal</value>
+  </data>
   <data name="LobbyItem.Content" xml:space="preserve">
-    <value>Lobbik</value>
+    <value>Szobák</value>
+  </data>
+  <data name="LobbyItemContent" xml:space="preserve">
+    <value>Szobák</value>
   </data>
   <data name="LoginButton.Content" xml:space="preserve">
     <value>Bejelentkezés</value>
@@ -163,6 +169,9 @@
     <value>Kijelentkezés</value>
   </data>
   <data name="MatchesItem.Content" xml:space="preserve">
+    <value>Meccsek</value>
+  </data>
+  <data name="MatchesItemContent" xml:space="preserve">
     <value>Meccsek</value>
   </data>
   <data name="NewPasswordBox.PlaceholderText" xml:space="preserve">
@@ -190,6 +199,9 @@
     <value>A regisztrációhoz kattints ide</value>
   </data>
   <data name="StatisticsItem.Content" xml:space="preserve">
+    <value>Statisztikák</value>
+  </data>
+  <data name="StatisticsItemContent" xml:space="preserve">
     <value>Statisztikák</value>
   </data>
   <data name="Success" xml:space="preserve">
