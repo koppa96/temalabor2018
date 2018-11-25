@@ -34,15 +34,15 @@ namespace Connect4Client
 
         public MainPage()
         {
-            this.InitializeComponent();
-            pages = new Dictionary<string, Type> {
-                { "Home", typeof(HomePage) },
-                { "LobbyBrowserPage", typeof(LobbyBrowserPage) },
-                { "Matches", typeof(MatchesPage) },
-                { "Statistics", typeof(StatisticsPage) }
-            };
-            resourceLoader = ResourceLoader.GetForViewIndependentUse();
+	        resourceLoader = ResourceLoader.GetForViewIndependentUse();
+			this.InitializeComponent();
 
+	        pages = new Dictionary<string, Type>();
+	        
+			pages.Add(resourceLoader.GetString("HomeItemContent"), typeof(HomePage));
+			pages.Add(resourceLoader.GetString("LobbyItemContent"), typeof(LobbyBrowserPage));
+			pages.Add(resourceLoader.GetString("MatchesItemContent"), typeof(MatchesPage));
+			pages.Add(resourceLoader.GetString("StatisticsItemContent"), typeof(StatisticsPage));
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
@@ -51,15 +51,9 @@ namespace Connect4Client
                 ContentFrame.Navigate(typeof(SettingsPage));
                 return;
             }
+
             string menuName = (string)args.InvokedItem;
-            var invokedMenuItem = sender.MenuItems
-                            .OfType<NavigationViewItem>()
-                            .Where(item =>
-                                    item.Tag.ToString() ==
-                                    args.InvokedItem.ToString())
-                            .First();
-            var pageTypeName = invokedMenuItem.Tag.ToString();
-            ContentFrame.Navigate(pages[pageTypeName]);
+            ContentFrame.Navigate(pages[menuName]);
         }
 
         private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e) {
