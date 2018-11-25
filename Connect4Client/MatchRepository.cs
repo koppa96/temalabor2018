@@ -34,7 +34,7 @@ namespace Connect4Client {
 
         public void RefreshMatch(MatchDto match) {
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                int MatchId = SelectedMatch.MatchId;
+                int MatchId = SelectedMatch?.MatchId ?? -1;
 
                 MatchDto matchInList = MatchList.SingleOrDefault(x => x.MatchId == match.MatchId);
                 int indexInList = MatchList.IndexOf(matchInList);

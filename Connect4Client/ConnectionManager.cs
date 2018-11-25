@@ -42,6 +42,7 @@ namespace Connect4Client
             //hubConnection.On("IncorrectMatchHandler", );
             hubConnection.On("ColumnFullHandler", () => ShowDialog("Failed to place item", "The selected column is full. Choose another column to place an item in."));
             hubConnection.On("MatchFinishedHandler", () => ShowDialog("Match Over", "This match is already over and you can not make any more moves."));
+            hubConnection.On<MatchDto>("DrawHandler", DrawHandler);
             hubConnection.On("NotYourTurnHandler", () => ShowDialog("Failed to place item", "You can only place items on your turn."));
             hubConnection.On<MatchDto>("SuccessfulPlacement", SuccessfulPlacement);
             hubConnection.On<MatchDto>("SuccessfulEnemyPlacement", SuccessfulEnemyPlacement);
@@ -195,6 +196,12 @@ namespace Connect4Client
 
         private void SuccessfulEnemyPlacement(MatchDto match) {
             MatchRepository.Instance.RefreshMatch(match);
+        }
+
+        private void DrawHandler(MatchDto match)
+        {
+            MatchRepository.Instance.RefreshMatch(match);
+            ShowDialog("Match Over", "One of your matches has ended in a draw.");
         }
 
     }
