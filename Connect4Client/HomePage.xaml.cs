@@ -1,7 +1,5 @@
-﻿using Connect4Client.DTOs;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,20 +20,8 @@ namespace Connect4Client {
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class HomePage : Page {
-
-        private ObservableCollection<LobbyData> _lobbies;
-        private ObservableCollection<LobbyData> Lobbies { get { return _lobbies; } }
-        private LobbyData selectedLobby;
-
         public HomePage() {
             this.InitializeComponent();
-            _lobbies = new ObservableCollection<LobbyData>();
-            _lobbies.Add(new LobbyData { Id = 213, Leader = "Maca", Open = true , InvitedPlayers = { "Laca", "Papa" } });
-            _lobbies.Add(new LobbyData { Id = 45, Leader = "RandomUser#123", Open = true });
-            _lobbies.Add(new LobbyData { Id = 2052, Leader = "PrivacyFan", Open = false, InvitedPlayers = {"Maca2" }});
-            _lobbies.Add(new LobbyData { Id = 21893, Leader = "Maca2", Open = true });
-
         }
-        
     }
 }

@@ -102,14 +102,27 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
+    <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
+    <Compile Include="Converters\PlayerColorConverter.cs" />
+    <Compile Include="DTOs\BoardData.cs" />
+    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="Converters\InvitedPlayerNotificationConverter.cs" />
     <Compile Include="Converters\InvitedPlayersConverter.cs" />
     <Compile Include="Converters\LobbyStatusConverter.cs" />
-    <Compile Include="DTOs\BoardData.cs" />
-    <Compile Include="DTOs\Item.cs" />
-    <Compile Include="DTOs\LobbyData.cs" />
+    <Compile Include="Converters\SelectedLobbyVisibilityConverter.cs" />
+    <Compile Include="Converters\StatusToRadioConverter.cs" />
+    <Compile Include="DTOs\NotifyingLobbyData.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LobbyBrowserPage.xaml.cs">
+      <DependentUpon>LobbyBrowserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LobbyPage.xaml.cs">
+      <DependentUpon>LobbyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LobbyRepository.cs" />
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -119,6 +132,7 @@
     <Compile Include="MatchesPage.xaml.cs">
       <DependentUpon>MatchesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MatchRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
@@ -159,6 +173,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="LobbyBrowserPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LobbyPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,7 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
-      <Version>1.0.4</Version>
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.7</Version>
@@ -194,6 +216,18 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>
     </PackageReference>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
+      <Version>4.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks.Extensions">
+      <Version>4.5.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Connect4Dtos\Connect4Dtos.csproj">
+      <Project>{1064a424-aece-423c-a925-1638db6dd596}</Project>
+      <Name>Connect4Dtos</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

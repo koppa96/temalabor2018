@@ -144,6 +144,9 @@
   <data name="HomeItem.Content" xml:space="preserve">
     <value>Kezdőoldal</value>
   </data>
+  <data name="LobbyItem.Content" xml:space="preserve">
+    <value>Lobbik</value>
+  </data>
   <data name="LoginButton.Content" xml:space="preserve">
     <value>Bejelentkezés</value>
   </data>
@@ -169,7 +172,10 @@
     <value>Nem</value>
   </data>
   <data name="Ok" xml:space="preserve">
-    <value>Oké Tehát</value>
+    <value>Igen</value>
+  </data>
+  <data name="OldPasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Régi jelszó</value>
   </data>
   <data name="OldPasswordBox.PlaceholderText" xml:space="preserve">
     <value>Régi jelszó</value>

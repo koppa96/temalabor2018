@@ -1,22 +1,22 @@
-﻿using System;
+﻿using Connect4Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Data;
-using System.Diagnostics;
 using Windows.UI.Xaml;
-using Connect4Dtos;
+using Windows.UI.Xaml.Data;
 
-namespace Connect4Client.Converters {
-    public class LobbyStatusConverter : IValueConverter {
+namespace Connect4Client.Converters
+{
+    class SelectedLobbyVisibilityConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, string language) {
-            LobbyStatus? v = value as LobbyStatus?;
-            if(v.Value == LobbyStatus.Public) {
+            var selectedItem = value as int?;
+            if((selectedItem == null) || (selectedItem.Value == -1) ){
                 return Visibility.Collapsed;
             }
             return Visibility.Visible;
-            
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

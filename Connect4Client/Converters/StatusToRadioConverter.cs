@@ -1,22 +1,19 @@
-﻿using System;
+﻿using Connect4Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
-using System.Diagnostics;
-using Windows.UI.Xaml;
-using Connect4Dtos;
 
 namespace Connect4Client.Converters {
-    public class LobbyStatusConverter : IValueConverter {
+    class StatusToRadioConverter : IValueConverter{
         public object Convert(object value, Type targetType, object parameter, string language) {
-            LobbyStatus? v = value as LobbyStatus?;
-            if(v.Value == LobbyStatus.Public) {
-                return Visibility.Collapsed;
+            var status = value as LobbyStatus?;
+            if((status == null) || (status.Value == LobbyStatus.Public)) {
+                return false;
             }
-            return Visibility.Visible;
-            
+            return true;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {
