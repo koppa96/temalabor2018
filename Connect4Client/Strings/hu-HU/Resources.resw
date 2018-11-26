@@ -132,6 +132,12 @@
   <data name="Error" xml:space="preserve">
     <value>Hiba</value>
   </data>
+  <data name="ErrorDuplicateEmail" xml:space="preserve">
+    <value>Az általad megadott e-mail címmel már van regisztrálva fiók.</value>
+  </data>
+  <data name="ErrorPasswordsNotMatching" xml:space="preserve">
+    <value>Nem egyezik a két általad megadott jelszó.</value>
+  </data>
   <data name="ErrorUserExists" xml:space="preserve">
     <value>Már létezik felhasználó az adott felhasználónévvel.</value>
   </data>
@@ -182,9 +188,6 @@
   </data>
   <data name="Ok" xml:space="preserve">
     <value>Igen</value>
-  </data>
-  <data name="OldPasswordBox.PlaceholderText" xml:space="preserve">
-    <value>Régi jelszó</value>
   </data>
   <data name="OldPasswordBox.PlaceholderText" xml:space="preserve">
     <value>Régi jelszó</value>

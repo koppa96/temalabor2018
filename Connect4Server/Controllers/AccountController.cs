@@ -102,6 +102,10 @@ namespace Connect4Server.Controllers {
 
                     return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
                 }
+
+                if (result.Errors.Count(e => e.Code == "DuplicateEmail") == 1) {
+                    return BadRequest("ErrorDuplicateEmail");
+                }
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError);

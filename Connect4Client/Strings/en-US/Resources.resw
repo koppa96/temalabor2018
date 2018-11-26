@@ -132,6 +132,12 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="ErrorDuplicateEmail" xml:space="preserve">
+    <value>An account with your given e-mail address already exists.</value>
+  </data>
+  <data name="ErrorPasswordsNotMatching" xml:space="preserve">
+    <value>The passwords you've entered do not match.</value>
+  </data>
   <data name="ErrorUserExists" xml:space="preserve">
     <value>A user with the given username already exists.</value>
   </data>
