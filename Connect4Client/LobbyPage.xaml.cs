@@ -44,11 +44,6 @@ namespace Connect4Client
             this.Frame.GoBack();
         }
 
-
-        private void Button_Click_1(object sender, RoutedEventArgs e) {
-            ;
-        }
-
         private void StartButton_Click(object sender, RoutedEventArgs e) {
             ConnectionManager.Instance.StartMatch(JoinedLobby.InnerLobby);
         }
