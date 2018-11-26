@@ -23,5 +23,35 @@ namespace Connect4Client {
         public HomePage() {
             this.InitializeComponent();
         }
+
+        private void LobbyButton_Click(object sender, RoutedEventArgs e) {
+            this.Frame.Navigate(typeof(LobbyBrowserPage));
+        }
+
+        private void SoloButton_Click(object sender, RoutedEventArgs e) {
+            if (SoloBtn.IsChecked.Value) {
+                ConnectionManager.Instance.JoinSoloQueue();
+                SoloTxt.Text = "You are now queued. You'll leave the queue on leaving this page.";
+            }
+            else {
+                ConnectionManager.Instance.LeaveSoloQueue();
+                SoloTxt.Text = "Click here to queue into a match";
+            }
+        }
+
+        private void MatchButton_Click(object sender, RoutedEventArgs e) {
+            this.Frame.Navigate(typeof(MatchesPage));
+        }
+
+        private void StatsButton_Click(object sender, RoutedEventArgs e) {
+            this.Frame.Navigate(typeof(StatisticsPage));
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
+            if (SoloBtn.IsChecked.Value) {
+                ConnectionManager.Instance.LeaveSoloQueue();
+            }
+            base.OnNavigatingFrom(e);
+        }
     }
 }

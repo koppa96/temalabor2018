@@ -57,7 +57,7 @@ namespace Connect4Client
         }
 
         private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e) {
-            ContentFrame.Navigate(typeof(LobbyBrowserPage));
+            ContentFrame.Navigate(typeof(HomePage));
         }
 
         private async void Logout_Tapped(object sender, TappedRoutedEventArgs e) {

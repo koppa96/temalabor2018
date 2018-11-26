@@ -8,7 +8,63 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <TextBlock Text="Hello, Wordl!"/>
+    <Grid Padding="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        
+        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="0" Grid.ColumnSpan="4" TextAlignment="Center" VerticalAlignment="Center">
+            Welcome to our simple <Bold>Connect Four</Bold> game!
+        </TextBlock>
+
+        <Button BorderBrush="DarkBlue" BorderThickness="3" Background="LightBlue" Grid.Row="1" Grid.Column="0" Margin="16" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="LobbyButton_Click">
+            <StackPanel>
+                <TextBlock Text="Lobbies" FontWeight="Bold"/>
+                <TextBlock Text="Click here to go to the lobby page" TextWrapping="WrapWholeWords"/>
+            </StackPanel>
+        </Button>
+
+        <ToggleButton Name="SoloBtn" BorderBrush="DarkGreen"  BorderThickness="3" Background="LightGreen" Grid.Row="1" Grid.Column="1" Margin="16" Padding="16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="SoloButton_Click">
+            <StackPanel>
+                <TextBlock Text="Solo" FontWeight="Bold"/>
+                <TextBlock Name="SoloTxt" Text="Click here to queue into a match" TextWrapping="WrapWholeWords"/>
+            </StackPanel>
+        </ToggleButton>
+
+        <Button BorderBrush="DarkRed" BorderThickness="3" Background="LightPink" Grid.Row="1" Grid.Column="2" Margin="16" Padding="16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="MatchButton_Click">
+            <StackPanel>
+                <TextBlock Text="Matches" FontWeight="Bold"/>
+                <TextBlock Text="Click here to view your matches" TextWrapping="WrapWholeWords"/>
+            </StackPanel>
+        </Button>
+
+        <Button BorderBrush="DarkGoldenrod" BorderThickness="3" Background="LightGoldenrodYellow" Grid.Row="1" Grid.Column="3" Margin="16" Padding="16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="StatsButton_Click">
+            <StackPanel>
+                <TextBlock Text="Statistics" FontWeight="Bold"/>
+                <TextBlock Text="Click here to view your statistics" TextWrapping="WrapWholeWords"/>
+            </StackPanel>
+        </Button>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="4" Padding="16" Margin="16">
+
+            <TextBlock Text="This is a simple online Connect Four table game. To start a new match you can:" Style="{StaticResource SubtitleTextBlockStyle}"/>
+            <TextBlock Text="• queue up solo and get matched with a random player"  Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
+            <TextBlock Text="• create your own lobby and invite your friends" Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
+            <TextBlock Text="• browse the lobbies of other players" Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
+
+            <TextBlock Text="After starting a match you can also:" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0, 32, 0, 0"/>
+            <TextBlock Text="• interact with your matches in progress"  Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
+            <TextBlock Text="• view the results of your past matches" Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
+            <TextBlock Text="• check out your overall statistics and ranking" Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
+        </StackPanel>
     </Grid>
 </Page>

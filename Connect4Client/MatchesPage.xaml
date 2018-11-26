@@ -22,7 +22,7 @@
                 <ListView x:Name="MatchList" ItemsSource="{x:Bind Matches}" SelectedItem="{x:Bind SelectedMatch, Mode=TwoWay}">
                     <ListView.Header>
                         <Border Height="48" Background="LightBlue" CornerRadius="16">
-                            <TextBlock Text="Currently running matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+                            <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
                         </Border>
                     </ListView.Header>
                     <ListView.ItemTemplate>

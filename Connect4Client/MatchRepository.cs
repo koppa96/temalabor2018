@@ -22,7 +22,7 @@ namespace Connect4Client {
         private MatchRepository(){}
 
         public void LoadItems(ICollection<MatchDto> matches) {
-            matchList = new ObservableCollection<MatchDto>(matches);
+            matchList = new ObservableCollection<MatchDto>(matches.OrderBy(x => x.State));
         }
 
 #pragma warning disable CS4014

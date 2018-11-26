@@ -60,6 +60,14 @@ namespace Connect4Client
             await hubConnection.StartAsync();
         }
 
+        internal void JoinSoloQueue() {
+            hubConnection.InvokeAsync("JoinSoloQueueAsync");
+        }
+
+        internal void LeaveSoloQueue() {
+            hubConnection.InvokeAsync("LeaveSoloQueue");
+        }
+
         internal void PlaceItem(int matchId, int column) {
             hubConnection.InvokeAsync("PlaceItem", matchId, column);
         }
