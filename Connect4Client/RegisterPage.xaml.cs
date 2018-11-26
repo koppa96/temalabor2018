@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -58,7 +59,7 @@ namespace Connect4Client {
                 if (responseMessage.StatusCode == HttpStatusCode.Ok) {
                     App.Token = await responseMessage.Content.ReadAsStringAsync();
 
-                    OnSuccessfulRegister();
+                    await OnSuccessfulRegister();
                     loadingDialog.Hide();
                 } else {
                     var resourceLoader = ResourceLoader.GetForViewIndependentUse();
@@ -75,7 +76,13 @@ namespace Connect4Client {
             }
         }
 
-        private void OnSuccessfulRegister() {
+        private async Task OnSuccessfulRegister() {
+            await ConnectionManager.Instance.CreateConnection();
+            var lobbyList = await ConnectionManager.Instance.GetLobbies();
+            var matchList = await ConnectionManager.Instance.GetMatches();
+            LobbyRepository.Instance.LoadItems(lobbyList);
+            MatchRepository.Instance.LoadItems(matchList);
+            ConnectionManager.Instance.UserName = tbUsername.Text;
             Frame.Navigate(typeof(MainPage));
         }
 
