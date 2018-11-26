@@ -106,6 +106,12 @@ namespace Connect4Server.Controllers {
                 if (result.Errors.Count(e => e.Code == "DuplicateEmail") == 1) {
                     return BadRequest("ErrorDuplicateEmail");
                 }
+
+                if (result.Errors.Count(e =>
+                        e.Code == "PasswordTooShort" || e.Code == "PasswordRequiresDigit" ||
+                        e.Code == "PasswordRequiresUpper") > 0) {
+                    return BadRequest("ErrorPasswordIncorrect");
+                }
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError);

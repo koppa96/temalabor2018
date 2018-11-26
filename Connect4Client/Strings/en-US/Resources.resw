@@ -135,6 +135,9 @@
   <data name="ErrorDuplicateEmail" xml:space="preserve">
     <value>An account with your given e-mail address already exists.</value>
   </data>
+  <data name="ErrorPasswordIncorrect" xml:space="preserve">
+    <value>Your password must be at least 6 characters long and contain upper and lower case characters and at least one digit.</value>
+  </data>
   <data name="ErrorPasswordsNotMatching" xml:space="preserve">
     <value>The passwords you've entered do not match.</value>
   </data>

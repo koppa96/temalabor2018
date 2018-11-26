@@ -135,6 +135,9 @@
   <data name="ErrorDuplicateEmail" xml:space="preserve">
     <value>Az általad megadott e-mail címmel már van regisztrálva fiók.</value>
   </data>
+  <data name="ErrorPasswordIncorrect" xml:space="preserve">
+    <value>Nem megfelelő jelszóformátum. A jelszónak legalább 6 karakter hosszúnak kell lennie, és tartalmaznia kell legalább egy kisbetűt, nagybetűt és számot.</value>
+  </data>
   <data name="ErrorPasswordsNotMatching" xml:space="preserve">
     <value>Nem egyezik a két általad megadott jelszó.</value>
   </data>
