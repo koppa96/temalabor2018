@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Connect4Server.Data;
+using Connect4.DAL.Entities;
 using Connect4Server.Models.Account;
 using Connect4Server.Services;
 using Microsoft.AspNetCore.Authorization;

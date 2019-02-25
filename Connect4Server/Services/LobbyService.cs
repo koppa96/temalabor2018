@@ -1,5 +1,4 @@
-﻿using Connect4Server.Data;
-using Connect4Server.Models.Lobby;
+﻿using Connect4Server.Models.Lobby;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

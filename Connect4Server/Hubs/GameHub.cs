@@ -1,5 +1,4 @@
-﻿using Connect4Server.Data;
-using Connect4Server.Models.Board;
+﻿using Connect4Server.Models.Board;
 using Connect4Server.Models.Lobby;
 using Connect4Server.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Connect4.DAL.Entities;
 using Connect4Dtos;
 using Microsoft.Extensions.Logging;
 

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Connect4.DAL\Connect4.DAL.csproj" />
     <ProjectReference Include="..\Connect4Dtos\Connect4Dtos.csproj" />
   </ItemGroup>
 

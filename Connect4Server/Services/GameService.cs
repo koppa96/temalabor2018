@@ -1,14 +1,14 @@
-﻿using Connect4Server.Data;
-using Connect4Server.Models.Board;
+﻿using Connect4Server.Models.Board;
 using Connect4Server.Models.Lobby;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Connect4.DAL;
+using Connect4.DAL.Entities;
 using Connect4Dtos;
 using Microsoft.EntityFrameworkCore;
-using Match = Connect4Server.Data.Match;
 
 namespace Connect4Server.Services {
 	public class GameService {
@@ -27,7 +27,8 @@ namespace Connect4Server.Services {
 				Player1 = player1,
 				Player2 = player2,
 				State = MatchState.Player1Moves,
-				BoardData = new Board(width, height).ToString()
+                //TODO Change match creation
+				Board = new SerializedConnect4Board() //new Board(width, height).ToString()
 			};
 
 			_context.Matches.Add(match);
@@ -50,7 +51,7 @@ namespace Connect4Server.Services {
 				MatchDto dto = new MatchDto {
 					MatchId = m.MatchId,
 					OtherPlayer = isPlayer1 ? m.Player2.UserName : m.Player1.UserName,
-					BoardData = m.BoardData,
+					BoardData = m.Board.BoardData,
 					YourItem = isPlayer1 ? Item.Red : Item.Yellow
 				};
 
@@ -111,7 +112,7 @@ namespace Connect4Server.Services {
 			MatchDto dto = new MatchDto {
 				MatchId = match.MatchId,
 				OtherPlayer = isPlayer1 ? match.Player2.UserName : match.Player1.UserName,
-				BoardData = match.BoardData,
+				BoardData = match.Board.BoardData,
 				YourItem = isPlayer1 ? Item.Red : Item.Yellow
 			};
 
@@ -153,10 +154,10 @@ namespace Connect4Server.Services {
 				return PlacementResult.NotYourTurn;
 			}
 
-			Board board = Board.Parse(match.BoardData);
+			Board board = Board.Parse(match.Board.BoardData);
 			Item item = isPlayerOne ? Item.Red : Item.Yellow;
 			if (board.PutItemToColumn(item, column)) {
-				match.BoardData = board.ToString();
+				match.Board.BoardData = board.ToString();
 
 				if (board.CheckWinner() == item) {
 					match.State = isPlayerOne ? MatchState.Player1Won : MatchState.Player2Won;
