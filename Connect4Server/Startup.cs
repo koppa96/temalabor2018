@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Connect4.DAL;
-using Connect4.DAL.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Connect4Server.Hubs;
 using Connect4Server.Services;
 using Microsoft.AspNetCore.SignalR;
+using Connect4.DAL;
+using Connect4.DAL.Entities;
+using System.Text;
 
 namespace Connect4Server
 {
@@ -63,9 +63,13 @@ namespace Connect4Server
                 };
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSignalR();
+            services.AddSignalR()
+                .AddNewtonsoftJsonProtocol(protocol =>
+                {
+                    protocol.PayloadSerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
+                });
 
 			services.AddSingleton<LobbyService>();
 			services.AddSingleton<SoloQueueService>();
