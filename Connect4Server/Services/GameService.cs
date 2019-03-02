@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Connect4.DAL;
-using Connect4.DAL.Entities;
+using Connect4.Entities;
 using Connect4Dtos;
 using Microsoft.EntityFrameworkCore;
 

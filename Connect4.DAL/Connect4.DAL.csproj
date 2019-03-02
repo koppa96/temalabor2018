@@ -14,4 +14,9 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.0.0-preview-18579-0056" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Connect4.Abstractions\Connect4.Abstractions.csproj" />
+    <ProjectReference Include="..\Connect4.Entities\Connect4.Entities.csproj" />
+  </ItemGroup>
+
 </Project>

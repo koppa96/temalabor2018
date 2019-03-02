@@ -12,7 +12,7 @@ using Connect4Server.Hubs;
 using Connect4Server.Services;
 using Microsoft.AspNetCore.SignalR;
 using Connect4.DAL;
-using Connect4.DAL.Entities;
+using Connect4.Entities;
 using System.Text;
 
 namespace Connect4Server

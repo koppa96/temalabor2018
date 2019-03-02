@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 
-namespace Connect4.DAL.Entities
+namespace Connect4.Entities
 {
     public class ApplicationUser : IdentityUser
     {

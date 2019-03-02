@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Connect4.DAL.Entities;
 using Connect4Dtos;
 using Microsoft.Extensions.Logging;
+using Connect4.Entities;
 
-namespace Connect4Server.Hubs {
-	[Authorize]
+namespace Connect4Server.Hubs
+{
+    [Authorize]
     public class GameHub : Hub<IConnect4Client> {
 		private readonly GameService _gameService;
 		private readonly LobbyService _lobbyService;

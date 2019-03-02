@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Connect4.DAL.Entities
+namespace Connect4.Entities
 {
     public class Match
     {

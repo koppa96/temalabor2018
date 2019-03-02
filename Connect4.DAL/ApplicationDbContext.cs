@@ -1,5 +1,5 @@
 ﻿using System;
-using Connect4.DAL.Entities;
+using Connect4.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
