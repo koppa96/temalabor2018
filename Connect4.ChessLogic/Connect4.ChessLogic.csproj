@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Connect4.Abstractions\Connect4.Abstractions.csproj" />
+    <ProjectReference Include="..\Connect4.Entities\Connect4.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
