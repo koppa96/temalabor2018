@@ -26,13 +26,13 @@ namespace Connect4.DAL.Repositories
         public T GetById(int id)
         {
             var board = _context.Boards.Find(id);
-            return VaildateBoard(board);
+            return ValidateBoard(board);
         }
 
         public T GetByMatchId(int id)
         {
             var board = _context.Boards.FirstOrDefault(b => b.Match.MatchId == id);
-            return VaildateBoard(board);
+            return ValidateBoard(board);
         }
 
         public void InsertBoard(T board)
@@ -55,19 +55,14 @@ namespace Connect4.DAL.Repositories
             _context.SaveChanges();
         }
 
-        private T VaildateBoard(SerializedBoard board)
+        private static T ValidateBoard(SerializedBoard board)
         {
             if (board == null)
             {
-                throw new ArgumentException("There is no board with such ID.");
+                throw new NullReferenceException("There is no board with such ID.");
             }
 
-            if (!(board is T))
-            {
-                throw new ArgumentException("The board with the given ID is of a different type.");
-            }
-
-            return board as T;
+            return (T)board;
         }
     }
 }

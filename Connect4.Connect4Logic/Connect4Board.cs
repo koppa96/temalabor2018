@@ -17,7 +17,6 @@ namespace Connect4.Connect4Logic
         {
             get
             {
-                //Elegendő csupán az első sort ellenőrizni
                 for (int i = 0; i < width; i++)
                 {
                     if (board[0, i] == Item.None)
@@ -35,13 +34,21 @@ namespace Connect4.Connect4Logic
             this.width = width;
             this.height = height;
             board = new Item[height, width];
+
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    board[i, j] = Item.None;
+                }
+            }
         }
 
         public bool PlaceItem(Item item, int column)
         {
             if (column > width - 1)
             {
-                throw new ArgumentException("This board does not have a column with that index.");
+                throw new ArgumentOutOfRangeException(nameof(column), "This board does not have a column with that index.");
             }
 
             for (int i = height - 1; i >= 0; i--)
