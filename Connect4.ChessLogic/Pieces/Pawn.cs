@@ -25,12 +25,12 @@ namespace Connect4.ChessLogic.Pieces
                 if (Color == Color.White)
                 {
                     return MovePawnForward(targetField, (from, to) => to + 1 == from ||
-                                           to + 2 == from && !hasMoved && Board.RouteClear(Field, targetField, Direction.Above));
+                                           to + 2 == from && !hasMoved && Board.RouteClear(Field, targetField));
                 }
                 else
                 {
                     return MovePawnForward(targetField, (from, to) => to - 1 == from ||
-                                           to - 2 == from && !hasMoved && Board.RouteClear(Field, targetField, Direction.Below));
+                                           to - 2 == from && !hasMoved && Board.RouteClear(Field, targetField));
                 }
             }
             catch (ArgumentException)
@@ -41,23 +41,19 @@ namespace Connect4.ChessLogic.Pieces
 
         private bool MovePawnForward(Field to, Func<int, int, bool> rule)
         {
-            if (!rule(Field.Position.Row, to.Position.Row))
+            if (!rule(Field.Row, to.Row))
             {
                 return false;
             }
 
-            if (Field.Position.Column == to.Position.Column && to.Empty || 
-                Math.Abs(Field.Position.Column - to.Position.Column) == 1 && !to.Empty 
-                                                                          && Math.Abs(to.Position.Row - Field.Position.Row) == 1)
+            if (Field.Column == to.Column && to.Empty || 
+                Math.Abs(Field.Column - to.Column) == 1 && !to.Empty && Math.Abs(to.Row - Field.Row) == 1)
             {
-                Field.RemovePiece(this);
-                Field = to;
-                to.AddPiece(this);
-
+                SwitchPosition(to);
+                hasMoved = true;
                 return true;
             }
 
-            hasMoved = true;
             return false;
         }
     }

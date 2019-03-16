@@ -24,8 +24,8 @@ namespace Connect4.Tests.ChessLogic
             var pawn = new Pawn(board, Color.White);
             pawn.AddToField(board[4, 4]);
 
-            Assert.IsTrue(board.RouteClear(board[0, 0], board[0, 1], Direction.Right));
-            Assert.IsTrue(board.RouteClear(board[0, 0], board[0, 6], Direction.Right));
+            Assert.IsTrue(board.RouteClear(board[0, 0], board[0, 1]));
+            Assert.IsTrue(board.RouteClear(board[0, 0], board[0, 6]));
         }
     }
 }

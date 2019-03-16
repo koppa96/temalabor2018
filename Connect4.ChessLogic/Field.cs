@@ -10,11 +10,13 @@ namespace Connect4.ChessLogic
     {
         public bool Empty => Piece == null;
         public Piece Piece { get; private set; }
-        public Position Position { get; }
+        public int Row { get; }
+        public int Column { get; }
 
-        public Field(Position position)
+        public Field(int row, int column)
         {
-            Position = position;
+            Row = row;
+            Column = column;
         }
 
         public void AddPiece(Piece piece)

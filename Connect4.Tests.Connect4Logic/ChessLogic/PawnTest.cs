@@ -62,7 +62,7 @@ namespace Connect4.Tests.ChessLogic
             //First double move
             Assert.IsTrue(pawn.Move(board[2, 4]));
             Assert.IsFalse(board[2, 4].Empty);
-            Assert.IsFalse(board[4, 4].Empty);
+            Assert.IsTrue(board[4, 4].Empty);
 
             //Second double move
             Assert.IsFalse(pawn.Move(board[0, 4]));
@@ -73,6 +73,38 @@ namespace Connect4.Tests.ChessLogic
             Assert.IsTrue(pawn.Move(board[1, 4]));
             Assert.IsFalse(board[1, 4].Empty);
             Assert.IsTrue(board[2, 4].Empty);
+        }
+
+        [TestMethod]
+        public void PawnHits()
+        {
+            var pawn = new Pawn(board, Color.White);
+            pawn.AddToField(board[4, 4]);
+
+            var enemy = new Pawn(board, Color.Black);
+            enemy.AddToField(board[3, 4]);
+
+            var otherEnemy = new Pawn(board, Color.Black);
+            otherEnemy.AddToField(board[3, 3]);
+
+            var friend = new Pawn(board, Color.White);
+            friend.AddToField(board[3, 5]);
+
+            Assert.IsFalse(pawn.Move(board[3, 5]));
+            Assert.IsFalse(pawn.Move(board[3, 4]));
+            Assert.IsTrue(pawn.Move(board[3, 3]));
+        }
+
+        [TestMethod]
+        public void PawnTriesToStepOver()
+        {
+            var pawn = new Pawn(board, Color.White);
+            pawn.AddToField(board[4, 4]);
+
+            var other = new Pawn(board, Color.White);
+            other.AddToField(board[3, 4]);
+
+            Assert.IsFalse(pawn.Move(board[2, 4]));
         }
     }
 }

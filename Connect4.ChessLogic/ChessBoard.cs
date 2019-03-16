@@ -24,11 +24,11 @@ namespace Connect4.ChessLogic
             {
                 for (int j = 0; j < ChessboardSize; j++)
                 {
-                    board[i, j] = new Field(new Position(i, j));
+                    board[i, j] = new Field(i, j);
                 }
             }
 
-            if (!newBoard)
+            if (newBoard)
             {
                 InitializeBoard();
             }
@@ -36,7 +36,48 @@ namespace Connect4.ChessLogic
 
         private void InitializeBoard()
         {
-       
+            InitializePlayer(Color.White);
+            InitializePlayer(Color.Black);
+        }
+
+        private void InitializePlayer(Color color)
+        {
+            int firstRow = 1, secondRow = 0;
+            if (color == Color.White)
+            {
+                firstRow = 6;
+                secondRow = 7;
+            }
+
+            Piece piece = new Rook(this, color);
+            piece.AddToField(board[secondRow, 0]);
+
+            piece = new Rook(this, color);
+            piece.AddToField(board[secondRow, 7]);
+
+            piece = new Knight(this, color);
+            piece.AddToField(board[secondRow, 1]);
+
+            piece = new Knight(this, color);
+            piece.AddToField(board[secondRow, 6]);
+
+            piece = new Bishop(this, color);
+            piece.AddToField(board[secondRow, 2]);
+
+            piece = new Bishop(this, color);
+            piece.AddToField(board[secondRow, 5]);
+
+            piece = new Queen(this, color);
+            piece.AddToField(board[secondRow, 3]);
+           
+            piece = new King(this, color);
+            piece.AddToField(board[secondRow, 4]);
+
+            for (int i = 0; i < ChessboardSize; i++)
+            {
+                piece = new Pawn(this, color);
+                piece.AddToField(board[firstRow, i]);
+            }
         }
 
         public SerializedChessBoard ToSerialized()
@@ -56,31 +97,24 @@ namespace Connect4.ChessLogic
 
         private delegate void IncrementDelegate(ref int i, ref int j);
 
-        public bool RouteClear(Field from, Field to, Direction direction)
+        public bool RouteClear(Field from, Field to)
         {
-            if (from == to)
-            {
-                throw new ArgumentException("The fields are the same.");
-            }
+            Direction direction = Direction.GuessDirection(from, to);
 
-            var incrementDelegate = SetIncrementDelegate(direction);
-            var predicate = SetPredicate(direction);
+            int i = from.Row + direction.RowDirection, j = from.Column + direction.ColumnDirection;
 
-            int i = from.Position.Row, j = from.Position.Column;
-            incrementDelegate(ref i, ref j);
-
-
-            while (predicate(i, j, to))
+            while (direction.Predicate(i, j, to))
             {
                 if (!board[i, j].Empty)
                 {
                     return false;
                 }
 
-                incrementDelegate(ref i, ref j);
+                i += direction.RowDirection;
+                j += direction.ColumnDirection;
             }
 
-            if (!(i == to.Position.Row && j == to.Position.Column))
+            if (!(i == to.Row && j == to.Column))
             {
                 throw new ArgumentException("The given fields are not in the given relative position from each other");
             }
@@ -88,75 +122,10 @@ namespace Connect4.ChessLogic
             return true;
         }
 
-        private Func<int, int, Field, bool> SetPredicate(Direction direction)
+        public void AddPieceToTheGame(Piece piece, Field field)
         {
-            switch (direction)
-            {
-                case Direction.Above:
-                    return (i, j, f) => i > f.Position.Row;
-                case Direction.Below:
-                    return (i, j, f) => i < f.Position.Row;
-                case Direction.Right:
-                    return (i, j, f) => j < f.Position.Column;
-                case Direction.Left:
-                    return (i, j, f) => j > f.Position.Column;
-                case Direction.AboveLeft:
-                    return (i, j, f) => i > f.Position.Row && j > f.Position.Column;
-                case Direction.AboveRight:
-                    return (i, j, f) => i > f.Position.Row && j < f.Position.Column;
-                case Direction.BelowRight:
-                    return (i, j, f) => i < f.Position.Row && j < f.Position.Column;
-                case Direction.BelowLeft:
-                    return (i, j, f) => i < f.Position.Row && j > f.Position.Column;
-                default:
-                    throw new ArgumentException("No such direction");
-            }
-        }
-
-        private IncrementDelegate SetIncrementDelegate(Direction direction)
-        {
-            switch (direction)
-            {
-                case Direction.Above:
-                    return (ref int i, ref int j) => i--;
-                case Direction.Below:
-                    return (ref int i, ref int j) => i++;
-                case Direction.Right:
-                    return (ref int i, ref int j) => j++;
-                case Direction.Left:
-                    return (ref int i, ref int j) => j--;
-                case Direction.AboveLeft:
-                    return (ref int i, ref int j) =>
-                    {
-                        i--;
-                        j--;
-                    };
-                case Direction.AboveRight:
-                    return (ref int i, ref int j) =>
-                    {
-                        i--;
-                        j++;
-                    };
-                case Direction.BelowLeft:
-                    return (ref int i, ref int j) =>
-                    {
-                        i++;
-                        j--;
-                    };
-                case Direction.BelowRight:
-                    return (ref int i, ref int j) =>
-                    {
-                        i++;
-                        j++;
-                    };
-                default:
-                    throw new ArgumentException("No such direction");
-            }
-        }
-
-        public Field GetFieldByPosition(Position position)
-        {
-            return board[position.Row, position.Column];
+            piece.AddToField(field);
+            pieces.Add(piece);
         }
     }
 }

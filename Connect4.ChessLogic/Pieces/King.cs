@@ -12,7 +12,18 @@ namespace Connect4.ChessLogic.Pieces
 
         public override bool Move(Field targetField)
         {
-            throw new NotImplementedException();
+            if (!base.Move(targetField))
+            {
+                return false;
+            }
+
+            if (Math.Abs(targetField.Row - Field.Row) < 2 && Math.Abs(targetField.Column - Field.Column) < 2)
+            {
+                SwitchPosition(targetField);
+                return true;
+            }
+
+            return false;
         }
     }
 }

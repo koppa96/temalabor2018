@@ -38,5 +38,11 @@ namespace Connect4.ChessLogic.Pieces
             Field = targetField;
             targetField.AddPiece(this);
         }
+
+        protected void SwitchPosition(Field to)
+        {
+            Field.RemovePiece(this);
+            AddToField(to);
+        }
     }
 }

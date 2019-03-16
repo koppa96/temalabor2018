@@ -12,7 +12,30 @@ namespace Connect4.ChessLogic.Pieces
 
         public override bool Move(Field targetField)
         {
-            throw new NotImplementedException();
+            if (!base.Move(targetField))
+            {
+                return false;
+            }
+
+            if (targetField.Row == Field.Row)
+            {
+                if (Board.RouteClear(Field, targetField))
+                {
+                    SwitchPosition(targetField);
+                    return true;
+                }
+            }
+
+            if (targetField.Column == Field.Column)
+            {
+                if (Board.RouteClear(Field, targetField))
+                {
+                    SwitchPosition(targetField);
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
