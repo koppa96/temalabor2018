@@ -16,21 +16,23 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Connect4Server.Controllers {
-    public class AccountController : Controller {
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager,
-                                 ILoggerFactory loggerFactory,
-								 LobbyService lobbyService) {
+                                 ILogger<AccountController> logger) {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = loggerFactory.CreateLogger<AccountController>();
+            _logger = logger;
         }
 
         [HttpPost]
+        [Route("/login")]
         public async Task<ActionResult> Login([FromBody]AppLoginModel model) {
             if (ModelState.IsValid) {
                 var user = await _userManager.FindByNameAsync(model.Username);
@@ -62,6 +64,7 @@ namespace Connect4Server.Controllers {
         }
 
         [HttpPost]
+        [Route("/logout")]
 		[Authorize]
         public async Task<ActionResult> Logout() {
             await _signInManager.SignOutAsync();
@@ -70,6 +73,7 @@ namespace Connect4Server.Controllers {
         }
 
         [HttpPost]
+        [Route("/register")]
         public async Task<ActionResult> Register([FromBody]AppRegisterModel model) {
             if (ModelState.IsValid) {
                 if (await _userManager.FindByNameAsync(model.Username) != null) {
@@ -118,6 +122,7 @@ namespace Connect4Server.Controllers {
         }
 
 		[HttpPost]
+        [Route("/changePass")]
 		[Authorize]
 		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
 			if (model.Password != model.ConfirmPassword) {
