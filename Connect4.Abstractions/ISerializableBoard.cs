@@ -6,7 +6,7 @@ namespace Connect4.Abstractions
 {
     public interface ISerializableBoard<T>
     {
-        T ToSerialized();
-        void FillFromSerialized(T serializedBoard);
+        T SerializeContent();
+        void DeserializeContent(T serializedBoard);
     }
 }

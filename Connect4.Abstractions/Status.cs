@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Connect4.Abstractions
 {
-    public interface IGameService
+    public enum Status
     {
-        Status ExecuteMove(MoveData move, int playerId);
+        Success, Fail, Win, Draw
     }
 }

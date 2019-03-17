@@ -1,44 +1,47 @@
 ﻿using Connect4.Abstractions;
 using Connect4.Entities;
 using System;
+using Czeum.DTO.Connect4;
 
 namespace Connect4.Connect4Logic
 {
+    [GameService(ServiceNames.Connect4)]
     public class Connect4Service : IGameService
     {
         private readonly IBoardRepository<SerializedConnect4Board> _repository;
 
-        public Connect4Service(IBoardRepository<SerializedConnect4Board> repository)
+        public Connect4Service(IBoardRepository<SerializedConnect4Board> repository, IMatchRepository matchRepository)
         {
             _repository = repository;
         }
 
-        public MoveResult ExecuteMove(MoveData moveData)
+        public Status ExecuteMove(MoveData moveData, int playerId)
         {
             var move = moveData as Connect4MoveData;
             var board = new Connect4Board();
             var serializedBoard = _repository.GetByMatchId(move.MatchId);
-            board.FillFromSerialized(serializedBoard);
-
-            if (!board.PlaceItem(move.Item, move.Column))
+            board.DeserializeContent(serializedBoard);
+            
+            var item = playerId == 1 ? Item.Red : Item.Yellow;
+            if (!board.PlaceItem(item, move.Column))
             {
-                throw new ArgumentException("The selected column is full.");
+                return Status.Fail;
             }
 
-            serializedBoard.BoardData = board.ToSerialized().BoardData;
+            serializedBoard.BoardData = board.SerializeContent().BoardData;
             _repository.UpdateBoard(serializedBoard);
 
-            if (board.CheckWinner() == move.Item)
+            if (board.CheckWinner() == item)
             {
-                return MoveResult.Win;
+                return Status.Win;
             }
 
             if (board.Full)
             {
-                return MoveResult.Draw;
+                return Status.Draw;
             }
 
-            return MoveResult.Success;
+            return Status.Success;
         }
     }
 }

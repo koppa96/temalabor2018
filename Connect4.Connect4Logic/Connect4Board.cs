@@ -3,6 +3,7 @@ using Connect4.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Czeum.DTO.Connect4;
 
 namespace Connect4.Connect4Logic
 {
@@ -63,7 +64,7 @@ namespace Connect4.Connect4Logic
             return false;
         }
 
-        public void FillFromSerialized(SerializedConnect4Board serializedBoard)
+        public void DeserializeContent(SerializedConnect4Board serializedBoard)
         {
             width = serializedBoard.Width;
             height = serializedBoard.Height;
@@ -230,7 +231,7 @@ namespace Connect4.Connect4Logic
             return Item.None;
         }
 
-        public SerializedConnect4Board ToSerialized()
+        public SerializedConnect4Board SerializeContent()
         {
             SerializedConnect4Board serialized = new SerializedConnect4Board
             {

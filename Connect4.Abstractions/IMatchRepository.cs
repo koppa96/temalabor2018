@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Connect4.Abstractions
 {
-    public interface IGameService
+    public interface IMatchRepository
     {
-        Status ExecuteMove(MoveData move, int playerId);
+        int GetPlayerIdByName(string name, int matchId);
     }
 }

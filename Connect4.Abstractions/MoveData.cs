@@ -10,16 +10,10 @@ namespace Connect4.Abstractions
 
         public abstract IGameService FindGameService(IEnumerable<IGameService> services);
 
-        protected IGameService FindGameServiceTyped<T>(IEnumerable<IGameService> services)
+        protected IGameService FindGameServiceByIdentifier(IEnumerable<IGameService> services, string id)
         {
-            var service = services.FirstOrDefault(s => s is T);
-
-            if (service == null)
-            {
-                throw new GameNotSupportedException("The server is not running the requested game service.");
-            }
-
-            return service;
+            return services.FirstOrDefault(s => Attribute.GetCustomAttributes(s.GetType())
+                .Any(a => a is GameServiceAttribute attr && attr.Identifier == id));
         }
     }
 }

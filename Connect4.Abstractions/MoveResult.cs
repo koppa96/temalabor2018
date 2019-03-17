@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Connect4.Abstractions
 {
-    public enum MoveResult
+    public abstract class MoveResult
     {
-        Success, Win, Draw
+        public Status Status { get; set; }
     }
 }
