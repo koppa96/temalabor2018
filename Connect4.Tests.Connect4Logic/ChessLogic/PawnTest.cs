@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Connect4.ChessLogic;
 using Connect4.ChessLogic.Pieces;
+using Czeum.DTO.Chess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Connect4.Tests.ChessLogic
