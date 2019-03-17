@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Connect4.Abstractions;
+using Czeum.Abstractions;
 
 namespace Czeum.DTO.Connect4
 {
