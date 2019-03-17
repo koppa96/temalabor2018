@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Czeum.DTO.Chess;
 
 namespace Connect4.ChessLogic.Pieces
 {
@@ -8,53 +9,55 @@ namespace Connect4.ChessLogic.Pieces
     {
         private bool hasMoved;
 
+        public override PieceInfo PieceInfo => new PieceInfo()
+        {
+            Type = PieceType.Pawn,
+            Color = Color,
+            Row = Field.Row,
+            Column = Field.Column
+        };
+
         public Pawn(ChessBoard board, Color color) : base(board, color)
         {
             hasMoved = false;
         }
 
-        public override bool Move(Field targetField)
+        public override bool CanMoveTo(Field targetField)
         {
-            if (!base.Move(targetField))
+            if (!base.CanMoveTo(targetField))
             {
                 return false;
             }
 
-            try
+            var direction = Color == Color.White ? Direction.Above : Direction.Below;
+
+            return targetField.Row - direction.RowDirection == Field.Row && targetField.Column == Field.Column && targetField.Empty 
+                   || CanAttack(targetField) && !targetField.Empty
+                   || targetField.Row - 2 * direction.RowDirection == Field.Row && targetField.Column == Field.Column && !hasMoved && Board.RouteClear(Field, targetField);
+        }
+
+        public override bool CanAttack(Field targetField)
+        {
+            switch (Color)
             {
-                if (Color == Color.White)
-                {
-                    return MovePawnForward(targetField, (from, to) => to + 1 == from ||
-                                           to + 2 == from && !hasMoved && Board.RouteClear(Field, targetField));
-                }
-                else
-                {
-                    return MovePawnForward(targetField, (from, to) => to - 1 == from ||
-                                           to - 2 == from && !hasMoved && Board.RouteClear(Field, targetField));
-                }
-            }
-            catch (ArgumentException)
-            {
-                return false;
+                case Color.White when targetField.Row + 1 == Field.Row && Math.Abs(targetField.Column - Field.Column) == 1:
+                case Color.Black when targetField.Row - 1 == Field.Row && Math.Abs(targetField.Column - Field.Column) == 1:
+                    return true;
+                default:
+                    return false;
             }
         }
 
-        private bool MovePawnForward(Field to, Func<int, int, bool> rule)
+        public override bool Move(Field targetField)
         {
-            if (!rule(Field.Row, to.Row))
-            {
-                return false;
-            }
+            var result = base.Move(targetField);
 
-            if (Field.Column == to.Column && to.Empty || 
-                Math.Abs(Field.Column - to.Column) == 1 && !to.Empty && Math.Abs(to.Row - Field.Row) == 1)
+            if (result)
             {
-                SwitchPosition(to);
                 hasMoved = true;
-                return true;
             }
 
-            return false;
+            return result;
         }
     }
 }

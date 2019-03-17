@@ -4,6 +4,7 @@ using System;
 
 namespace Connect4.ChessLogic
 {
+    [GameService(ServiceNames.Chess)]
     public class ChessService : IGameService
     {
         private readonly IBoardRepository<SerializedChessBoard> _repository;
@@ -13,7 +14,7 @@ namespace Connect4.ChessLogic
             _repository = repository;
         }
 
-        public MoveResult ExecuteMove(MoveData move)
+        public Status ExecuteMove(MoveData move, int playerId)
         {
             throw new NotImplementedException();
         }

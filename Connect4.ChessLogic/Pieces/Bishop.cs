@@ -1,29 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Czeum.DTO.Chess;
 
 namespace Connect4.ChessLogic.Pieces
 {
     public class Bishop : Piece
     {
+        public override PieceInfo PieceInfo => new PieceInfo()
+        {
+            Type = PieceType.Bishop,
+            Color = Color,
+            Row = Field.Row,
+            Column = Field.Column
+        };
+
         public Bishop(ChessBoard board, Color color) : base(board, color)
         {
         }
 
-        public override bool Move(Field targetField)
+        public override bool CanMoveTo(Field targetField)
         {
             if (!base.Move(targetField))
             {
                 return false;
             }
 
-            if (Math.Abs(targetField.Row - Field.Row) == Math.Abs(targetField.Column - Field.Column) && Board.RouteClear(Field, targetField))
-            {
-                SwitchPosition(targetField);
-                return true;
-            }
-
-            return false;
+            return Math.Abs(targetField.Row - Field.Row) == Math.Abs(targetField.Column - Field.Column)
+                   && Board.RouteClear(Field, targetField);
         }
     }
 }

@@ -32,5 +32,10 @@ namespace Connect4.ChessLogic
                 Piece = null;
             }
         }
+
+        public override string ToString()
+        {
+            return Row + "," + Column;
+        }
     }
 }

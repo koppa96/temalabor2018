@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Connect4.Abstractions;
 using Connect4.ChessLogic.Pieces;
 using Connect4.Entities;
+using Czeum.DTO.Chess;
 
 namespace Connect4.ChessLogic
 {
     public class ChessBoard : ISerializableBoard<SerializedChessBoard>
     {
-        private const int ChessboardSize = 8;
+        public const int ChessboardSize = 8;
         private readonly List<Piece> pieces;
         private Field[,] board;
 
@@ -80,14 +82,31 @@ namespace Connect4.ChessLogic
             }
         }
 
-        public SerializedChessBoard ToSerialized()
+        public SerializedChessBoard SerializeContent()
         {
-            throw new NotImplementedException();
+            StringBuilder builder = new StringBuilder();
+            foreach (var piece in pieces)
+            {
+                builder.Append(piece.ToString() + " ");
+            }
+
+            return new SerializedChessBoard()
+            {
+                BoardData = builder.ToString()
+            };
         }
 
-        public void FillFromSerialized(SerializedChessBoard serializedBoard)
+        public void DeserializeContent(SerializedChessBoard serializedBoard)
         {
-            throw new NotImplementedException();
+            var pieceInfos = serializedBoard.BoardData.Trim().Split(' ');
+
+            foreach (var pieceInfo in pieceInfos)
+            {
+                var positions = pieceInfo.Split('_')[1].Split(',');
+                var piece = Piece.CreateFromString(this, pieceInfo);
+                int row = int.Parse(positions[0]), column = int.Parse(positions[1]);
+                AddPieceToTheGame(piece, board[row, column]);
+            }
         }
 
         public void RemovePiece(Piece piece)
@@ -126,6 +145,11 @@ namespace Connect4.ChessLogic
         {
             piece.AddToField(field);
             pieces.Add(piece);
+        }
+
+        public bool IsFieldSafe(Color color, Field field)
+        {
+            return pieces.Any(p => p.Color != color && p.CanAttack(field));
         }
     }
 }
