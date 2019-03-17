@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.Entities", "Czeum.Ent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.ChessLogic", "Czeum.ChessLogic\Czeum.ChessLogic.csproj", "{820F9E54-8BDE-4A1F-89B7-EE509F5ACCEA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.Tests", "Connect4.Tests\Czeum.Tests.csproj", "{D2F25AE0-A16C-4499-89D6-CB15038345F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.Tests", "Czeum.Tests\Czeum.Tests.csproj", "{D2F25AE0-A16C-4499-89D6-CB15038345F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Czeum.DTO", "Czeum.DTO\Czeum.DTO.csproj", "{E7C9A283-5BF0-44FD-B645-99DE3925CC89}"
 EndProject
