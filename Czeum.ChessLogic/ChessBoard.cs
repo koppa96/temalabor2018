@@ -149,7 +149,7 @@ namespace Czeum.ChessLogic
 
         public bool IsFieldSafe(Color color, Field field)
         {
-            return pieces.Any(p => p.Color != color && p.CanAttack(field));
+            return !pieces.Any(p => p.Color != color && p.CanAttack(field));
         }
     }
 }
