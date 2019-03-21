@@ -1,5 +1,5 @@
 ﻿using System;
-using Czeum.Entities;
+using Czeum.DAL.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

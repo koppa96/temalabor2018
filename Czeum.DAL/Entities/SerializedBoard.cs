@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using Czeum.Abstractions;
+using Czeum.Abstractions.DTO;
 
-namespace Czeum.Entities
+namespace Czeum.DAL.Entities
 {
     public abstract class SerializedBoard
     {
@@ -16,5 +15,7 @@ namespace Czeum.Entities
 
         [ForeignKey("Match")]
         public int MatchId { get; set; }
+
+        public abstract MoveResult ToMoveResult();
     }
 }

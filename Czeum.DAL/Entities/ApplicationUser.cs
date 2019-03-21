@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using Microsoft.AspNetCore.Identity;
 
-namespace Czeum.Entities
+namespace Czeum.DAL.Entities
 {
     public class ApplicationUser : IdentityUser
     {

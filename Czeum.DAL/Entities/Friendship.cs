@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Czeum.Entities
+﻿namespace Czeum.DAL.Entities
 {
     public class Friendship
     {

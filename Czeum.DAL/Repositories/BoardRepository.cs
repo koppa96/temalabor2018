@@ -1,10 +1,12 @@
 ﻿using Czeum.Abstractions;
-using Czeum.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Czeum.Abstractions.DTO;
+using Czeum.DAL.Entities;
+using Czeum.DAL.Interfaces;
 
 namespace Czeum.DAL.Repositories
 {
@@ -63,6 +65,12 @@ namespace Czeum.DAL.Repositories
             }
 
             return (T)board;
+        }
+
+        public MoveResult GetMoveResultByMatchId(int matchId)
+        {
+            var board = GetByMatchId(matchId);
+            return board.ToMoveResult();
         }
     }
 }
