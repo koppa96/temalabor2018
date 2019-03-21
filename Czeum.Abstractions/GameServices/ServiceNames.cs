@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Czeum.Abstractions
+﻿namespace Czeum.Abstractions.GameServices
 {
     public static class ServiceNames
     {

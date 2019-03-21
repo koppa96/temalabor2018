@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Czeum.Abstractions.GameServices;
 
-namespace Czeum.Abstractions
+namespace Czeum.Abstractions.DTO
 {
     public abstract class MoveData
     {
@@ -12,8 +13,15 @@ namespace Czeum.Abstractions
 
         protected IGameService FindGameServiceByIdentifier(IEnumerable<IGameService> services, string id)
         {
-            return services.FirstOrDefault(s => Attribute.GetCustomAttributes(s.GetType())
+            var service = services.FirstOrDefault(s => Attribute.GetCustomAttributes(s.GetType())
                 .Any(a => a is GameServiceAttribute attr && attr.Identifier == id));
+
+            if (service == null)
+            {
+                throw new GameNotSupportedException("The server does not have the required service at the moment.");
+            }
+
+            return service;
         }
     }
 }
