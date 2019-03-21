@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Connect4Dtos;
+using Czeum.DTO;
+using Czeum.DTO.Lobby;
 
 namespace Czeum.Server.Hubs {
 	public interface IConnect4Client {
 		Task CannotCreateLobbyFromOtherLobby();
 		Task LobbyCreated(LobbyData lobby);
 		Task LobbyAddedHandler(LobbyData lobby);
-		Task MatchCreated(MatchDto match);
+		Task MatchCreated(MatchStatus match);
 		Task LobbyDeleted(int lobbyId);
 		Task NotEnoughPlayersHandler();
 		Task CannotSetOtherLobby();
@@ -23,10 +24,10 @@ namespace Czeum.Server.Hubs {
 		Task ColumnFullHandler();
 		Task MatchFinishedHandler();
 		Task NotYourTurnHandler();
-		Task SuccessfulPlacement(MatchDto dto);
-		Task SuccessfulEnemyPlacement(MatchDto dto);
-		Task VictoryHandler(MatchDto dto);
-		Task EnemyVictoryHandler(MatchDto dto);
+		Task SuccessfulPlacement(MatchStatus dto);
+		Task SuccessfulEnemyPlacement(MatchStatus dto);
+		Task VictoryHandler(MatchStatus dto);
+		Task EnemyVictoryHandler(MatchStatus dto);
 		Task GuestKicked();
 		Task YouHaveBeenKicked();
 		Task OnlyHostCanInvite();
@@ -38,6 +39,7 @@ namespace Czeum.Server.Hubs {
 		Task CannotJoinOrCreateWhileQueuing();
 		Task CannotQueueWhileInLobby();
 		Task InvalidBoardSize();
-		Task DrawHandler(MatchDto dto);
-	}
+		Task DrawHandler(MatchStatus dto);
+        Task NotYourMatch();
+    }
 }
