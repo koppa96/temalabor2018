@@ -6,7 +6,7 @@ using Czeum.ChessLogic.Pieces;
 using Czeum.DTO.Chess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Czeum.Tests.ChessLogic
+namespace Czeum.Tests.ChessLogic.PieceTest
 {
     [TestClass]
     public class KnightTest

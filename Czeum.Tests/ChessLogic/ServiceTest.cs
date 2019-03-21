@@ -1,35 +1,40 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
-using Czeum.DTO.Connect4;
+using Czeum.DTO.Chess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Czeum.Tests.Connect4Logic
+namespace Czeum.Tests.ChessLogic
 {
     [TestClass]
     public class ServiceTest
     {
-        private Connect4MoveData move;
-        private List<IGameService> services;
+        private ChessMoveData move;
         private DummyRepository repository;
+        private List<IGameService> services;
 
         [TestInitialize]
         public void Init()
         {
-            move = new Connect4MoveData
+            move = new ChessMoveData
             {
-                Column = 0,
+                FromRow = 6,
+                FromColumn = 0,
+                ToRow = 4,
+                ToColumn = 0,
                 MatchId = 1
             };
-
+            
             repository = new DummyRepository();
             services = new List<IGameService>
             {
-                new ChessService(null),
-                new Connect4Service(repository)
+                new Connect4Service(null),
+                new ChessService(repository)
             };
         }
 
@@ -41,14 +46,16 @@ namespace Czeum.Tests.Connect4Logic
         }
 
         [TestMethod]
-        public void ExecutionTest()
+        public void TestExecute()
         {
             var service = move.FindGameService(services);
-            var result = (Connect4MoveResult) service.ExecuteMove(move, 1);
+            var result = (ChessMoveResult) service.ExecuteMove(move, 1);
             
             Assert.AreEqual(Status.Success, result.Status);
-            Assert.AreEqual(Item.Red, result.Board[result.Board.GetLength(0) - 1, 0]);
-            Assert.IsTrue(repository.GetByMatchId(1).BoardData.Contains('R'));
+            Assert.IsTrue(result.PieceInfos.Any(p => p.Row == move.ToRow && p.Column == move.ToColumn));
+
+            var pieceInfos = repository.GetById(1).BoardData.Trim().Split(' ');
+            Assert.IsTrue(pieceInfos.Contains($"WP_{move.ToRow},{move.ToColumn}"));
         }
     }
 }
