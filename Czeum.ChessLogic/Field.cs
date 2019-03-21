@@ -19,10 +19,15 @@ namespace Czeum.ChessLogic
             Column = column;
         }
 
-        public void AddPiece(Piece piece)
+        public bool AddPiece(Piece piece)
         {
-            Piece?.HitBy(piece);
-            Piece = piece;
+            if (Piece == null || Piece.HitBy(piece))
+            {
+                Piece = piece;
+                return true;
+            }
+
+            return false;
         }
 
         public void RemovePiece(Piece piece)

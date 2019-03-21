@@ -23,13 +23,13 @@ namespace Czeum.ChessLogic.Pieces
 
         public override bool CanMoveTo(Field targetField)
         {
-            if (!base.Move(targetField))
+            if (!base.CanMoveTo(targetField))
             {
                 return false;
             }
 
             return Math.Abs(targetField.Row - Field.Row) < 2 && Math.Abs(targetField.Column - Field.Column) < 2 
-                                                             && Board.IsFieldSafe(Color, targetField);
+                   && Board.IsFieldSafe(Color, targetField) && (targetField.Empty || targetField.Piece.Color != Color);
         }
     }
 }

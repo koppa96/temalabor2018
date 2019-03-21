@@ -10,7 +10,7 @@ namespace Czeum.ChessLogic.Pieces
     {
         protected ChessBoard Board { get; }
         public Color Color { get; }
-        protected Field Field { get; set; }
+        public Field Field { get; set; }
         public abstract PieceInfo PieceInfo { get; }
 
         protected Piece(ChessBoard board, Color color)
@@ -23,11 +23,15 @@ namespace Czeum.ChessLogic.Pieces
         {
             if (CanMoveTo(targetField))
             {
-                SwitchPosition(targetField);
-                return true;
+                return SwitchPosition(targetField);
             }
 
             return false;
+        }
+
+        internal bool UndoMove(Field targetField)
+        {
+            return SwitchPosition(targetField);
         }
 
         public virtual bool CanMoveTo(Field targetField)
@@ -45,23 +49,40 @@ namespace Czeum.ChessLogic.Pieces
             return CanMoveTo(targetField);
         }
 
-        public void HitBy(Piece piece)
+        public bool HitBy(Piece piece)
         {
+            if (piece.Color == Color)
+            {
+                return false;
+            }
+
             Field.RemovePiece(this);
             Field = null;
-            Board?.RemovePiece(this);
+            Board.RemovePiece(this);
+            return true;
         }
 
-        public void AddToField(Field targetField)
+        public bool AddToField(Field targetField)
         {
-            Field = targetField;
-            targetField.AddPiece(this);
+            if (targetField.AddPiece(this))
+            {
+                Field = targetField;
+                return true;
+            }
+
+            return false;
         }
 
-        protected void SwitchPosition(Field to)
+        protected bool SwitchPosition(Field to)
         {
-            Field.RemovePiece(this);
-            AddToField(to);
+            var oldField = Field;
+            if (AddToField(to))
+            {
+                oldField.RemovePiece(this);
+                return true;
+            }
+
+            return false;
         }
 
         public override string ToString()

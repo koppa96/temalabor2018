@@ -9,7 +9,7 @@ namespace Czeum.ChessLogic.Pieces
     {
         private bool hasMoved;
 
-        public override PieceInfo PieceInfo => new PieceInfo()
+        public override PieceInfo PieceInfo => new PieceInfo
         {
             Type = PieceType.Pawn,
             Color = Color,

@@ -15,56 +15,56 @@ namespace Czeum.ChessLogic
         {
         }
 
-        public static Direction Left => new Direction()
+        public static Direction Left => new Direction
         {
             RowDirection = 0,
             ColumnDirection = -1,
             Predicate = (i, j, f) => j > f.Column
         };
 
-        public static Direction Right => new Direction()
+        public static Direction Right => new Direction
         {
             RowDirection = 0,
             ColumnDirection = 1,
             Predicate = (i, j, f) => j < f.Column
         };
 
-        public static Direction Above => new Direction()
+        public static Direction Above => new Direction
         {
             RowDirection = -1,
             ColumnDirection = 0,
             Predicate = (i, j, f) => i > f.Row
         };
 
-        public static Direction Below => new Direction()
+        public static Direction Below => new Direction
         {
             RowDirection = 1,
             ColumnDirection = 0,
             Predicate = (i, j, f) => i < f.Row
         };
 
-        public static Direction AboveLeft => new Direction()
+        public static Direction AboveLeft => new Direction
         {
             RowDirection = -1,
             ColumnDirection = -1,
             Predicate = (i, j, f) => Above.Predicate(i, j, f) && Left.Predicate(i, j, f)
         };
 
-        public static Direction AboveRight => new Direction()
+        public static Direction AboveRight => new Direction
         {
             RowDirection = -1,
             ColumnDirection = 1,
             Predicate = (i, j, f) => Above.Predicate(i, j, f) && Right.Predicate(i, j, f)
         };
 
-        public static Direction BelowRight => new Direction()
+        public static Direction BelowRight => new Direction
         {
             RowDirection = 1,
             ColumnDirection = 1,
             Predicate = (i, j, f) => Below.Predicate(i, j, f) && Right.Predicate(i, j, f)
         };
 
-        public static Direction BelowLeft => new Direction()
+        public static Direction BelowLeft => new Direction
         {
             RowDirection = 1,
             ColumnDirection = -1,
