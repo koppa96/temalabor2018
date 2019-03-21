@@ -1,6 +1,9 @@
 ﻿using Czeum.Abstractions;
-using Czeum.Entities;
 using System;
+using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.GameServices;
+using Czeum.DAL.Entities;
+using Czeum.DAL.Interfaces;
 using Czeum.DTO.Connect4;
 
 namespace Czeum.Connect4Logic
@@ -10,38 +13,48 @@ namespace Czeum.Connect4Logic
     {
         private readonly IBoardRepository<SerializedConnect4Board> _repository;
 
-        public Connect4Service(IBoardRepository<SerializedConnect4Board> repository, IMatchRepository matchRepository)
+        public Connect4Service(IBoardRepository<SerializedConnect4Board> repository)
         {
             _repository = repository;
         }
 
-        public Status ExecuteMove(MoveData moveData, int playerId)
+        public MoveResult ExecuteMove(MoveData moveData, int playerId)
         {
-            var move = moveData as Connect4MoveData;
+            var move = (Connect4MoveData) moveData;
             var board = new Connect4Board();
             var serializedBoard = _repository.GetByMatchId(move.MatchId);
             board.DeserializeContent(serializedBoard);
             
             var item = playerId == 1 ? Item.Red : Item.Yellow;
+
             if (!board.PlaceItem(item, move.Column))
             {
-                return Status.Fail;
+                return new Connect4MoveResult
+                {
+                    Status = Status.Fail,
+                    Board = board.Board
+                };
             }
 
-            serializedBoard.BoardData = board.SerializeContent().BoardData;
-            _repository.UpdateBoard(serializedBoard);
-
+            _repository.UpdateBoardData(serializedBoard.BoardId, board.SerializeContent().BoardData);
+            var result = new Connect4MoveResult
+            {
+                Board = board.Board
+            };
             if (board.CheckWinner() == item)
             {
-                return Status.Win;
+                result.Status = Status.Win;
+                return result;
             }
 
             if (board.Full)
             {
-                return Status.Draw;
+                result.Status = Status.Draw;
+                return result;
             }
 
-            return Status.Success;
+            result.Status = Status.Success;
+            return result;
         }
     }
 }

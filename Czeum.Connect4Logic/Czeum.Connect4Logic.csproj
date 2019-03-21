@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj" />
+    <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
     <ProjectReference Include="..\Czeum.DTO\Czeum.DTO.csproj" />
-    <ProjectReference Include="..\Czeum.Entities\Czeum.Entities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 ﻿using Czeum.Abstractions;
-using Czeum.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Czeum.DAL.Entities;
 using Czeum.DTO.Connect4;
 
 namespace Czeum.Connect4Logic
@@ -12,7 +12,7 @@ namespace Czeum.Connect4Logic
         private const int DefaultWidth = 7, DefaultHeight = 6;
 
         private int height, width;
-        private Item[,] board;
+        public Item[,] Board { get; private set; }
 
         public bool Full 
         {
@@ -20,7 +20,7 @@ namespace Czeum.Connect4Logic
             {
                 for (int i = 0; i < width; i++)
                 {
-                    if (board[0, i] == Item.None)
+                    if (Board[0, i] == Item.None)
                     {
                         return false;
                     }
@@ -34,13 +34,13 @@ namespace Czeum.Connect4Logic
         {
             this.width = width;
             this.height = height;
-            board = new Item[height, width];
+            Board = new Item[height, width];
 
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    board[i, j] = Item.None;
+                    Board[i, j] = Item.None;
                 }
             }
         }
@@ -54,9 +54,9 @@ namespace Czeum.Connect4Logic
 
             for (int i = height - 1; i >= 0; i--)
             {
-                if (board[i, column] == Item.None)
+                if (Board[i, column] == Item.None)
                 {
-                    board[i, column] = item;
+                    Board[i, column] = item;
                     return true;
                 }
             }
@@ -68,7 +68,7 @@ namespace Czeum.Connect4Logic
         {
             width = serializedBoard.Width;
             height = serializedBoard.Height;
-            board = new Item[height, width];
+            Board = new Item[height, width];
 
             for (int i = 0; i < height; i++)
             {
@@ -77,13 +77,13 @@ namespace Czeum.Connect4Logic
                     switch (serializedBoard.BoardData[i * width + j])
                     {
                         case 'R':
-                            board[i, j] = Item.Red;
+                            Board[i, j] = Item.Red;
                             break;
                         case 'Y':
-                            board[i, j] = Item.Yellow;
+                            Board[i, j] = Item.Yellow;
                             break;
                         case 'N':
-                            board[i, j] = Item.None;
+                            Board[i, j] = Item.None;
                             break;
                         default:
                             throw new ArgumentException($"Error while processing the data of the board: {serializedBoard.BoardData}");
@@ -99,7 +99,7 @@ namespace Czeum.Connect4Logic
                 int count = 0;
                 for (int j = 0; j < width; j++)
                 {
-                    if (board[i, j] == item)
+                    if (Board[i, j] == item)
                     {
                         count++;
 
@@ -125,7 +125,7 @@ namespace Czeum.Connect4Logic
                 int count = 0;
                 for (int i = 0; i < height; i++)
                 {
-                    if (board[i, j] == item)
+                    if (Board[i, j] == item)
                     {
                         count++;
 
@@ -153,7 +153,7 @@ namespace Czeum.Connect4Logic
                 int count = 0;
                 for (int i = startRow, j = startCol; i < height && j < width; i++, j++)
                 {
-                    if (board[i, j] == item)
+                    if (Board[i, j] == item)
                     {
                         count++;
 
@@ -190,7 +190,7 @@ namespace Czeum.Connect4Logic
                 int count = 0;
                 for (int i = startRow, j = startCol; i < height && j >= 0; i++, j--)
                 {
-                    if (board[i, j] == item)
+                    if (Board[i, j] == item)
                     {
                         count++;
 
@@ -244,7 +244,7 @@ namespace Czeum.Connect4Logic
             {
                 for (int j = 0; j < width; j++)
                 {
-                    switch (board[i, j])
+                    switch (Board[i, j])
                     {
                         case Item.Red:
                             builder.Append('R');
