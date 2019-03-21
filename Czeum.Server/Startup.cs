@@ -10,10 +10,16 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Czeum.DAL;
-using Czeum.Entities;
 using System.Text;
+using Czeum.Abstractions;
+using Czeum.Abstractions.GameServices;
+using Czeum.ChessLogic;
+using Czeum.Connect4Logic;
+using Czeum.DAL.Entities;
 using Czeum.Server.Hubs;
 using Czeum.Server.Services;
+using Czeum.Server.Services.Lobby;
+using Microsoft.Extensions.Hosting;
 
 namespace Czeum.Server
 {
@@ -71,14 +77,16 @@ namespace Czeum.Server
                     protocol.PayloadSerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
                 });
 
-			services.AddSingleton<LobbyService>();
+			services.AddSingleton<ILobbyService, LobbyService>();
 			services.AddSingleton<SoloQueueService>();
-			services.AddScoped<GameService>();
 			services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+            services.AddScoped<IGameService, Connect4Service>();
+            services.AddScoped<IGameService, ChessService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Czeum.Entities;
-using Czeum.Server.Services;
-using Czeum.Server.Models.Account;
+using Czeum.DAL.Entities;
+using Czeum.DTO.UserManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +31,7 @@ namespace Czeum.Server.Controllers {
 
         [HttpPost]
         [Route("/login")]
-        public async Task<ActionResult> Login([FromBody]AppLoginModel model) {
+        public async Task<ActionResult> Login([FromBody]LoginModel model) {
             if (ModelState.IsValid) {
                 var user = await _userManager.FindByNameAsync(model.Username);
 
@@ -74,7 +72,7 @@ namespace Czeum.Server.Controllers {
 
         [HttpPost]
         [Route("/register")]
-        public async Task<ActionResult> Register([FromBody]AppRegisterModel model) {
+        public async Task<ActionResult> Register([FromBody]RegisterModel model) {
             if (ModelState.IsValid) {
                 if (await _userManager.FindByNameAsync(model.Username) != null) {
                     return BadRequest("ErrorUserExists");

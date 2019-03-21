@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0-preview-19075-0444" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0-preview-19075-0444" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0-preview-19075-0444" />
@@ -25,9 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Connect4Dtos\Connect4Dtos.csproj" />
+    <ProjectReference Include="..\Czeum.ChessLogic\Czeum.ChessLogic.csproj" />
+    <ProjectReference Include="..\Czeum.Connect4Logic\Czeum.Connect4Logic.csproj" />
     <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
-    <ProjectReference Include="..\Czeum.Entities\Czeum.Entities.csproj" />
+    <ProjectReference Include="..\Czeum.DTO\Czeum.DTO.csproj" />
   </ItemGroup>
 
 </Project>
