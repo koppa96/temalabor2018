@@ -14,7 +14,7 @@ namespace Czeum.DTO.Connect4
 
         public override IGameService FindGameService(IEnumerable<IGameService> services)
         {
-            return FindGameServiceByIdentifier(services, ServiceNames.Connect4);
+            return ServiceFinder.FindService(ServiceFinder.Connect4, services);
         }
     }
 }
