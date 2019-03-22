@@ -1,6 +1,6 @@
 ﻿namespace Czeum.Server.Hubs
 {
-    public interface ICzeumClient : IGameClient
+    public interface ICzeumClient : IGameClient, ILobbyClient, IErrorClient
     {
     }
 }

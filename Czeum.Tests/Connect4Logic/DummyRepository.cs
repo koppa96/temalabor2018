@@ -26,7 +26,7 @@ namespace Czeum.Tests.Connect4Logic
             throw new ArgumentException("No such board.");
         }
 
-        public void InsertBoard(SerializedConnect4Board board)
+        public int InsertBoard(SerializedConnect4Board board)
         {
             throw new NotImplementedException();
         }

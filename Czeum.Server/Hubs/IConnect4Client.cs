@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Czeum.Abstractions.DTO;
 using Czeum.DTO;
-using Czeum.DTO.Lobby;
 
 namespace Czeum.Server.Hubs {
 	public interface IConnect4Client {

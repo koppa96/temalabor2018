@@ -7,11 +7,15 @@ using Czeum.Abstractions.DTO;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
 using Czeum.DTO;
-using Czeum.DTO.Lobby;
+using Czeum.DTO.UserManagement;
+using Czeum.Server.Hubs;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.OnlineUsers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Server.Controllers
 {
@@ -23,40 +27,35 @@ namespace Czeum.Server.Controllers
         private readonly IBoardRepository<SerializedBoard> _boardRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly ILobbyService _lobbyService;
+        private readonly IFriendRepository _friendRepository;
+        private readonly IOnlineUserTracker _onlineUserTracker;
 
         public GameController(IBoardRepository<SerializedBoard> boardRepository, IMatchRepository matchRepository, 
-            ILobbyService lobbyService)
+            ILobbyService lobbyService, IFriendRepository friendRepository, IOnlineUserTracker onlineUserTracker)
         {
             _boardRepository = boardRepository;
             _matchRepository = matchRepository;
             _lobbyService = lobbyService;
+            _friendRepository = friendRepository;
+            _onlineUserTracker = onlineUserTracker;
         }
 
         [HttpGet]
         [Route("/matches")]
         public ActionResult<List<MatchStatus>> GetMatches()
         {
-            var matches = _matchRepository.GetMatchesOf(User.Identity.Name);
-            var statusList = new List<MatchStatus>();
-            foreach (var match in matches)
+            return _matchRepository.GetMatchesOf(User.Identity.Name).Select(m => new MatchStatus
             {
-                var status = new MatchStatus
-                {
-                    MatchId = match.MatchId,
-                    OtherPlayer = match.GetOtherPlayerName(User.Identity.Name),
-                    CurrentBoard = null,
-                    State = _matchRepository.GetGameStateForMatch(match, User.Identity.Name)
-                };
-
-                statusList.Add(status);
-            }
-
-            return statusList;
+                MatchId = m.MatchId,
+                OtherPlayer = m.GetOtherPlayerName(User.Identity.Name),
+                CurrentBoard = null,
+                State = _matchRepository.GetGameStateForMatch(m, User.Identity.Name)
+            }).ToList();
         }
 
         [HttpGet]
         [Route("/boards/{id}")]
-        public MoveResult GetBoardByMatchId(int id)
+        public ActionResult<MoveResult> GetBoardByMatchId(int id)
         {
             var serializedBoard = _boardRepository.GetByMatchId(id);
             return serializedBoard.ToMoveResult();
@@ -66,7 +65,30 @@ namespace Czeum.Server.Controllers
         [Route("/lobbies")]
         public ActionResult<List<LobbyData>> GetLobbies()
         {
-            return _lobbyService.GetLobbyData();
+            return _lobbyService.GetLobbies();
+        }
+
+        [HttpGet]
+        [Route("/requests")]
+        public ActionResult<List<string>> GetFriendRequests()
+        {
+            return _friendRepository.GetRequestsReceivedBy(User.Identity.Name);
+        }
+
+        [HttpGet]
+        [Route("/myrequests")]
+        public ActionResult<List<string>> GetSentRequests()
+        {
+            return _friendRepository.GetRequestsSentBy(User.Identity.Name);
+        }
+
+        [HttpGet]
+        [Route("/friends")]
+        public ActionResult<List<Friend>> GetFriends()
+        {
+            return _friendRepository.GetFriendsOf(User.Identity.Name)
+                .Select(f => new Friend { IsOnline = _onlineUserTracker.GetUsers().Contains(f), Username = f })
+                .ToList();
         }
     }
 }

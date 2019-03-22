@@ -26,7 +26,7 @@ namespace Czeum.Tests.ChessLogic
             throw new ArgumentException("No such board.");
         }
 
-        public void InsertBoard(SerializedChessBoard board)
+        public int InsertBoard(SerializedChessBoard board)
         {
             throw new NotImplementedException();
         }

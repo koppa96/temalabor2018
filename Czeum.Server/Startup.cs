@@ -16,9 +16,12 @@ using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
 using Czeum.DAL.Entities;
+using Czeum.DAL.Interfaces;
+using Czeum.DAL.Repositories;
 using Czeum.Server.Hubs;
 using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.OnlineUsers;
 using Microsoft.Extensions.Hosting;
 
 namespace Czeum.Server
@@ -77,12 +80,15 @@ namespace Czeum.Server
                     protocol.PayloadSerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
                 });
 
-			services.AddSingleton<ILobbyService, LobbyService>();
-			services.AddSingleton<SoloQueueService>();
+			services.AddSingleton<ISoloQueueService, SoloQueueService>();
+            services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
+			
 			services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-
             services.AddScoped<IGameService, Connect4Service>();
             services.AddScoped<IGameService, ChessService>();
+            services.AddSingleton<ILobbyStorage, LobbyStorage>();
+            services.AddScoped<ILobbyService, LobbyService>();
+            services.AddScoped<IFriendRepository, FriendRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

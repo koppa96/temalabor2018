@@ -4,31 +4,40 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Czeum.Server.Services {
-	public class SoloQueueService {
+	public class SoloQueueService : ISoloQueueService
+	{
 		private readonly List<string> _queuingPlayers;
 		private readonly object _syncObj;
 
-		public SoloQueueService() {
+		public SoloQueueService()
+		{
 			_queuingPlayers = new List<string>();
 			_syncObj = new object();
 		}
 
-		public void JoinSoloQueue(string user) {
-			lock (_syncObj) {
+		public void JoinSoloQueue(string user)
+		{
+			lock (_syncObj)
+			{
 				_queuingPlayers.Add(user);
 			}
 		}
 
-		public void LeaveSoloQueue(string user) {
-			lock (_syncObj) {
+		public void LeaveSoloQueue(string user)
+		{
+			lock (_syncObj)
+			{
 				_queuingPlayers.Remove(user);
 			}
 		}
 
-		public string[] PopFirstTwoPlayers() {
+		public string[] PopFirstTwoPlayers()
+		{
 			string[] players = new string[2];
-			lock (_syncObj) {
-				if (_queuingPlayers.Count < 2) {
+			lock (_syncObj)
+			{
+				if (_queuingPlayers.Count < 2)
+				{
 					return null;
 				}
 
@@ -41,8 +50,10 @@ namespace Czeum.Server.Services {
 			return players;
 		}
 
-		public bool IsQueuing(string user) {
-			lock (_syncObj) {
+		public bool IsQueuing(string user)
+		{
+			lock (_syncObj)
+			{
 				return _queuingPlayers.Contains(user);
 			}
 		}
