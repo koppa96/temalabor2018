@@ -16,5 +16,6 @@ namespace Czeum.DAL.Interfaces
         string GetOtherPlayer(int matchId, string player);
         Match GetMatchById(int matchId);
         void UpdateMatchByStatus(int matchId, Status status);
+        int CreateMatch(LobbyData lobbyData, int boardId);
     }
 }

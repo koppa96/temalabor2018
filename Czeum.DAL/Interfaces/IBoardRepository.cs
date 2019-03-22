@@ -9,7 +9,7 @@ namespace Czeum.DAL.Interfaces
     public interface IBoardRepository<T> where T : SerializedBoard
     {
         T GetByMatchId(int id);
-        void InsertBoard(T board);
+        int InsertBoard(T board);
         void UpdateBoard(T board);
         void DeleteBoard(T board);
         void UpdateBoardData(int id, string newData);

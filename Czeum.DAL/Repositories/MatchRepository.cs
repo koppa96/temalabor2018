@@ -140,5 +140,19 @@ namespace Czeum.DAL.Repositories
 
             _context.SaveChanges();
         }
+
+        public int CreateMatch(LobbyData lobbyData, int boardId)
+        {
+            var match = new Match
+            {
+                Player1 = _context.Users.SingleOrDefault(u => u.UserName == lobbyData.Host),
+                Player2 = _context.Users.SingleOrDefault(u => u.UserName == lobbyData.Guest),
+                Board = _context.Boards.Find(boardId),
+                State = MatchState.Player1Moves
+            };
+
+            _context.Matches.Add(match);
+            return match.MatchId;
+        }
     }
 }

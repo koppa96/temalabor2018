@@ -10,6 +10,7 @@ namespace Czeum.DAL
         public DbSet<Match> Matches { get; set; }
         public DbSet<SerializedBoard> Boards { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<FriendRequest> Requests { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

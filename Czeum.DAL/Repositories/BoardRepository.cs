@@ -37,10 +37,11 @@ namespace Czeum.DAL.Repositories
             return ValidateBoard(board);
         }
 
-        public void InsertBoard(T board)
+        public int InsertBoard(T board)
         {
             _context.Boards.Add(board);
             _context.SaveChanges();
+            return board.BoardId;
         }
 
         public void UpdateBoard(T board)
