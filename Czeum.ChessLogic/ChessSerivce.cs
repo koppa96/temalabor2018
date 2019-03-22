@@ -1,6 +1,4 @@
-﻿using Czeum.Abstractions;
-using System;
-using Czeum.Abstractions.DTO;
+﻿using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
@@ -8,7 +6,7 @@ using Czeum.DTO.Chess;
 
 namespace Czeum.ChessLogic
 {
-    [GameService(ServiceNames.Chess)]
+    [GameService(ServiceFinder.Chess)]
     public class ChessService : IGameService
     {
         private readonly IBoardRepository<SerializedChessBoard> _repository;
@@ -65,6 +63,13 @@ namespace Czeum.ChessLogic
                 Status = Status.Success,
                 PieceInfos = board.GetPieceInfos()
             };
+        }
+
+        public int CreateNewBoard(LobbyData lobbyData)
+        {
+            var lobby = (ChessLobbyData) lobbyData;
+            var board = new ChessBoard(true).SerializeContent();
+            return _repository.InsertBoard(board);
         }
     }
 }

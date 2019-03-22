@@ -1,6 +1,4 @@
-﻿using Czeum.Abstractions;
-using System;
-using Czeum.Abstractions.DTO;
+﻿using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
@@ -8,7 +6,7 @@ using Czeum.DTO.Connect4;
 
 namespace Czeum.Connect4Logic
 {
-    [GameService(ServiceNames.Connect4)]
+    [GameService(ServiceFinder.Connect4)]
     public class Connect4Service : IGameService
     {
         private readonly IBoardRepository<SerializedConnect4Board> _repository;
@@ -55,6 +53,13 @@ namespace Czeum.Connect4Logic
 
             result.Status = Status.Success;
             return result;
+        }
+
+        public int CreateNewBoard(LobbyData lobbyData)
+        {
+            var lobby = (Connect4LobbyData) lobbyData;
+            var board = new Connect4Board(lobby.BoardWidth, lobby.BoardHeight).SerializeContent();
+            return _repository.InsertBoard(board);
         }
     }
 }
