@@ -17,5 +17,11 @@ namespace Czeum.DAL.Entities
 
         [InverseProperty("User2")]
         public List<Friendship> User2Friendships { get; set; }
+        
+        [InverseProperty("Sender")]
+        public List<FriendRequest> SentRequests { get; set; }
+        
+        [InverseProperty("Receiver")] 
+        public List<FriendRequest> Type { get; set; }
     }
 }
