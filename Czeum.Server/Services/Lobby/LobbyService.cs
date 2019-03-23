@@ -19,10 +19,9 @@ namespace Czeum.Server.Services.Lobby {
 			_repository = repository;
 		}
 
-		public LobbyData AddLobby(LobbyData lobbyData)
+		public void AddLobby(LobbyData lobbyData)
 		{
-			_lobbyStorage.AddLobby(ref lobbyData);
-			return lobbyData;
+			_lobbyStorage.AddLobby(lobbyData);
 		}
 
 		public bool JoinPlayerToLobby(string player, int lobbyId)
@@ -76,7 +75,7 @@ namespace Czeum.Server.Services.Lobby {
 			return _lobbyStorage.GetLobbies().ToList();
 		}
 
-		public void UpdateLobbySettings(ref LobbyData lobbyData)
+		public void UpdateLobbySettings(LobbyData lobbyData)
 		{
 			var oldLobby = _lobbyStorage.GetLobby(lobbyData.LobbyId);
 			if (oldLobby == null)
@@ -104,6 +103,16 @@ namespace Czeum.Server.Services.Lobby {
 		public bool LobbyExists(int lobbyId)
 		{
 			return _lobbyStorage.GetLobby(lobbyId) != null;
+		}
+
+		public LobbyData CreateLobby(Type type)
+		{
+			if (!type.IsSubclassOf(typeof(LobbyData)))
+			{
+				throw new ArgumentException("Invalid lobby type.");
+			}
+			
+			return (LobbyData) Activator.CreateInstance(type);
 		}
 
 		public void CancelInviteFromLobby(int lobbyId, string player)

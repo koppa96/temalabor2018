@@ -5,8 +5,6 @@ namespace Czeum.Server.Hubs
 {
     public interface IGameClient
     {
-        Task NotYourMatch();
         Task ReceiveResult(MatchStatus status);
-        Task NotYourTurn();
     }
 }

@@ -8,7 +8,7 @@ namespace Czeum.Server.Services.Lobby
 {
     public interface ILobbyService
     {
-        LobbyData AddLobby(LobbyData lobbyData);
+        void AddLobby(LobbyData lobbyData);
         bool JoinPlayerToLobby(string player, int lobbyId);
         void DisconnectPlayerFromLobby(string player, int lobbyId);
         void InvitePlayerToLobby(int lobbyId, string player);
@@ -16,9 +16,10 @@ namespace Czeum.Server.Services.Lobby
         string KickGuest(int lobbyId);
         LobbyData FindUserLobby(string user);
         List<LobbyData> GetLobbies();
-        void UpdateLobbySettings(ref LobbyData lobbyData);
+        void UpdateLobbySettings(LobbyData lobbyData);
         LobbyData GetLobby(int lobbyId);
         bool ValidateModifier(string modifier, int lobbyId);
         bool LobbyExists(int lobbyId);
+        LobbyData CreateLobby(Type type);
     }
 }

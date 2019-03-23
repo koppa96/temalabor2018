@@ -24,8 +24,8 @@ namespace Czeum.Server.Services.Lobby
             return lobbies[lobbyId];
         }
 
-        public void AddLobby(ref LobbyData lobbyData)
-        {
+        public void AddLobby(LobbyData lobbyData)
+        {           
             lobbyData.LobbyId = lobbies.Values.Max(l => l.LobbyId) + 1;
             lobbies[lobbyData.LobbyId] = lobbyData;
         }

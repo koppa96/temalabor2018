@@ -7,7 +7,7 @@ namespace Czeum.Server.Services.Lobby
     {
         IEnumerable<LobbyData> GetLobbies();
         LobbyData GetLobby(int lobbyId);
-        void AddLobby(ref LobbyData lobbyData);
+        void AddLobby(LobbyData lobbyData);
         void RemoveLobby(int lobbyId);
         void UpdateLobby(LobbyData lobbyData);
         LobbyData GetLobbyOfUser(string user);

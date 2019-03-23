@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.DTO;
@@ -9,7 +10,7 @@ namespace Czeum.Server.Hubs
 {
     public partial class GameHub
     {
-        public async Task<LobbyData> CreateLobby(LobbyData lobbyData)
+        public async Task<LobbyData> CreateLobby(Type lobbyType)
         {
             if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null)
             {
@@ -22,19 +23,32 @@ namespace Czeum.Server.Hubs
                 await Clients.Caller.ReceiveError(ErrorCodes.AlreadyQueuing);
                 return null;
             }
+
+            try
+            {
+                var lobby = _lobbyService.CreateLobby(lobbyType);
+                
+                lobby.Host = Context.UserIdentifier;
+                lobby.Guest = null;
+                lobby.InvitedPlayers = new List<string>();
+                _lobbyService.AddLobby(lobby);
+                _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
             
-            var lobbyWithId = _lobbyService.AddLobby(lobbyData);
-            _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobbyWithId.LobbyId}");
-            
-            await Clients.All.LobbyCreated(lobbyWithId);
-            return lobbyWithId;
+                await Clients.All.LobbyCreated(lobby);
+                return lobby;
+            }
+            catch (ArgumentException e)
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.InvalidLobbyType);
+                return null;
+            }
         }
 
         public async Task UpdateLobby(LobbyData lobbyData)
         {
-            if (!_lobbyService.ValidateModifier(Context.UserIdentifier, lobbyData.LobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyData.LobbyId))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoRightToChange);
+                return;
             }
             
             var result = lobbyData.ValidateSettings();
@@ -44,21 +58,14 @@ namespace Czeum.Server.Hubs
                 return;
             }
             
-            _lobbyService.UpdateLobbySettings(ref lobbyData);
+            _lobbyService.UpdateLobbySettings(lobbyData);
             await Clients.All.LobbyChanged(lobbyData);
         }
 
         public async Task InvitePlayer(int lobbyId, string player)
         {
-            if (!_lobbyService.LobbyExists(lobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
-                return;
-            }
-            
-            if (!_lobbyService.ValidateModifier(Context.UserIdentifier, lobbyId))
-            {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoRightToChange);
                 return;
             }
 
@@ -68,15 +75,8 @@ namespace Czeum.Server.Hubs
 
         public async Task CancelInvitation(int lobbyId, string player)
         {
-            if (!_lobbyService.LobbyExists(lobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
-                return;
-            }
-            
-            if (!_lobbyService.ValidateModifier(Context.UserIdentifier, lobbyId))
-            {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoRightToChange);
                 return;
             }
             
@@ -86,15 +86,9 @@ namespace Czeum.Server.Hubs
 
         public async Task JoinLobby(int lobbyId)
         {
-            if (!_lobbyService.LobbyExists(lobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
                 return;
-            }
-
-            if (!_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId))
-            {
-                await Clients.Caller.ReceiveError(ErrorCodes.CouldNotJoinLobby);
             }
             
             var lobby = _lobbyService.GetLobby(lobbyId);
@@ -123,15 +117,8 @@ namespace Czeum.Server.Hubs
 
         public async Task KickGuest(int lobbyId)
         {
-            if (!_lobbyService.LobbyExists(lobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
-                return;
-            }
-            
-            if (!_lobbyService.ValidateModifier(Context.UserIdentifier, lobbyId))
-            {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoRightToChange);
                 return;
             }
 

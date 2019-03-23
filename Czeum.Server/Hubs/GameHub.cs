@@ -7,14 +7,18 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
+using Czeum.DTO;
 using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace Czeum.Server.Hubs
 {
+    [Authorize]
     public partial class GameHub : Hub<ICzeumClient>
     {
         private readonly IEnumerable<IGameService> _gameServices;
@@ -23,9 +27,12 @@ namespace Czeum.Server.Hubs
         private readonly ILobbyService _lobbyService;
         private readonly ILogger _logger;
         private readonly ISoloQueueService _soloQueueService;
+        private readonly IFriendRepository _friendRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public GameHub(IEnumerable<IGameService> gameServices, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
-            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService)
+            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository,
+            UserManager<ApplicationUser> userManager)
         {
             _gameServices = gameServices;
             _matchRepository = matchRepository;
@@ -33,12 +40,20 @@ namespace Czeum.Server.Hubs
             _lobbyService = lobbyService;
             _logger = logger;
             _soloQueueService = soloQueueService;
+            _friendRepository = friendRepository;
+            _userManager = userManager;
         }
 
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
             _onlineUserTracker.PutUser(Context.UserIdentifier);
+
+            var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
+            foreach (var friend in friends)
+            {
+                await Clients.User(friend).FriendConnected(Context.UserIdentifier);
+            }
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -58,6 +73,12 @@ namespace Czeum.Server.Hubs
                     await Clients.All.LobbyDeleted(lobby.LobbyId);
                 }
             }
+
+            var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
+            foreach (var friend in friends)
+            {
+                await Clients.User(friend).FriendDisconnected(Context.UserIdentifier);
+            }
             
             _onlineUserTracker.RemoveUser(Context.UserIdentifier);
             await base.OnDisconnectedAsync(exception);
@@ -66,16 +87,22 @@ namespace Czeum.Server.Hubs
         public async Task ReceiveMove(MoveData moveData)
         {
             var match = _matchRepository.GetMatchById(moveData.MatchId);
+
+            if (match == null)
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchMatch);
+                return;
+            }
             
             if (!match.HasPlayer(Context.UserIdentifier))
             {
-                await Clients.Caller.NotYourMatch();
+                await Clients.Caller.ReceiveError(ErrorCodes.NotYourMatch);
                 return;
             }
 
             if (!match.IsPlayersTurn(Context.UserIdentifier))
             {
-                await Clients.Caller.NotYourTurn();
+                await Clients.Caller.ReceiveError(ErrorCodes.NotYourTurn);
                 return;
             }
             
