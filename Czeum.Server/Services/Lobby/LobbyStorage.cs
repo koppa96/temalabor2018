@@ -32,8 +32,7 @@ namespace Czeum.Server.Services.Lobby
 
         public void RemoveLobby(int lobbyId)
         {
-            LobbyData removedLobby;
-            lobbies.TryRemove(lobbyId, out removedLobby);
+            lobbies.TryRemove(lobbyId, out _);
         }
 
         public void UpdateLobby(LobbyData lobbyData)

@@ -7,6 +7,8 @@ namespace Czeum.Server.Hubs
     {
         Task ReceiveRequest(string sender);
         Task RequestRejected(string receiver);
+        Task SuccessfulRejection(string sender);
+        Task SuccessfulRequest(string receiver);
         Task FriendAdded(Friend friend);
         Task FriendRemoved(string friend);
         Task FriendConnected(string friend);

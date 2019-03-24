@@ -10,7 +10,7 @@ namespace Czeum.Server.Hubs
 {
     public partial class GameHub
     {
-        public async Task<LobbyData> CreateLobby(Type lobbyType)
+        public async Task<LobbyData> CreateLobby(Type lobbyType, LobbyAccess access)
         {
             if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null)
             {
@@ -27,17 +27,16 @@ namespace Czeum.Server.Hubs
             try
             {
                 var lobby = _lobbyService.CreateLobby(lobbyType);
-                
                 lobby.Host = Context.UserIdentifier;
-                lobby.Guest = null;
-                lobby.InvitedPlayers = new List<string>();
+                lobby.Access = access;
+                
                 _lobbyService.AddLobby(lobby);
                 _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
             
                 await Clients.All.LobbyCreated(lobby);
                 return lobby;
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.InvalidLobbyType);
                 return null;
@@ -90,10 +89,15 @@ namespace Czeum.Server.Hubs
             {
                 return;
             }
-            
-            var lobby = _lobbyService.GetLobby(lobbyId);
-            await Clients.Caller.JoinedToLobby(lobby);
-            await Clients.All.LobbyChanged(lobby);
+
+            if (_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId))
+            {
+                var lobby = _lobbyService.GetLobby(lobbyId);
+                await Clients.Caller.JoinedToLobby(lobby);
+                await Clients.All.LobbyChanged(lobby);
+            }
+
+            await Clients.Caller.ReceiveError(ErrorCodes.CouldNotJoinLobby);
         }
 
         public async Task DisconnectFromLobby(int lobbyId)
