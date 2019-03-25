@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.DTO;
 using Microsoft.Extensions.Logging;
@@ -131,6 +132,36 @@ namespace Czeum.Server.Hubs
             {
                 await Clients.User(kickedGuest).KickedFromLobby();
                 await Clients.All.LobbyChanged(_lobbyService.GetLobby(lobbyId));
+            }
+        }
+
+        public async Task CreateMatch(int lobbyId)
+        {
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
+            {
+                return;
+            }
+
+            var lobby = _lobbyService.GetLobby(lobbyId);
+            if (lobby.Guest == null)
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.NotEnoughPlayers);
+                return;
+            }
+
+            try
+            {
+                var service = lobby.FindGameService(_gameServices);
+                var newBoardId = service.CreateNewBoard(lobby);
+                var matchId = _matchRepository.CreateMatch(lobby, newBoardId);
+
+                var statuses = _matchRepository.CreateMatchStatuses(matchId, newBoardId);
+                await Clients.Caller.MatchCreated(statuses[lobby.Host]);
+                await Clients.User(lobby.Guest).MatchCreated(statuses[lobby.Guest]);
+            }
+            catch (GameNotSupportedException)
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.GameNotSupported);
             }
         }
     }

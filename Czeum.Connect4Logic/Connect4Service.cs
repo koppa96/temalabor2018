@@ -61,5 +61,11 @@ namespace Czeum.Connect4Logic
             var board = new Connect4Board(lobby.BoardWidth, lobby.BoardHeight).SerializeContent();
             return _repository.InsertBoard(board);
         }
+
+        public int CreateDefaultBoard()
+        {
+            var lobby = new Connect4LobbyData();
+            return CreateNewBoard(lobby);
+        }
     }
 }

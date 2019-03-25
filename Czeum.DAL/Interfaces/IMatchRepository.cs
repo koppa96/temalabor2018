@@ -10,12 +10,12 @@ namespace Czeum.DAL.Interfaces
 {
     public interface IMatchRepository
     {
-        MatchStatus CreateMatchStatusFor(int matchId, string player, MoveResult moveResult);
-        List<Match> GetMatchesOf(string player);
-        GameState GetGameStateForMatch(Match match, string player);
-        string GetOtherPlayer(int matchId, string player);
+        Dictionary<string, MatchStatus> CreateMatchStatuses(int matchId, MoveResult moveResult);
+        Dictionary<string, MatchStatus> CreateMatchStatuses(int matchId, int boardId);
+        IEnumerable<Match> GetMatchesOf(string player);
         Match GetMatchById(int matchId);
         void UpdateMatchByStatus(int matchId, Status status);
         int CreateMatch(LobbyData lobbyData, int boardId);
+        int CreateMatch(string player1, string player2, int boardId);
     }
 }

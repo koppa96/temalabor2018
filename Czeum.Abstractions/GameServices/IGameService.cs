@@ -6,5 +6,6 @@ namespace Czeum.Abstractions.GameServices
     {
         MoveResult ExecuteMove(MoveData moveData, int playerId);
         int CreateNewBoard(LobbyData lobbyData);
+        int CreateDefaultBoard();
     }
 }

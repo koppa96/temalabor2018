@@ -28,11 +28,9 @@ namespace Czeum.Server.Hubs
         private readonly ILogger _logger;
         private readonly ISoloQueueService _soloQueueService;
         private readonly IFriendRepository _friendRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public GameHub(IEnumerable<IGameService> gameServices, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
-            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository,
-            UserManager<ApplicationUser> userManager)
+            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository)
         {
             _gameServices = gameServices;
             _matchRepository = matchRepository;
@@ -41,7 +39,6 @@ namespace Czeum.Server.Hubs
             _logger = logger;
             _soloQueueService = soloQueueService;
             _friendRepository = friendRepository;
-            _userManager = userManager;
         }
 
         public override async Task OnConnectedAsync()
@@ -73,6 +70,8 @@ namespace Czeum.Server.Hubs
                     await Clients.All.LobbyDeleted(lobby.LobbyId);
                 }
             }
+
+            _soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
             var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
             foreach (var friend in friends)
@@ -107,19 +106,24 @@ namespace Czeum.Server.Hubs
             }
             
             var playerId = match.GetPlayerId(Context.UserIdentifier);
-            var service = moveData.FindGameService(_gameServices);
-            var result = service.ExecuteMove(moveData, playerId);
-            _matchRepository.UpdateMatchByStatus(match.MatchId, result.Status);
-            
-            await Clients.Caller.ReceiveResult(_matchRepository.CreateMatchStatusFor(moveData.MatchId, Context.UserIdentifier, result));
-            if (result.Status != Status.Fail)
+
+            try
             {
-                var otherPlayer = match.GetOtherPlayerName(Context.UserIdentifier);
-                if (Clients.User(otherPlayer) != null)
+                var service = moveData.FindGameService(_gameServices);
+                var result = service.ExecuteMove(moveData, playerId);
+                _matchRepository.UpdateMatchByStatus(match.MatchId, result.Status);
+                var statues = _matchRepository.CreateMatchStatuses(match.MatchId, result);
+                
+                await Clients.Caller.ReceiveResult(statues[Context.UserIdentifier]);
+                if (result.Status != Status.Fail)
                 {
-                    await Clients.User(otherPlayer)
-                        .ReceiveResult(_matchRepository.CreateMatchStatusFor(moveData.MatchId, otherPlayer, result));
+                    var otherPlayer = match.GetOtherPlayerName(Context.UserIdentifier);
+                    await Clients.User(otherPlayer).ReceiveResult(statues[otherPlayer]);
                 }
+            }
+            catch (GameNotSupportedException)
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.GameNotSupported);
             }
         }
     }

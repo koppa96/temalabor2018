@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using Czeum.Abstractions.DTO;
 
 namespace Czeum.DAL.Entities
 {
@@ -33,6 +35,31 @@ namespace Czeum.DAL.Entities
             }
 
             return player == match.Player1.UserName ? match.Player2.UserName : match.Player1.UserName;
+        }
+
+        public static GameState GetGameStateForPlayer(this Match match, string player)
+        {
+            if (!match.HasPlayer(player))
+            {
+                throw new ArgumentException("The player is not playing this match");
+            }
+
+            var playerId = match.GetPlayerId(player);
+            switch (match.State)
+            {
+                case MatchState.Draw:
+                    return GameState.Draw;
+                case MatchState.Player1Moves:
+                    return playerId == 1 ? GameState.YourTurn : GameState.EnemyTurn;
+                case MatchState.Player2Moves:
+                    return playerId == 1 ? GameState.EnemyTurn : GameState.YourTurn;
+                case MatchState.Player1Won:
+                    return playerId == 1 ? GameState.YouWon : GameState.EnemyWon;
+                case MatchState.Player2Won:
+                    return playerId == 1 ? GameState.EnemyWon : GameState.YouWon;
+                default:
+                    throw new NotSupportedException("There is an unhandled MatchState that can't be converted to GameState.");
+            }
         }
     }
 }

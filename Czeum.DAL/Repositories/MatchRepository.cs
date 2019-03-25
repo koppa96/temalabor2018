@@ -20,90 +20,44 @@ namespace Czeum.DAL.Repositories
             _context = context;
         }
 
-        public MatchStatus CreateMatchStatusFor(int matchId, string player, MoveResult moveResult)
+        public Dictionary<string, MatchStatus> CreateMatchStatuses(int matchId, MoveResult moveResult)
         {
+            var statuses = new Dictionary<string, MatchStatus>();
             var match = _context.Matches.Find(matchId);
 
-            if (match == null)
-            {
-                throw new ArgumentException("There is no match with the given id.");
-            }
-
-            int playerId = match.GetPlayerId(player);
-
-            MatchStatus status = new MatchStatus()
+            var statusForPlayer1 = new MatchStatus
             {
                 CurrentBoard = moveResult,
                 MatchId = matchId,
-                OtherPlayer = playerId == 1 ? match.Player1.UserName : match.Player2.UserName
+                OtherPlayer = match.Player2.UserName,
+                State = match.GetGameStateForPlayer(match.Player1.UserName)
             };
 
-            switch (match.State)
+            var statusForPlayer2 = new MatchStatus
             {
-                case MatchState.Player1Moves:
-                    status.State = playerId == 1 ? GameState.YourTurn : GameState.EnemyTurn;
-                    break;
-                case MatchState.Player2Moves:
-                    status.State = playerId == 2 ? GameState.YourTurn : GameState.EnemyTurn;
-                    break;
-                case MatchState.Draw:
-                    status.State = GameState.Draw;
-                    break;
-                case MatchState.Player1Won:
-                    status.State = playerId == 1 ? GameState.YouWon : GameState.EnemyWon;
-                    break;
-                case MatchState.Player2Won:
-                    status.State = playerId == 2 ? GameState.YouWon : GameState.EnemyWon;
-                    break;
-            }
+                CurrentBoard = moveResult,
+                MatchId = matchId,
+                OtherPlayer = match.Player1.UserName,
+                State = match.GetGameStateForPlayer(match.Player2.UserName)
+            };
 
-            return status;
+            statuses[match.Player1.UserName] = statusForPlayer1;
+            statuses[match.Player2.UserName] = statusForPlayer2;
+            
+            return statuses;
         }
 
-        public List<Match> GetMatchesOf(string player)
+        public Dictionary<string, MatchStatus> CreateMatchStatuses(int matchId, int boardId)
+        {
+            var moveResult = _context.Boards.Find(boardId).ToMoveResult();
+            return CreateMatchStatuses(matchId, moveResult);
+        }
+
+        public IEnumerable<Match> GetMatchesOf(string player)
         {
             return _context.Matches.Include("Player1").Include("Player2")
                 .Where(m => m.Player1.UserName == player || m.Player2.UserName == player)
                 .ToList();
-        }
-
-        public GameState GetGameStateForMatch(Match match, string player)
-        {
-            switch (match.State)
-            {
-                case MatchState.Draw:
-                    return GameState.Draw;
-                case MatchState.Player1Moves:
-                    return match.Player1.UserName == player
-                        ? GameState.YourTurn
-                        : GameState.EnemyTurn;
-                case MatchState.Player2Moves:
-                    return match.Player2.UserName == player
-                        ? GameState.YourTurn
-                        : GameState.EnemyTurn;
-                case MatchState.Player1Won:
-                    return match.Player1.UserName == player
-                        ? GameState.YouWon
-                        : GameState.EnemyWon;
-                case MatchState.Player2Won:
-                    return match.Player2.UserName == player
-                        ? GameState.YouWon
-                        : GameState.EnemyWon;
-                default:
-                    throw new ArgumentException("There is no GameState for this MatchState.");
-            }
-        }
-
-        public string GetOtherPlayer(int matchId, string player)
-        {
-            var match = _context.Matches.Find(matchId);
-
-            if (match.HasPlayer(player))
-            {
-                return player == match.Player1.UserName ? match.Player2.UserName : match.Player1.UserName;
-            }
-            
-            throw new ArgumentException("The player is not playing in the match.");
         }
 
         public Match GetMatchById(int matchId)
@@ -143,15 +97,36 @@ namespace Czeum.DAL.Repositories
 
         public int CreateMatch(LobbyData lobbyData, int boardId)
         {
+            return CreateMatch(lobbyData.Host, lobbyData.Guest, boardId);
+        }
+
+        public int CreateMatch(string player1, string player2, int boardId)
+        {
             var match = new Match
             {
-                Player1 = _context.Users.SingleOrDefault(u => u.UserName == lobbyData.Host),
-                Player2 = _context.Users.SingleOrDefault(u => u.UserName == lobbyData.Guest),
+                Player1 = _context.Users.SingleOrDefault(u => u.UserName == player1),
+                Player2 = _context.Users.SingleOrDefault(u => u.UserName == player2),
                 Board = _context.Boards.Find(boardId),
                 State = MatchState.Player1Moves
             };
 
+            if (match.Player1 == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(player1), "There is no such player.");
+            }
+
+            if (match.Player2 == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(player2), "There is no such player");
+            }
+
+            if (match.Board == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(boardId), "There is no such board.");
+            }
+
             _context.Matches.Add(match);
+            _context.SaveChanges();
             return match.MatchId;
         }
     }

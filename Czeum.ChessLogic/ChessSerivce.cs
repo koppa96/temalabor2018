@@ -67,9 +67,13 @@ namespace Czeum.ChessLogic
 
         public int CreateNewBoard(LobbyData lobbyData)
         {
-            var lobby = (ChessLobbyData) lobbyData;
             var board = new ChessBoard(true).SerializeContent();
             return _repository.InsertBoard(board);
+        }
+
+        public int CreateDefaultBoard()
+        {
+            return CreateNewBoard(null);
         }
     }
 }

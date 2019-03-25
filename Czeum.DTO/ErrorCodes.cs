@@ -10,6 +10,7 @@ namespace Czeum.DTO
         public const string NoRightToChange = nameof(NoRightToChange);
         public const string CouldNotJoinLobby = nameof(CouldNotJoinLobby);
         public const string InvalidLobbyType = nameof(InvalidLobbyType);
+        public const string NotEnoughPlayers = nameof(NotEnoughPlayers);
         
         //Friend management related errors
         public const string NoSuchUser = nameof(NoSuchUser);
@@ -22,5 +23,6 @@ namespace Czeum.DTO
         public const string NoSuchMatch = nameof(NoSuchMatch);
         public const string NotYourTurn = nameof(NotYourTurn);
         public const string NotYourMatch = nameof(NotYourMatch);
+        public const string GameNotSupported = nameof(GameNotSupported);
     }
 }

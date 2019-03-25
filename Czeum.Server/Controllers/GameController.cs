@@ -49,7 +49,7 @@ namespace Czeum.Server.Controllers
                 MatchId = m.MatchId,
                 OtherPlayer = m.GetOtherPlayerName(User.Identity.Name),
                 CurrentBoard = null,
-                State = _matchRepository.GetGameStateForMatch(m, User.Identity.Name)
+                State = m.GetGameStateForPlayer(User.Identity.Name)
             }).ToList();
         }
 

@@ -8,6 +8,12 @@ namespace Czeum.DTO.Connect4
     {
         public int BoardWidth { get; set; }
         public int BoardHeight { get; set; }
+
+        public Connect4LobbyData()
+        {
+            BoardWidth = 7;
+            BoardHeight = 6;
+        }
         
         public override IGameService FindGameService(IEnumerable<IGameService> services)
         {
