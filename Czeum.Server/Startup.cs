@@ -23,6 +23,7 @@ using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
 using Microsoft.Extensions.Hosting;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Czeum.Server
 {
@@ -92,7 +93,7 @@ namespace Czeum.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

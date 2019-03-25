@@ -17,9 +17,9 @@ namespace Czeum.ChessLogic.Pieces
             Column = Field.Column
         };
 
-        public Pawn(ChessBoard board, Color color) : base(board, color)
+        public Pawn(ChessBoard board, Color color, bool hasMoved = false) : base(board, color)
         {
-            hasMoved = false;
+            this.hasMoved = hasMoved;
         }
 
         public override bool CanMoveTo(Field targetField)
@@ -58,6 +58,11 @@ namespace Czeum.ChessLogic.Pieces
             }
 
             return result;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + "_" + (hasMoved ? 't' : 'f');
         }
     }
 }

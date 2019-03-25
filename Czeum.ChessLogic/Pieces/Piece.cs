@@ -107,7 +107,7 @@ namespace Czeum.ChessLogic.Pieces
                 case 'K':
                     return new King(board, color);
                 case 'P':
-                    return new Pawn(board, color);
+                    return new Pawn(board, color, str.Last() == 't');
             }
 
             return null;
