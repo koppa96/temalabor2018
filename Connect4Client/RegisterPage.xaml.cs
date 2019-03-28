@@ -11,7 +11,7 @@ using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Connect4Client {
+namespace Czeum.Client {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -87,7 +87,7 @@ namespace Connect4Client {
         }
 
         private void BackButton_Click(object sender, BackRequestedEventArgs e) {
-            Frame.Navigate(typeof(LoginPage));
+            //Frame.Navigate(typeof(LoginPage));
 
             var currentView = SystemNavigationManager.GetForCurrentView();
             currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Disabled;

@@ -1,7 +1,8 @@
-﻿<Application
-    x:Class="Connect4Client.App"
+﻿<prismUnity:PrismUnityApplication
+    x:Class="Czeum.Client.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Connect4Client">
+    xmlns:local="using:Czeum.Client"
+    xmlns:prismUnity="using:Prism.Unity.Windows">
 
-</Application>
+</prismUnity:PrismUnityApplication>

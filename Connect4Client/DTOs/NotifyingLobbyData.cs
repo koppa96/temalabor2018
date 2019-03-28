@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Connect4Client.DTOs
+namespace Czeum.Client.DTOs
 {
     public class NotifyingLobbyData : INotifyPropertyChanged
     {

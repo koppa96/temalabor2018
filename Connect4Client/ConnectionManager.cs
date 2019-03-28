@@ -10,7 +10,7 @@ using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Core;
 
-namespace Connect4Client
+namespace Czeum.Client
 {
     class ConnectionManager {
         private static readonly ConnectionManager instance = new ConnectionManager();

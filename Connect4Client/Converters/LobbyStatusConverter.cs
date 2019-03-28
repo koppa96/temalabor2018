@@ -8,7 +8,7 @@ using System.Diagnostics;
 using Windows.UI.Xaml;
 using Connect4Dtos;
 
-namespace Connect4Client.Converters {
+namespace Czeum.Client.Converters {
     public class LobbyStatusConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, string language) {
             LobbyStatus? v = value as LobbyStatus?;
