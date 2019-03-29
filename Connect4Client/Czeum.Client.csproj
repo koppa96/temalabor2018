@@ -7,8 +7,8 @@
     <ProjectGuid>{3968CF5B-6349-4B9F-872C-50F13A2B711F}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Connect4Client</RootNamespace>
-    <AssemblyName>Connect4Client</AssemblyName>
+    <RootNamespace>Czeum.Client</RootNamespace>
+    <AssemblyName>Czeum.Client</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17763.0</TargetPlatformVersion>
@@ -36,6 +36,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -116,6 +118,8 @@
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\ILoginPageViewModel.cs" />
+    <Compile Include="Interfaces\IUserManagerService.cs" />
     <Compile Include="LobbyBrowserPage.xaml.cs">
       <DependentUpon>LobbyBrowserPage.xaml</DependentUpon>
     </Compile>
@@ -123,7 +127,7 @@
       <DependentUpon>LobbyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="LobbyRepository.cs" />
-    <Compile Include="LoginPage.xaml.cs">
+    <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
@@ -137,12 +141,14 @@
     <Compile Include="RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\DummyUserManagerService.cs" />
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="StatisticsPage.xaml.cs">
       <DependentUpon>StatisticsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\LoginPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -181,7 +187,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LoginPage.xaml">
+    <Page Include="Views\LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -213,8 +219,20 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.7</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Animations">
+      <Version>5.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Unity">
+      <Version>6.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Windows">
+      <Version>6.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
       <Version>4.5.1</Version>
@@ -228,6 +246,17 @@
       <Project>{1064a424-aece-423c-a925-1638db6dd596}</Project>
       <Name>Connect4Dtos</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj">
+      <Project>{f9da0e65-03b2-4531-8bea-a4aa438caf88}</Project>
+      <Name>Czeum.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Czeum.DTO\Czeum.DTO.csproj">
+      <Project>{e7c9a283-5bf0-44fd-b645-99de3925cc89}</Project>
+      <Name>Czeum.DTO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

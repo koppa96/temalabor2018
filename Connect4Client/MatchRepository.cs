@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using Connect4Dtos;
 using Windows.UI.Core;
 
-namespace Connect4Client {
+namespace Czeum.Client {
     class MatchRepository {
         public static MatchRepository Instance { get; } = new MatchRepository();
         private static object lockObject = new object();

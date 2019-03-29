@@ -15,23 +15,41 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Connect4Client
+using Prism.Unity.Windows;
+using System.Threading.Tasks;
+using Czeum.Client.Interfaces;
+using Czeum.Client.Services;
+using Microsoft.Practices.Unity;
+using Prism.Logging;
+using NLog;
+
+namespace Czeum.Client
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    sealed partial class App : Application
+    sealed partial class App : PrismUnityApplication
     {
+        static readonly UnityContainer _container = new UnityContainer();
+        public enum Experiences { Login }
+   
         public static string Token { get; set; }
         public static readonly string AppUrl = "https://koppa96.sch.bme.hu/Czeum.Server";
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
+
         public App()
         {
             this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            //this.Suspending += OnSuspending;
+        }
+
+        protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
+        {
+            _container.RegisterType<IUserManagerService, DummyUserManagerService>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
+            this.NavigationService.Navigate(Experiences.Login.ToString(), null);
+            return Task.FromResult<object>(null);
+        }
+
+        protected override object Resolve(Type type)
+        {
+            return _container.Resolve(type);
         }
 
         /// <summary>
@@ -39,7 +57,7 @@ namespace Connect4Client
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        /*protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -100,6 +118,38 @@ namespace Connect4Client
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }*/
+    }
+
+    class NLogAdapter : ILoggerFacade
+    {
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+        public NLogAdapter()
+        {
+            var config = new NLog.Config.LoggingConfiguration();
+            var logdebug = new NLog.Targets.DebuggerTarget("logdebug");
+            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logdebug);
+            LogManager.Configuration = config;
+        }
+
+        public void Log(string message, Category category, Priority priority)
+        {
+            switch (category)
+            {
+                case Category.Debug:
+                    _logger.Debug(message);
+                    break;
+                case Category.Exception:
+                    _logger.Error(message);
+                    break;
+                case Category.Info:
+                    _logger.Info(message);
+                    break;
+                case Category.Warn:
+                    _logger.Warn(message);
+                    break;
+            }
         }
     }
+
 }

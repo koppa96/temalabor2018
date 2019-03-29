@@ -12,9 +12,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
-using Connect4Client.DTOs;
+using Czeum.Client.DTOs;
 
-namespace Connect4Client {
+namespace Czeum.Client {
     class LobbyRepository {
         public static LobbyRepository Instance { get; } = new LobbyRepository();
 

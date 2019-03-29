@@ -1,4 +1,4 @@
-﻿using Connect4Client.DTOs;
+﻿using Czeum.Client.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Connect4Client {
+namespace Czeum.Client {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>

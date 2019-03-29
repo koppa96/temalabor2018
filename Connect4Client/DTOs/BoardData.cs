@@ -1,7 +1,7 @@
 ﻿using System;
 using Connect4Dtos;
 
-namespace Connect4Client {
+namespace Czeum.Client {
     public class BoardData {
         private Item[] board;
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
-namespace Connect4Client.Converters {
+namespace Czeum.Client.Converters {
     class PlayerColorConverter : IValueConverter{
         public object Convert(object value, Type targetType, object parameter, string language) {
             var playerItem = value as Connect4Dtos.Item?;

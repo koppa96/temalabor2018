@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Connect4Client.Converters
+namespace Czeum.Client.Converters
 {
     class SelectedLobbyVisibilityConverter : IValueConverter
     {

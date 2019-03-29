@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Connect4Client.Converters {
+namespace Czeum.Client.Converters {
     class InvitedPlayerNotificationConverter : IValueConverter{
         public object Convert(object value, Type targetType, object parameter, string language) {
             var invitedPlayers = value as List<String>;

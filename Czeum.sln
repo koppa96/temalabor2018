@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28621.142
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.Server", "Czeum.Server\Czeum.Server.csproj", "{869019BA-DA57-4421-927C-3232B2E21879}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4Client", "Connect4Client\Connect4Client.csproj", "{3968CF5B-6349-4B9F-872C-50F13A2B711F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Czeum.Client", "Connect4Client\Czeum.Client.csproj", "{3968CF5B-6349-4B9F-872C-50F13A2B711F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4Test", "Connect4Test\Connect4Test.csproj", "{3A09B51C-5D9D-4A30-B1A0-4D081BD0850E}"
 EndProject

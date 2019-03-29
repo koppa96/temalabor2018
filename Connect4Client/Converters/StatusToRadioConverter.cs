@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace Connect4Client.Converters {
+namespace Czeum.Client.Converters {
     class StatusToRadioConverter : IValueConverter{
         public object Convert(object value, Type targetType, object parameter, string language) {
             var status = value as LobbyStatus?;

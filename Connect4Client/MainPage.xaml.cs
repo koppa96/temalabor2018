@@ -22,7 +22,7 @@ using Windows.Web.Http.Filters;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace Connect4Client
+namespace Czeum.Client
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -93,7 +93,7 @@ namespace Connect4Client
                 HttpResponseMessage message = await client.PostAsync(uri, content);
 
                 if (message.IsSuccessStatusCode) {
-                    Frame.Navigate(typeof(LoginPage));
+                    //Frame.Navigate(typeof(LoginPage));
                     await ConnectionManager.Instance.CloseConnectionAsync();
                 } else {
                     ContentDialog dialog = new ContentDialog() {
