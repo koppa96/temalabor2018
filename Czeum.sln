@@ -5,11 +5,7 @@ VisualStudioVersion = 15.0.28307.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.Server", "Czeum.Server\Czeum.Server.csproj", "{869019BA-DA57-4421-927C-3232B2E21879}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Czeum.Client", "Connect4Client\Czeum.Client.csproj", "{3968CF5B-6349-4B9F-872C-50F13A2B711F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4Test", "Connect4Test\Connect4Test.csproj", "{3A09B51C-5D9D-4A30-B1A0-4D081BD0850E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connect4Dtos", "Connect4Dtos\Connect4Dtos.csproj", "{1064A424-AECE-423C-A925-1638DB6DD596}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Czeum.Client", "Czeum.Client\Czeum.Client.csproj", "{3968CF5B-6349-4B9F-872C-50F13A2B711F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.DAL", "Czeum.DAL\Czeum.DAL.csproj", "{349371D3-EC4C-46C5-9217-D3915987FF2A}"
 EndProject
