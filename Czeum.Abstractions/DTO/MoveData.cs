@@ -8,7 +8,5 @@ namespace Czeum.Abstractions.DTO
     public abstract class MoveData
     {
         public int MatchId { get; set; }
-
-        public abstract IGameService FindGameService(IEnumerable<IGameService> services);
     }
 }

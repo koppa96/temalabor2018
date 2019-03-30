@@ -4,11 +4,13 @@ namespace Czeum.Abstractions.GameServices
 {
     public class GameServiceAttribute : Attribute
     {
-        public string Identifier { get; }
+        public Type MoveType { get; }
+        public Type LobbyType { get; }
 
-        public GameServiceAttribute(string identifier)
+        public GameServiceAttribute(Type moveType, Type lobbyType)
         {
-            Identifier = identifier;
+            MoveType = moveType;
+            LobbyType = lobbyType;
         }
     }
 }

@@ -11,10 +11,5 @@ namespace Czeum.DTO.Connect4
     public class Connect4MoveData : MoveData
     {
         public int Column { get; set; }
-
-        public override IGameService FindGameService(IEnumerable<IGameService> services)
-        {
-            return ServiceFinder.FindService(ServiceFinder.Connect4, services);
-        }
     }
 }

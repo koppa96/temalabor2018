@@ -11,6 +11,7 @@ using Czeum.DTO;
 using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
+using Czeum.Server.Services.ServiceContainer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -21,7 +22,7 @@ namespace Czeum.Server.Hubs
     [Authorize]
     public partial class GameHub : Hub<ICzeumClient>
     {
-        private readonly IEnumerable<IGameService> _gameServices;
+        private readonly IServiceContainer _serviceContainer;
         private readonly IMatchRepository _matchRepository;
         private readonly IOnlineUserTracker _onlineUserTracker;
         private readonly ILobbyService _lobbyService;
@@ -29,10 +30,10 @@ namespace Czeum.Server.Hubs
         private readonly ISoloQueueService _soloQueueService;
         private readonly IFriendRepository _friendRepository;
 
-        public GameHub(IEnumerable<IGameService> gameServices, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
+        public GameHub(IServiceContainer serviceContainer, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
             ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository)
         {
-            _gameServices = gameServices;
+            _serviceContainer = serviceContainer;
             _matchRepository = matchRepository;
             _onlineUserTracker = onlineUserTracker;
             _lobbyService = lobbyService;
@@ -109,7 +110,7 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var service = moveData.FindGameService(_gameServices);
+                var service = _serviceContainer.FindService(moveData);
                 var result = service.ExecuteMove(moveData, playerId);
                 _matchRepository.UpdateMatchByStatus(match.MatchId, result.Status);
                 var statues = _matchRepository.CreateMatchStatuses(match.MatchId, result);

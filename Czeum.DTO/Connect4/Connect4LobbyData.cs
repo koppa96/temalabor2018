@@ -14,11 +14,6 @@ namespace Czeum.DTO.Connect4
             BoardWidth = 7;
             BoardHeight = 6;
         }
-        
-        public override IGameService FindGameService(IEnumerable<IGameService> services)
-        {
-            return ServiceFinder.FindService(ServiceFinder.Connect4, services);
-        }
 
         public override string ValidateSettings()
         {

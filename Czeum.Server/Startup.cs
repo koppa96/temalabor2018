@@ -22,8 +22,9 @@ using Czeum.Server.Hubs;
 using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
+using Czeum.Server.Services.ServiceContainer;
 using Microsoft.Extensions.Hosting;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+
 
 namespace Czeum.Server
 {
@@ -83,17 +84,27 @@ namespace Czeum.Server
 
 			services.AddSingleton<ISoloQueueService, SoloQueueService>();
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
-			
 			services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+            services.AddTransient<IServiceContainer, ServiceContainer>();
+            
+			//Game Services
             services.AddScoped<IGameService, Connect4Service>();
             services.AddScoped<IGameService, ChessService>();
+            
+            //Lobby
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
             services.AddScoped<ILobbyService, LobbyService>();
+            
+            //Repositories
             services.AddScoped<IFriendRepository, FriendRepository>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
+            services.AddScoped<IBoardRepository<SerializedBoard>, BoardRepository<SerializedBoard>>();
+            services.AddScoped<IBoardRepository<SerializedChessBoard>, BoardRepository<SerializedChessBoard>>();
+            services.AddScoped<IBoardRepository<SerializedConnect4Board>, BoardRepository<SerializedConnect4Board>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

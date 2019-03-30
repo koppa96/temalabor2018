@@ -15,8 +15,7 @@ namespace Czeum.Abstractions.DTO {
 			InvitedPlayers = new List<string>();
 			Access = LobbyAccess.FriendsOnly;
 		}
-
-		public abstract IGameService FindGameService(IEnumerable<IGameService> services);
+		
 		public abstract string ValidateSettings();
 	}
 }

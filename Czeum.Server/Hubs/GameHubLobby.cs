@@ -151,7 +151,7 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var service = lobby.FindGameService(_gameServices);
+                var service = _serviceContainer.FindService(lobby);
                 var newBoardId = service.CreateNewBoard(lobby);
                 var matchId = _matchRepository.CreateMatch(lobby, newBoardId);
 

@@ -14,10 +14,5 @@ namespace Czeum.DTO.Chess
         public int FromColumn { get; set; }
         public int ToRow { get; set; }
         public int ToColumn { get; set; }
-        
-        public override IGameService FindGameService(IEnumerable<IGameService> services)
-        {
-            return ServiceFinder.FindService(ServiceFinder.Chess, services);
-        }
     }
 }

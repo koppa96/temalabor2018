@@ -6,7 +6,7 @@ using Czeum.DTO.Chess;
 
 namespace Czeum.ChessLogic
 {
-    [GameService(ServiceFinder.Chess)]
+    [GameService(typeof(ChessMoveData), typeof(ChessLobbyData))]
     public class ChessService : IGameService
     {
         private readonly IBoardRepository<SerializedChessBoard> _repository;

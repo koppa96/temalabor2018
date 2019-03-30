@@ -6,7 +6,7 @@ using Czeum.DTO.Connect4;
 
 namespace Czeum.Connect4Logic
 {
-    [GameService(ServiceFinder.Connect4)]
+    [GameService(typeof(Connect4MoveData), typeof(Connect4LobbyData))]
     public class Connect4Service : IGameService
     {
         private readonly IBoardRepository<SerializedConnect4Board> _repository;
