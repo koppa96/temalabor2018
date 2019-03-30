@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 
-namespace Czeum.Server.Hubs
+namespace Czeum.ClientCallback
 {
     public interface ILobbyClient
     {

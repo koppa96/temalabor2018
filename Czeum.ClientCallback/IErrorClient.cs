@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Czeum.Server.Hubs
+namespace Czeum.ClientCallback
 {
     public interface IErrorClient
     {

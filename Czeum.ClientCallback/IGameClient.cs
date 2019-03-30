@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Czeum.DTO;
 
-namespace Czeum.Server.Hubs
+namespace Czeum.ClientCallback
 {
     public interface IGameClient
     {

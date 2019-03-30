@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Czeum.DTO.UserManagement;
 
-namespace Czeum.Server.Hubs
+namespace Czeum.ClientCallback
 {
     public interface IFriendClient
     {
