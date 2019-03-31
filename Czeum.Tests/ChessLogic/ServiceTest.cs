@@ -7,6 +7,7 @@ using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
 using Czeum.DTO.Chess;
+using Czeum.Server.Services.ServiceContainer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Czeum.Tests.ChessLogic
@@ -16,7 +17,8 @@ namespace Czeum.Tests.ChessLogic
     {
         private ChessMoveData move;
         private DummyRepository repository;
-        private List<IGameService> services;
+        private IServiceContainer serviceContainer;
+        private ChessService originalService;
 
         [TestInitialize]
         public void Init()
@@ -31,31 +33,33 @@ namespace Czeum.Tests.ChessLogic
             };
             
             repository = new DummyRepository();
-            services = new List<IGameService>
+            originalService = new ChessService(repository);
+            var services = new List<IGameService>
             {
                 new Connect4Service(null),
-                new ChessService(repository)
+                originalService
             };
+            serviceContainer = new ServiceContainer(services);
         }
 
         [TestMethod]
         public void MoveDataFindsService()
         {
-            var service = move.FindGameService(services);
-            Assert.AreSame(services[1], service);
+            var foundService = serviceContainer.FindService(move);
+            Assert.AreSame(originalService, foundService);
         }
 
         [TestMethod]
         public void TestExecute()
         {
-            var service = move.FindGameService(services);
+            var service = serviceContainer.FindService(move);
             var result = (ChessMoveResult) service.ExecuteMove(move, 1);
             
             Assert.AreEqual(Status.Success, result.Status);
             Assert.IsTrue(result.PieceInfos.Any(p => p.Row == move.ToRow && p.Column == move.ToColumn));
 
             var pieceInfos = repository.GetById(1).BoardData.Trim().Split(' ');
-            Assert.IsTrue(pieceInfos.Contains($"WP_{move.ToRow},{move.ToColumn}"));
+            Assert.IsTrue(pieceInfos.Contains($"WP_{move.ToRow},{move.ToColumn}_t"));
         }
     }
 }

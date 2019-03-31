@@ -87,7 +87,7 @@ namespace Czeum.Server.Controllers
         public ActionResult<List<Friend>> GetFriends()
         {
             return _friendRepository.GetFriendsOf(User.Identity.Name)
-                .Select(f => new Friend { IsOnline = _onlineUserTracker.GetUsers().Contains(f), Username = f })
+                .Select(f => new Friend { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
                 .ToList();
         }
     }
