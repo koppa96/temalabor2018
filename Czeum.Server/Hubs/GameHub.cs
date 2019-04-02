@@ -12,6 +12,7 @@ using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -19,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Czeum.Server.Hubs
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public partial class GameHub : Hub<ICzeumClient>
     {
         private readonly IServiceContainer _serviceContainer;

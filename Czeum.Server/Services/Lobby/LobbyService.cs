@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.DAL.Interfaces;
+using Czeum.DTO;
 
 namespace Czeum.Server.Services.Lobby {
 	public class LobbyService : ILobbyService
@@ -95,7 +96,7 @@ namespace Czeum.Server.Services.Lobby {
 			return _lobbyStorage.GetLobby(lobbyData);
 		}
 
-		public bool ValidateModifier(string modifier, int lobbyId)
+		public bool ValidateModifier(int lobbyId, string modifier)
 		{
 			return _lobbyStorage.GetLobby(lobbyId).Host == modifier;
 		}
@@ -113,6 +114,29 @@ namespace Czeum.Server.Services.Lobby {
 			}
 			
 			return (LobbyData) Activator.CreateInstance(type);
+		}
+
+		public void AddMessage(int lobbyId, Message message)
+		{
+			message.Timestamp = DateTime.Now;
+			_lobbyStorage.AddMessage(lobbyId, message);
+		}
+
+		public List<Message> GetMessages(int lobbyId)
+		{
+			return _lobbyStorage.GetMessages(lobbyId);
+		}
+
+		public bool ValidateMessageSender(int lobbyId, string sender)
+		{
+			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			return sender == lobby.Host || sender == lobby.Guest;
+		}
+
+		public string GetOtherPlayer(int lobbyId, string player)
+		{
+			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			return player == lobby.Host ? lobby.Guest : lobby.Host;
 		}
 
 		public void CancelInviteFromLobby(int lobbyId, string player)

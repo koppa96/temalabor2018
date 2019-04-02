@@ -11,6 +11,7 @@ namespace Czeum.DTO
         public const string CouldNotJoinLobby = nameof(CouldNotJoinLobby);
         public const string InvalidLobbyType = nameof(InvalidLobbyType);
         public const string NotEnoughPlayers = nameof(NotEnoughPlayers);
+        public const string CannotSendMessage = nameof(CannotSendMessage);
         
         //Friend management related errors
         public const string NoSuchUser = nameof(NoSuchUser);

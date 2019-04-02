@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Czeum.Abstractions.DTO;
+using Czeum.DTO;
 
 namespace Czeum.Server.Services.Lobby
 {
@@ -11,5 +12,7 @@ namespace Czeum.Server.Services.Lobby
         void RemoveLobby(int lobbyId);
         void UpdateLobby(LobbyData lobbyData);
         LobbyData GetLobbyOfUser(string user);
+        void AddMessage(int lobbyId, Message message);
+        List<Message> GetMessages(int lobbyId);
     }
 }

@@ -94,7 +94,7 @@ namespace Czeum.Server.Hubs
             if (_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId))
             {
                 var lobby = _lobbyService.GetLobby(lobbyId);
-                await Clients.Caller.JoinedToLobby(lobby);
+                await Clients.Caller.JoinedToLobby(lobby, _lobbyService.GetMessages(lobbyId));
                 await Clients.All.LobbyChanged(lobby);
             }
 
@@ -163,6 +163,17 @@ namespace Czeum.Server.Hubs
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.GameNotSupported);
             }
+        }
+
+        public async Task SendMessageToLobby(int lobbyId, Message message)
+        {
+            if (!await this.MessageValidationCallbacks(_lobbyService, lobbyId))
+            {
+                return;
+            }
+            
+            _lobbyService.AddMessage(lobbyId, message);
+            await Clients.User(_lobbyService.GetOtherPlayer(lobbyId, Context.UserIdentifier)).ReceiveLobbyMessage(message);
         }
     }
 }

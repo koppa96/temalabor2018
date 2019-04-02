@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Czeum.DAL.Entities;
 using Czeum.DTO.UserManagement;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -63,7 +64,7 @@ namespace Czeum.Server.Controllers {
 
         [HttpPost]
         [Route("/logout")]
-		[Authorize]
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Logout() {
             await _signInManager.SignOutAsync();
             _logger.LogInformation($"{User.Identity.Name} logged out.");
@@ -121,7 +122,7 @@ namespace Czeum.Server.Controllers {
 
 		[HttpPost]
         [Route("/changePass")]
-		[Authorize]
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
 			if (model.Password != model.ConfirmPassword) {
 				return BadRequest("ErrorPasswordsNotMatching");

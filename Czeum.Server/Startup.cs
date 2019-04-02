@@ -24,6 +24,7 @@ using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
 using Microsoft.Extensions.Hosting;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 
 namespace Czeum.Server
@@ -58,11 +59,9 @@ namespace Czeum.Server
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options => {
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(options => {
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters() {
                     ValidateIssuer = true,
@@ -104,7 +103,7 @@ namespace Czeum.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

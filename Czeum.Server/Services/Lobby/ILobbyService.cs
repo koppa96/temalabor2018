@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.DTO;
 
 namespace Czeum.Server.Services.Lobby
 {
@@ -18,8 +19,12 @@ namespace Czeum.Server.Services.Lobby
         List<LobbyData> GetLobbies();
         void UpdateLobbySettings(LobbyData lobbyData);
         LobbyData GetLobby(int lobbyId);
-        bool ValidateModifier(string modifier, int lobbyId);
+        bool ValidateModifier(int lobbyId, string modifier);
         bool LobbyExists(int lobbyId);
         LobbyData CreateLobby(Type type);
+        void AddMessage(int lobbyId, Message message);
+        List<Message> GetMessages(int lobbyId);
+        bool ValidateMessageSender(int lobbyId, string sender);
+        string GetOtherPlayer(int lobbyId, string player);
     }
 }

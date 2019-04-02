@@ -11,6 +11,7 @@ using Czeum.DTO.UserManagement;
 using Czeum.Server.Hubs;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,7 +22,7 @@ namespace Czeum.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GameController : ControllerBase
     {
         private readonly IBoardRepository<SerializedBoard> _boardRepository;
