@@ -25,24 +25,10 @@ namespace Czeum.DAL.Repositories
             var statuses = new Dictionary<string, MatchStatus>();
             var match = _context.Matches.Find(matchId);
 
-            var statusForPlayer1 = new MatchStatus
-            {
-                CurrentBoard = moveResult,
-                MatchId = matchId,
-                OtherPlayer = match.Player2.UserName,
-                State = match.GetGameStateForPlayer(match.Player1.UserName)
-            };
-
-            var statusForPlayer2 = new MatchStatus
-            {
-                CurrentBoard = moveResult,
-                MatchId = matchId,
-                OtherPlayer = match.Player1.UserName,
-                State = match.GetGameStateForPlayer(match.Player2.UserName)
-            };
-
-            statuses[match.Player1.UserName] = statusForPlayer1;
-            statuses[match.Player2.UserName] = statusForPlayer2;
+            statuses[match.Player1.UserName] = match.ToMatchStatus(match.Player1.UserName);
+            statuses[match.Player2.UserName] = match.ToMatchStatus(match.Player2.UserName);
+            statuses[match.Player1.UserName].CurrentBoard = moveResult;
+            statuses[match.Player2.UserName].CurrentBoard = moveResult;
             
             return statuses;
         }
@@ -53,10 +39,11 @@ namespace Czeum.DAL.Repositories
             return CreateMatchStatuses(matchId, moveResult);
         }
 
-        public IEnumerable<Match> GetMatchesOf(string player)
+        public List<MatchStatus> GetMatchesOf(string player)
         {
             return _context.Matches.Include("Player1").Include("Player2")
-                .Where(m => m.Player1.UserName == player || m.Player2.UserName == player)
+                .Where(m => m.HasPlayer(player))
+                .Select(m => m.ToMatchStatus(player))
                 .ToList();
         }
 

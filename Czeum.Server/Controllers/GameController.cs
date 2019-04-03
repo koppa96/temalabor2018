@@ -45,20 +45,21 @@ namespace Czeum.Server.Controllers
         [Route("/matches")]
         public ActionResult<List<MatchStatus>> GetMatches()
         {
-            return _matchRepository.GetMatchesOf(User.Identity.Name).Select(m => new MatchStatus
-            {
-                MatchId = m.MatchId,
-                OtherPlayer = m.GetOtherPlayerName(User.Identity.Name),
-                CurrentBoard = null,
-                State = m.GetGameStateForPlayer(User.Identity.Name)
-            }).ToList();
+            return _matchRepository.GetMatchesOf(User.Identity.Name);
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("/boards/{id}")]
         public ActionResult<MoveResult> GetBoardByMatchId(int id)
         {
             var serializedBoard = _boardRepository.GetByMatchId(id);
+
+            if (serializedBoard == null)
+            {
+                return NotFound();
+            }
+            
             return serializedBoard.ToMoveResult();
         }
 
@@ -77,7 +78,7 @@ namespace Czeum.Server.Controllers
         }
 
         [HttpGet]
-        [Route("/myrequests")]
+        [Route("/sent-requests")]
         public ActionResult<List<string>> GetSentRequests()
         {
             return _friendRepository.GetRequestsSentBy(User.Identity.Name);
