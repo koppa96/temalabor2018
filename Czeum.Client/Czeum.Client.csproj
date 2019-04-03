@@ -118,6 +118,7 @@
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\ILobbyService.cs" />
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
     <Compile Include="LobbyBrowserPage.xaml.cs">
@@ -127,6 +128,7 @@
       <DependentUpon>LobbyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="LobbyRepository.cs" />
+    <Compile Include="Services\UserManagerService.cs" />
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -242,10 +244,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Connect4Dtos\Connect4Dtos.csproj">
-      <Project>{1064a424-aece-423c-a925-1638db6dd596}</Project>
-      <Name>Connect4Dtos</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj">
       <Project>{f9da0e65-03b2-4531-8bea-a4aa438caf88}</Project>
       <Name>Czeum.Abstractions</Name>

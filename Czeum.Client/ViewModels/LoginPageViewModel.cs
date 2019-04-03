@@ -34,12 +34,6 @@ namespace Czeum.Client.ViewModels
         public String ConfirmPassword {
 			get { return _ConfirmPassword; }
             set {SetProperty(ref _ConfirmPassword, value); }
-		}
-        private String _PasswordRepeat;
-        public String PasswordRepeat
-        {
-            get { return _PasswordRepeat; }
-            set { SetProperty(ref _PasswordRepeat, value); }
         }
         private String _Email;
         public String Email
@@ -47,13 +41,14 @@ namespace Czeum.Client.ViewModels
             get { return _Email; }
             set { SetProperty(ref _Email, value); }
         }
-        private Visibility _PasswordRepeatVisibility = Visibility.Collapsed;
-        public Visibility PasswordRepeatVisibility
+        private Visibility _RegistrationInfoVisibility = Visibility.Collapsed;
+        public Visibility RegistrationInfoVisibility
         {
-            get { return _PasswordRepeatVisibility; }
-            set { SetProperty(ref _PasswordRepeatVisibility, value); }
+            get { return _RegistrationInfoVisibility; }
+            set { SetProperty(ref _RegistrationInfoVisibility, value); }
         }
         
+
         public ICommand ToggleClickCommand { get; private set; }
         public ICommand PerformClickCommand { get; private set; }
         
@@ -66,7 +61,7 @@ namespace Czeum.Client.ViewModels
             }
             else
             {
-                ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = PasswordRepeat });
+                ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
             }
         }
 
@@ -75,11 +70,11 @@ namespace Czeum.Client.ViewModels
             switch (pageState)
             {
                 case PageState.Register:
-                    PasswordRepeatVisibility = Visibility.Collapsed;
+                    RegistrationInfoVisibility = Visibility.Collapsed;
                     pageState = PageState.Login;
                     break;
                 case PageState.Login:
-                    PasswordRepeatVisibility = Visibility.Visible;
+                    RegistrationInfoVisibility = Visibility.Visible;
                     pageState = PageState.Register;
                     break;
             }
@@ -90,7 +85,7 @@ namespace Czeum.Client.ViewModels
             ums = userManagerService;
             PerformClickCommand = new DelegateCommand(PerformClick);
             ToggleClickCommand = new DelegateCommand(ToggleClick);
-            PasswordRepeatVisibility = Visibility.Collapsed;
+            RegistrationInfoVisibility = Visibility.Collapsed;
         }
 
     }

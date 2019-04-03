@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using Connect4Dtos;
+using Czeum.DTO;
 using Windows.UI.Core;
 
-namespace Czeum.Client {
+namespace Czeum.Client {/*
     class MatchRepository {
         public static MatchRepository Instance { get; } = new MatchRepository();
         private static object lockObject = new object();
@@ -51,5 +51,5 @@ namespace Czeum.Client {
             this.matchesPage = matchesPage;
         }
     }
-#pragma warning restore CS4014
+#pragma warning restore CS4014*/
 }

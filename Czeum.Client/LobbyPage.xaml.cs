@@ -1,5 +1,5 @@
 ﻿using Czeum.Client.DTOs;
-using Connect4Dtos;
+using Czeum.DTO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +22,7 @@ namespace Czeum.Client
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LobbyPage : Page
+    /*public sealed partial class LobbyPage : Page
     {
 
         public NotifyingLobbyData JoinedLobby { get { return LobbyRepository.Instance.JoinedLobby; } set { LobbyRepository.Instance.JoinedLobby = value; } }
@@ -97,5 +97,5 @@ namespace Czeum.Client
         private void KickButton_Click(object sender, RoutedEventArgs e) {
             ConnectionManager.Instance.KickGuest(JoinedLobby.LobbyId);
         }
-    }
+    }*/
 }

@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
+    <!--<Page.Resources>
         <converters:LobbyStatusConverter x:Key="LobbyStatusConverter"/>
         <converters:InvitedPlayersConverter x:Key="InvitedPlayersConverter"/>
         <converters:SelectedLobbyVisibilityConverter x:Key="SelectedLobbyVisibilityConverter"/>
@@ -70,5 +70,5 @@
                     
             </StackPanel>
         </SplitView>
-    </Grid>
+    </Grid>-->
 </Page>

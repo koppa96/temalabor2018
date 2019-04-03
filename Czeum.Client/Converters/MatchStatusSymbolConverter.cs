@@ -9,19 +9,20 @@ using Windows.UI.Xaml.Data;
 namespace Czeum.Client.Converters {
     class MatchStatusSymbolConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, string language) {
-            var status = value as Connect4Dtos.GameState?;
-            if(status != null) {
-                if(status.Value == Connect4Dtos.GameState.YouWon) {
-                    return Symbol.Like;
-                }
-                else if(status.Value == Connect4Dtos.GameState.EnemyWon) {
-                    return Symbol.Dislike;
-                }
-                else if(status.Value == Connect4Dtos.GameState.Draw) {
-                    return Symbol.LikeDislike;
-                }
-            }
-            return Symbol.Target;
+            /* var status = value as Czeum.DTO.GameState?;
+             if(status != null) {
+                 if(status.Value == Czeum.DTO.GameState.YouWon) {
+                     return Symbol.Like;
+                 }
+                 else if(status.Value == Czeum.DTO.GameState.EnemyWon) {
+                     return Symbol.Dislike;
+                 }
+                 else if(status.Value == Czeum.DTO.GameState.Draw) {
+                     return Symbol.LikeDislike;
+                 }
+             }
+             return Symbol.Target;*/
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

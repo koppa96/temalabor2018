@@ -13,7 +13,6 @@ using Windows.System;
 using System.Threading.Tasks;
 using Prism.Windows.Mvvm;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Czeum.Client.Views {
     /// <summary>
