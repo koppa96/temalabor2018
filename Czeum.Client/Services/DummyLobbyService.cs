@@ -12,13 +12,14 @@ namespace Czeum.Client.Services {
     class DummyLobbyService : ILobbyService {
 
         private ObservableCollection<LobbyData> _lobbyListList;
-        private LobbyData CurrentLobby;
+        private LobbyData _currentLobby;
 
         public DummyLobbyService() {
             _lobbyListList = new ObservableCollection<LobbyData>();
         }
 
         public ObservableCollection<LobbyData> LobbyList => _lobbyListList;
+        public LobbyData CurrentLobby => _currentLobby;
 
         public void CreateLobby() {
             _lobbyListList.Add(new Connect4LobbyData());
@@ -29,11 +30,11 @@ namespace Czeum.Client.Services {
         }
 
         public void JoinLobby(int index) {
-            CurrentLobby = _lobbyListList[index];
+            _currentLobby = _lobbyListList[index];
         }
 
         public void LeaveLobby() {
-            CurrentLobby = null;
+            _currentLobby = null;
         }
 
         public void QueryLobbyList() {

@@ -43,7 +43,7 @@ namespace Czeum.Client.ViewModels {
             }
             lobbyService.JoinLobby(index.Value);
             loggerService.Log($"Navigating to Lobby #{index.Value}", Category.Debug, Priority.None);
-            navigationService.Navigate("LobbyDetailsPage", null);
+            navigationService.Navigate("LobbyDetails", null);
         }
     }
 }

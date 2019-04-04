@@ -9,6 +9,7 @@ using Czeum.Abstractions.DTO;
 namespace Czeum.Client.Interfaces {
     interface ILobbyService {
         ObservableCollection<LobbyData> LobbyList { get; }
+        LobbyData CurrentLobby { get; }
         void QueryLobbyList();
         void CreateLobby();
         void JoinLobby(int index);

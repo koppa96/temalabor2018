@@ -129,6 +129,9 @@
     <Compile Include="Services\UserManagerService.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
+    <Compile Include="Views\LobbyDetailsPage.xaml.cs">
+      <DependentUpon>LobbyDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LobbyPage.xaml.cs">
       <DependentUpon>LobbyPage.xaml</DependentUpon>
     </Compile>
@@ -185,6 +188,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="LobbyBrowserPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LobbyDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
