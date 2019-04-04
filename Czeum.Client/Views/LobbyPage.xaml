@@ -1,0 +1,47 @@
+﻿<prism:SessionStateAwarePage
+    x:Class="Czeum.Client.Views.LobbyPage"
+    xmlns:prism="using:Prism.Windows.Mvvm"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Czeum.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dto="using:Czeum.Abstractions.DTO"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <ListView Name="LobbyListView" ItemsSource="{Binding LobbyList, Mode=TwoWay}">
+            <ListView.Header>
+                <Border Height="48" Background="LightBlue" CornerRadius="16">
+                    <TextBlock Text="Currently available lobbies" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+                </Border>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="dto:LobbyData" x:Name="LobbyDataTemplate">
+                    <StackPanel Orientation="Horizontal" Height="80">
+                        <Grid Width="30" Height="30">
+                            <SymbolIcon Symbol="Permissions" Visibility="Visible"/>
+                        </Grid>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="{Binding LobbyId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                            <TextBlock Text="{Binding Host}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        </StackPanel>
+                        <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}">
+                            <SymbolIcon Symbol="Play" Height="80"/>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Add" Margin="10,0,10,0" />
+                        <TextBlock Text="Create new lobby" Style="{ThemeResource TitleTextBlockStyle}"/>
+                    </StackPanel>
+                </Button>
+            </ListView.Footer>
+        </ListView>
+    </Grid>
+</prism:SessionStateAwarePage>

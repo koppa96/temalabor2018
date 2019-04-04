@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Prism.Commands;
 using Microsoft.Practices.Unity;
 using Windows.UI.Xaml;
+using Prism.Windows.Navigation;
 
 namespace Czeum.Client.ViewModels
 {
@@ -19,6 +20,7 @@ namespace Czeum.Client.ViewModels
         private enum PageState { Login, Register}
         private PageState pageState = PageState.Login;
         private IUserManagerService ums;
+        private INavigationService ns;
 
         private String _Name;
         public String Name {
@@ -53,15 +55,22 @@ namespace Czeum.Client.ViewModels
         public ICommand PerformClickCommand { get; private set; }
         
 
-        private void PerformClick()
+        private async void PerformClickAsync()
         {
             if (pageState == PageState.Login)
             {
-                ums.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+                bool result = await ums.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+                if(result) {
+                    ns.Navigate("Lobby", null); 
+                }
+                else {
+                    throw new NotImplementedException();
+                }
+                
             }
             else
             {
-                ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
+                await ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
             }
         }
 
@@ -80,10 +89,11 @@ namespace Czeum.Client.ViewModels
             }
         }
 
-        public LoginPageViewModel(IUserManagerService userManagerService)
+        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService ns)
         {
+            this.ns = ns;   
             ums = userManagerService;
-            PerformClickCommand = new DelegateCommand(PerformClick);
+            PerformClickCommand = new DelegateCommand(PerformClickAsync);
             ToggleClickCommand = new DelegateCommand(ToggleClick);
             RegistrationInfoVisibility = Visibility.Collapsed;
         }

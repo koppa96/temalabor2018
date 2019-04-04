@@ -26,10 +26,11 @@ namespace Czeum.Client.Services
             _logger.Log($"Password change requested by user '{username}'", Category.Info, Priority.None);
         }
 
-        public async Task LoginAsync(LoginModel data)
+        public async Task<bool> LoginAsync(LoginModel data)
         {
             _logger.Log($"Login attempt by user '{data.Username}'", Category.Info, Priority.None);
             username = data.Username;
+            return true;
         }
 
         public async Task RegisterAsync(RegisterModel data)

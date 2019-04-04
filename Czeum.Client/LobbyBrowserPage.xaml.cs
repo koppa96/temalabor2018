@@ -26,7 +26,7 @@ namespace Czeum.Client {
     /// </summary>
     /*public sealed partial class LobbyBrowserPage : Page {
         
-        private ObservableCollection<LobbyData> Lobbies { get { return LobbyRepository.Instance.LobbyList; } }
+        private ObservableCollection<LobbyData> LobbyList { get { return LobbyRepository.Instance.LobbyList; } }
         private LobbyData SelectedLobby {
             get { return LobbyRepository.Instance.SelectedLobby; }
             set { LobbyRepository.Instance.SelectedLobby = value; }

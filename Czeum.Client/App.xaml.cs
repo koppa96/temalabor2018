@@ -22,6 +22,7 @@ using Czeum.Client.Services;
 using Microsoft.Practices.Unity;
 using Prism.Logging;
 using NLog;
+using Prism.Windows.Navigation;
 
 namespace Czeum.Client
 {
@@ -36,13 +37,14 @@ namespace Czeum.Client
         public App()
         {
             this.InitializeComponent();
-            //this.Suspending += OnSuspending;
         }
 
         protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
         {
+            _container.RegisterInstance<INavigationService>(NavigationService);
             _container.RegisterType<IUserManagerService, DummyUserManagerService>(new ContainerControlledLifetimeManager());
             _container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<ILobbyService, DummyLobbyService>(new ContainerControlledLifetimeManager());
             this.NavigationService.Navigate(Experiences.Login.ToString(), null);
             return Task.FromResult<object>(null);
         }

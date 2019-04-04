@@ -14,7 +14,7 @@ namespace Czeum.Client.Services {
             throw new NotImplementedException();
         }
 
-        public Task LoginAsync(LoginModel data) {
+        public Task<bool> LoginAsync(LoginModel data) {
             throw new NotImplementedException();
         }
 

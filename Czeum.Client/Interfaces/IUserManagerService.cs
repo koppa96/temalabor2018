@@ -11,7 +11,7 @@ namespace Czeum.Client.Interfaces
     {
         string AccessToken { get; }
         
-        Task LoginAsync(LoginModel data);
+        Task<bool> LoginAsync(LoginModel data);
         Task ChangePasswordAsync(ChangePasswordModel data);
         Task RegisterAsync(RegisterModel data);
     }

@@ -157,10 +157,10 @@
     <value>Home</value>
   </data>
   <data name="LobbyItem.Content" xml:space="preserve">
-    <value>Lobbies</value>
+    <value>LobbyList</value>
   </data>
   <data name="LobbyItemContent" xml:space="preserve">
-    <value>Lobbies</value>
+    <value>LobbyList</value>
   </data>
   <data name="LoginButton.Content" xml:space="preserve">
     <value>Log in</value>
