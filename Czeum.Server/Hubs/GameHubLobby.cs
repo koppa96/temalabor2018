@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
+using Czeum.DAL.Entities;
 using Czeum.DTO;
 using Microsoft.Extensions.Logging;
 
@@ -27,11 +28,7 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var lobby = _lobbyService.CreateLobby(lobbyType);
-                lobby.Host = Context.UserIdentifier;
-                lobby.Access = access;
-                
-                _lobbyService.AddLobby(lobby);
+                var lobby = _lobbyService.CreateAndAddLobby(lobbyType, Context.UserIdentifier, access);
                 _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
             
                 await Clients.All.LobbyCreated(lobby);
@@ -152,10 +149,9 @@ namespace Czeum.Server.Hubs
             try
             {
                 var service = _serviceContainer.FindService(lobby);
-                var newBoardId = service.CreateNewBoard(lobby);
-                var matchId = _matchRepository.CreateMatch(lobby, newBoardId);
+                var newBoardId = service.CreateAndSaveNewBoard(lobby);
+                var statuses = _matchRepository.CreateMatch(lobby, newBoardId);
 
-                var statuses = _matchRepository.CreateMatchStatuses(matchId, newBoardId);
                 await Clients.Caller.MatchCreated(statuses[lobby.Host]);
                 await Clients.User(lobby.Guest).MatchCreated(statuses[lobby.Guest]);
             }
@@ -172,7 +168,7 @@ namespace Czeum.Server.Hubs
                 return;
             }
             
-            _lobbyService.AddMessage(lobbyId, message);
+            _lobbyService.AddMessageNow(lobbyId, message);
             await Clients.User(_lobbyService.GetOtherPlayer(lobbyId, Context.UserIdentifier)).ReceiveLobbyMessage(message);
         }
     }

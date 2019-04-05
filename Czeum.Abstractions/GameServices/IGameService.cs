@@ -5,7 +5,7 @@ namespace Czeum.Abstractions.GameServices
     public interface IGameService
     {
         MoveResult ExecuteMove(MoveData moveData, int playerId);
-        int CreateNewBoard(LobbyData lobbyData);
-        int CreateDefaultBoard();
+        int CreateAndSaveNewBoard(LobbyData lobbyData);
+        int CreateAndSaveDefaultBoard();
     }
 }

@@ -7,5 +7,6 @@ namespace Czeum.ClientCallback
     {
         Task ReceiveResult(MatchStatus status);
         Task MatchCreated(MatchStatus status);
+        Task ReceiveMatchMessage(int matchId, Message message);
     }
 }

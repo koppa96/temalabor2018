@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Czeum.DAL.Entities
 {
-    public class Message
+    public class StoredMessage
     {
         [Key]
         public int MessageId { get; set; }

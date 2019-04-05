@@ -7,11 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Czeum.DAL;
-using System.Text;
-using Czeum.Abstractions;
 using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
@@ -23,8 +20,8 @@ using Czeum.Server.Services;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
+using IdentityModel;
 using Microsoft.Extensions.Hosting;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 
 namespace Czeum.Server
@@ -69,17 +66,16 @@ namespace Czeum.Server
 
             services.AddAuthentication()
                 .AddCookie()
-                .AddJwtBearer(options => {
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters() {
-                    ValidateIssuer = true,
-                    ValidIssuer = "Czeum.Server",
-                    ValidateAudience = true,
-                    ValidAudience = "Czeum.Server",
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"))
-                };
-            });
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = "https://localhost:5001";
+                    options.Audience = "czeum_api";
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = JwtClaimTypes.Name
+                    };
+                });
 
             services.AddMvc()
                 .AddNewtonsoftJson()
@@ -110,10 +106,11 @@ namespace Czeum.Server
             services.AddScoped<IBoardRepository<SerializedBoard>, BoardRepository<SerializedBoard>>();
             services.AddScoped<IBoardRepository<SerializedChessBoard>, BoardRepository<SerializedChessBoard>>();
             services.AddScoped<IBoardRepository<SerializedConnect4Board>, BoardRepository<SerializedConnect4Board>>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
@@ -126,6 +123,7 @@ namespace Czeum.Server
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.UseIdentityServer();
             app.UseAuthentication();
 
             app.UseSignalR(route => { route.MapHub<GameHub>("/gamehub"); });

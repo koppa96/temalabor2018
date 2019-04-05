@@ -11,6 +11,7 @@ namespace Czeum.DAL
         public DbSet<SerializedBoard> Boards { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<FriendRequest> Requests { get; set; }
+        public DbSet<StoredMessage> Messages { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

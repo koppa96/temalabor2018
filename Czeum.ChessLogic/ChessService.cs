@@ -1,4 +1,5 @@
-﻿using Czeum.Abstractions.DTO;
+﻿using Czeum.Abstractions;
+using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
@@ -65,15 +66,15 @@ namespace Czeum.ChessLogic
             };
         }
 
-        public int CreateNewBoard(LobbyData lobbyData)
+        public int CreateAndSaveNewBoard(LobbyData lobbyData)
         {
             var board = new ChessBoard(true).SerializeContent();
             return _repository.InsertBoard(board);
         }
 
-        public int CreateDefaultBoard()
+        public int CreateAndSaveDefaultBoard()
         {
-            return CreateNewBoard(null);
+            return CreateAndSaveNewBoard(null);
         }
     }
 }

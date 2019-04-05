@@ -55,17 +55,17 @@ namespace Czeum.Connect4Logic
             return result;
         }
 
-        public int CreateNewBoard(LobbyData lobbyData)
+        public int CreateAndSaveNewBoard(LobbyData lobbyData)
         {
             var lobby = (Connect4LobbyData) lobbyData;
             var board = new Connect4Board(lobby.BoardWidth, lobby.BoardHeight).SerializeContent();
             return _repository.InsertBoard(board);
         }
 
-        public int CreateDefaultBoard()
+        public int CreateAndSaveDefaultBoard()
         {
             var lobby = new Connect4LobbyData();
-            return CreateNewBoard(lobby);
+            return CreateAndSaveNewBoard(lobby);
         }
     }
 }

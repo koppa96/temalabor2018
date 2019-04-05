@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Czeum.DAL.Entities;
 using Czeum.DTO;
 
 namespace Czeum.Server.Hubs
@@ -20,10 +21,9 @@ namespace Czeum.Server.Hubs
             if (players != null)
             {
                 var service = _serviceContainer.GetRandomService();
-                var boardId = service.CreateDefaultBoard();
-                var matchId = _matchRepository.CreateMatch(players[0], players[1], boardId);
+                var board = service.CreateAndSaveDefaultBoard();
+                var statuses = _matchRepository.CreateMatch(players[0], players[1], board);
 
-                var statuses = _matchRepository.CreateMatchStatuses(matchId, boardId);
                 await Clients.User(players[0]).MatchCreated(statuses[players[0]]);
                 await Clients.User(players[1]).MatchCreated(statuses[players[1]]);
             }

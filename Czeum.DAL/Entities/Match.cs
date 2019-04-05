@@ -18,6 +18,6 @@ namespace Czeum.DAL.Entities
         public SerializedBoard Board { get; set; }
 
         [InverseProperty("Match")]
-        public List<Message> Messages { get; set; }
+        public List<StoredMessage> Messages { get; set; }
     }
 }

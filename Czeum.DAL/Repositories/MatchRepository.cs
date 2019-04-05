@@ -33,12 +33,6 @@ namespace Czeum.DAL.Repositories
             return statuses;
         }
 
-        public Dictionary<string, MatchStatus> CreateMatchStatuses(int matchId, int boardId)
-        {
-            var moveResult = _context.Boards.Find(boardId).ToMoveResult();
-            return CreateMatchStatuses(matchId, moveResult);
-        }
-
         public List<MatchStatus> GetMatchesOf(string player)
         {
             return _context.Matches.Include("Player1").Include("Player2")
@@ -82,12 +76,12 @@ namespace Czeum.DAL.Repositories
             _context.SaveChanges();
         }
 
-        public int CreateMatch(LobbyData lobbyData, int boardId)
+        public Dictionary<string, MatchStatus> CreateMatch(LobbyData lobbyData, int boardId)
         {
             return CreateMatch(lobbyData.Host, lobbyData.Guest, boardId);
         }
 
-        public int CreateMatch(string player1, string player2, int boardId)
+        public Dictionary<string, MatchStatus> CreateMatch(string player1, string player2, int boardId)
         {
             var match = new Match
             {
@@ -109,12 +103,17 @@ namespace Czeum.DAL.Repositories
 
             if (match.Board == null)
             {
-                throw new ArgumentOutOfRangeException(nameof(boardId), "There is no such board.");
+                throw new ArgumentOutOfRangeException(nameof(boardId), "The board id must be a valid board id");
             }
 
             _context.Matches.Add(match);
             _context.SaveChanges();
-            return match.MatchId;
+            
+            return new Dictionary<string, MatchStatus>
+            {
+                { player1, match.ToMatchStatus(player1) },
+                { player2, match.ToMatchStatus(player2) }
+            };
         }
     }
 }

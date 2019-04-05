@@ -30,9 +30,11 @@ namespace Czeum.Server.Hubs
         private readonly ILogger _logger;
         private readonly ISoloQueueService _soloQueueService;
         private readonly IFriendRepository _friendRepository;
+        private readonly IMessageRepository _messageRepository;
 
         public GameHub(IServiceContainer serviceContainer, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
-            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository)
+            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository,
+            IMessageRepository messageRepository)
         {
             _serviceContainer = serviceContainer;
             _matchRepository = matchRepository;
@@ -41,6 +43,7 @@ namespace Czeum.Server.Hubs
             _logger = logger;
             _soloQueueService = soloQueueService;
             _friendRepository = friendRepository;
+            _messageRepository = messageRepository;
         }
 
         public override async Task OnConnectedAsync()
@@ -127,6 +130,19 @@ namespace Czeum.Server.Hubs
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.GameNotSupported);
             }
+        }
+
+        public async Task SendMessageToMatch(int matchId, Message message)
+        {
+            var match = _matchRepository.GetMatchById(matchId);
+            if (!match.HasPlayer(Context.UserIdentifier))
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
+                return;
+            }
+            
+            _messageRepository.AddMessageNow(matchId, message);
+            await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, message);
         }
     }
 }
