@@ -1,131 +1,81 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Czeum.DAL.Entities;
+using Czeum.DTO;
 using Czeum.DTO.UserManagement;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 
-namespace Czeum.Server.Controllers {
+namespace Czeum.Server.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase {
+    public class AccountController : ControllerBase
+    {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
-                                 SignInManager<ApplicationUser> signInManager,
-                                 ILogger<AccountController> logger) {
+        public AccountController(UserManager<ApplicationUser> userManager, ILogger<AccountController> logger)
+        {
             _userManager = userManager;
-            _signInManager = signInManager;
             _logger = logger;
         }
 
         [HttpPost]
-        [Route("/login")]
-        public async Task<ActionResult> Login([FromBody]LoginModel model) {
-            if (ModelState.IsValid) {
-                var user = await _userManager.FindByNameAsync(model.Username);
-
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-                if (result.Succeeded) {
-                    _logger.LogInformation($"{model.Username} logged in.");
-
-					var claims = new Claim[] {
-						new Claim(ClaimTypes.Name, model.Username),
-					};
-
-					var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
-                    var securityToken = new JwtSecurityToken(
-                        issuer: "Czeum.Server",
-                        audience: "Czeum.Server",
-                        claims: claims,
-						expires: DateTime.Now.AddHours(1),
-                        signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
-                        );
-
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
-                }
-
-	            return BadRequest("ErrorIncorrectLogin");
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
-        [HttpPost]
-        [Route("/logout")]
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult> Logout() {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation($"{User.Identity.Name} logged out.");
-            return Ok();
-        }
-
-        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("/register")]
         public async Task<ActionResult> Register([FromBody]RegisterModel model) {
-            if (ModelState.IsValid) {
-                if (await _userManager.FindByNameAsync(model.Username) != null) {
-                    return BadRequest("ErrorUserExists");
-                }
+	        if (!ModelState.IsValid)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError);
+	        }
 
-                if (model.Password != model.ConfirmPassword) {
-                    return BadRequest("ErrorPasswordsNotMatching");
-                }
+	        if (_userManager.FindByNameAsync(model.Username) != null)
+	        {
+		        return BadRequest(ErrorCodes.UsernameAlreadyTaken);
+	        }
 
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+	        if (model.Password != model.ConfirmPassword)
+	        {
+		        return BadRequest(ErrorCodes.PasswordsNotMatching);
+	        }
 
-                if (result.Succeeded) {
-                    await _signInManager.SignInAsync(user, false);
-                    _logger.LogInformation($"{model.Username} created new account");
+	        var user = new ApplicationUser
+	        {
+				UserName = model.Username,
+				Email = model.Email
+	        };
 
-					var claims = new Claim[] {
-						new Claim(ClaimTypes.Name, model.Username)
-					};
+	        var result = await _userManager.CreateAsync(user, model.Password);
+	        if (result.Succeeded)
+	        {
+		        _logger.LogInformation($"New user created: {user.UserName}");
+		        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
+		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id));
 
-					var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
-                    var securityToken = new JwtSecurityToken(
-                        issuer: "Czeum.Server",
-                        audience: "Czeum.Server",
-                        expires: DateTime.UtcNow.AddHours(1),
-						claims: claims,
-                        signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
-                        );
+		        return Ok();
+	        }
 
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
-                }
-
-                if (result.Errors.Count(e => e.Code == "DuplicateEmail") == 1) {
-                    return BadRequest("ErrorDuplicateEmail");
-                }
-
-                if (result.Errors.Count(e =>
-                        e.Code == "PasswordTooShort" || e.Code == "PasswordRequiresDigit" ||
-                        e.Code == "PasswordRequiresUpper") > 0) {
-                    return BadRequest("ErrorPasswordIncorrect");
-                }
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError);
+	        var errors = result.Errors.Select(e => e.Code);
+	        return BadRequest(errors);
         }
 
 		[HttpPost]
         [Route("/changePass")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
 			if (model.Password != model.ConfirmPassword) {
-				return BadRequest("ErrorPasswordsNotMatching");
+				return BadRequest(ErrorCodes.PasswordsNotMatching);
 			}
 
 			if (ModelState.IsValid) {
@@ -134,10 +84,10 @@ namespace Czeum.Server.Controllers {
 
 				if (result.Succeeded) {
 					_logger.LogInformation($"{User.Identity.Name} changed their password.");
-					return Ok("SuccessfulPasswordChange");
+					return Ok();
 				}
 
-				return BadRequest("OldPasswordIncorrect");
+				return BadRequest(ErrorCodes.BadOldPassword);
 			}
 
 			return StatusCode(StatusCodes.Status500InternalServerError);
