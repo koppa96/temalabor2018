@@ -6,13 +6,13 @@ using Czeum.DAL.Entities;
 
 namespace Czeum.DAL.Interfaces
 {
-    public interface IBoardRepository<T> where T : SerializedBoard
+    public interface IBoardRepository
     {
-        T GetByMatchId(int id);
-        int InsertBoard(T board);
-        void UpdateBoard(T board);
-        void DeleteBoard(T board);
+        SerializedBoard GetByMatchId(int id);
+        void InsertBoard(SerializedBoard board);
+        void UpdateBoard(SerializedBoard board);
+        void DeleteBoard(SerializedBoard board);
         void UpdateBoardData(int id, string newData);
-        T GetById(int id);
+        SerializedBoard GetById(int id);
     }
 }

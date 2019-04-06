@@ -39,7 +39,6 @@ namespace Czeum.DAL.Repositories
 
             _context.Friendships.Add(friendship);
             _context.Requests.Remove(request);
-            _context.SaveChanges();
         }
 
         private Friendship GetFriendshipByFriendNames(string user, string friend)
@@ -65,7 +64,6 @@ namespace Czeum.DAL.Repositories
             }
 
             _context.Friendships.Remove(friendship);
-            _context.SaveChanges();
         }
 
         public void AddRequest(string sender, string receiver)
@@ -99,7 +97,6 @@ namespace Czeum.DAL.Repositories
             }
 
             _context.Requests.Add(request);
-            _context.SaveChanges();
         }
 
         public void RemoveRequest(string sender, string receiver)
@@ -111,7 +108,6 @@ namespace Czeum.DAL.Repositories
             }
 
             _context.Requests.Remove(request);
-            _context.SaveChanges();
         }
 
         public List<string> GetRequestsSentBy(string user)

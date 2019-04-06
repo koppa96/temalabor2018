@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
+using Czeum.DAL;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
 using Czeum.DTO;
 using Czeum.Server.Services;
+using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
@@ -23,27 +25,22 @@ namespace Czeum.Server.Hubs
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public partial class GameHub : Hub<ICzeumClient>
     {
-        private readonly IServiceContainer _serviceContainer;
-        private readonly IMatchRepository _matchRepository;
         private readonly IOnlineUserTracker _onlineUserTracker;
         private readonly ILobbyService _lobbyService;
         private readonly ILogger _logger;
         private readonly ISoloQueueService _soloQueueService;
-        private readonly IFriendRepository _friendRepository;
-        private readonly IMessageRepository _messageRepository;
-
-        public GameHub(IServiceContainer serviceContainer, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
-            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository,
-            IMessageRepository messageRepository)
+        private readonly IGameHandler _gameHandler;
+        private readonly IUnitOfWork _unitOfWork;
+        
+        public GameHub(IOnlineUserTracker onlineUserTracker, ILobbyService lobbyService, ILogger<GameHub> logger,
+            ISoloQueueService soloQueueService, IGameHandler gameHandler, IUnitOfWork unitOfWork)
         {
-            _serviceContainer = serviceContainer;
-            _matchRepository = matchRepository;
             _onlineUserTracker = onlineUserTracker;
             _lobbyService = lobbyService;
             _logger = logger;
             _soloQueueService = soloQueueService;
-            _friendRepository = friendRepository;
-            _messageRepository = messageRepository;
+            _gameHandler = gameHandler;
+            _unitOfWork = unitOfWork;
         }
 
         public override async Task OnConnectedAsync()
@@ -51,7 +48,7 @@ namespace Czeum.Server.Hubs
             await base.OnConnectedAsync();
             _onlineUserTracker.PutUser(Context.UserIdentifier);
 
-            var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
+            var friends = _unitOfWork.FriendRepository.GetFriendsOf(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendConnected(Context.UserIdentifier);
@@ -78,7 +75,7 @@ namespace Czeum.Server.Hubs
 
             _soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
-            var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
+            var friends = _unitOfWork.FriendRepository.GetFriendsOf(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendDisconnected(Context.UserIdentifier);
@@ -90,7 +87,7 @@ namespace Czeum.Server.Hubs
 
         public async Task ReceiveMove(MoveData moveData)
         {
-            var match = _matchRepository.GetMatchById(moveData.MatchId);
+            var match = _unitOfWork.MatchRepository.GetMatchById(moveData.MatchId);
 
             if (match == null)
             {
@@ -114,16 +111,13 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var service = _serviceContainer.FindService(moveData);
-                var result = service.ExecuteMove(moveData, playerId);
-                _matchRepository.UpdateMatchByStatus(match.MatchId, result.Status);
-                var statues = _matchRepository.CreateMatchStatuses(match.MatchId, result);
+                var result = _gameHandler.HandleMove(moveData, playerId);
                 
-                await Clients.Caller.ReceiveResult(statues[Context.UserIdentifier]);
-                if (result.Status != Status.Fail)
+                await Clients.Caller.ReceiveResult(result[Context.UserIdentifier]);
+                if (result[Context.UserIdentifier].CurrentBoard.Status != Status.Fail)
                 {
                     var otherPlayer = match.GetOtherPlayerName(Context.UserIdentifier);
-                    await Clients.User(otherPlayer).ReceiveResult(statues[otherPlayer]);
+                    await Clients.User(otherPlayer).ReceiveResult(result[otherPlayer]);
                 }
             }
             catch (GameNotSupportedException)
@@ -134,14 +128,14 @@ namespace Czeum.Server.Hubs
 
         public async Task SendMessageToMatch(int matchId, Message message)
         {
-            var match = _matchRepository.GetMatchById(matchId);
+            var match = _unitOfWork.MatchRepository.GetMatchById(matchId);
             if (!match.HasPlayer(Context.UserIdentifier))
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
                 return;
             }
             
-            _messageRepository.AddMessageNow(matchId, message);
+            _unitOfWork.MessageRepository.AddMessageNow(matchId, message);
             await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, message);
         }
     }

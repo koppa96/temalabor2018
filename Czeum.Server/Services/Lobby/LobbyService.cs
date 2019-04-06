@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.DAL;
 using Czeum.DAL.Interfaces;
 using Czeum.DTO;
 
@@ -12,12 +13,12 @@ namespace Czeum.Server.Services.Lobby {
 	public class LobbyService : ILobbyService
 	{
 		private readonly ILobbyStorage _lobbyStorage;
-		private readonly IFriendRepository _repository;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public LobbyService(ILobbyStorage lobbyStorage, IFriendRepository repository)
+		public LobbyService(ILobbyStorage lobbyStorage, IUnitOfWork unitOfWork)
 		{
 			_lobbyStorage = lobbyStorage;
-			_repository = repository;
+			_unitOfWork = unitOfWork;
 		}
 
 		public bool JoinPlayerToLobby(string player, int lobbyId)
@@ -27,7 +28,7 @@ namespace Czeum.Server.Services.Lobby {
 				throw new ArgumentException("Invalid lobby id");
 			}
 
-			return lobby.JoinGuest(player, _repository.GetFriendsOf(player));
+			return lobby.JoinGuest(player, _unitOfWork.FriendRepository.GetFriendsOf(player));
 		}
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId)

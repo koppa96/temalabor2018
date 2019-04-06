@@ -20,19 +20,6 @@ namespace Czeum.DAL.Repositories
             _context = context;
         }
 
-        public Dictionary<string, MatchStatus> CreateMatchStatuses(int matchId, MoveResult moveResult)
-        {
-            var statuses = new Dictionary<string, MatchStatus>();
-            var match = _context.Matches.Find(matchId);
-
-            statuses[match.Player1.UserName] = match.ToMatchStatus(match.Player1.UserName);
-            statuses[match.Player2.UserName] = match.ToMatchStatus(match.Player2.UserName);
-            statuses[match.Player1.UserName].CurrentBoard = moveResult;
-            statuses[match.Player2.UserName].CurrentBoard = moveResult;
-            
-            return statuses;
-        }
-
         public List<MatchStatus> GetMatchesOf(string player)
         {
             return _context.Matches.Include("Player1").Include("Player2")
@@ -44,17 +31,17 @@ namespace Czeum.DAL.Repositories
         public Match GetMatchById(int matchId)
         {
             return _context.Matches.Include("Player1").Include("Player2")
-                .FirstOrDefault(m => m.MatchId == matchId);
+                .SingleOrDefault(m => m.MatchId == matchId);
         }
 
-        public void UpdateMatchByStatus(int matchId, Status status)
+        public Match UpdateMatchByStatus(int matchId, Status status)
         {
+            var match = GetMatchById(matchId);
+            
             if (status == Status.Requested || status == Status.Fail)
             {
-                return;
+                return match;
             }
-
-            var match = _context.Matches.Find(matchId);
 
             switch (status)
             {
@@ -73,21 +60,26 @@ namespace Czeum.DAL.Repositories
                     break;
             }
 
-            _context.SaveChanges();
+            return match;
         }
 
-        public Dictionary<string, MatchStatus> CreateMatch(LobbyData lobbyData, int boardId)
+        public Match CreateMatch(LobbyData lobbyData, SerializedBoard board)
         {
-            return CreateMatch(lobbyData.Host, lobbyData.Guest, boardId);
+            return CreateMatch(lobbyData.Host, lobbyData.Guest, board);
         }
 
-        public Dictionary<string, MatchStatus> CreateMatch(string player1, string player2, int boardId)
+        public Match CreateMatch(string player1, string player2, SerializedBoard board)
         {
+            if (board == null)
+            {
+                throw new ArgumentNullException(nameof(board), "The board can not be null.");
+            }
+            
             var match = new Match
             {
                 Player1 = _context.Users.SingleOrDefault(u => u.UserName == player1),
                 Player2 = _context.Users.SingleOrDefault(u => u.UserName == player2),
-                Board = _context.Boards.Find(boardId),
+                Board = board,
                 State = MatchState.Player1Moves
             };
 
@@ -101,19 +93,8 @@ namespace Czeum.DAL.Repositories
                 throw new ArgumentOutOfRangeException(nameof(player2), "There is no such player");
             }
 
-            if (match.Board == null)
-            {
-                throw new ArgumentOutOfRangeException(nameof(boardId), "The board id must be a valid board id");
-            }
-
             _context.Matches.Add(match);
-            _context.SaveChanges();
-            
-            return new Dictionary<string, MatchStatus>
-            {
-                { player1, match.ToMatchStatus(player1) },
-                { player2, match.ToMatchStatus(player2) }
-            };
+            return match;
         }
     }
 }

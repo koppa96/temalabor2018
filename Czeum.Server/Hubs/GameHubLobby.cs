@@ -148,9 +148,7 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var service = _serviceContainer.FindService(lobby);
-                var newBoardId = service.CreateAndSaveNewBoard(lobby);
-                var statuses = _matchRepository.CreateMatch(lobby, newBoardId);
+                var statuses = _gameHandler.CreateMatch(lobby);
 
                 await Clients.Caller.MatchCreated(statuses[lobby.Host]);
                 await Clients.User(lobby.Guest).MatchCreated(statuses[lobby.Guest]);

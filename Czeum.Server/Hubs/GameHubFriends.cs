@@ -12,7 +12,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _friendRepository.AddRequest(Context.UserIdentifier, receiver);
+                _unitOfWork.FriendRepository.AddRequest(Context.UserIdentifier, receiver);
                 await Clients.User(receiver).ReceiveRequest(Context.UserIdentifier);
                 await Clients.Caller.SuccessfulRequest(receiver);
             }
@@ -37,7 +37,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _friendRepository.AcceptRequest(sender, Context.UserIdentifier);
+                _unitOfWork.FriendRepository.AcceptRequest(sender, Context.UserIdentifier);
                 
                 await Clients.User(sender).FriendAdded(new Friend
                 {
@@ -60,7 +60,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _friendRepository.RemoveRequest(sender, Context.UserIdentifier);
+                _unitOfWork.FriendRepository.RemoveRequest(sender, Context.UserIdentifier);
                 
                 await Clients.User(sender).RequestRejected(Context.UserIdentifier);
                 await Clients.Caller.SuccessfulRejection(sender);
@@ -75,7 +75,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _friendRepository.RemoveFriend(Context.UserIdentifier, friend);
+                _unitOfWork.FriendRepository.RemoveFriend(Context.UserIdentifier, friend);
                 
                 await Clients.User(friend).FriendRemoved(Context.UserIdentifier);
                 await Clients.Caller.FriendRemoved(friend);

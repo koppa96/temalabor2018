@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
+using Czeum.DAL;
 using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
 using Czeum.DTO;
@@ -25,27 +26,22 @@ namespace Czeum.Server.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GameController : ControllerBase
     {
-        private readonly IBoardRepository<SerializedBoard> _boardRepository;
-        private readonly IMatchRepository _matchRepository;
         private readonly ILobbyService _lobbyService;
-        private readonly IFriendRepository _friendRepository;
         private readonly IOnlineUserTracker _onlineUserTracker;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GameController(IBoardRepository<SerializedBoard> boardRepository, IMatchRepository matchRepository, 
-            ILobbyService lobbyService, IFriendRepository friendRepository, IOnlineUserTracker onlineUserTracker)
+        public GameController(ILobbyService lobbyService, IOnlineUserTracker onlineUserTracker, IUnitOfWork unitOfWork)
         {
-            _boardRepository = boardRepository;
-            _matchRepository = matchRepository;
             _lobbyService = lobbyService;
-            _friendRepository = friendRepository;
             _onlineUserTracker = onlineUserTracker;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         [Route("/matches")]
         public ActionResult<List<MatchStatus>> GetMatches()
         {
-            return _matchRepository.GetMatchesOf(User.Identity.Name);
+            return _unitOfWork.MatchRepository.GetMatchesOf(User.Identity.Name);
         }
 
         [HttpGet]
@@ -53,7 +49,7 @@ namespace Czeum.Server.Controllers
         [Route("/boards/{id}")]
         public ActionResult<MoveResult> GetBoardByMatchId(int id)
         {
-            var serializedBoard = _boardRepository.GetByMatchId(id);
+            var serializedBoard = _unitOfWork.BoardRepository.GetByMatchId(id);
 
             if (serializedBoard == null)
             {
@@ -74,21 +70,21 @@ namespace Czeum.Server.Controllers
         [Route("/requests")]
         public ActionResult<List<string>> GetFriendRequests()
         {
-            return _friendRepository.GetRequestsReceivedBy(User.Identity.Name);
+            return _unitOfWork.FriendRepository.GetRequestsReceivedBy(User.Identity.Name);
         }
 
         [HttpGet]
         [Route("/sent-requests")]
         public ActionResult<List<string>> GetSentRequests()
         {
-            return _friendRepository.GetRequestsSentBy(User.Identity.Name);
+            return _unitOfWork.FriendRepository.GetRequestsSentBy(User.Identity.Name);
         }
 
         [HttpGet]
         [Route("/friends")]
         public ActionResult<List<Friend>> GetFriends()
         {
-            return _friendRepository.GetFriendsOf(User.Identity.Name)
+            return _unitOfWork.FriendRepository.GetFriendsOf(User.Identity.Name)
                 .Select(f => new Friend { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
                 .ToList();
         }

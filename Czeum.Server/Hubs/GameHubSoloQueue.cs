@@ -20,9 +20,7 @@ namespace Czeum.Server.Hubs
             var players = _soloQueueService.PopFirstTwoPlayers();
             if (players != null)
             {
-                var service = _serviceContainer.GetRandomService();
-                var board = service.CreateAndSaveDefaultBoard();
-                var statuses = _matchRepository.CreateMatch(players[0], players[1], board);
+                var statuses = _gameHandler.CreateRandomMatch(players[0], players[1]);
 
                 await Clients.User(players[0]).MatchCreated(statuses[players[0]]);
                 await Clients.User(players[1]).MatchCreated(statuses[players[1]]);

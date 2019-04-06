@@ -17,6 +17,7 @@ using Czeum.DAL.Interfaces;
 using Czeum.DAL.Repositories;
 using Czeum.Server.Hubs;
 using Czeum.Server.Services;
+using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
@@ -93,20 +94,15 @@ namespace Czeum.Server
             services.AddTransient<IServiceContainer, ServiceContainer>();
             
 			//Game Services
-            services.AddScoped<IGameService, Connect4Service>();
-            services.AddScoped<IGameService, ChessService>();
+            services.AddTransient<IGameService, Connect4Service>();
+            services.AddTransient<IGameService, ChessService>();
+            services.AddTransient<IGameHandler, GameHandler>();
             
             //Lobby
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
-            services.AddScoped<ILobbyService, LobbyService>();
-            
-            //Repositories
-            services.AddScoped<IFriendRepository, FriendRepository>();
-            services.AddScoped<IMatchRepository, MatchRepository>();
-            services.AddScoped<IBoardRepository<SerializedBoard>, BoardRepository<SerializedBoard>>();
-            services.AddScoped<IBoardRepository<SerializedChessBoard>, BoardRepository<SerializedChessBoard>>();
-            services.AddScoped<IBoardRepository<SerializedConnect4Board>, BoardRepository<SerializedConnect4Board>>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddTransient<ILobbyService, LobbyService>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

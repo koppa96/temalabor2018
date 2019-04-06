@@ -10,7 +10,7 @@ using Czeum.DAL.Interfaces;
 
 namespace Czeum.DAL.Repositories
 {
-    public class BoardRepository<T> : IBoardRepository<T> where T : SerializedBoard
+    public class BoardRepository<T> : IBoardRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,53 +19,36 @@ namespace Czeum.DAL.Repositories
             _context = context;
         }
 
-        public void DeleteBoard(T board)
+        public void DeleteBoard(SerializedBoard board)
         {
             _context.Boards.Remove(board);
-            _context.SaveChanges();
         }
 
-        public T GetById(int id)
+        public SerializedBoard GetById(int id)
         {
-            var board = _context.Boards.Find(id);
-            return ValidateBoard(board);
+            return _context.Boards.Find(id);
         }
 
-        public T GetByMatchId(int id)
+        public SerializedBoard GetByMatchId(int id)
         {
-            var board = _context.Boards.FirstOrDefault(b => b.Match.MatchId == id);
-            return ValidateBoard(board);
+            return _context.Boards.FirstOrDefault(b => b.Match.MatchId == id);
         }
 
-        public int InsertBoard(T board)
+        public void InsertBoard(SerializedBoard board)
         {
             _context.Boards.Add(board);
-            _context.SaveChanges();
-            return board.BoardId;
         }
 
-        public void UpdateBoard(T board)
+        public void UpdateBoard(SerializedBoard board)
         {
             var outdatedBoard = GetById(board.BoardId);
             _context.Entry(outdatedBoard).CurrentValues.SetValues(board);
-            _context.SaveChanges();
         }
 
         public void UpdateBoardData(int id, string newData)
         {
             var board = GetById(id);
             board.BoardData = newData;
-            _context.SaveChanges();
-        }
-
-        private static T ValidateBoard(SerializedBoard board)
-        {
-            if (board == null)
-            {
-                throw new NullReferenceException("There is no board with such ID.");
-            }
-
-            return (T)board;
         }
 
         public MoveResult GetMoveResultByMatchId(int matchId)

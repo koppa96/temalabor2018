@@ -28,7 +28,6 @@ namespace Czeum.DAL.Repositories
             };
 
             _context.Messages.Add(storedMessage);
-            _context.SaveChanges();
         }
 
         public List<Message> GetMessagesForMatch(int matchId)
