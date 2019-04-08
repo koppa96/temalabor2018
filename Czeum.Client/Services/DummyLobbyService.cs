@@ -11,38 +11,40 @@ using System.Threading.Tasks;
 namespace Czeum.Client.Services {
     class DummyLobbyService : ILobbyService {
 
-        private ObservableCollection<LobbyData> _lobbyListList;
+        private ObservableCollection<LobbyData> _lobbyList;
         private LobbyData _currentLobby;
 
         public DummyLobbyService() {
-            _lobbyListList = new ObservableCollection<LobbyData>();
+            _lobbyList = new ObservableCollection<LobbyData>();
         }
 
-        public ObservableCollection<LobbyData> LobbyList => _lobbyListList;
+        public ObservableCollection<LobbyData> LobbyList => _lobbyList;
         public LobbyData CurrentLobby => _currentLobby;
 
         public void CreateLobby() {
-            _lobbyListList.Add(new Connect4LobbyData());
+            _lobbyList.Add(new Connect4LobbyData());
         }
 
         public ObservableCollection<LobbyData> GetLobbyList() {
-            return _lobbyListList;
+            return _lobbyList;
         }
 
         public void JoinLobby(int index) {
-            _currentLobby = _lobbyListList[index];
+            _currentLobby = _lobbyList[index];
         }
 
         public void LeaveLobby() {
             _currentLobby = null;
         }
 
-        public void QueryLobbyList() {
-            _lobbyListList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0 });
-            _lobbyListList.Add(new Connect4LobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1 });
-            _lobbyListList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, LobbyId = 2 });
-            _lobbyListList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, LobbyId = 3 });
-            _lobbyListList.Add(new Connect4LobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4 });
+        public void QueryLobbyList()
+        {
+            _lobbyList.Clear();
+            _lobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0, Guest = "guest1"});
+            _lobbyList.Add(new Connect4LobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
+            _lobbyList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, LobbyId = 2 });
+            _lobbyList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, LobbyId = 3, Guest = "guest4" });
+            _lobbyList.Add(new Connect4LobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4, Guest = "guest5" });
         }
     }
 }
