@@ -118,6 +118,7 @@
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\ILobbyService.cs" />
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
@@ -125,6 +126,7 @@
       <DependentUpon>LobbyBrowserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="LobbyRepository.cs" />
+    <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\DummyLobbyService.cs" />
     <Compile Include="Services\UserManagerService.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />

@@ -45,6 +45,7 @@ namespace Czeum.Client
             _container.RegisterType<IUserManagerService, DummyUserManagerService>(new ContainerControlledLifetimeManager());
             _container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
             _container.RegisterType<ILobbyService, DummyLobbyService>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<IDialogService, DialogService>(new ContainerControlledLifetimeManager());
             this.NavigationService.Navigate(Experiences.Login.ToString(), null);
             return Task.FromResult<object>(null);
         }

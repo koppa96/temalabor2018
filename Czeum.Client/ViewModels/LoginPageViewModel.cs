@@ -98,5 +98,10 @@ namespace Czeum.Client.ViewModels
             RegistrationInfoVisibility = Visibility.Collapsed;
         }
 
+        public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
+        {
+            ns.ClearHistory(); //This way the back button disappears after logging out
+            base.OnNavigatedTo(e, viewModelState);
+        }
     }
 }
