@@ -24,14 +24,16 @@ namespace Czeum.Client.ViewModels {
         private INavigationService navigationService;
         private ILoggerFacade loggerService;
         private IDialogService dialogService;
+        private IUserManagerService userManagerService;
 
         public ObservableCollection<LobbyData> LobbyList { get; private set; }
 
-        public LobbyPageViewModel(ILobbyService lobbyService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService) {
+        public LobbyPageViewModel(ILobbyService lobbyService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService, IUserManagerService userManagerService) {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
             this.loggerService = loggerService;
             this.dialogService = dialogService;
+            this.userManagerService = userManagerService;
 
             this.lobbyService.QueryLobbyList();
             LobbyList = lobbyService.LobbyList;
@@ -66,6 +68,7 @@ namespace Czeum.Client.ViewModels {
             if (result == ContentDialogResult.Primary)
             {
                 //Perform logout
+                await userManagerService.LogOutAsync();
                 navigationService.Navigate("Login", null);
             }
         }
