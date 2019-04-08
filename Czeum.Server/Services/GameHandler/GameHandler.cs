@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Czeum.Server.Services.ServiceContainer;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.GameServices;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
@@ -23,14 +24,27 @@ namespace Czeum.Server.Services.GameHandler
             var service = _serviceContainer.FindService(lobbyData);
             var board = (SerializedBoard) service.CreateNewBoard(lobbyData);
 
-            _unitOfWork.BoardRepository.InsertBoard(board);
-            var match = _unitOfWork.MatchRepository.CreateMatch(lobbyData, board);
-            _unitOfWork.Save();
+            return CreateMatchWithBoard(lobbyData.Host, lobbyData.Guest, board);
+        }
+        
+        public Dictionary<string, MatchStatus> CreateRandomMatch(string player1, string player2)
+        {
+            var service = _serviceContainer.GetRandomService();
+            var board = (SerializedBoard) service.CreateDefaultBoard();
 
+            return CreateMatchWithBoard(player1, player2, board);
+        }
+
+        private Dictionary<string, MatchStatus> CreateMatchWithBoard(string player1, string player2, SerializedBoard board)
+        {
+            _unitOfWork.BoardRepository.InsertBoard(board);
+            var match = _unitOfWork.MatchRepository.CreateMatch(player1, player2, board);
+            _unitOfWork.Save();
+            
             return new Dictionary<string, MatchStatus>
             {
-                { lobbyData.Host, match.ToMatchStatus(lobbyData.Host) },
-                { lobbyData.Guest, match.ToMatchStatus(lobbyData.Guest) }
+                { player1, match.ToMatchStatus(player1) },
+                { player2, match.ToMatchStatus(player2) }
             };
         }
 
@@ -56,20 +70,19 @@ namespace Czeum.Server.Services.GameHandler
             };
         }
 
-        public Dictionary<string, MatchStatus> CreateRandomMatch(string player1, string player2)
+        public Match GetMatchById(int id)
         {
-            var service = _serviceContainer.GetRandomService();
-            var board = (SerializedBoard) service.CreateDefaultBoard();
-            
-            _unitOfWork.BoardRepository.InsertBoard(board);
-            var match = _unitOfWork.MatchRepository.CreateMatch(player1, player2, board);
-            _unitOfWork.Save();
-            
-            return new Dictionary<string, MatchStatus>
-            {
-                { player1, match.ToMatchStatus(player1) },
-                { player2, match.ToMatchStatus(player2) }
-            };
+            return _unitOfWork.MatchRepository.GetMatchById(id);
+        }
+
+        public List<MatchStatus> GetMatchesOf(string player)
+        {
+            return _unitOfWork.MatchRepository.GetMatchesOf(player);
+        }
+
+        public MoveResult GetBoardByMatchId(int matchId)
+        {
+            return _unitOfWork.BoardRepository.GetByMatchId(matchId)?.ToMoveResult();
         }
     }
 }

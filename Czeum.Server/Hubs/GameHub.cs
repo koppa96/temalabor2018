@@ -10,8 +10,10 @@ using Czeum.DAL.Entities;
 using Czeum.DAL.Interfaces;
 using Czeum.DTO;
 using Czeum.Server.Services;
+using Czeum.Server.Services.FriendService;
 using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,17 +32,20 @@ namespace Czeum.Server.Hubs
         private readonly ILogger _logger;
         private readonly ISoloQueueService _soloQueueService;
         private readonly IGameHandler _gameHandler;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IFriendService _friendService;
+        private readonly IMessageService _messageService;
         
         public GameHub(IOnlineUserTracker onlineUserTracker, ILobbyService lobbyService, ILogger<GameHub> logger,
-            ISoloQueueService soloQueueService, IGameHandler gameHandler, IUnitOfWork unitOfWork)
+            ISoloQueueService soloQueueService, IGameHandler gameHandler, IFriendService friendService,
+            IMessageService messageService)
         {
             _onlineUserTracker = onlineUserTracker;
             _lobbyService = lobbyService;
             _logger = logger;
             _soloQueueService = soloQueueService;
             _gameHandler = gameHandler;
-            _unitOfWork = unitOfWork;
+            _friendService = friendService;
+            _messageService = messageService;
         }
 
         public override async Task OnConnectedAsync()
@@ -48,7 +53,7 @@ namespace Czeum.Server.Hubs
             await base.OnConnectedAsync();
             _onlineUserTracker.PutUser(Context.UserIdentifier);
 
-            var friends = _unitOfWork.FriendRepository.GetFriendsOf(Context.UserIdentifier);
+            var friends = _friendService.GetFriendsOf(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendConnected(Context.UserIdentifier);
@@ -75,7 +80,7 @@ namespace Czeum.Server.Hubs
 
             _soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
-            var friends = _unitOfWork.FriendRepository.GetFriendsOf(Context.UserIdentifier);
+            var friends = _friendService.GetFriendsOf(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendDisconnected(Context.UserIdentifier);
@@ -87,7 +92,7 @@ namespace Czeum.Server.Hubs
 
         public async Task ReceiveMove(MoveData moveData)
         {
-            var match = _unitOfWork.MatchRepository.GetMatchById(moveData.MatchId);
+            var match = _gameHandler.GetMatchById(moveData.MatchId);
 
             if (match == null)
             {
@@ -128,14 +133,14 @@ namespace Czeum.Server.Hubs
 
         public async Task SendMessageToMatch(int matchId, Message message)
         {
-            var match = _unitOfWork.MatchRepository.GetMatchById(matchId);
-            if (!match.HasPlayer(Context.UserIdentifier))
+            if (!_messageService.SendToMatch(matchId, message, Context.UserIdentifier))
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
                 return;
             }
-            
-            _unitOfWork.MessageRepository.AddMessageNow(matchId, message);
+
+            var match = _gameHandler.GetMatchById(matchId);
+            await Clients.Caller.MatchMessageSent(matchId, message);
             await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, message);
         }
     }

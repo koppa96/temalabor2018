@@ -13,7 +13,6 @@ namespace Czeum.DAL.Interfaces
         List<MatchStatus> GetMatchesOf(string player);
         Match GetMatchById(int matchId);
         Match UpdateMatchByStatus(int matchId, Status status);
-        Match CreateMatch(LobbyData lobbyData, SerializedBoard board);
         Match CreateMatch(string player1, string player2, SerializedBoard board);
     }
 }

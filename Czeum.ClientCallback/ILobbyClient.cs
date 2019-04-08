@@ -12,6 +12,7 @@ namespace Czeum.ClientCallback
         Task LobbyChanged(LobbyData lobbyData);
         Task JoinedToLobby(LobbyData lobbyData, List<Message> messages);
         Task KickedFromLobby();
+        Task LobbyMessageSent(Message message);
         Task ReceiveLobbyMessage(Message message);
     }
 }

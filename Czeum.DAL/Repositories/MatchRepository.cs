@@ -63,11 +63,6 @@ namespace Czeum.DAL.Repositories
             return match;
         }
 
-        public Match CreateMatch(LobbyData lobbyData, SerializedBoard board)
-        {
-            return CreateMatch(lobbyData.Host, lobbyData.Guest, board);
-        }
-
         public Match CreateMatch(string player1, string player2, SerializedBoard board)
         {
             if (board == null)

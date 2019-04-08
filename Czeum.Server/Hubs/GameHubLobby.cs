@@ -12,7 +12,7 @@ namespace Czeum.Server.Hubs
 {
     public partial class GameHub
     {
-        public async Task<LobbyData> CreateLobby(Type lobbyType, LobbyAccess access)
+        public async Task<LobbyData> CreateLobby(Type lobbyType, LobbyAccess access, string name)
         {
             if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null)
             {
@@ -28,7 +28,7 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var lobby = _lobbyService.CreateAndAddLobby(lobbyType, Context.UserIdentifier, access);
+                var lobby = _lobbyService.CreateAndAddLobby(lobbyType, Context.UserIdentifier, access, name);
                 _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
             
                 await Clients.All.LobbyCreated(lobby);
@@ -91,7 +91,7 @@ namespace Czeum.Server.Hubs
             if (_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId))
             {
                 var lobby = _lobbyService.GetLobby(lobbyId);
-                await Clients.Caller.JoinedToLobby(lobby, _lobbyService.GetMessages(lobbyId));
+                await Clients.Caller.JoinedToLobby(lobby, _messageService.GetMessagesOfLobby(lobbyId));
                 await Clients.All.LobbyChanged(lobby);
             }
 
@@ -161,12 +161,19 @@ namespace Czeum.Server.Hubs
 
         public async Task SendMessageToLobby(int lobbyId, Message message)
         {
-            if (!await this.MessageValidationCallbacks(_lobbyService, lobbyId))
+            if (!_lobbyService.LobbyExists(lobbyId))
             {
+                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
+                return;
+            }
+
+            if (!_messageService.SendToLobby(lobbyId, message, Context.UserIdentifier))
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
                 return;
             }
             
-            _lobbyService.AddMessageNow(lobbyId, message);
+            await Clients.Caller.LobbyMessageSent(message);
             await Clients.User(_lobbyService.GetOtherPlayer(lobbyId, Context.UserIdentifier)).ReceiveLobbyMessage(message);
         }
     }

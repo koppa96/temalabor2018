@@ -16,9 +16,8 @@ namespace Czeum.DAL.Repositories
             _context = context;
         }
         
-        public void AddMessageNow(int matchId, Message message)
+        public void AddMessage(int matchId, Message message)
         {
-            message.Timestamp = DateTime.UtcNow;
             var storedMessage = new StoredMessage
             {
                 Text = message.Text,

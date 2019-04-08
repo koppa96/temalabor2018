@@ -24,23 +24,5 @@ namespace Czeum.Server.Hubs
 
             return true;
         }
-
-        public static async Task<bool> MessageValidationCallbacks(this GameHub hub, ILobbyService lobbyService,
-            int lobbyId)
-        {
-            if (!lobbyService.LobbyExists(lobbyId))
-            {
-                await hub.Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
-                return false;
-            }
-
-            if (!lobbyService.ValidateMessageSender(lobbyId, hub.Context.UserIdentifier))
-            {
-                await hub.Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
-                return false;
-            }
-
-            return true;
-        }
     }
 }

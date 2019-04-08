@@ -8,6 +8,7 @@ using Czeum.Abstractions.DTO;
 using Czeum.DAL;
 using Czeum.DAL.Interfaces;
 using Czeum.DTO;
+using IdentityServer4.Extensions;
 
 namespace Czeum.Server.Services.Lobby {
 	public class LobbyService : ILobbyService
@@ -102,7 +103,7 @@ namespace Czeum.Server.Services.Lobby {
 			return _lobbyStorage.GetLobby(lobbyId) != null;
 		}
 
-		public LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access)
+		public LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name)
 		{
 			if (!type.IsSubclassOf(typeof(LobbyData)))
 			{
@@ -112,6 +113,7 @@ namespace Czeum.Server.Services.Lobby {
 			var lobby = (LobbyData) Activator.CreateInstance(type);
 			lobby.Host = host;
 			lobby.Access = access;
+			lobby.Name = name.IsNullOrEmpty() ? host + "'s lobby" : name;
 			_lobbyStorage.AddLobby(lobby);
 			
 			return lobby;
@@ -126,12 +128,6 @@ namespace Czeum.Server.Services.Lobby {
 		public List<Message> GetMessages(int lobbyId)
 		{
 			return _lobbyStorage.GetMessages(lobbyId);
-		}
-
-		public bool ValidateMessageSender(int lobbyId, string sender)
-		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
-			return sender == lobby.Host || sender == lobby.Guest;
 		}
 
 		public string GetOtherPlayer(int lobbyId, string player)

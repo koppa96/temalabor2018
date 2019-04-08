@@ -17,12 +17,13 @@ using Czeum.DAL.Interfaces;
 using Czeum.DAL.Repositories;
 using Czeum.Server.Hubs;
 using Czeum.Server.Services;
+using Czeum.Server.Services.FriendService;
 using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
 using IdentityModel;
-using Microsoft.Extensions.Hosting;
 
 
 namespace Czeum.Server
@@ -88,25 +89,29 @@ namespace Czeum.Server
                     protocol.PayloadSerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
                 });
 
+            //Singleton in memory storing services
 			services.AddSingleton<ISoloQueueService, SoloQueueService>();
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
 			services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-            services.AddTransient<IServiceContainer, ServiceContainer>();
             
 			//Game Services
             services.AddTransient<IGameService, Connect4Service>();
             services.AddTransient<IGameService, ChessService>();
             services.AddTransient<IGameHandler, GameHandler>();
+            services.AddTransient<IServiceContainer, ServiceContainer>();
             
             //Lobby
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
             services.AddTransient<ILobbyService, LobbyService>();
 
+            services.AddTransient<IFriendService, FriendService>();
+            services.AddTransient<IMessageService, MessageService>();
+            
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

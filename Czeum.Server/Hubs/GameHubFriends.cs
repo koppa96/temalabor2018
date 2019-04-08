@@ -12,11 +12,11 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _unitOfWork.FriendRepository.AddRequest(Context.UserIdentifier, receiver);
+                _friendService.AddRequest(Context.UserIdentifier, receiver);
                 await Clients.User(receiver).ReceiveRequest(Context.UserIdentifier);
                 await Clients.Caller.SuccessfulRequest(receiver);
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.NoSuchUser);
             }
@@ -37,7 +37,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _unitOfWork.FriendRepository.AcceptRequest(sender, Context.UserIdentifier);
+                _friendService.AcceptRequest(sender, Context.UserIdentifier);
                 
                 await Clients.User(sender).FriendAdded(new Friend
                 {
@@ -60,7 +60,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _unitOfWork.FriendRepository.RemoveRequest(sender, Context.UserIdentifier);
+                _friendService.RemoveRequest(sender, Context.UserIdentifier);
                 
                 await Clients.User(sender).RequestRejected(Context.UserIdentifier);
                 await Clients.Caller.SuccessfulRejection(sender);
@@ -75,7 +75,7 @@ namespace Czeum.Server.Hubs
         {
             try
             {
-                _unitOfWork.FriendRepository.RemoveFriend(Context.UserIdentifier, friend);
+                _friendService.RemoveFriend(Context.UserIdentifier, friend);
                 
                 await Clients.User(friend).FriendRemoved(Context.UserIdentifier);
                 await Clients.Caller.FriendRemoved(friend);

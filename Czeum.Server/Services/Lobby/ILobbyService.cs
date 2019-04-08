@@ -20,10 +20,7 @@ namespace Czeum.Server.Services.Lobby
         LobbyData GetLobby(int lobbyId);
         bool ValidateModifier(int lobbyId, string modifier);
         bool LobbyExists(int lobbyId);
-        LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access);
-        void AddMessageNow(int lobbyId, Message message);
-        List<Message> GetMessages(int lobbyId);
-        bool ValidateMessageSender(int lobbyId, string sender);
+        LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name);
         string GetOtherPlayer(int lobbyId, string player);
     }
 }
