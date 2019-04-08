@@ -20,7 +20,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <RelativePanel Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="3" BorderBrush="Black">
+        <RelativePanel Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
             <TextBlock Name="IdTextBlock" RelativePanel.AlignTopWithPanel="True">
                 <Run Text="Current lobby is: #"/>
                 <Run Text="{Binding SelectedLobby.LobbyId}" FontWeight="Bold"/>
@@ -35,14 +35,14 @@
             </TextBlock>
         </RelativePanel>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="3" BorderBrush="Black" >
+        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
             <TextBlock Text="Lobby settings" FontWeight="Bold"/>
 
             <!-- Lobby type specific control goes here -->
 
         </StackPanel>
 
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="3" BorderBrush="Black" >
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
             <TextBlock Text="Currently invited players: " FontWeight="Bold"/>
             <ListView ItemsSource="{Binding SelectedLobby.InvitedPlayers}"></ListView>
         </StackPanel>
