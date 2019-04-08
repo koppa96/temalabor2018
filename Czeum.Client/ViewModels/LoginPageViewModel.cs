@@ -19,35 +19,35 @@ namespace Czeum.Client.ViewModels
     {
         private enum PageState { Login, Register}
         private PageState pageState = PageState.Login;
-        private IUserManagerService ums;
-        private INavigationService ns;
+        private IUserManagerService userManagerService;
+        private INavigationService navigationService;
 
-        private String _Name;
-        public String Name {
-            get { return _Name; }
-            set { SetProperty(ref _Name, value);  }
+        private string _Name;
+        public string Name {
+            get => _Name;
+            set => SetProperty(ref _Name, value);
         }
-        private String m_Password;
-        public String Password { 
-			get { return m_Password; }
-            set { SetProperty(ref m_Password, value); }
-		}
-        private String _ConfirmPassword;
-        public String ConfirmPassword {
-			get { return _ConfirmPassword; }
-            set {SetProperty(ref _ConfirmPassword, value); }
+        private string m_Password;
+        public string Password { 
+			get => m_Password;
+            set => SetProperty(ref m_Password, value);
         }
-        private String _Email;
-        public String Email
+        private string _ConfirmPassword;
+        public string ConfirmPassword {
+			get => _ConfirmPassword;
+            set => SetProperty(ref _ConfirmPassword, value);
+        }
+        private string _Email;
+        public string Email
         {
-            get { return _Email; }
-            set { SetProperty(ref _Email, value); }
+            get => _Email;
+            set => SetProperty(ref _Email, value);
         }
         private Visibility _RegistrationInfoVisibility = Visibility.Collapsed;
         public Visibility RegistrationInfoVisibility
         {
-            get { return _RegistrationInfoVisibility; }
-            set { SetProperty(ref _RegistrationInfoVisibility, value); }
+            get => _RegistrationInfoVisibility;
+            set => SetProperty(ref _RegistrationInfoVisibility, value);
         }
         
 
@@ -59,9 +59,9 @@ namespace Czeum.Client.ViewModels
         {
             if (pageState == PageState.Login)
             {
-                bool result = await ums.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+                bool result = await userManagerService.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
                 if(result) {
-                    ns.Navigate("Lobby", null); 
+                    navigationService.Navigate("Lobby", null); 
                 }
                 else {
                     throw new NotImplementedException();
@@ -70,7 +70,7 @@ namespace Czeum.Client.ViewModels
             }
             else
             {
-                await ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
+                await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
             }
         }
 
@@ -89,10 +89,10 @@ namespace Czeum.Client.ViewModels
             }
         }
 
-        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService ns)
+        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService)
         {
-            this.ns = ns;   
-            ums = userManagerService;
+            this.navigationService = navigationService;   
+            this.userManagerService = userManagerService;
             PerformClickCommand = new DelegateCommand(PerformClickAsync);
             ToggleClickCommand = new DelegateCommand(ToggleClick);
             RegistrationInfoVisibility = Visibility.Collapsed;
@@ -100,7 +100,7 @@ namespace Czeum.Client.ViewModels
 
         public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
         {
-            ns.ClearHistory(); //This way the back button disappears after logging out
+            navigationService.ClearHistory(); //This way the back button disappears after logging out
             base.OnNavigatedTo(e, viewModelState);
         }
     }
