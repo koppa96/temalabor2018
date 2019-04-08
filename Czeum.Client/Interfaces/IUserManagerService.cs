@@ -10,8 +10,10 @@ namespace Czeum.Client.Interfaces
     interface IUserManagerService
     {
         string AccessToken { get; }
-        
+        string Username { get; }
+
         Task<bool> LoginAsync(LoginModel data);
+        Task LogOutAsync();
         Task ChangePasswordAsync(ChangePasswordModel data);
         Task RegisterAsync(RegisterModel data);
     }
