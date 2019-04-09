@@ -18,30 +18,40 @@ namespace Czeum.Server.Services.MessageService
             _lobbyStorage = lobbyStorage;
         }
 
-        public bool SendToLobby(int lobbyId, Message message, string sender)
+        public Message SendToLobby(int lobbyId, string message, string sender)
         {
             var lobby = _lobbyStorage.GetLobby(lobbyId);
-            if (lobby == null || (lobby.Host != sender && lobby.Guest != sender) || message.Sender != sender)
+            if (lobby == null || lobby.Host != sender && lobby.Guest != sender)
             {
-                return false;
+                return null;
             }
-            
-            message.Timestamp = DateTime.UtcNow;
-            _lobbyStorage.AddMessage(lobbyId, message);
-            return true;
+
+            var msg = new Message
+            {
+                Sender = sender,
+                Text = message,
+                Timestamp = DateTime.UtcNow
+            };
+            _lobbyStorage.AddMessage(lobbyId, msg);
+            return msg;
         }
 
-        public bool SendToMatch(int matchId, Message message, string sender)
+        public Message SendToMatch(int matchId, string message, string sender)
         {
             var match = _unitOfWork.MatchRepository.GetMatchById(matchId);
-            if (!match.HasPlayer(sender) && message.Sender != sender)
+            if (!match.HasPlayer(sender))
             {
-                return false;
+                return null;
             }
 
-            message.Timestamp = DateTime.UtcNow;
-            _unitOfWork.MessageRepository.AddMessage(matchId, message);
-            return true;
+            var msg = new Message
+            {
+                Sender = sender,
+                Text = message,
+                Timestamp = DateTime.UtcNow
+            };
+            _unitOfWork.MessageRepository.AddMessage(matchId, msg);
+            return msg;
         }
 
         public List<Message> GetMessagesOfLobby(int lobbyId)

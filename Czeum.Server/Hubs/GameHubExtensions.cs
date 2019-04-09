@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
-using Czeum.Abstractions.DTO;
 using Czeum.DTO;
 using Czeum.Server.Services.Lobby;
-using Microsoft.AspNetCore.Hosting.Internal;
 
 namespace Czeum.Server.Hubs
 {

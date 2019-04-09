@@ -23,6 +23,7 @@ using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
+using Czeum.Server.Services.SoloQueue;
 using IdentityModel;
 
 

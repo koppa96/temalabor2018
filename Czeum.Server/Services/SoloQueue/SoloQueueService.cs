@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Czeum.Server.Services {
+namespace Czeum.Server.Services.SoloQueue {
 	public class SoloQueueService : ISoloQueueService
 	{
 		private readonly List<string> _queuingPlayers;

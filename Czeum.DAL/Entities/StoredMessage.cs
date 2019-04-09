@@ -8,7 +8,7 @@ namespace Czeum.DAL.Entities
         [Key]
         public int MessageId { get; set; }
 
-        public string Sender { get; set; }
+        public ApplicationUser Sender { get; set; }
         public string Text { get; set; }
         public DateTime Timestamp { get; set; }
 

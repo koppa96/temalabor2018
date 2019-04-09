@@ -21,10 +21,15 @@ namespace Czeum.DAL.Repositories
             var storedMessage = new StoredMessage
             {
                 Text = message.Text,
-                Sender = message.Sender,
+                Sender = _context.Users.SingleOrDefault(u => u.UserName == message.Sender),
                 Timestamp = message.Timestamp,
                 Match = _context.Matches.Find(matchId)
             };
+
+            if (storedMessage.Sender == null)
+            {
+                throw new ArgumentException("The sender must be a valid user.");
+            }
 
             _context.Messages.Add(storedMessage);
         }
@@ -34,7 +39,7 @@ namespace Czeum.DAL.Repositories
             return _context.Messages.Where(m => m.Match.MatchId == matchId)
                 .Select(m => new Message
                 {
-                    Sender = m.Sender,
+                    Sender = m.Sender.UserName,
                     Text = m.Text,
                     Timestamp = m.Timestamp
                 }).ToList();

@@ -13,6 +13,7 @@ using Czeum.Server.Hubs;
 using Czeum.Server.Services.FriendService;
 using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -32,13 +33,15 @@ namespace Czeum.Server.Controllers
         private readonly IOnlineUserTracker _onlineUserTracker;
         private readonly IGameHandler _gameHandler;
         private readonly IFriendService _friendService;
+        private readonly IMessageService _messageService;
         public GameController(ILobbyService lobbyService, IOnlineUserTracker onlineUserTracker, IGameHandler gameHandler,
-            IFriendService friendService)
+            IFriendService friendService, IMessageService messageService)
         {
             _lobbyService = lobbyService;
             _onlineUserTracker = onlineUserTracker;
             _gameHandler = gameHandler;
             _friendService = friendService;
+            _messageService = messageService;
         }
 
         [HttpGet]
@@ -91,6 +94,13 @@ namespace Czeum.Server.Controllers
             return _friendService.GetFriendsOf(User.Identity.Name)
                 .Select(f => new Friend { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
                 .ToList();
+        }
+
+        [HttpGet]
+        [Route("/messages/{id}")]
+        public ActionResult<List<Message>> GetMessages(int id)
+        {
+            return _messageService.GetMessagesOfMatch(id);
         }
     }
 }

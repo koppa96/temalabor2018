@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.GameServices;
-using Czeum.DAL;
 using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO;
-using Czeum.Server.Services;
 using Czeum.Server.Services.FriendService;
 using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
 using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
-using Czeum.Server.Services.ServiceContainer;
+using Czeum.Server.Services.SoloQueue;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -131,17 +124,18 @@ namespace Czeum.Server.Hubs
             }
         }
 
-        public async Task SendMessageToMatch(int matchId, Message message)
+        public async Task SendMessageToMatch(int matchId, string message)
         {
-            if (!_messageService.SendToMatch(matchId, message, Context.UserIdentifier))
+            var msg = _messageService.SendToMatch(matchId, message, Context.UserIdentifier);
+            if (msg == null)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
                 return;
             }
 
             var match = _gameHandler.GetMatchById(matchId);
-            await Clients.Caller.MatchMessageSent(matchId, message);
-            await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, message);
+            await Clients.Caller.MatchMessageSent(matchId, msg);
+            await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, msg);
         }
     }
 }

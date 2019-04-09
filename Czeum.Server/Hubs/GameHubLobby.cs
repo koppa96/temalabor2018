@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
-using Czeum.DAL.Entities;
 using Czeum.DTO;
 using Microsoft.Extensions.Logging;
 
@@ -159,7 +156,7 @@ namespace Czeum.Server.Hubs
             }
         }
 
-        public async Task SendMessageToLobby(int lobbyId, Message message)
+        public async Task SendMessageToLobby(int lobbyId, string message)
         {
             if (!_lobbyService.LobbyExists(lobbyId))
             {
@@ -167,14 +164,15 @@ namespace Czeum.Server.Hubs
                 return;
             }
 
-            if (!_messageService.SendToLobby(lobbyId, message, Context.UserIdentifier))
+            var msg = _messageService.SendToLobby(lobbyId, message, Context.UserIdentifier);
+            if (msg == null)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
                 return;
             }
             
-            await Clients.Caller.LobbyMessageSent(message);
-            await Clients.User(_lobbyService.GetOtherPlayer(lobbyId, Context.UserIdentifier)).ReceiveLobbyMessage(message);
+            await Clients.Caller.LobbyMessageSent(msg);
+            await Clients.User(_lobbyService.GetOtherPlayer(lobbyId, Context.UserIdentifier)).ReceiveLobbyMessage(msg);
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace Czeum.Server.Services
+namespace Czeum.Server.Services.SoloQueue
 {
     public interface ISoloQueueService
     {
