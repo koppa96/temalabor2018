@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using Czeum.Abstractions.DTO;
 
 namespace Czeum.Client.Interfaces {
-    public interface ILobbyRenderer
+    interface IInsertable
     {
-        Panel RenderLobby(LobbyData lobbyData);
+        void Insert(Panel insertedControl);
     }
 }

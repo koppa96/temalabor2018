@@ -12,6 +12,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Czeum.Client.Interfaces;
+using Czeum.Client.ViewModels;
 using Prism.Windows.Mvvm;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -20,9 +22,16 @@ namespace Czeum.Client.Views {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LobbyDetailsPage : SessionStateAwarePage {
+    public sealed partial class LobbyDetailsPage : SessionStateAwarePage, IInsertable{
         public LobbyDetailsPage() {
             this.InitializeComponent();
+            LobbyDetailsPageViewModel viewModel = (LobbyDetailsPageViewModel) this.DataContext;
+            viewModel.RegisterView(this);
+        }
+
+        public void Insert(Panel insertedControl)
+        {
+            SettingsPanel.Children.Add(insertedControl);
         }
     }
 }

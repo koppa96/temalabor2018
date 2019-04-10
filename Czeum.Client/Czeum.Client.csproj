@@ -104,6 +104,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IInsertable.cs" />
     <Compile Include="Renderers\ChessLobbyRenderer.cs" />
     <Compile Include="Renderers\Connect4LobbyRenderer.cs" />
     <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
