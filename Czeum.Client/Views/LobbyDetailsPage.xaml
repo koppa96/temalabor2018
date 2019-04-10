@@ -1,0 +1,52 @@
+﻿<prism:SessionStateAwarePage
+    xmlns:prism="using:Prism.Windows.Mvvm"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="Czeum.Client.Views.LobbyDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Czeum.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <RelativePanel Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
+            <TextBlock Name="IdTextBlock" RelativePanel.AlignTopWithPanel="True">
+                <Run Text="Current lobby is: #"/>
+                <Run Text="{Binding SelectedLobby.LobbyId}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock Name="HostTextBlock" RelativePanel.AlignVerticalCenterWithPanel="True">
+                <Run Text="The host of the lobby is: "/>
+                <Run Text="{Binding SelectedLobby.Host}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock Name="GuestTextBlock" RelativePanel.AlignBottomWithPanel="True">
+                <Run Text="The current guest of the lobby is: "/>
+                <Run Text="{Binding SelectedLobby.Guest}" FontWeight="Bold"/>
+            </TextBlock>
+        </RelativePanel>
+
+        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
+            <TextBlock Text="Lobby settings" FontWeight="Bold"/>
+            <Button Content="DEBUG" Click="ButtonBase_OnClick"></Button>
+
+            <!-- Lobby type specific control goes here -->
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
+            <TextBlock Text="Currently invited players: " FontWeight="Bold"/>
+            <ListView ItemsSource="{Binding SelectedLobby.InvitedPlayers}"></ListView>
+        </StackPanel>
+
+    </Grid>
+</prism:SessionStateAwarePage>

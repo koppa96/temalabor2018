@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Connect4Dtos;
+using Czeum.DTO;
 using System.Collections;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Czeum.Client.DTOs;
 
-namespace Czeum.Client {
+namespace Czeum.Client {/*
     class LobbyRepository {
         public static LobbyRepository Instance { get; } = new LobbyRepository();
 
@@ -114,5 +114,5 @@ namespace Czeum.Client {
         }
 
 #pragma warning restore CS4014
-    }
+    }*/
 }

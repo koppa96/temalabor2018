@@ -20,14 +20,37 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
             </Grid.RowDefinitions>
 
-            <TextBox x:Name="tbUsername"
+            <TextBox x:Name="tbEmail"
                      Grid.Row="0"
+                     Grid.Column="1"
+                     x:Uid="EmailTextBox"
+                     Margin="0 5 0 5"
+                     Text="{Binding Path=Email, Mode=TwoWay}"
+                     Visibility="{Binding Path=RegistrationInfoVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <animations:Implicit.ShowAnimations>
+                    <animations:OpacityAnimation Duration="0:0:1" From="0" To="1">
+                    </animations:OpacityAnimation>
+                    <animations:ScaleAnimation Duration="0:0:1" From="0" To="1">
+                    </animations:ScaleAnimation>
+                </animations:Implicit.ShowAnimations>
+
+                <animations:Implicit.HideAnimations>
+                    <animations:OpacityAnimation Duration="0:0:1" From="1" To="0">
+                    </animations:OpacityAnimation>
+                    <animations:ScaleAnimation Duration="0:0:1" From="1" To="0">
+                    </animations:ScaleAnimation>
+                </animations:Implicit.HideAnimations>
+            </TextBox>
+
+            <TextBox x:Name="tbUsername"
+                     Grid.Row="1"
                      Grid.Column="1"
                      x:Uid="UsernameTextBox"
                      Margin="0 5 0 5"
@@ -35,18 +58,18 @@
 
             <PasswordBox x:Name="pwbPassword"
                          x:Uid="PasswordBox"
-                         Grid.Row="1"
+                         Grid.Row="2"
                          Grid.Column="1"
                          Margin="0 5 0 5"
                          Password="{Binding Path=Password, Mode=TwoWay}"/>
 
-            <PasswordBox x:Name="pwbPasswordRepeat"
-                         x:Uid="PasswordRepeatBox"
-                         Grid.Row="2"
+            <PasswordBox x:Name="pwbConfirmPassword"
+                         x:Uid="ConfirmPasswordBox"
+                         Grid.Row="3"
                          Grid.Column="1"
                          Margin="0 5 0 5"
-                         Password="{Binding Path=PasswordRepeat, Mode=TwoWay}"
-                         Visibility="{Binding Path=PasswordRepeatVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                         Password="{Binding Path=ConfirmPassword, Mode=TwoWay}"
+                         Visibility="{Binding Path=RegistrationInfoVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <animations:Implicit.ShowAnimations>
                     <animations:OpacityAnimation Duration="0:0:1" From="0" To="1">
                     </animations:OpacityAnimation>
@@ -63,7 +86,7 @@
             </PasswordBox>
 
             <Grid
-                Grid.Row="3"
+                Grid.Row="4"
                 Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*" />

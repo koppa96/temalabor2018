@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="16">
+    <!--<Grid Padding="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -66,5 +66,5 @@
             <TextBlock Text="• view the results of your past matches" Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
             <TextBlock Text="• check out your overall statistics and ranking" Style="{StaticResource BodyTextBlockStyle}" Margin="16, 0, 0, 0"/>
         </StackPanel>
-    </Grid>
+    </Grid>-->
 </Page>

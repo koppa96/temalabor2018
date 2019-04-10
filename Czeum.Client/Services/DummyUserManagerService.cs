@@ -12,8 +12,10 @@ namespace Czeum.Client.Services
     class DummyUserManagerService : IUserManagerService
     {
         public string AccessToken => throw new NotImplementedException();
+        public string Username { get; private set; }
+
         private ILoggerFacade _logger;
-        private String username;
+
 
         public DummyUserManagerService(ILoggerFacade logger)
         {
@@ -21,15 +23,21 @@ namespace Czeum.Client.Services
             _logger = logger;
         }
 
-        public async Task ChangePasswordAsync(ChangePasswordModel data)
+        public async Task LogOutAsync()
         {
-            _logger.Log($"Password change requested by user '{username}'", Category.Info, Priority.None);
+            Username = null;
         }
 
-        public async Task LoginAsync(LoginModel data)
+        public async Task ChangePasswordAsync(ChangePasswordModel data)
+        {
+            _logger.Log($"Password change requested by user '{Username}'", Category.Info, Priority.None);
+        }
+
+        public async Task<bool> LoginAsync(LoginModel data)
         {
             _logger.Log($"Login attempt by user '{data.Username}'", Category.Info, Priority.None);
-            username = data.Username;
+            Username = data.Username;
+            return true;
         }
 
         public async Task RegisterAsync(RegisterModel data)

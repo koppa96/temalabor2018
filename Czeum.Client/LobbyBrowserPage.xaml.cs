@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-using Connect4Dtos;
+using Czeum.DTO;
 using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -24,9 +24,9 @@ namespace Czeum.Client {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LobbyBrowserPage : Page {
+    /*public sealed partial class LobbyBrowserPage : Page {
         
-        private ObservableCollection<LobbyData> Lobbies { get { return LobbyRepository.Instance.LobbyList; } }
+        private ObservableCollection<LobbyData> LobbyList { get { return LobbyRepository.Instance.LobbyList; } }
         private LobbyData SelectedLobby {
             get { return LobbyRepository.Instance.SelectedLobby; }
             set { LobbyRepository.Instance.SelectedLobby = value; }
@@ -48,5 +48,5 @@ namespace Czeum.Client {
         private void CreateButton_Click(object sender, RoutedEventArgs e) {
             ConnectionManager.Instance.CreateLobby(LobbyStatus.Public);
         }
-    }
+    }*/
 }

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Prism.Commands;
 using Microsoft.Practices.Unity;
 using Windows.UI.Xaml;
+using Prism.Windows.Navigation;
 
 namespace Czeum.Client.ViewModels
 {
@@ -18,55 +19,58 @@ namespace Czeum.Client.ViewModels
     {
         private enum PageState { Login, Register}
         private PageState pageState = PageState.Login;
-        private IUserManagerService ums;
+        private IUserManagerService userManagerService;
+        private INavigationService navigationService;
 
-        private String _Name;
-        public String Name {
-            get { return _Name; }
-            set { SetProperty(ref _Name, value);  }
+        private string _Name;
+        public string Name {
+            get => _Name;
+            set => SetProperty(ref _Name, value);
         }
-        private String m_Password;
-        public String Password { 
-			get { return m_Password; }
-            set { SetProperty(ref m_Password, value); }
-		}
-        private String _ConfirmPassword;
-        public String ConfirmPassword {
-			get { return _ConfirmPassword; }
-            set {SetProperty(ref _ConfirmPassword, value); }
-		}
-        private String _PasswordRepeat;
-        public String PasswordRepeat
-        {
-            get { return _PasswordRepeat; }
-            set { SetProperty(ref _PasswordRepeat, value); }
+        private string m_Password;
+        public string Password { 
+			get => m_Password;
+            set => SetProperty(ref m_Password, value);
         }
-        private String _Email;
-        public String Email
-        {
-            get { return _Email; }
-            set { SetProperty(ref _Email, value); }
+        private string _ConfirmPassword;
+        public string ConfirmPassword {
+			get => _ConfirmPassword;
+            set => SetProperty(ref _ConfirmPassword, value);
         }
-        private Visibility _PasswordRepeatVisibility = Visibility.Collapsed;
-        public Visibility PasswordRepeatVisibility
+        private string _Email;
+        public string Email
         {
-            get { return _PasswordRepeatVisibility; }
-            set { SetProperty(ref _PasswordRepeatVisibility, value); }
+            get => _Email;
+            set => SetProperty(ref _Email, value);
+        }
+        private Visibility _RegistrationInfoVisibility = Visibility.Collapsed;
+        public Visibility RegistrationInfoVisibility
+        {
+            get => _RegistrationInfoVisibility;
+            set => SetProperty(ref _RegistrationInfoVisibility, value);
         }
         
+
         public ICommand ToggleClickCommand { get; private set; }
         public ICommand PerformClickCommand { get; private set; }
         
 
-        private void PerformClick()
+        private async void PerformClickAsync()
         {
             if (pageState == PageState.Login)
             {
-                ums.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+                bool result = await userManagerService.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+                if(result) {
+                    navigationService.Navigate("Lobby", null); 
+                }
+                else {
+                    throw new NotImplementedException();
+                }
+                
             }
             else
             {
-                ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = PasswordRepeat });
+                await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
             }
         }
 
@@ -75,23 +79,29 @@ namespace Czeum.Client.ViewModels
             switch (pageState)
             {
                 case PageState.Register:
-                    PasswordRepeatVisibility = Visibility.Collapsed;
+                    RegistrationInfoVisibility = Visibility.Collapsed;
                     pageState = PageState.Login;
                     break;
                 case PageState.Login:
-                    PasswordRepeatVisibility = Visibility.Visible;
+                    RegistrationInfoVisibility = Visibility.Visible;
                     pageState = PageState.Register;
                     break;
             }
         }
 
-        public LoginPageViewModel(IUserManagerService userManagerService)
+        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService)
         {
-            ums = userManagerService;
-            PerformClickCommand = new DelegateCommand(PerformClick);
+            this.navigationService = navigationService;   
+            this.userManagerService = userManagerService;
+            PerformClickCommand = new DelegateCommand(PerformClickAsync);
             ToggleClickCommand = new DelegateCommand(ToggleClick);
-            PasswordRepeatVisibility = Visibility.Collapsed;
+            RegistrationInfoVisibility = Visibility.Collapsed;
         }
 
+        public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
+        {
+            navigationService.ClearHistory(); //This way the back button disappears after logging out
+            base.OnNavigatedTo(e, viewModelState);
+        }
     }
 }

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Connect4Dtos;
+using Czeum.DTO;
 using System.Collections;
 using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Core;
 
 namespace Czeum.Client
-{
+{/*
     class ConnectionManager {
         private static readonly ConnectionManager instance = new ConnectionManager();
         public static ConnectionManager Instance { get { return instance; } }
@@ -212,5 +212,5 @@ namespace Czeum.Client
             ShowDialog("Match Over", "One of your matches has ended in a draw.");
         }
 
-    }
+    }*/
 }
