@@ -51,6 +51,7 @@ namespace Czeum.Server.Services.MessageService
                 Timestamp = DateTime.UtcNow
             };
             _unitOfWork.MessageRepository.AddMessage(matchId, msg);
+            _unitOfWork.Save();
             return msg;
         }
 
