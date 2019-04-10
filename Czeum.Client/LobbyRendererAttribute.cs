@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Czeum.Client {
     class LobbyRendererAttribute : Attribute {
-        public string Identifier { get; }
+        public Type LobbyType { get; }
 
-        public LobbyRendererAttribute(string identifier)
+        public LobbyRendererAttribute(Type lobbyType)
         {
-            this.Identifier = identifier;
+            this.LobbyType = lobbyType;
         }
     }
 }

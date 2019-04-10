@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.Client.Interfaces;
+using Czeum.DTO.Chess;
 using Prism.Logging;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
@@ -17,6 +18,7 @@ namespace Czeum.Client.ViewModels {
         private IUserManagerService userManagerService;
         private ITypeDispatcher typeDispatcher;
 
+        private ILobbyRenderer lobbyRenderer;
 
         public LobbyData SelectedLobby  => lobbyService.CurrentLobby;
 
@@ -31,6 +33,8 @@ namespace Czeum.Client.ViewModels {
             this.loggerService = loggerService;
             this.userManagerService = userManagerService;
             this.typeDispatcher = typeDispatcher;
+
+            lobbyRenderer = typeDispatcher.DispatchLobbyRenderer(lobbyService.CurrentLobby);
         }
     }
 }

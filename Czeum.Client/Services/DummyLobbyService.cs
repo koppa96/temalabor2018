@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Czeum.DTO.Chess;
 
 namespace Czeum.Client.Services {
     class DummyLobbyService : ILobbyService {
@@ -41,10 +42,10 @@ namespace Czeum.Client.Services {
         {
             _lobbyList.Clear();
             _lobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0, Guest = "guest1"});
-            _lobbyList.Add(new Connect4LobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
+            _lobbyList.Add(new ChessLobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
             _lobbyList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, LobbyId = 2 });
             _lobbyList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, LobbyId = 3, Guest = "guest4" });
-            _lobbyList.Add(new Connect4LobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4, Guest = "guest5" });
+            _lobbyList.Add(new ChessLobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4, Guest = "guest5" });
         }
     }
 }
