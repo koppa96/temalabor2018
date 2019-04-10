@@ -26,6 +26,7 @@
                         </Grid>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
                             <TextBlock Text="{Binding LobbyId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                            <TextBlock Text="{Binding Name}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
                             <TextBlock Text="{Binding Host}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                         <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}">
