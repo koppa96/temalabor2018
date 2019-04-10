@@ -33,5 +33,10 @@ namespace Czeum.Client.Views {
         {
             SettingsPanel.Children.Add(insertedControl);
         }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            ;
+        }
     }
 }

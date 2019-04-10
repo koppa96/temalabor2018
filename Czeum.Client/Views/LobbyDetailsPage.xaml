@@ -37,6 +37,7 @@
 
         <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
             <TextBlock Text="Lobby settings" FontWeight="Bold"/>
+            <Button Content="DEBUG" Click="ButtonBase_OnClick"></Button>
 
             <!-- Lobby type specific control goes here -->
 

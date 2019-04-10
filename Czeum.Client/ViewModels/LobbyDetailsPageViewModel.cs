@@ -36,7 +36,7 @@ namespace Czeum.Client.ViewModels {
             this.userManagerService = userManagerService;
             this.typeDispatcher = typeDispatcher;
 
-            lobbyRenderer = typeDispatcher.DispatchLobbyRenderer(lobbyService.CurrentLobby);
+            lobbyRenderer = typeDispatcher.DispatchLobbyRenderer(SelectedLobby);
         }
 
         public void RegisterView(LobbyDetailsPage lobbyDetailsPage)
