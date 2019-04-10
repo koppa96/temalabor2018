@@ -46,6 +46,10 @@ namespace Czeum.Client
             _container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
             _container.RegisterType<ILobbyService, DummyLobbyService>(new ContainerControlledLifetimeManager());
             _container.RegisterType<IDialogService, DialogService>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<ILobbyRenderer, Connect4LobbyRenderer>("Connect4", new ContainerControlledLifetimeManager());
+            _container.RegisterType<ILobbyRenderer, ChessLobbyRenderer>("Chess", new ContainerControlledLifetimeManager());
+            _container.RegisterType<IEnumerable<ILobbyRenderer>, ILobbyRenderer[]>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<ITypeDispatcher, TypeDispatcher>(new ContainerControlledLifetimeManager());
             this.NavigationService.Navigate(Experiences.Login.ToString(), null);
             return Task.FromResult<object>(null);
         }

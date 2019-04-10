@@ -15,6 +15,7 @@ namespace Czeum.Client.ViewModels {
         private ILoggerFacade loggerService;
         private INavigationService navigationService;
         private IUserManagerService userManagerService;
+        private ITypeDispatcher typeDispatcher;
 
 
         public LobbyData SelectedLobby  => lobbyService.CurrentLobby;
@@ -22,15 +23,14 @@ namespace Czeum.Client.ViewModels {
         public bool IsUserGuest => lobbyService.CurrentLobby.Guest == userManagerService.Username;
 
         public LobbyDetailsPageViewModel(INavigationService navigationService, ILoggerFacade loggerService,
-            ILobbyService lobbyService, IUserManagerService userManagerService
+            ILobbyService lobbyService, IUserManagerService userManagerService, ITypeDispatcher typeDispatcher
             )
         {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
             this.loggerService = loggerService;
             this.userManagerService = userManagerService;
+            this.typeDispatcher = typeDispatcher;
         }
-
-
     }
 }

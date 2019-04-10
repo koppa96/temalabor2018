@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 namespace Czeum.Client.Services {
     class UserManagerService : IUserManagerService {
         public string AccessToken => throw new NotImplementedException();
+        public string Username { get; }
+
+        public Task LogOutAsync()
+        {
+            throw new NotImplementedException();
+        }
 
         public Task ChangePasswordAsync(ChangePasswordModel data) {
             throw new NotImplementedException();
