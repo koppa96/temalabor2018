@@ -104,8 +104,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChessLobbyRenderer.cs" />
-    <Compile Include="Connect4LobbyRenderer.cs" />
+    <Compile Include="Renderers\ChessLobbyRenderer.cs" />
+    <Compile Include="Renderers\Connect4LobbyRenderer.cs" />
     <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
     <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
     <Compile Include="Converters\PlayerColorConverter.cs" />
@@ -129,7 +129,7 @@
     <Compile Include="LobbyBrowserPage.xaml.cs">
       <DependentUpon>LobbyBrowserPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LobbyRendererAttribute.cs" />
+    <Compile Include="Renderers\LobbyRendererAttribute.cs" />
     <Compile Include="LobbyRepository.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\DummyLobbyService.cs" />
