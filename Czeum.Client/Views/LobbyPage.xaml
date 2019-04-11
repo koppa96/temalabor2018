@@ -9,32 +9,77 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dto="using:Czeum.Abstractions.DTO"
+    xmlns:chess="using:Czeum.DTO.Chess"
+    xmlns:connect4="using:Czeum.DTO.Connect4"
+    xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <DataTemplate x:Key="ChessLobbyTemplate" x:DataType="chess:ChessLobbyData">
+            <Grid BorderThickness="2" BorderBrush="Gray" Background="LightGray" Margin="0, 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="ms-appx:///Assets/chess.png" Width="80" Height="80" Grid.Column="0" Margin="10"/>
+                <StackPanel Grid.Column="1" Margin="10, 0">
+                    <TextBlock FontWeight="Bold">
+                        <Run Text="{Binding Name}"/>
+                        <Run>(</Run>
+                        <Run Text="{Binding LobbyId}"/>
+                        <Run>)</Run>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Host}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
+                    <TextBlock Text="{Binding Guest}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
+                </StackPanel>
+                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}" Grid.Column="2">
+                    <SymbolIcon Symbol="Play" Height="20" Width="20"/>
+                </Button> 
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Connect4LobbyTemplate" x:DataType="connect4:Connect4LobbyData">
+            <Grid BorderThickness="2" BorderBrush="Gray" Background="LightGray" Margin="0, 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="ms-appx:///Assets/connect4.png" Width="80" Height="80" Grid.Column="0" Margin="10"/>
+                <StackPanel Grid.Column="1" Margin="10, 0">
+                    <TextBlock FontWeight="Bold">
+                        <Run Text="{Binding Name}"/>
+                        <Run>(</Run>
+                        <Run Text="{Binding LobbyId}"/>
+                        <Run>)</Run>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Host}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
+                    <TextBlock Text="{Binding Guest}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
+                </StackPanel>
+                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}" Grid.Column="2">
+                    <SymbolIcon Symbol="Play" Height="20" Width="20"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+    </Page.Resources>
+
     <Grid>
-        <ListView Name="LobbyListView" ItemsSource="{Binding LobbyList, Mode=TwoWay}">
+        <ListView Name="LobbyListView" ItemsSource="{Binding LobbyList, Mode=TwoWay}" ItemTemplateSelector="{StaticResource LobbyListDataTemplateSelector}">
             <ListView.Header>
                 <Border Height="48" Background="LightBlue" CornerRadius="16">
                     <TextBlock Text="Currently available lobbies" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
                 </Border>
             </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="dto:LobbyData" x:Name="LobbyDataTemplate">
-                    <StackPanel Orientation="Horizontal" Height="80">
-                        <Grid Width="30" Height="30">
-                            <SymbolIcon Symbol="Permissions" Visibility="Visible"/>
-                        </Grid>
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="{Binding LobbyId}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
-                            <TextBlock Text="{Binding Name}"  Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
-                            <TextBlock Text="{Binding Host}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        </StackPanel>
-                        <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}">
-                            <SymbolIcon Symbol="Play" Height="80"/>
-                        </Button>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+
             <ListView.Footer>
                 <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray">
                     <StackPanel Orientation="Horizontal">

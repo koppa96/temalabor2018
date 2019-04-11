@@ -135,6 +135,7 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\DummyLobbyService.cs" />
     <Compile Include="Services\UserManagerService.cs" />
+    <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
     <Compile Include="TypeDispatcher.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
@@ -176,7 +177,9 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\chess.png" />
     <Content Include="Assets\closed.png" />
+    <Content Include="Assets\connect4.png" />
     <Content Include="Assets\open.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
