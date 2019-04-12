@@ -60,8 +60,6 @@
 
             <!-- Lobby type specific control goes here -->
             <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" Name="asd"/>
-            
-            <Button Content="DEBUG" Click="ButtonBase_OnClick"></Button>
 
         </StackPanel>
 
