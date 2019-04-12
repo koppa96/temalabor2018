@@ -7,8 +7,27 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chess="using:Czeum.DTO.Chess"
+    xmlns:connect4="using:Czeum.DTO.Connect4"
+    xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ChessLobbyTemplate" x:DataType="chess:ChessLobbyData">
+            <TextBlock Text="Chess lobbies do not contain additional settings"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Connect4LobbyTemplate" x:DataType="connect4:Connect4LobbyData">
+            <StackPanel>
+                <TextBox Header="Board width" Text="{Binding BoardWidth, Mode=TwoWay}"/>
+                <TextBox Header="Board height" Text="{Binding BoardHeight, Mode=TwoWay}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+    </Page.Resources>
+
 
     <Grid>
         <Grid.RowDefinitions>
@@ -37,11 +56,12 @@
 
         <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
             <TextBlock Text="Lobby settings" FontWeight="Bold"/>
-            <TextBox PlaceholderText="Lobby Name" Text="{Binding SelectedLobby.Name}"/>
-            <Button Content="DEBUG" Click="ButtonBase_OnClick"></Button>
-            
+            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding SelectedLobby.Name}"/>
 
             <!-- Lobby type specific control goes here -->
+            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" Name="asd"/>
+            
+            <Button Content="DEBUG" Click="ButtonBase_OnClick"></Button>
 
         </StackPanel>
 

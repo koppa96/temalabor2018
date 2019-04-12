@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.Client.Interfaces;
+using Czeum.Client.TemplateSelectors;
 using Czeum.Client.Views;
 using Czeum.DTO.Chess;
 using Prism.Logging;
@@ -12,7 +13,7 @@ using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
 
 namespace Czeum.Client.ViewModels {
-    class LobbyDetailsPageViewModel : ViewModelBase{
+    public class LobbyDetailsPageViewModel : ViewModelBase{
         private ILobbyService lobbyService;
         private ILoggerFacade loggerService;
         private INavigationService navigationService;
@@ -21,8 +22,9 @@ namespace Czeum.Client.ViewModels {
 
         private ILobbyRenderer lobbyRenderer;
         private LobbyDetailsPage view;
+       
 
-        public LobbyData SelectedLobby  => lobbyService.CurrentLobby;
+        public LobbyData SelectedLobby => lobbyService.CurrentLobby;
 
         public bool IsUserGuest => lobbyService.CurrentLobby.Guest == userManagerService.Username;
 
@@ -42,7 +44,7 @@ namespace Czeum.Client.ViewModels {
         public void RegisterView(LobbyDetailsPage lobbyDetailsPage)
         {
             this.view = lobbyDetailsPage;
-            view.Insert(lobbyRenderer.RenderLobby(lobbyService.CurrentLobby));
+            //view.Insert(lobbyRenderer.RenderLobby(lobbyService.CurrentLobby));
         }
     }
 }

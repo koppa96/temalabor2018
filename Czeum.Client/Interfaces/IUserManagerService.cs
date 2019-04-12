@@ -7,7 +7,7 @@ using Czeum.DTO.UserManagement;
 
 namespace Czeum.Client.Interfaces
 {
-    interface IUserManagerService
+    public interface IUserManagerService
     {
         string AccessToken { get; }
         string Username { get; }

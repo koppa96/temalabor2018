@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 
 namespace Czeum.Client.Interfaces {
-    interface ILobbyService {
+    public interface ILobbyService {
         ObservableCollection<LobbyData> LobbyList { get; }
         LobbyData CurrentLobby { get; }
         void QueryLobbyList();

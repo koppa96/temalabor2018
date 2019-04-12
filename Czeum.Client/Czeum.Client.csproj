@@ -135,7 +135,9 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\DummyLobbyService.cs" />
     <Compile Include="Services\UserManagerService.cs" />
+    <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\TestSelector.cs" />
     <Compile Include="TypeDispatcher.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />

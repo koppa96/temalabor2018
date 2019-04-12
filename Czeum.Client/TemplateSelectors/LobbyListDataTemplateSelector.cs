@@ -16,7 +16,6 @@ namespace Czeum.Client.TemplateSelectors {
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject dependencyObject)
         {
-            var lobbyData = (LobbyData) item;
             if (item == null)
             {
                 throw new ArgumentException("Tried selecting template for null lobby");
