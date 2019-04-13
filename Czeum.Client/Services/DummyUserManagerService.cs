@@ -24,14 +24,16 @@ namespace Czeum.Client.Services
             _logger = logger;
         }
 
-        public async Task LogOutAsync()
+        public async Task<bool> LogOutAsync()
         {
             Username = null;
+            return true;
         }
 
-        public async Task ChangePasswordAsync(ChangePasswordModel data)
+        public async Task<bool> ChangePasswordAsync(ChangePasswordModel data)
         {
             _logger.Log($"Password change requested by user '{Username}'", Category.Info, Priority.None);
+            return true;
         }
 
         public async Task<bool> LoginAsync(LoginModel data)

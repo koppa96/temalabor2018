@@ -231,6 +231,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Flurl">
+      <Version>2.8.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
       <Version>1.0.1</Version>
     </PackageReference>

@@ -13,8 +13,8 @@ namespace Czeum.Client.Interfaces
         string Username { get; }
 
         Task<bool> LoginAsync(LoginModel data);
-        Task LogOutAsync();
-        Task ChangePasswordAsync(ChangePasswordModel data);
+        Task<bool> LogOutAsync();
+        Task<bool> ChangePasswordAsync(ChangePasswordModel data);
         Task<bool> RegisterAsync(RegisterModel data);
     }
 }
