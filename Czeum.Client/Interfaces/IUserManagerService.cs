@@ -15,6 +15,6 @@ namespace Czeum.Client.Interfaces
         Task<bool> LoginAsync(LoginModel data);
         Task LogOutAsync();
         Task ChangePasswordAsync(ChangePasswordModel data);
-        Task RegisterAsync(RegisterModel data);
+        Task<bool> RegisterAsync(RegisterModel data);
     }
 }
