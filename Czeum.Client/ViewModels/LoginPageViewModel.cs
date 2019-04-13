@@ -22,26 +22,26 @@ namespace Czeum.Client.ViewModels
         private INavigationService navigationService;
         private IDialogService dialogService;
 
-        private string _Name;
+        private string name;
         public string Name {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
+            get => name;
+            set => SetProperty(ref name, value);
         }
-        private string _Password;
+        private string password;
         public string Password { 
-			get => _Password;
-            set => SetProperty(ref _Password, value);
+			get => password;
+            set => SetProperty(ref password, value);
         }
-        private string _ConfirmPassword;
+        private string confirmPassword;
         public string ConfirmPassword {
-			get => _ConfirmPassword;
-            set => SetProperty(ref _ConfirmPassword, value);
+			get => confirmPassword;
+            set => SetProperty(ref confirmPassword, value);
         }
-        private string _Email;
+        private string email;
         public string Email
         {
-            get => _Email;
-            set => SetProperty(ref _Email, value);
+            get => email;
+            set => SetProperty(ref email, value);
         }
 
         public ICommand LoginCommand { get; private set; }
