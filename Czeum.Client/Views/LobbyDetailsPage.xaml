@@ -19,10 +19,14 @@
         </DataTemplate>
 
         <DataTemplate x:Key="Connect4LobbyTemplate" x:DataType="connect4:Connect4LobbyData">
-            <StackPanel>
-                <TextBox Header="Board width" Text="{Binding BoardWidth, Mode=TwoWay}"/>
-                <TextBox Header="Board height" Text="{Binding BoardHeight, Mode=TwoWay}"/>
-            </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Header="Board width" Text="{Binding BoardWidth, Mode=TwoWay}" Margin="0,10"/>
+                <TextBox Grid.Row="1" Header="Board height" Text="{Binding BoardHeight, Mode=TwoWay}" Margin="0,10"/>
+            </Grid>
         </DataTemplate>
 
         <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
@@ -54,12 +58,15 @@
             </TextBlock>
         </RelativePanel>
 
-        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
-            <TextBlock Text="Lobby settings" FontWeight="Bold"/>
-            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding SelectedLobby.Name}"/>
+        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">
+            <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
+            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
 
             <!-- Lobby type specific control goes here -->
-            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" Name="asd"/>
+            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
+                            HorizontalContentAlignment="Stretch"/>
+
+            <Button Content="DEBUG BREAK" Margin="0,50,0,0" Click="ButtonBase_OnClick"/>
 
         </StackPanel>
 

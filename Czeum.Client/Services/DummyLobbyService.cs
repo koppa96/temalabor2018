@@ -40,6 +40,10 @@ namespace Czeum.Client.Services {
 
         public void QueryLobbyList()
         {
+            if (LobbyList.Count > 0)
+            {
+                return;
+            }
             _lobbyList.Clear();
             _lobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0, Guest = "guest1", Name = "My Little Lobbyyy"});
             _lobbyList.Add(new ChessLobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});

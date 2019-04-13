@@ -26,5 +26,10 @@ namespace Czeum.Client.Views {
         public LobbyDetailsPage() {
             this.InitializeComponent();
         }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            ;
+        }
     }
 }
