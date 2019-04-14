@@ -15,7 +15,5 @@ namespace Czeum.DAL.Entities
 
         [ForeignKey("Match")]
         public int MatchId { get; set; }
-
-        public abstract MoveResult ToMoveResult();
     }
 }

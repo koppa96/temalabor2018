@@ -2,12 +2,11 @@
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO.Connect4;
 
 namespace Czeum.Connect4Logic
 {
-    [GameService(typeof(Connect4MoveData), typeof(Connect4LobbyData))]
+    [GameService(typeof(Connect4MoveData), typeof(Connect4LobbyData), typeof(SerializedConnect4Board))]
     public class Connect4Service : IGameService
     {
         public InnerMoveResult ExecuteMove(MoveData moveData, int playerId, ISerializedBoard serializedBoard)
@@ -67,6 +66,18 @@ namespace Czeum.Connect4Logic
         {
             var lobby = new Connect4LobbyData();
             return CreateNewBoard(lobby);
+        }
+
+        public MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
+        {
+            var board = new Connect4Board();
+            board.DeserializeContent((SerializedConnect4Board) serializedBoard);
+            
+            return new Connect4MoveResult
+            {
+                Status = Status.Requested,
+                Board = board.Board
+            };
         }
     }
 }

@@ -3,12 +3,11 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO.Chess;
 
 namespace Czeum.ChessLogic
 {
-    [GameService(typeof(ChessMoveData), typeof(ChessLobbyData))]
+    [GameService(typeof(ChessMoveData), typeof(ChessLobbyData), typeof(SerializedChessBoard))]
     public class ChessService : IGameService
     {
         public InnerMoveResult ExecuteMove(MoveData moveData, int playerId, ISerializedBoard serializedBoard)
@@ -20,8 +19,10 @@ namespace Czeum.ChessLogic
             var board = new ChessBoard(false);
             board.DeserializeContent((SerializedChessBoard) serializedBoard);
 
-            var oldBoard = serializedBoard.ToMoveResult();
-            oldBoard.Status = Status.Fail;
+            var oldBoard = new ChessMoveResult
+            {
+                
+            };
             if (!board.ValidateMove(move, color) || 
                 !board.MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]) ||
                 !board.IsKingSafe(color))
@@ -80,6 +81,20 @@ namespace Czeum.ChessLogic
         public ISerializedBoard CreateDefaultBoard()
         {
             return CreateNewBoard(null);
+        }
+
+        public MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
+        {
+            var board = new ChessBoard(false);
+            board.DeserializeContent((SerializedChessBoard) serializedBoard);
+
+            return new ChessMoveResult
+            {
+                Status = Status.Requested,
+                BlackKingInCheck = !board.IsKingSafe(Color.Black),
+                WhiteKingInCheck = board.IsKingSafe(Color.White),
+                PieceInfos = board.GetPieceInfos()
+            };
         }
     }
 }

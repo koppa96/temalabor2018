@@ -7,5 +7,6 @@ namespace Czeum.Abstractions.GameServices
         InnerMoveResult ExecuteMove(MoveData moveData, int playerId, ISerializedBoard board);
         ISerializedBoard CreateNewBoard(LobbyData lobbyData);
         ISerializedBoard CreateDefaultBoard();
+        MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard);
     }
 }
