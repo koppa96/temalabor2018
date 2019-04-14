@@ -30,14 +30,14 @@ namespace Czeum.Server.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Route("/register")]
+        [Route("register")]
         public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model) {
 	        if (!ModelState.IsValid)
 	        {
 		        return StatusCode(StatusCodes.Status500InternalServerError);
 	        }
 
-	        if (_userManager.FindByNameAsync(model.Username) != null)
+	        if (await _userManager.FindByNameAsync(model.Username) != null)
 	        {
 		        return BadRequest(ErrorCodes.UsernameAlreadyTaken);
 	        }
@@ -69,7 +69,7 @@ namespace Czeum.Server.Controllers
         }
 
 		[HttpPost]
-        [Route("/changePass")]
+        [Route("changePass")]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

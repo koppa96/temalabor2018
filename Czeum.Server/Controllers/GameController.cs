@@ -37,7 +37,7 @@ namespace Czeum.Server.Controllers
         }
 
         [HttpGet]
-        [Route("/matches")]
+        [Route("matches")]
         public async Task<ActionResult<List<MatchStatus>>> GetMatchesAsync()
         {
             return await _gameHandler.GetMatchesOfPlayerAsync(User.Identity.Name);
@@ -45,7 +45,7 @@ namespace Czeum.Server.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("/boards/{id}")]
+        [Route("boards/{id}")]
         public async Task<ActionResult<MoveResult>> GetBoardByMatchIdAsync(int id)
         {
             var result = await _gameHandler.GetBoardByMatchIdAsync(id);
@@ -59,28 +59,28 @@ namespace Czeum.Server.Controllers
         }
 
         [HttpGet]
-        [Route("/lobbies")]
+        [Route("lobbies")]
         public ActionResult<List<LobbyData>> GetLobbies()
         {
             return _lobbyService.GetLobbies();
         }
 
         [HttpGet]
-        [Route("/requests")]
+        [Route("requests")]
         public async Task<ActionResult<List<string>>> GetFriendRequestsAsync()
         {
             return await _friendService.GetRequestsReceivedByUserAsync(User.Identity.Name);
         }
 
         [HttpGet]
-        [Route("/sent-requests")]
+        [Route("sent-requests")]
         public async Task<ActionResult<List<string>>> GetSentRequests()
         {
             return await _friendService.GetRequestsSentByUserAsync(User.Identity.Name);
         }
 
         [HttpGet]
-        [Route("/friends")]
+        [Route("friends")]
         public async Task<ActionResult<List<Friend>>> GetFriends()
         {
             return (await _friendService.GetFriendsOfUserAsync(User.Identity.Name))
@@ -89,7 +89,7 @@ namespace Czeum.Server.Controllers
         }
 
         [HttpGet]
-        [Route("/messages/{id}")]
+        [Route("messages/{id}")]
         public async Task<ActionResult<List<Message>>> GetMessages(int id)
         {
             return await _messageService.GetMessagesOfMatchAsync(id);
