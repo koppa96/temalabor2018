@@ -6,6 +6,7 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
+using Czeum.DAL.Extensions;
 using Czeum.DTO;
 using Microsoft.EntityFrameworkCore;
 

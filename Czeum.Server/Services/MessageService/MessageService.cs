@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
+using Czeum.DAL.Extensions;
 using Czeum.DTO;
 using Czeum.Server.Services.Lobby;
 using Microsoft.AspNetCore.Identity;

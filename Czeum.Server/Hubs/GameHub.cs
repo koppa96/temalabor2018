@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.DAL.Entities;
+using Czeum.DAL.Extensions;
 using Czeum.DTO;
 using Czeum.Server.Services.FriendService;
 using Czeum.Server.Services.GameHandler;
