@@ -13,10 +13,10 @@ namespace Czeum.Server.Services.MessageService
 {
     public class MessageService : IMessageService
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly ILobbyStorage _lobbyStorage;
 
-        public MessageService(IApplicationDbContext context, ILobbyStorage lobbyStorage)
+        public MessageService(ApplicationDbContext context, ILobbyStorage lobbyStorage)
         {
             _context = context;
             _lobbyStorage = lobbyStorage;

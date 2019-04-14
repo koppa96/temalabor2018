@@ -10,9 +10,9 @@ namespace Czeum.Server.Services.FriendService
 {
     public class FriendService : IFriendService
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public FriendService(IApplicationDbContext context)
+        public FriendService(ApplicationDbContext context)
         {
             _context = context;
         }

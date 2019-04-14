@@ -14,9 +14,9 @@ namespace Czeum.Server.Services.GameHandler
     public class GameHandler : IGameHandler
     {
         private readonly IServiceContainer _serviceContainer;
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public GameHandler(IServiceContainer serviceContainer, IApplicationDbContext context)
+        public GameHandler(IServiceContainer serviceContainer, ApplicationDbContext context)
         {
             _serviceContainer = serviceContainer;
             _context = context;

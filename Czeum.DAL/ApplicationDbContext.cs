@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.DAL
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Match> Matches { get; set; }
         public DbSet<SerializedBoard> Boards { get; set; }

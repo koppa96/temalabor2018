@@ -12,9 +12,9 @@ namespace Czeum.Server.Services.Lobby {
 	public class LobbyService : ILobbyService
 	{
 		private readonly ILobbyStorage _lobbyStorage;
-		private readonly IApplicationDbContext _context;
+		private readonly ApplicationDbContext _context;
 
-		public LobbyService(ILobbyStorage lobbyStorage, IApplicationDbContext context)
+		public LobbyService(ILobbyStorage lobbyStorage, ApplicationDbContext context)
 		{
 			_lobbyStorage = lobbyStorage;
 			_context = context;
