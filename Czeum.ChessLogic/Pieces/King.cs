@@ -28,8 +28,14 @@ namespace Czeum.ChessLogic.Pieces
                 return false;
             }
 
-            return Math.Abs(targetField.Row - Field.Row) < 2 && Math.Abs(targetField.Column - Field.Column) < 2 
+            Field.RemovePiece(this);
+
+            var canMove = Math.Abs(targetField.Row - Field.Row) < 2 && Math.Abs(targetField.Column - Field.Column) < 2 
                    && Board.IsFieldSafe(Color, targetField) && (targetField.Empty || targetField.Piece.Color != Color);
+
+            Field.AddPiece(this);
+
+            return canMove;
         }
     }
 }
