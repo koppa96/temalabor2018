@@ -8,5 +8,6 @@ namespace Czeum.DAL.Entities
         public string BoardData { get; set; }
 
         public Match Match { get; set; }
+        public int MatchId { get; set; }
     }
 }

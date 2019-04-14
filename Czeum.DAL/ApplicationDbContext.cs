@@ -60,7 +60,8 @@ namespace Czeum.DAL
 
             builder.Entity<Match>()
                 .HasOne(m => m.Board)
-                .WithOne(b => b.Match);
+                .WithOne(b => b.Match)
+                .HasForeignKey<SerializedBoard>(b => b.MatchId);
 
             builder.Entity<SerializedBoard>()
                 .HasKey(b => b.BoardId);

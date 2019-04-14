@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Czeum.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190225164839_InitialDatabase")]
+    [Migration("20190414134951_InitialDatabase")]
     partial class InitialDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "3.0.0-preview.19074.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -70,6 +70,25 @@ namespace Czeum.DAL.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Czeum.DAL.Entities.FriendRequest", b =>
+                {
+                    b.Property<int>("RequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ReceiverId");
+
+                    b.Property<string>("SenderId");
+
+                    b.HasKey("RequestId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("Czeum.DAL.Entities.Friendship", b =>
@@ -133,6 +152,29 @@ namespace Czeum.DAL.Migrations
                     b.ToTable("Boards");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("SerializedBoard");
+                });
+
+            modelBuilder.Entity("Czeum.DAL.Entities.StoredMessage", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("MatchId");
+
+                    b.Property<string>("SenderId");
+
+                    b.Property<string>("Text");
+
+                    b.Property<DateTime>("Timestamp");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -267,6 +309,17 @@ namespace Czeum.DAL.Migrations
                     b.HasDiscriminator().HasValue("SerializedConnect4Board");
                 });
 
+            modelBuilder.Entity("Czeum.DAL.Entities.FriendRequest", b =>
+                {
+                    b.HasOne("Czeum.DAL.Entities.ApplicationUser", "Receiver")
+                        .WithMany("ReceivedRequests")
+                        .HasForeignKey("ReceiverId");
+
+                    b.HasOne("Czeum.DAL.Entities.ApplicationUser", "Sender")
+                        .WithMany("SentRequests")
+                        .HasForeignKey("SenderId");
+                });
+
             modelBuilder.Entity("Czeum.DAL.Entities.Friendship", b =>
                 {
                     b.HasOne("Czeum.DAL.Entities.ApplicationUser", "User1")
@@ -295,6 +348,17 @@ namespace Czeum.DAL.Migrations
                         .WithOne("Board")
                         .HasForeignKey("Czeum.DAL.Entities.SerializedBoard", "MatchId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Czeum.DAL.Entities.StoredMessage", b =>
+                {
+                    b.HasOne("Czeum.DAL.Entities.Match", "Match")
+                        .WithMany("Messages")
+                        .HasForeignKey("MatchId");
+
+                    b.HasOne("Czeum.DAL.Entities.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
