@@ -39,14 +39,14 @@ namespace Czeum.Tests.Connect4Logic
         [TestMethod]
         public void MoveDataFindsService()
         {
-            var service = serviceContainer.FindService(move);
+            var service = serviceContainer.FindByMoveData(move);
             Assert.AreSame(originalService, service);
         }
 
         [TestMethod]
         public void ExecutionTest()
         {
-            var service = serviceContainer.FindService(move);
+            var service = serviceContainer.FindByMoveData(move);
             var result = service.ExecuteMove(move, 1, new Connect4Board().SerializeContent());
             
             Assert.AreEqual(Status.Success, result.MoveResult.Status);

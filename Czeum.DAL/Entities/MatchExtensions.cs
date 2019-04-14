@@ -73,5 +73,41 @@ namespace Czeum.DAL.Entities
                 State = match.GetGameStateForPlayer(player)
             };
         }
+
+        public static bool HasEnded(this Match match)
+        {
+            return match.State == MatchState.Player1Won || match.State == MatchState.Player2Won ||
+                   match.State == MatchState.Draw;
+        }
+
+        public static void NextTurn(this Match match)
+        {
+            switch (match.State)
+            {
+                case MatchState.Player1Moves:
+                    match.State = MatchState.Player2Moves;
+                    return;
+                case MatchState.Player2Moves:
+                    match.State = MatchState.Player1Moves;
+                    return;
+                default:
+                    throw new InvalidOperationException("The match already ended.");
+            }
+        }
+
+        public static void CurrentPlayerWon(this Match match)
+        {
+            switch (match.State)
+            {
+                case MatchState.Player1Moves:
+                    match.State = MatchState.Player1Won;
+                    return;
+                case MatchState.Player2Moves:
+                    match.State = MatchState.Player2Won;
+                    return;
+                default:
+                    throw new InvalidOperationException("The match already ended.");
+            }
+        }
     }
 }

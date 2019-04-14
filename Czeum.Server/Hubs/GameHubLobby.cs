@@ -85,7 +85,7 @@ namespace Czeum.Server.Hubs
                 return;
             }
 
-            if (_lobbyService.JoinPlayerToLobby(Context.UserIdentifier, lobbyId))
+            if (await _lobbyService.JoinPlayerToLobbyAsync(Context.UserIdentifier, lobbyId))
             {
                 var lobby = _lobbyService.GetLobby(lobbyId);
                 await Clients.Caller.JoinedToLobby(lobby, _messageService.GetMessagesOfLobby(lobbyId));
@@ -145,7 +145,7 @@ namespace Czeum.Server.Hubs
 
             try
             {
-                var statuses = _gameHandler.CreateMatch(lobby);
+                var statuses = await _gameHandler.CreateMatchAsync(lobby);
 
                 await Clients.Caller.MatchCreated(statuses[lobby.Host]);
                 await Clients.User(lobby.Guest).MatchCreated(statuses[lobby.Guest]);

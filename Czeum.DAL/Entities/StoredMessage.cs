@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Czeum.DTO;
 
 namespace Czeum.DAL.Entities
 {
@@ -13,5 +14,15 @@ namespace Czeum.DAL.Entities
         public DateTime Timestamp { get; set; }
 
         public Match Match { get; set; }
+
+        public Message ToMessage()
+        {
+            return new Message
+            {
+                Sender = Sender.UserName,
+                Text = Text,
+                Timestamp = Timestamp
+            };
+        }
     }
 }

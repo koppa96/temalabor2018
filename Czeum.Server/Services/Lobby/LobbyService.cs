@@ -1,35 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.DAL;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO;
 using IdentityServer4.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Server.Services.Lobby {
 	public class LobbyService : ILobbyService
 	{
 		private readonly ILobbyStorage _lobbyStorage;
-		private readonly IUnitOfWork _unitOfWork;
+		private readonly IApplicationDbContext _context;
 
-		public LobbyService(ILobbyStorage lobbyStorage, IUnitOfWork unitOfWork)
+		public LobbyService(ILobbyStorage lobbyStorage, IApplicationDbContext context)
 		{
 			_lobbyStorage = lobbyStorage;
-			_unitOfWork = unitOfWork;
+			_context = context;
 		}
 
-		public bool JoinPlayerToLobby(string player, int lobbyId)
+		public async Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId)
 		{
 			var lobby = _lobbyStorage.GetLobby(lobbyId);
 			if (lobby == null) {
 				throw new ArgumentException("Invalid lobby id");
 			}
 
-			return lobby.JoinGuest(player, _unitOfWork.FriendRepository.GetFriendsOf(player));
+			var friends = await _context.Friendships
+				.Where(f => f.User1.UserName == player || f.User2.UserName == player)
+				.Select(f => f.User1.UserName == player ? f.User2.UserName : f.User1.UserName)
+				.ToListAsync();
+			
+			return lobby.JoinGuest(player, friends);
 		}
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId)

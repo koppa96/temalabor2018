@@ -1,20 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
 using Czeum.Server.Services.Lobby;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Server.Services.MessageService
 {
     public class MessageService : IMessageService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IApplicationDbContext _context;
         private readonly ILobbyStorage _lobbyStorage;
 
-        public MessageService(IUnitOfWork unitOfWork, ILobbyStorage lobbyStorage)
+        public MessageService(IApplicationDbContext context, ILobbyStorage lobbyStorage)
         {
-            _unitOfWork = unitOfWork;
+            _context = context;
             _lobbyStorage = lobbyStorage;
         }
 
@@ -36,23 +40,26 @@ namespace Czeum.Server.Services.MessageService
             return msg;
         }
 
-        public Message SendToMatch(int matchId, string message, string sender)
+        public async Task<Message> SendToMatchAsync(int matchId, string message, string sender)
         {
-            var match = _unitOfWork.MatchRepository.GetMatchById(matchId);
-            if (!match.HasPlayer(sender))
+            var match = await _context.Matches.FindAsync(matchId);
+            if (match == null || !match.HasPlayer(sender))
             {
                 return null;
             }
 
-            var msg = new Message
+            var senderUser = await _context.Users.SingleAsync(u => u.UserName == sender);
+            var storedMessage = new StoredMessage
             {
-                Sender = sender,
+                Sender = senderUser,
+                Match = match,
                 Text = message,
                 Timestamp = DateTime.UtcNow
             };
-            _unitOfWork.MessageRepository.AddMessage(matchId, msg);
-            _unitOfWork.Save();
-            return msg;
+            _context.Messages.Add(storedMessage);
+            await _context.SaveChangesAsync();
+            
+            return storedMessage.ToMessage();
         }
 
         public List<Message> GetMessagesOfLobby(int lobbyId)
@@ -60,9 +67,11 @@ namespace Czeum.Server.Services.MessageService
             return _lobbyStorage.GetMessages(lobbyId);
         }
 
-        public List<Message> GetMessagesOfMatch(int matchId)
+        public async Task<List<Message>> GetMessagesOfMatchAsync(int matchId)
         {
-            return _unitOfWork.MessageRepository.GetMessagesForMatch(matchId);
+            return await _context.Messages.Where(m => m.Match.MatchId == matchId)
+                .Select(m => m.ToMessage())
+                .ToListAsync();
         }
     }
 }

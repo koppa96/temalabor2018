@@ -13,8 +13,6 @@ using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
 using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
-using Czeum.DAL.Repositories;
 using Czeum.Server.Hubs;
 using Czeum.Server.Services;
 using Czeum.Server.Services.FriendService;
@@ -25,6 +23,8 @@ using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
 using Czeum.Server.Services.SoloQueue;
 using IdentityModel;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 
 namespace Czeum.Server
@@ -81,13 +81,16 @@ namespace Czeum.Server
                 });
 
             services.AddMvc()
-                .AddNewtonsoftJson()
+                .AddNewtonsoftJson(protocol =>
+                {
+                    protocol.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSignalR()
                 .AddNewtonsoftJsonProtocol(protocol =>
                 {
-                    protocol.PayloadSerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
+                    protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
                 });
 
             //Singleton in memory storing services
@@ -107,12 +110,12 @@ namespace Czeum.Server
 
             services.AddTransient<IFriendService, FriendService>();
             services.AddTransient<IMessageService, MessageService>();
-            
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

@@ -31,7 +31,7 @@ namespace Czeum.Server.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("/register")]
-        public async Task<ActionResult> Register([FromBody]RegisterModel model) {
+        public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model) {
 	        if (!ModelState.IsValid)
 	        {
 		        return StatusCode(StatusCodes.Status500InternalServerError);
@@ -73,7 +73,7 @@ namespace Czeum.Server.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
+		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model) {
 			if (model.Password != model.ConfirmPassword) {
 				return BadRequest(ErrorCodes.PasswordsNotMatching);
 			}

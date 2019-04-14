@@ -25,6 +25,7 @@ namespace Czeum.DTO
         public const string NotYourTurn = nameof(NotYourTurn);
         public const string NotYourMatch = nameof(NotYourMatch);
         public const string GameNotSupported = nameof(GameNotSupported);
+        public const string MatchEnded = nameof(MatchEnded);
         
         //User management errors
         public const string UsernameAlreadyTaken = nameof(UsernameAlreadyTaken);

@@ -9,7 +9,7 @@ namespace Czeum.Server.Services.Lobby
 {
     public interface ILobbyService
     {
-        bool JoinPlayerToLobby(string player, int lobbyId);
+        Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId);
         void DisconnectPlayerFromLobby(string player, int lobbyId);
         void InvitePlayerToLobby(int lobbyId, string player);
         void CancelInviteFromLobby(int lobbyId, string player);

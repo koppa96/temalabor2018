@@ -44,14 +44,14 @@ namespace Czeum.Tests.ChessLogic
         [TestMethod]
         public void MoveDataFindsService()
         {
-            var foundService = serviceContainer.FindService(move);
+            var foundService = serviceContainer.FindByMoveData(move);
             Assert.AreSame(originalService, foundService);
         }
 
         [TestMethod]
         public void TestExecute()
         {
-            var service = serviceContainer.FindService(move);
+            var service = serviceContainer.FindByMoveData(move);
             var result = service.ExecuteMove(move, 1, new ChessBoard(true).SerializeContent());
             
             Assert.AreEqual(Status.Success, result.MoveResult.Status);

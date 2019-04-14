@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Czeum.Server.Services.FriendService
 {
     public interface IFriendService
     {
-        List<string> GetFriendsOf(string user);
-        void AcceptRequest(string sender, string receiver);
-        void RemoveFriend(string user, string friend);
-        void AddRequest(string sender, string receiver);
-        void RemoveRequest(string sender, string receiver);
-        List<string> GetRequestsSentBy(string user);
-        List<string> GetRequestsReceivedBy(string user);
+        Task<List<string>> GetFriendsOfUserAsync(string user);
+        Task AcceptRequestAsync(string sender, string receiver);
+        Task RemoveFriendAsync(string user, string friend);
+        Task AddRequestAsync(string sender, string receiver);
+        Task RemoveRequestAsync(string sender, string receiver);
+        Task<List<string>> GetRequestsSentByUserAsync(string user);
+        Task<List<string>> GetRequestsReceivedByUserAsync(string user);
     }
 }

@@ -20,8 +20,8 @@ namespace Czeum.DAL.Entities
         
         [InverseProperty("Sender")]
         public List<FriendRequest> SentRequests { get; set; }
-        
+
         [InverseProperty("Receiver")] 
-        public List<FriendRequest> Type { get; set; }
+        public List<FriendRequest> ReceivedRequests { get; set; }
     }
 }

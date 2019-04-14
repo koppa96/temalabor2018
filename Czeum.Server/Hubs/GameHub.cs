@@ -46,7 +46,7 @@ namespace Czeum.Server.Hubs
             await base.OnConnectedAsync();
             _onlineUserTracker.PutUser(Context.UserIdentifier);
 
-            var friends = _friendService.GetFriendsOf(Context.UserIdentifier);
+            var friends = await _friendService.GetFriendsOfUserAsync(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendConnected(Context.UserIdentifier);
@@ -73,7 +73,7 @@ namespace Czeum.Server.Hubs
 
             _soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
-            var friends = _friendService.GetFriendsOf(Context.UserIdentifier);
+            var friends = await _friendService.GetFriendsOfUserAsync(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendDisconnected(Context.UserIdentifier);
@@ -85,7 +85,7 @@ namespace Czeum.Server.Hubs
 
         public async Task ReceiveMove(MoveData moveData)
         {
-            var match = _gameHandler.GetMatchById(moveData.MatchId);
+            var match = await _gameHandler.GetMatchByIdAsync(moveData.MatchId);
 
             if (match == null)
             {
@@ -104,12 +104,18 @@ namespace Czeum.Server.Hubs
                 await Clients.Caller.ReceiveError(ErrorCodes.NotYourTurn);
                 return;
             }
+
+            if (match.HasEnded())
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.MatchEnded);
+                return;
+            }
             
             var playerId = match.GetPlayerId(Context.UserIdentifier);
 
             try
             {
-                var result = _gameHandler.HandleMove(moveData, playerId);
+                var result = await _gameHandler.HandleMoveAsync(moveData, playerId);
                 
                 await Clients.Caller.ReceiveResult(result[Context.UserIdentifier]);
                 if (result[Context.UserIdentifier].CurrentBoard.Status != Status.Fail)
@@ -126,14 +132,14 @@ namespace Czeum.Server.Hubs
 
         public async Task SendMessageToMatch(int matchId, string message)
         {
-            var msg = _messageService.SendToMatch(matchId, message, Context.UserIdentifier);
+            var msg = await _messageService.SendToMatchAsync(matchId, message, Context.UserIdentifier);
             if (msg == null)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
                 return;
             }
 
-            var match = _gameHandler.GetMatchById(matchId);
+            var match = await _gameHandler.GetMatchByIdAsync(matchId);
             await Clients.Caller.MatchMessageSent(matchId, msg);
             await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, msg);
         }

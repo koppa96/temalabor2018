@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
-using Czeum.DAL;
-using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO;
 using Czeum.DTO.UserManagement;
-using Czeum.Server.Hubs;
 using Czeum.Server.Services.FriendService;
 using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
@@ -18,9 +12,7 @@ using Czeum.Server.Services.OnlineUsers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Server.Controllers
 {
@@ -46,17 +38,17 @@ namespace Czeum.Server.Controllers
 
         [HttpGet]
         [Route("/matches")]
-        public ActionResult<List<MatchStatus>> GetMatches()
+        public async Task<ActionResult<List<MatchStatus>>> GetMatchesAsync()
         {
-            return _gameHandler.GetMatchesOf(User.Identity.Name);
+            return await _gameHandler.GetMatchesOfPlayerAsync(User.Identity.Name);
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("/boards/{id}")]
-        public ActionResult<MoveResult> GetBoardByMatchId(int id)
+        public async Task<ActionResult<MoveResult>> GetBoardByMatchIdAsync(int id)
         {
-            var result = _gameHandler.GetBoardByMatchId(id);
+            var result = await _gameHandler.GetBoardByMatchIdAsync(id);
 
             if (result == null)
             {
@@ -75,32 +67,32 @@ namespace Czeum.Server.Controllers
 
         [HttpGet]
         [Route("/requests")]
-        public ActionResult<List<string>> GetFriendRequests()
+        public async Task<ActionResult<List<string>>> GetFriendRequestsAsync()
         {
-            return _friendService.GetRequestsReceivedBy(User.Identity.Name);
+            return await _friendService.GetRequestsReceivedByUserAsync(User.Identity.Name);
         }
 
         [HttpGet]
         [Route("/sent-requests")]
-        public ActionResult<List<string>> GetSentRequests()
+        public async Task<ActionResult<List<string>>> GetSentRequests()
         {
-            return _friendService.GetRequestsSentBy(User.Identity.Name);
+            return await _friendService.GetRequestsSentByUserAsync(User.Identity.Name);
         }
 
         [HttpGet]
         [Route("/friends")]
-        public ActionResult<List<Friend>> GetFriends()
+        public async Task<ActionResult<List<Friend>>> GetFriends()
         {
-            return _friendService.GetFriendsOf(User.Identity.Name)
+            return (await _friendService.GetFriendsOfUserAsync(User.Identity.Name))
                 .Select(f => new Friend { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
                 .ToList();
         }
 
         [HttpGet]
         [Route("/messages/{id}")]
-        public ActionResult<List<Message>> GetMessages(int id)
+        public async Task<ActionResult<List<Message>>> GetMessages(int id)
         {
-            return _messageService.GetMessagesOfMatch(id);
+            return await _messageService.GetMessagesOfMatchAsync(id);
         }
     }
 }
