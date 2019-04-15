@@ -23,7 +23,6 @@ using Czeum.Server.Services.OnlineUsers;
 using Czeum.Server.Services.ServiceContainer;
 using Czeum.Server.Services.SoloQueue;
 using IdentityModel;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
 
@@ -113,7 +112,7 @@ namespace Czeum.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
