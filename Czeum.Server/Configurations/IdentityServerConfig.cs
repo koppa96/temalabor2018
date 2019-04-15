@@ -3,7 +3,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace Czeum.Server
+namespace Czeum.Server.Configurations
 {
     public static class IdentityServerConfig
     {

@@ -24,7 +24,9 @@ using Czeum.Server.Services.ServiceContainer;
 using Czeum.Server.Services.SoloQueue;
 using IdentityModel;
 using Newtonsoft.Json;
-
+using Microsoft.Extensions.Hosting;
+using Czeum.Server.Configurations;
+using Czeum.Server.Services.EmailSender;
 
 namespace Czeum.Server
 {
@@ -50,6 +52,8 @@ namespace Czeum.Server
 				options.Password.RequireNonAlphanumeric = false;
 
 				options.User.RequireUniqueEmail = true;
+
+                options.SignIn.RequireConfirmedEmail = true;
 			});
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -109,10 +113,11 @@ namespace Czeum.Server
 
             services.AddTransient<IFriendService, FriendService>();
             services.AddTransient<IMessageService, MessageService>();
+            services.AddTransient<IEmailSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

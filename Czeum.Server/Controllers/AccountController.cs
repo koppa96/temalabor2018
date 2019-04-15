@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
 using Czeum.DTO.UserManagement;
+using Czeum.Server.Services.EmailSender;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +21,14 @@ namespace Czeum.Server.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<ApplicationUser> userManager, ILogger<AccountController> logger)
+        public AccountController(UserManager<ApplicationUser> userManager, ILogger<AccountController> logger,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _logger = logger;
+            _emailSender = emailSender;
         }
 
         [HttpPost]
@@ -61,6 +65,9 @@ namespace Czeum.Server.Controllers
 		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
 		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id));
 
+                string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _emailSender.SendConfirmationEmailAsync(user.Email, confirmationToken);
+
 		        return Ok();
 	        }
 
@@ -69,7 +76,7 @@ namespace Czeum.Server.Controllers
         }
 
 		[HttpPost]
-        [Route("changePass")]
+        [Route("change-password")]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -92,5 +99,23 @@ namespace Czeum.Server.Controllers
 
 			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
+
+        [HttpPost]
+        [Route("confirm-email")]
+        public async Task<ActionResult> ConfirmEmailAsync(string username, string token)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(username);
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
