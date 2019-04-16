@@ -30,7 +30,7 @@ namespace Czeum.Server.Services.Lobby
 
         public void AddLobby(LobbyData lobbyData)
         {           
-            lobbyData.LobbyId = lobbies.Values.Max(l => l.LobbyId) + 1;
+            lobbyData.LobbyId = lobbies.Keys.DefaultIfEmpty(0).Max() + 1;
             lobbies[lobbyData.LobbyId] = lobbyData;
             messages[lobbyData.LobbyId] = new List<Message>();
         }
