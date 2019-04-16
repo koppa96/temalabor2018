@@ -1,8 +1,8 @@
 ﻿using Czeum.Server.Configurations;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,45 +12,54 @@ namespace Czeum.Server.Services.EmailSender
 {
     public class EmailSender : IEmailSender
     {
-        private string sendGridKey;
+        private readonly string _gmailAccount;
+        private readonly string _gmailPassword;
 
         public EmailSender(IConfiguration config)
         {
-            sendGridKey = config.GetValue<string>("SendGrid:SendGridKey");
+            _gmailAccount = config.GetValue<string>("Gmail:Username");
+            _gmailPassword = config.GetValue<string>("Gmail:Password");
         }
 
         public async Task SendConfirmationEmailAsync(string to, string token)
         {
-            var client = new SendGridClient(sendGridKey);
-            var msg = new SendGridMessage
-            {
-                From = new EmailAddress("czeum@koppa96.sch.bme.hu", "Czeum Server"),
-                Subject = "Verify your email address at Czeum",
-                PlainTextContent = "A user has been registered with your e-mail address in our server.\n" +
-                    "You can activate your user by pasting this code into the application:\n" +
-                    token + "\n If it was not you who registered you can ignore this email."
-            };
-            msg.AddTo(new EmailAddress(to));
-            msg.SetClickTracking(false, false);
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));
+            message.To.Add(new MailboxAddress(to));
+            message.Subject = "Confirm your email at Czeum";
 
-            await client.SendEmailAsync(msg);
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = "<p>An account was registered with your e-mail address. You can activate it with this code:</p>" +
+                $"<p>{token}</p>";
+            message.Body = bodyBuilder.ToMessageBody();
+
+            await SendMailAsync(message);
         }
 
         public async Task SendPasswordResetEmailAsync(string to, string token)
         {
-            var client = new SendGridClient(sendGridKey);
-            var msg = new SendGridMessage
-            {
-                From = new EmailAddress("czeum@koppa96.sch.bme.hu", "Czeum Server"),
-                Subject = "Reset your password at Czeum",
-                PlainTextContent = "A password reset has been requested for this email address.\n" +
-                    "Use the following code to reset your password:\n " +
-                    token + "\n If it was not you who requested the password change you can ignore this email."
-            };
-            msg.AddTo(new EmailAddress(to));
-            msg.SetClickTracking(false, false);
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));
+            message.To.Add(new MailboxAddress(to));
+            message.Subject = "Password reset at Czeum";
 
-            await client.SendEmailAsync(msg);
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = "<p>A password reset was requested with your account. You can reset your password with this code:</p>" +
+                $"<p>{token}</p>";
+            message.Body = bodyBuilder.ToMessageBody();
+
+            await SendMailAsync(message);
+        }
+
+        private async Task SendMailAsync(MimeMessage message)
+        {
+            using (var client = new SmtpClient())
+            {
+                await client.ConnectAsync("smtp.gmail.com", 587, false);
+                await client.AuthenticateAsync(_gmailAccount, _gmailPassword);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+            }
         }
     }
 }
