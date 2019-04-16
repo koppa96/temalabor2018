@@ -101,18 +101,111 @@ namespace Czeum.Server.Controllers
 		}
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("confirm-email")]
         public async Task<ActionResult> ConfirmEmailAsync(string username, string token)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByNameAsync(username);
-                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if (user == null)
+                {
+                    return NotFound(ErrorCodes.NoSuchUser);
+                }
 
+                var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
+                    _logger.LogInformation($"{username} has confirmed their email.");
                     return Ok();
                 }
+
+                return BadRequest();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpGet]
+        [Route("reset-password")]
+        public async Task<ActionResult> GetPasswordResetTokenAsync(string username, string email)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound(ErrorCodes.NoSuchUser);
+                }
+                if (user.UserName != username)
+                {
+                    return BadRequest(ErrorCodes.NoSuchUser);
+                }
+
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                await _emailSender.SendPasswordResetEmailAsync(email, resetToken);
+                _logger.LogInformation($"Password reset email for {username} was sent to {email}.");
+
+                return Ok();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPost]
+        [Route("reset-password")]
+        public async Task<ActionResult> ResetPasswordAsync([FromBody]PasswordResetModel model)
+        {
+            if (model.Password != model.ConfirmPassword)
+            {
+                return BadRequest(ErrorCodes.PasswordsNotMatching);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(model.Username);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"{user.UserName} has successfully reset their password.");
+                    return Ok();
+                }
+
+                var errors = result.Errors.Select(e => e.Code);
+                return BadRequest(errors);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpGet]
+        [Route("resend-confirm-email")]
+        public async Task<ActionResult> ResendConfirmationEmailAsync(string email)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound(ErrorCodes.NoSuchUser);
+                }
+                if (user.EmailConfirmed)
+                {
+                    return BadRequest();
+                }
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _emailSender.SendConfirmationEmailAsync(email, token);
+                _logger.LogInformation($"Confirmation email resent to {email}.");
+
+                return Ok();
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError);

@@ -26,6 +26,7 @@ namespace Czeum.Server.Controllers
         private readonly IGameHandler _gameHandler;
         private readonly IFriendService _friendService;
         private readonly IMessageService _messageService;
+
         public GameController(ILobbyService lobbyService, IOnlineUserTracker onlineUserTracker, IGameHandler gameHandler,
             IFriendService friendService, IMessageService messageService)
         {

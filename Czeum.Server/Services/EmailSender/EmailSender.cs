@@ -24,11 +24,28 @@ namespace Czeum.Server.Services.EmailSender
             var client = new SendGridClient(sendGridKey);
             var msg = new SendGridMessage
             {
-                From = new EmailAddress("czeum@sch.bme.hu", "Czeum Server"),
+                From = new EmailAddress("czeum@koppa96.sch.bme.hu", "Czeum Server"),
                 Subject = "Verify your email address at Czeum",
                 PlainTextContent = "A user has been registered with your e-mail address in our server.\n" +
                     "You can activate your user by pasting this code into the application:\n" +
                     token + "\n If it was not you who registered you can ignore this email."
+            };
+            msg.AddTo(new EmailAddress(to));
+            msg.SetClickTracking(false, false);
+
+            await client.SendEmailAsync(msg);
+        }
+
+        public async Task SendPasswordResetEmailAsync(string to, string token)
+        {
+            var client = new SendGridClient(sendGridKey);
+            var msg = new SendGridMessage
+            {
+                From = new EmailAddress("czeum@koppa96.sch.bme.hu", "Czeum Server"),
+                Subject = "Reset your password at Czeum",
+                PlainTextContent = "A password reset has been requested for this email address.\n" +
+                    "Use the following code to reset your password:\n " +
+                    token + "\n If it was not you who requested the password change you can ignore this email."
             };
             msg.AddTo(new EmailAddress(to));
             msg.SetClickTracking(false, false);
