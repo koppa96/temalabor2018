@@ -12,101 +12,39 @@
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Grid VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="45"/>
-                <RowDefinition Height="45"/>
-                <RowDefinition Height="45"/>
-                <RowDefinition Height="45"/>
-                <RowDefinition Height="45"/>
-            </Grid.RowDefinitions>
+    <Grid VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <TextBox x:Name="tbEmail"
-                     Grid.Row="0"
-                     Grid.Column="1"
-                     x:Uid="EmailTextBox"
-                     Margin="0 5 0 5"
-                     Text="{Binding Path=Email, Mode=TwoWay}"
-                     Visibility="{Binding Path=RegistrationInfoVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <animations:Implicit.ShowAnimations>
-                    <animations:OpacityAnimation Duration="0:0:1" From="0" To="1">
-                    </animations:OpacityAnimation>
-                    <animations:ScaleAnimation Duration="0:0:1" From="0" To="1">
-                    </animations:ScaleAnimation>
-                </animations:Implicit.ShowAnimations>
+        <Pivot Grid.Column="1">
 
-                <animations:Implicit.HideAnimations>
-                    <animations:OpacityAnimation Duration="0:0:1" From="1" To="0">
-                    </animations:OpacityAnimation>
-                    <animations:ScaleAnimation Duration="0:0:1" From="1" To="0">
-                    </animations:ScaleAnimation>
-                </animations:Implicit.HideAnimations>
-            </TextBox>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock Text="Login"/>
+                </PivotItem.Header>
+                <StackPanel>
+                    <TextBox Header="Username" PlaceholderText="Username" Text="{Binding Path=Name, Mode=TwoWay}"/>
+                    <PasswordBox Header="Password" PlaceholderText="Password" Password="{Binding Path=Password, Mode=TwoWay}"/>
+                    <Button Content="Log in" Command="{Binding LoginCommand}" HorizontalAlignment="Stretch" Margin="0,30"/>
+                </StackPanel>
+            </PivotItem>
 
-            <TextBox x:Name="tbUsername"
-                     Grid.Row="1"
-                     Grid.Column="1"
-                     x:Uid="UsernameTextBox"
-                     Margin="0 5 0 5"
-                     Text="{Binding Path=Name, Mode=TwoWay}"/>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock Text="Register" />
+                </PivotItem.Header>
+                <StackPanel>
+                    <TextBox Header="Username" PlaceholderText="Username" Text="{Binding Path=Name, Mode=TwoWay}"/>
+                    <TextBox Header="Email address" PlaceholderText="Email address" Text="{Binding Path=Email, Mode=TwoWay}"/>
+                    <PasswordBox Header="Password" PlaceholderText="Password" Password="{Binding Path=Password, Mode=TwoWay}"/>
+                    <PasswordBox Header="Confirm Password" PlaceholderText="Confirm password" Password="{Binding Path=Password, Mode=TwoWay}"/>
+                    <Button Content="Register" Command="{Binding RegisterCommand}" HorizontalAlignment="Stretch" Margin="0,30"/>
+                </StackPanel>
+            </PivotItem>
 
-            <PasswordBox x:Name="pwbPassword"
-                         x:Uid="PasswordBox"
-                         Grid.Row="2"
-                         Grid.Column="1"
-                         Margin="0 5 0 5"
-                         Password="{Binding Path=Password, Mode=TwoWay}"/>
-
-            <PasswordBox x:Name="pwbConfirmPassword"
-                         x:Uid="ConfirmPasswordBox"
-                         Grid.Row="3"
-                         Grid.Column="1"
-                         Margin="0 5 0 5"
-                         Password="{Binding Path=ConfirmPassword, Mode=TwoWay}"
-                         Visibility="{Binding Path=RegistrationInfoVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <animations:Implicit.ShowAnimations>
-                    <animations:OpacityAnimation Duration="0:0:1" From="0" To="1">
-                    </animations:OpacityAnimation>
-                    <animations:ScaleAnimation Duration="0:0:1" From="0" To="1">
-                    </animations:ScaleAnimation>
-                </animations:Implicit.ShowAnimations>
-
-                <animations:Implicit.HideAnimations>
-                    <animations:OpacityAnimation Duration="0:0:1" From="1" To="0">
-                    </animations:OpacityAnimation>
-                    <animations:ScaleAnimation Duration="0:0:1" From="1" To="0">
-                    </animations:ScaleAnimation>
-                </animations:Implicit.HideAnimations>
-            </PasswordBox>
-
-            <Grid
-                Grid.Row="4"
-                Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="2*" />
-                </Grid.ColumnDefinitions>
-
-                <HyperlinkButton x:Name="hlbtnToggleMode"
-                                 Grid.Column="0"
-                                 Click="RegisterButton_Click" 
-                                 x:Uid="RegisterHyperLinkButton"
-                                 Command="{Binding ToggleClickCommand}"/>
-
-                <Button x:Name="btnPerformAction"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        HorizontalContentAlignment="Center"
-                        Margin="0 5 0 5" 
-                        Command="{Binding PerformClickCommand}"
-                        x:Uid="LoginButton"/>
-            </Grid>
-        </Grid>
+        </Pivot>
     </Grid>
 </prism:SessionStateAwarePage>

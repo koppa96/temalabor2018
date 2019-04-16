@@ -7,8 +7,31 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chess="using:Czeum.DTO.Chess"
+    xmlns:connect4="using:Czeum.DTO.Connect4"
+    xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ChessLobbyTemplate" x:DataType="chess:ChessLobbyData">
+            <TextBlock Text="Chess lobbies do not contain additional settings"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Connect4LobbyTemplate" x:DataType="connect4:Connect4LobbyData">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Header="Board width" Text="{Binding BoardWidth, Mode=TwoWay}" Margin="0,10"/>
+                <TextBox Grid.Row="1" Header="Board height" Text="{Binding BoardHeight, Mode=TwoWay}" Margin="0,10"/>
+            </Grid>
+        </DataTemplate>
+
+        <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+    </Page.Resources>
+
 
     <Grid>
         <Grid.RowDefinitions>
@@ -35,11 +58,15 @@
             </TextBlock>
         </RelativePanel>
 
-        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
-            <TextBlock Text="Lobby settings" FontWeight="Bold"/>
-            <Button Content="DEBUG" Click="ButtonBase_OnClick"></Button>
+        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">
+            <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
+            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
 
             <!-- Lobby type specific control goes here -->
+            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
+                            HorizontalContentAlignment="Stretch"/>
+
+            <Button Content="DEBUG BREAK" Margin="0,50,0,0" Click="ButtonBase_OnClick"/>
 
         </StackPanel>
 

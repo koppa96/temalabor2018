@@ -104,9 +104,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IInsertable.cs" />
-    <Compile Include="Renderers\ChessLobbyRenderer.cs" />
-    <Compile Include="Renderers\Connect4LobbyRenderer.cs" />
     <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
     <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
     <Compile Include="Converters\PlayerColorConverter.cs" />
@@ -122,20 +119,20 @@
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IDialogService.cs" />
-    <Compile Include="Interfaces\ILobbyRenderer.cs" />
+    <Compile Include="Interfaces\IHubService.cs" />
     <Compile Include="Interfaces\ILobbyService.cs" />
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
-    <Compile Include="Interfaces\ITypeDispatcher.cs" />
     <Compile Include="LobbyBrowserPage.xaml.cs">
       <DependentUpon>LobbyBrowserPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Renderers\LobbyRendererAttribute.cs" />
     <Compile Include="LobbyRepository.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\DummyLobbyService.cs" />
+    <Compile Include="Services\HubService.cs" />
     <Compile Include="Services\UserManagerService.cs" />
-    <Compile Include="TypeDispatcher.cs" />
+    <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
     <Compile Include="Views\LobbyDetailsPage.xaml.cs">
@@ -176,7 +173,9 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\chess.png" />
     <Content Include="Assets\closed.png" />
+    <Content Include="Assets\connect4.png" />
     <Content Include="Assets\open.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -234,6 +233,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Flurl">
+      <Version>2.8.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
       <Version>1.0.1</Version>
     </PackageReference>

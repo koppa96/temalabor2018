@@ -11,91 +11,76 @@ using System.Windows.Input;
 using Prism.Commands;
 using Microsoft.Practices.Unity;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Prism.Windows.Navigation;
 
 namespace Czeum.Client.ViewModels
 {
-    class LoginPageViewModel : ViewModelBase, ILoginPageViewModel, INotifyPropertyChanged
+    class LoginPageViewModel : ViewModelBase
     {
-        private enum PageState { Login, Register}
-        private PageState pageState = PageState.Login;
         private IUserManagerService userManagerService;
         private INavigationService navigationService;
+        private IDialogService dialogService;
 
-        private string _Name;
+        private string name;
         public string Name {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
+            get => name;
+            set => SetProperty(ref name, value);
         }
-        private string m_Password;
+        private string password;
         public string Password { 
-			get => m_Password;
-            set => SetProperty(ref m_Password, value);
+			get => password;
+            set => SetProperty(ref password, value);
         }
-        private string _ConfirmPassword;
+        private string confirmPassword;
         public string ConfirmPassword {
-			get => _ConfirmPassword;
-            set => SetProperty(ref _ConfirmPassword, value);
+			get => confirmPassword;
+            set => SetProperty(ref confirmPassword, value);
         }
-        private string _Email;
+        private string email;
         public string Email
         {
-            get => _Email;
-            set => SetProperty(ref _Email, value);
+            get => email;
+            set => SetProperty(ref email, value);
         }
-        private Visibility _RegistrationInfoVisibility = Visibility.Collapsed;
-        public Visibility RegistrationInfoVisibility
+
+        public ICommand LoginCommand { get; private set; }
+        public ICommand RegisterCommand { get; private set; }
+
+        private async void LoginAsync()
         {
-            get => _RegistrationInfoVisibility;
-            set => SetProperty(ref _RegistrationInfoVisibility, value);
-        }
-        
-
-        public ICommand ToggleClickCommand { get; private set; }
-        public ICommand PerformClickCommand { get; private set; }
-        
-
-        private async void PerformClickAsync()
-        {
-            if (pageState == PageState.Login)
-            {
-                bool result = await userManagerService.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
-                if(result) {
-                    navigationService.Navigate("Lobby", null); 
-                }
-                else {
-                    throw new NotImplementedException();
-                }
-                
+            dialogService.ShowLoadingDialog();
+            bool result = await userManagerService.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+            if (result) {
+                navigationService.Navigate("Lobby", null);
             }
-            else
-            {
-                await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
+            else {
+                await dialogService.ShowError("Login failed. Please try again.");
             }
+            dialogService.HideLoadingDialog();
+            
         }
 
-        private void ToggleClick()
-        {
-            switch (pageState)
-            {
-                case PageState.Register:
-                    RegistrationInfoVisibility = Visibility.Collapsed;
-                    pageState = PageState.Login;
-                    break;
-                case PageState.Login:
-                    RegistrationInfoVisibility = Visibility.Visible;
-                    pageState = PageState.Register;
-                    break;
+        private async void RegisterAsync() {
+            dialogService.ShowLoadingDialog();
+            bool result = await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
+            if (result) {
+                await dialogService.ShowSuccess("Registration completed successfully. You can now log in with your new account.");
             }
+            else {
+                await dialogService.ShowError("Registration failed. Please try again.");
+            }
+            dialogService.HideLoadingDialog();
         }
 
-        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService)
+        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService, IDialogService dialogService)
         {
             this.navigationService = navigationService;   
             this.userManagerService = userManagerService;
-            PerformClickCommand = new DelegateCommand(PerformClickAsync);
-            ToggleClickCommand = new DelegateCommand(ToggleClick);
-            RegistrationInfoVisibility = Visibility.Collapsed;
+            this.dialogService = dialogService;
+
+            LoginCommand = new DelegateCommand(LoginAsync);
+            RegisterCommand = new DelegateCommand(RegisterAsync);
         }
 
         public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

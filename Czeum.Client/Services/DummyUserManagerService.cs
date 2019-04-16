@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Czeum.Client.Services
@@ -23,26 +24,31 @@ namespace Czeum.Client.Services
             _logger = logger;
         }
 
-        public async Task LogOutAsync()
+        public async Task<bool> LogOutAsync()
         {
             Username = null;
+            return true;
         }
 
-        public async Task ChangePasswordAsync(ChangePasswordModel data)
+        public async Task<bool> ChangePasswordAsync(ChangePasswordModel data)
         {
             _logger.Log($"Password change requested by user '{Username}'", Category.Info, Priority.None);
+            return true;
         }
 
         public async Task<bool> LoginAsync(LoginModel data)
         {
             _logger.Log($"Login attempt by user '{data.Username}'", Category.Info, Priority.None);
+            await Task.Delay(2000);
             Username = data.Username;
             return true;
         }
 
-        public async Task RegisterAsync(RegisterModel data)
+        public async Task<bool> RegisterAsync(RegisterModel data)
         {
             _logger.Log($"Registration requested by user '{data.Username}'", Category.Info, Priority.None);
+            await Task.Delay(2000);
+            return true;
         }
     }
 }
