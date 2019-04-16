@@ -9,18 +9,18 @@ namespace Czeum.Server.Hubs
 {
     public partial class GameHub
     {
-        public async Task<LobbyData> CreateLobby(Type lobbyType, LobbyAccess access, string name)
+        public async Task CreateLobby(Type lobbyType, LobbyAccess access, string name)
         {
             if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.AlreadyInLobby);
-                return null;
+                return;
             }
 
             if (_soloQueueService.IsQueuing(Context.UserIdentifier))
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.AlreadyQueuing);
-                return null;
+                return;
             }
 
             try
@@ -28,13 +28,13 @@ namespace Czeum.Server.Hubs
                 var lobby = _lobbyService.CreateAndAddLobby(lobbyType, Context.UserIdentifier, access, name);
                 _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
             
-                await Clients.All.LobbyCreated(lobby);
-                return lobby;
+                await Clients.Caller.LobbyCreated(lobby);
+                await Clients.Others.LobbyAdded(lobby);
             }
             catch (ArgumentException)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.InvalidLobbyType);
-                return null;
+                return;
             }
         }
 

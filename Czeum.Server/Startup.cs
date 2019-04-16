@@ -53,7 +53,7 @@ namespace Czeum.Server
 
 				options.User.RequireUniqueEmail = true;
 
-                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
 			});
 
             services.AddDbContext<ApplicationDbContext>(options =>

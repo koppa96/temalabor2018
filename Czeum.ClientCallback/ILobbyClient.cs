@@ -9,6 +9,7 @@ namespace Czeum.ClientCallback
     {
         Task LobbyDeleted(int lobbyId);
         Task LobbyCreated(LobbyData lobbyData);
+        Task LobbyAdded(LobbyData lobbyData);
         Task LobbyChanged(LobbyData lobbyData);
         Task JoinedToLobby(LobbyData lobbyData, List<Message> messages);
         Task KickedFromLobby();
