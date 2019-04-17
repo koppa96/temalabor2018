@@ -25,7 +25,12 @@ namespace Czeum.Server.Services.Lobby
 
         public LobbyData GetLobby(int lobbyId)
         {
-            return lobbies[lobbyId];
+            if (lobbies.ContainsKey(lobbyId))
+            {
+                return lobbies[lobbyId];
+            }
+
+            return null;
         }
 
         public void AddLobby(LobbyData lobbyData)
