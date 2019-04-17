@@ -21,14 +21,14 @@ namespace Czeum.Server.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService emailService;
 
         public AccountController(UserManager<ApplicationUser> userManager, ILogger<AccountController> logger,
-            IEmailSender emailSender)
+            IEmailService emailService)
         {
             _userManager = userManager;
             _logger = logger;
-            _emailSender = emailSender;
+            this.emailService = emailService;
         }
 
         [HttpPost]
@@ -66,7 +66,7 @@ namespace Czeum.Server.Controllers
 		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id));
 
                 string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                await _emailSender.SendConfirmationEmailAsync(user.Email, confirmationToken);
+                await emailService.SendConfirmationEmailAsync(user.Email, confirmationToken);
 
 		        return Ok();
 	        }
@@ -145,7 +145,7 @@ namespace Czeum.Server.Controllers
                 }
 
                 var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await _emailSender.SendPasswordResetEmailAsync(email, resetToken);
+                await emailService.SendPasswordResetEmailAsync(email, resetToken);
                 _logger.LogInformation($"Password reset email for {username} was sent to {email}.");
 
                 return Ok();
@@ -202,7 +202,7 @@ namespace Czeum.Server.Controllers
                 }
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                await _emailSender.SendConfirmationEmailAsync(email, token);
+                await emailService.SendConfirmationEmailAsync(email, token);
                 _logger.LogInformation($"Confirmation email resent to {email}.");
 
                 return Ok();

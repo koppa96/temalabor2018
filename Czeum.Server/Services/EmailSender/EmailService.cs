@@ -7,15 +7,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Czeum.Server.Services.EmailSender
 {
-    public class EmailSender : IEmailSender
+    public class EmailService : IEmailService, IEmailSender
     {
         private readonly string _gmailAccount;
         private readonly string _gmailPassword;
 
-        public EmailSender(IConfiguration config)
+        public EmailService(IConfiguration config)
         {
             _gmailAccount = config.GetValue<string>("Gmail:Username");
             _gmailPassword = config.GetValue<string>("Gmail:Password");
@@ -60,6 +61,20 @@ namespace Czeum.Server.Services.EmailSender
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));
+            message.To.Add(new MailboxAddress(email));
+            message.Subject = subject;
+            
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = htmlMessage;
+            message.Body = bodyBuilder.ToMessageBody();
+
+            await SendMailAsync(message);
         }
     }
 }

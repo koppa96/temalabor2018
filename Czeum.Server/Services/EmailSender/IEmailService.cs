@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Czeum.Server.Services.EmailSender
 {
-    public interface IEmailSender
+    public interface IEmailService
     {
         Task SendConfirmationEmailAsync(string to, string token);
         Task SendPasswordResetEmailAsync(string to, string token);

@@ -102,7 +102,7 @@ namespace Czeum.Server.Services.GameHandler
         {
             return await _context.Matches.Include("Player1")
                 .Include("Player2")
-                .SingleOrDefaultAsync(m => m.MatchId == id);
+                .SingleAsync(m => m.MatchId == id);
         }
 
         public async Task<List<MatchStatus>> GetMatchesOfPlayerAsync(string player)
