@@ -80,8 +80,9 @@ namespace Czeum.Server.Hubs
 
         public async Task JoinLobby(int lobbyId)
         {
-            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
+            if (!_lobbyService.LobbyExists(lobbyId))
             {
+                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
                 return;
             }
 
@@ -90,6 +91,7 @@ namespace Czeum.Server.Hubs
                 var lobby = _lobbyService.GetLobby(lobbyId);
                 await Clients.Caller.JoinedToLobby(lobby, _messageService.GetMessagesOfLobby(lobbyId));
                 await Clients.All.LobbyChanged(lobby);
+                return;
             }
 
             await Clients.Caller.ReceiveError(ErrorCodes.CouldNotJoinLobby);

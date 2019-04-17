@@ -34,8 +34,13 @@ namespace Czeum.Server.Services.Lobby
         }
 
         public void AddLobby(LobbyData lobbyData)
-        {           
-            lobbyData.LobbyId = lobbies.Keys.DefaultIfEmpty(0).Max() + 1;
+        {
+            int newLobbyId = 1;
+            while (lobbies.ContainsKey(newLobbyId))
+            {
+                newLobbyId++;
+            }
+
             lobbies[lobbyData.LobbyId] = lobbyData;
             messages[lobbyData.LobbyId] = new List<Message>();
         }
