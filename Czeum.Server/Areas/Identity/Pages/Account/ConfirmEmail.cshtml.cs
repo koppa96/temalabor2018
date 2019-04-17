@@ -20,23 +20,23 @@ namespace Czeum.Server.Areas.Identity.Pages.Account
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> OnGetAsync(string username, string code)
+        public async Task<IActionResult> OnGetAsync(string id, string code)
         {
-            if (username == null || code == null)
+            if (id == null || code == null)
             {
                 return RedirectToPage("/Index");
             }
 
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound($"Unable to load user with name '{username}'.");
+                return NotFound($"Unable to load user with id '{id}'.");
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Error confirming email for user '{username}':");
+                throw new InvalidOperationException($"Error confirming email for user '{id}':");
             }
 
             return Page();
