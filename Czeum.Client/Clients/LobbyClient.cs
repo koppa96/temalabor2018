@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Czeum.Abstractions.DTO;
+using Czeum.Client.Interfaces;
+using Czeum.ClientCallback;
+using Czeum.DTO;
+using Microsoft.AspNetCore.SignalR.Client;
+using Prism.Windows.Navigation;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
+
+namespace Czeum.Client.Clients {
+    class LobbyClient : ILobbyClient
+    {
+        private ILobbyService lobbyService;
+        private ILobbyStore lobbyStore;
+        private IHubService hubService;
+        private INavigationService navigationService;
+        
+        public LobbyClient(ILobbyStore lobbyStore, IHubService hubService, INavigationService navigationService, ILobbyService lobbyService)
+        {
+            this.lobbyService = lobbyService;
+            this.lobbyStore = lobbyStore;
+            this.hubService = hubService;
+            this.navigationService = navigationService;
+
+            hubService.CreateHubConnection();
+            hubService.Connection.On<int>(nameof(LobbyDeleted), LobbyDeleted);
+            hubService.Connection.On<LobbyData>(nameof(LobbyAdded), LobbyAdded);
+            hubService.Connection.On<LobbyData>(nameof(LobbyCreated), LobbyCreated);
+            hubService.Connection.On<LobbyData>(nameof(LobbyChanged), LobbyChanged);
+            hubService.Connection.On<LobbyData, List<Message>>(nameof(JoinedToLobby), JoinedToLobby);
+        }
+
+        public async Task LobbyDeleted(int lobbyId)
+        {
+            await lobbyStore.RemoveLobby(lobbyId);
+        }
+
+        public async Task LobbyCreated(LobbyData lobbyData)
+        {
+            lobbyStore.SelectedLobby = lobbyData;
+            await lobbyStore.AddLobby(lobbyData);
+            await JoinedToLobby(lobbyData, new List<Message>());
+        }
+
+        public async Task LobbyChanged(LobbyData lobbyData)
+        {
+            await lobbyStore.UpdateLobby(lobbyData);
+        }
+
+        public async Task JoinedToLobby(LobbyData lobbyData, List<Message> messages)
+        {
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                lobbyStore.SelectedLobby = lobbyData;
+                navigationService.Navigate("LobbyDetails", null);
+            });
+        }
+
+        public async Task KickedFromLobby()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task LobbyMessageSent(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task ReceiveLobbyMessage(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task LobbyAdded(LobbyData lobbyData)
+        {
+            await lobbyStore.AddLobby(lobbyData);
+        }
+    }
+}

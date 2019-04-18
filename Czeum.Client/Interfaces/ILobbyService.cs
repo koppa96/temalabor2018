@@ -5,15 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.ClientCallback;
 
 namespace Czeum.Client.Interfaces {
-    public interface ILobbyService {
+    public interface ILobbyService {  
         ObservableCollection<LobbyData> LobbyList { get; }
         LobbyData CurrentLobby { get; }
-        void QueryLobbyList();
-        void CreateLobby();
-        void JoinLobby(int index);
-        void LeaveLobby();
-        ObservableCollection<LobbyData> GetLobbyList();
+
+        Task JoinLobby(int index);
+        Task LeaveLobby();
+        Task InvitePlayer(string player);
+        Task CreateLobby(Type type);
+        Task QueryLobbyList();
+        Task UpdateLobby(LobbyData lobbyData);
     }
 }

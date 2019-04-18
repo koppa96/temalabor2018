@@ -23,6 +23,9 @@ using Microsoft.Practices.Unity;
 using Prism.Logging;
 using NLog;
 using Prism.Windows.Navigation;
+using Czeum.Client.Models;
+using Czeum.ClientCallback;
+using Czeum.Client.Clients;
 
 namespace Czeum.Client
 {
@@ -42,10 +45,15 @@ namespace Czeum.Client
         protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
         {
             _container.RegisterInstance<INavigationService>(NavigationService);
-            _container.RegisterType<IUserManagerService, DummyUserManagerService>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<IUserManagerService, UserManagerService>(new ContainerControlledLifetimeManager());
             _container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
-            _container.RegisterType<ILobbyService, DummyLobbyService>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<ILobbyService, LobbyService>(new ContainerControlledLifetimeManager());
             _container.RegisterType<IDialogService, DialogService>(new ContainerControlledLifetimeManager());
+            //TODO: REGISTER NEW SERVICES
+            _container.RegisterType<ILobbyStore, LobbyStore>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<ILobbyClient, LobbyClient>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<IHubService, HubService>(new ContainerControlledLifetimeManager());
+
             this.NavigationService.Navigate(Experiences.Login.ToString(), null);
             return Task.FromResult<object>(null);
         }

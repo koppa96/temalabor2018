@@ -67,7 +67,7 @@
     </Page.Resources>
 
     <Grid>
-        <ListView Name="LobbyListView" ItemsSource="{Binding LobbyList, Mode=TwoWay}" ItemTemplateSelector="{StaticResource LobbyListDataTemplateSelector}">
+        <ListView Name="LobbyListView" ItemsSource="{Binding lobbyStore.LobbyList, Mode=OneWay}" ItemTemplateSelector="{StaticResource LobbyListDataTemplateSelector}">
             <ListView.Header>
                 <Border Height="48" Background="LightBlue" CornerRadius="16">
                     <TextBlock Text="Currently available lobbies" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
@@ -81,7 +81,7 @@
             </ListView.ItemContainerStyle>
 
             <ListView.Footer>
-                <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray">
+                <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray" Command="{Binding CreateLobbyCommand}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add" Margin="10,0,10,0" />
                         <TextBlock Text="Create new lobby" Style="{ThemeResource TitleTextBlockStyle}"/>

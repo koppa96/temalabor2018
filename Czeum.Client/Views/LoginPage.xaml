@@ -40,7 +40,7 @@
                     <TextBox Header="Username" PlaceholderText="Username" Text="{Binding Path=Name, Mode=TwoWay}"/>
                     <TextBox Header="Email address" PlaceholderText="Email address" Text="{Binding Path=Email, Mode=TwoWay}"/>
                     <PasswordBox Header="Password" PlaceholderText="Password" Password="{Binding Path=Password, Mode=TwoWay}"/>
-                    <PasswordBox Header="Confirm Password" PlaceholderText="Confirm password" Password="{Binding Path=Password, Mode=TwoWay}"/>
+                    <PasswordBox Header="Confirm Password" PlaceholderText="Confirm password" Password="{Binding Path=ConfirmPassword, Mode=TwoWay}"/>
                     <Button Content="Register" Command="{Binding RegisterCommand}" HorizontalAlignment="Stretch" Margin="0,30"/>
                 </StackPanel>
             </PivotItem>

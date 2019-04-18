@@ -7,49 +7,59 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Czeum.DTO;
 using Czeum.DTO.Chess;
 
 namespace Czeum.Client.Services {
-    class DummyLobbyService : ILobbyService {
+    class DummyLobbyService : ILobbyService{
+        private ILobbyStore lobbyStore;
 
-        private ObservableCollection<LobbyData> _lobbyList;
-        private LobbyData _currentLobby;
-
-        public DummyLobbyService() {
-            _lobbyList = new ObservableCollection<LobbyData>();
+        public DummyLobbyService(ILobbyStore lobbyStore)
+        {
+            this.lobbyStore = lobbyStore;
         }
 
-        public ObservableCollection<LobbyData> LobbyList => _lobbyList;
-        public LobbyData CurrentLobby => _currentLobby;
-
-        public void CreateLobby() {
-            _lobbyList.Add(new Connect4LobbyData());
+        public ObservableCollection<LobbyData> LobbyList
+        {
+            get => lobbyStore.LobbyList;
         }
 
-        public ObservableCollection<LobbyData> GetLobbyList() {
-            return _lobbyList;
+        public LobbyData CurrentLobby { get;  set; }
+
+        public async Task CreateLobby(Type type) {
+            LobbyList.Add(new Connect4LobbyData());
         }
 
-        public void JoinLobby(int index) {
-            _currentLobby = _lobbyList[index];
+        public async Task JoinLobby(int index) {
+            CurrentLobby = LobbyList[index];
         }
 
-        public void LeaveLobby() {
-            _currentLobby = null;
+        public async Task LeaveLobby() {
+            CurrentLobby = null;
         }
 
-        public void QueryLobbyList()
+        public Task InvitePlayer(string player)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task QueryLobbyList()
         {
             if (LobbyList.Count > 0)
             {
                 return;
             }
-            _lobbyList.Clear();
-            _lobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0, Guest = "guest1", Name = "My Little Lobbyyy"});
-            _lobbyList.Add(new ChessLobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
-            _lobbyList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, LobbyId = 2 , Name = "Noone's invited"});
-            _lobbyList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, LobbyId = 3, Guest = "guest4" });
-            _lobbyList.Add(new ChessLobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4, Guest = "guest5", Name = "F off"});
+            LobbyList.Clear();
+            LobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0, Guest = "guest1", Name = "My Little Lobbyyy"});
+            LobbyList.Add(new ChessLobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
+            LobbyList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, LobbyId = 2 , Name = "Noone's invited"});
+            LobbyList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, LobbyId = 3, Guest = "guest4" });
+            LobbyList.Add(new ChessLobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4, Guest = "guest5", Name = "F off"});
+        }
+
+        public Task UpdateLobby(LobbyData lobbyData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

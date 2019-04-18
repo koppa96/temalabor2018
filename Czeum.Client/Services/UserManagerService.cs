@@ -14,10 +14,11 @@ using Newtonsoft.Json.Linq;
 namespace Czeum.Client.Services {
     class UserManagerService : IUserManagerService
     {
-        private string BASE_URL = "...";
+        private string BASE_URL = "https://localhost:44301";
 
         public string AccessToken { get; private set; }
         private string refreshToken;
+
         public string Username { get; }
 
         public async Task<bool> LogOutAsync()
@@ -27,8 +28,14 @@ namespace Czeum.Client.Services {
             return true;
         }
 
+        public UserManagerService()
+        {
+        }
+
         public async Task<bool> ChangePasswordAsync(ChangePasswordModel data) {
-            using (var client = new HttpClient()) {
+            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
+            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            using (var client = new HttpClient(ignoreCertHandler)) {
                 var json = JsonConvert.SerializeObject(data);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -58,23 +65,27 @@ namespace Czeum.Client.Services {
             }
         }
 
-        public async Task<bool> LoginAsync(LoginModel data) {
-            using (var client = new HttpClient())
+        public async Task<bool> LoginAsync(LoginModel data)
+        {
+            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
+            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            using (var client = new HttpClient(ignoreCertHandler))
             {
                 var formContent = new FormUrlEncodedContent(new []
                 {
                     new KeyValuePair<string, string>("grant_type", "password"),
                     new KeyValuePair<string, string>("username", data.Username),
                     new KeyValuePair<string, string>("password", data.Password),
-                    new KeyValuePair<string, string>("scope", "api offline_access"),
+                    new KeyValuePair<string, string>("scope", "czeum_api offline_access"),
                     new KeyValuePair<string, string>("client_id", "CzeumUWPClient"),
-                    new KeyValuePair<string, string>("client_secret", "secret") 
+                    new KeyValuePair<string, string>("client_secret", "UWPClientSecret") 
                 });
 
                 try
                 {
                     var targetUrl = Flurl.Url.Combine(BASE_URL, "/connect/token");
                     var response = await client.PostAsync(targetUrl, formContent);
+                    string responseString = await response.Content.ReadAsStringAsync();
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         //Login successful
@@ -104,11 +115,14 @@ namespace Czeum.Client.Services {
             }
         }
 
-        public async Task<bool> RegisterAsync(RegisterModel data) {
-            using (var client = new HttpClient()) {
+        public async Task<bool> RegisterAsync(RegisterModel data)
+        {
+            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
+            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            using (var client = new HttpClient(ignoreCertHandler)) {
                 var json = JsonConvert.SerializeObject(data);
                 var content = new StringContent(json, Encoding.UTF8,"application/json");
-
+                
                 try
                 {
                     var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/account/register");

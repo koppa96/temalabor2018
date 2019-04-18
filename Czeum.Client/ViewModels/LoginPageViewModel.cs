@@ -13,6 +13,8 @@ using Microsoft.Practices.Unity;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Prism.Windows.Navigation;
+using Czeum.ClientCallback;
+using Czeum.Abstractions.DTO;
 
 namespace Czeum.Client.ViewModels
 {
@@ -21,7 +23,6 @@ namespace Czeum.Client.ViewModels
         private IUserManagerService userManagerService;
         private INavigationService navigationService;
         private IDialogService dialogService;
-
         private string name;
         public string Name {
             get => name;
@@ -63,7 +64,7 @@ namespace Czeum.Client.ViewModels
 
         private async void RegisterAsync() {
             dialogService.ShowLoadingDialog();
-            bool result = await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = ConfirmPassword });
+            bool result = await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, Email = Email, ConfirmPassword = ConfirmPassword });
             if (result) {
                 await dialogService.ShowSuccess("Registration completed successfully. You can now log in with your new account.");
             }

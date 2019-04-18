@@ -46,33 +46,38 @@
         <RelativePanel Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
             <TextBlock Name="IdTextBlock" RelativePanel.AlignTopWithPanel="True">
                 <Run Text="Current lobby is: #"/>
-                <Run Text="{Binding SelectedLobby.LobbyId}" FontWeight="Bold"/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
             </TextBlock>
             <TextBlock Name="HostTextBlock" RelativePanel.AlignVerticalCenterWithPanel="True">
                 <Run Text="The host of the lobby is: "/>
-                <Run Text="{Binding SelectedLobby.Host}" FontWeight="Bold"/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.Host}" FontWeight="Bold"/>
             </TextBlock>
             <TextBlock Name="GuestTextBlock" RelativePanel.AlignBottomWithPanel="True">
                 <Run Text="The current guest of the lobby is: "/>
-                <Run Text="{Binding SelectedLobby.Guest}" FontWeight="Bold"/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
             </TextBlock>
         </RelativePanel>
 
         <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">
             <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
-            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
+            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding lobbyStore.SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
 
             <!-- Lobby type specific control goes here -->
-            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
+            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding lobbyStore.SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
                             HorizontalContentAlignment="Stretch"/>
-
+            <Button Margin="0,20,0,20" Command="{Binding SaveSettingsCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Width="20" Height="20" Symbol="Save"/>
+                    <TextBlock Text="Save settings"/>
+                </StackPanel>
+            </Button>
             <Button Content="DEBUG BREAK" Margin="0,50,0,0" Click="ButtonBase_OnClick"/>
 
         </StackPanel>
 
         <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
             <TextBlock Text="Currently invited players: " FontWeight="Bold"/>
-            <ListView ItemsSource="{Binding SelectedLobby.InvitedPlayers}"></ListView>
+            <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}"></ListView>
         </StackPanel>
 
     </Grid>
