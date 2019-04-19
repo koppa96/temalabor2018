@@ -94,7 +94,7 @@ namespace Czeum.Server
                     };
                 });
 
-            services.AddMvc()
+            services.AddMvc(options => options.EnableEndpointRouting = false)
                 .AddNewtonsoftJson(protocol =>
                 {
                     protocol.SerializerSettings.TypeNameHandling = TypeNameHandling.All;

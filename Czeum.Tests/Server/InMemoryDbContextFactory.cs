@@ -11,7 +11,7 @@ namespace Czeum.Tests.Server
         public ApplicationDbContext CreateContext()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("CzeumTestDb")
+                .UseInMemoryDatabase("TestDatabase")
                 .Options;
 
             return new ApplicationDbContext(options);
