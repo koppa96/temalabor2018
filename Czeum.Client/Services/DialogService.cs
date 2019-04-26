@@ -10,7 +10,7 @@ using Czeum.Client.Interfaces;
 using ProgressRing = Windows.UI.Xaml.Controls.ProgressRing;
 
 namespace Czeum.Client.Services {
-    class DialogService : IDialogService
+    public class DialogService : IDialogService
     {
         private ContentDialog progressDialog;
 

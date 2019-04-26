@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using Prism.Windows.Navigation;
 
 namespace Czeum.Client.Services {
-    class HubService : IHubService {
+    public class HubService : IHubService {
         private INavigationService navigationService;
         private IDialogService dialogService;
 

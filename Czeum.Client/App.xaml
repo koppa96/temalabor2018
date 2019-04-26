@@ -5,4 +5,12 @@
     xmlns:local="using:Czeum.Client"
     xmlns:prismUnity="using:Prism.Unity.Windows">
 
+    <prismUnity:PrismUnityApplication.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Themes/SplitViewSampleStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </prismUnity:PrismUnityApplication.Resources>
+
 </prismUnity:PrismUnityApplication>

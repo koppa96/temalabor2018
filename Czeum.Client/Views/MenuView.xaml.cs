@@ -1,6 +1,4 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Client.ViewModels;
-using Czeum.DTO.Connect4;
+﻿using Czeum.Client.ViewModels;
 using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -20,23 +18,27 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Czeum.Client.Views {
+namespace Czeum.Client.Views
+{
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LobbyPage : SessionStateAwarePage, INotifyPropertyChanged {
-        public LobbyPage() {
+    public sealed partial class MenuView : UserControl, INotifyPropertyChanged
+    {
+        public MenuView()
+        {
             this.InitializeComponent();
-            DataContextChanged += LobbyPageControl_DataContextChanged;
+            DataContextChanged += MenuControl_DataContextChanged;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public LobbyPageViewModel ConcreteDataContext => DataContext as LobbyPageViewModel;
+        public MenuViewModel ConcreteDataContext => DataContext as MenuViewModel;
 
-        private void LobbyPageControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void MenuControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConcreteDataContext)));
         }
+
     }
 }

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Czeum.Client.Services {
-    class UserManagerService : IUserManagerService
+    public class UserManagerService : IUserManagerService
     {
         private string BASE_URL = "https://localhost:44301";
 

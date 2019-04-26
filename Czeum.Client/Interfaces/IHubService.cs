@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Czeum.Client.Interfaces {
-    interface IHubService {
+    public interface IHubService {
         HubConnection Connection { get; }
         void CreateHubConnection();
         Task ConnectToHubAsync();

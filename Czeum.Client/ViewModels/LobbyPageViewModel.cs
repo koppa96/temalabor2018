@@ -20,7 +20,7 @@ using Czeum.ClientCallback;
 using Windows.ApplicationModel.Core;
 
 namespace Czeum.Client.ViewModels {
-    class LobbyPageViewModel : ViewModelBase
+    public class LobbyPageViewModel : ViewModelBase
     {
         private ILobbyService lobbyService;
         private INavigationService navigationService;
@@ -71,26 +71,6 @@ namespace Czeum.Client.ViewModels {
                 lobbyType = typeof(Connect4LobbyData);
             }
             await lobbyService.CreateLobby(lobbyType);
-        }
-
-        public override async void OnNavigatingFrom(NavigatingFromEventArgs e, Dictionary<string, object> viewModelState, bool suspending)
-        {
-            if (e.NavigationMode != NavigationMode.Back)
-            {
-                //Let normal navigation pass as usual
-                base.OnNavigatingFrom(e, viewModelState, suspending);
-                return;
-            }
-            //Intercept back navigation
-            e.Cancel = true;
-            var result = await dialogService.ShowConfirmation("Are you sure you want to log out?");
-            if (result == ContentDialogResult.Primary)
-            {
-                //Perform logout
-                await userManagerService.LogOutAsync();
-                await hubService.DisconnectFromHub();
-                navigationService.Navigate("Login", null);
-            }
         }
 
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

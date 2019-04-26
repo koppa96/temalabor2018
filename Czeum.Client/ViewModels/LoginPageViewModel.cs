@@ -18,7 +18,7 @@ using Czeum.Abstractions.DTO;
 
 namespace Czeum.Client.ViewModels
 {
-    class LoginPageViewModel : ViewModelBase
+    public class LoginPageViewModel : ViewModelBase
     {
         private IUserManagerService userManagerService;
         private INavigationService navigationService;
