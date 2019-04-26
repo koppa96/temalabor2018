@@ -100,16 +100,29 @@ namespace Czeum.Server.Services.GameHandler
 
         public async Task<Match> GetMatchByIdAsync(int id)
         {
-            return await _context.Matches.Include("Player1")
-                .Include("Player2")
+            return await _context.Matches.Include(m => m.Player1)
+                .Include(m => m.Player2)
                 .SingleAsync(m => m.MatchId == id);
         }
 
         public async Task<List<MatchStatus>> GetMatchesOfPlayerAsync(string player)
         {
-            return await _context.Matches.Where(m => m.Player1.UserName == player || m.Player2.UserName == player)
-                .Select(m => m.ToMatchStatus(player))
+            var matches = await _context.Matches
+                .Include(m => m.Board)
+                .Include(m => m.Player1)
+                .Include(m => m.Player2)
+                .Where(m => m.Player1.UserName == player || m.Player2.UserName == player)
                 .ToListAsync();
+            
+            var statuses = new List<MatchStatus>();
+            foreach (var match in matches)
+            {
+                var service = _serviceContainer.FindBySerializedBoard(match.Board);
+                var board = service.ConvertToMoveResult(match.Board);
+                statuses.Add(match.ToMatchStatus(player, board));
+            }
+
+            return statuses;
         }
 
         public async Task<MoveResult> GetBoardByMatchIdAsync(int matchId)
