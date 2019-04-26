@@ -32,7 +32,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 namespace Czeum.Server
 {
     public class Startup {
-        public Startup(IWebHostEnvironment env) {
+        public Startup(IWebHostEnvironment env) 
+        {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true);
@@ -49,14 +50,17 @@ namespace Czeum.Server
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services) {
-            services.Configure<CookiePolicyOptions>(options => {
+        public void ConfigureServices(IServiceCollection services) 
+        {
+            services.Configure<CookiePolicyOptions>(options => 
+            {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-			services.Configure<IdentityOptions>(options => {
+			services.Configure<IdentityOptions>(options => 
+            {
 				options.Password.RequireDigit = true;
 				options.Password.RequireLowercase = true;
 				options.Password.RequireUppercase = true;
@@ -129,11 +133,15 @@ namespace Czeum.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) 
+        {
+            if (env.IsDevelopment()) 
+            {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-            } else {
+            } 
+            else 
+            {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -145,9 +153,10 @@ namespace Czeum.Server
             app.UseIdentityServer();
             app.UseAuthentication();
 
-            app.UseSignalR(route => { route.MapHub<GameHub>("/gamehub"); });
+            app.UseSignalR(route => route.MapHub<GameHub>("/gamehub"));
 
-            app.UseMvc(routes => {
+            app.UseMvc(routes => 
+            {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
