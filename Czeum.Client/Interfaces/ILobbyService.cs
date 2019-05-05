@@ -18,5 +18,7 @@ namespace Czeum.Client.Interfaces {
         Task CreateLobby(Type type);
         Task QueryLobbyList();
         Task UpdateLobby(LobbyData lobbyData);
+
+        Task CreateMatch();
     }
 }

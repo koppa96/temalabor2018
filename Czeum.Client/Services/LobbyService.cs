@@ -94,5 +94,11 @@ namespace Czeum.Client.Services {
 
             }
         }
+
+        public async Task CreateMatch()
+        {
+            await hubService.Connection.InvokeAsync("CreateMatch", CurrentLobby.LobbyId);
+
+        }
     }
 }

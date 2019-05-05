@@ -11,7 +11,8 @@ using Czeum.DTO;
 using Czeum.DTO.Chess;
 
 namespace Czeum.Client.Services {
-    class DummyLobbyService : ILobbyService{
+    class DummyLobbyService : ILobbyService
+    {
         private ILobbyStore lobbyStore;
 
         public DummyLobbyService(ILobbyStore lobbyStore)
@@ -58,6 +59,11 @@ namespace Czeum.Client.Services {
         }
 
         public Task UpdateLobby(LobbyData lobbyData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateMatch()
         {
             throw new NotImplementedException();
         }

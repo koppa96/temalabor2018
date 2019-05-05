@@ -26,7 +26,6 @@ namespace Czeum.Client.Models {
             set {
                 selectedLobby = value;
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedLobby")); });
-
             }
         }
 

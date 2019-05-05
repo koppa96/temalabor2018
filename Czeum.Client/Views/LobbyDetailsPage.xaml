@@ -56,6 +56,9 @@
                 <Run Text="The current guest of the lobby is: "/>
                 <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
             </TextBlock>
+            <Button RelativePanel.AlignRightWithPanel="True" Command="{Binding CreateMatchCommand}">
+                <SymbolIcon Symbol="Play"/>
+            </Button>
         </RelativePanel>
 
         <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">

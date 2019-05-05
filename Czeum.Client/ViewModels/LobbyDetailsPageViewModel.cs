@@ -5,6 +5,7 @@ using Prism.Commands;
 using Prism.Logging;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -18,6 +19,7 @@ namespace Czeum.Client.ViewModels
         private IUserManagerService userManagerService;
         public ILobbyStore lobbyStore { get; private set; }
         public ICommand SaveSettingsCommand { get; private set; }
+        public ICommand CreateMatchCommand { get; private set; }
 
         public bool IsUserGuest => lobbyService.CurrentLobby.Guest == userManagerService.Username;
 
@@ -31,6 +33,12 @@ namespace Czeum.Client.ViewModels
             this.userManagerService = userManagerService;
             this.lobbyStore = lobbyStore;
             SaveSettingsCommand = new DelegateCommand(SaveLobbySettings);
+            CreateMatchCommand = new DelegateCommand(CreateMatch);
+        }
+
+        private void CreateMatch()
+        {
+            lobbyService.CreateMatch();
         }
 
         private void SaveLobbySettings()
