@@ -38,9 +38,9 @@ namespace Czeum.Client.ViewModels
 
             Commands = new ObservableCollection<MenuItemViewModel>
             {
-                new MenuItemViewModel { DisplayName = "Lobbies", FontIcon = "\ue894", Command = new DelegateCommand(() => NavigateToPageAsync(PageTokens.Lobby), () => CanNavigateToPage(PageTokens.Lobby)) },
-                new MenuItemViewModel { DisplayName = "Matches", FontIcon = "\ue039", Command = new DelegateCommand(() => NavigateToPageAsync(PageTokens.Match), () => CanNavigateToPage(PageTokens.Match)) },
-                new MenuItemViewModel { DisplayName = "Log out", FontIcon = "\ue8b8", Command = new DelegateCommand(() => NavigateToPageAsync(PageTokens.Login), () => CanNavigateToPage(PageTokens.Login)) }
+                new MenuItemViewModel { DisplayName = "Lobbies", SymbolName = "\ue787", Command = new DelegateCommand(() => NavigateToPageAsync(PageTokens.Lobby), () => CanNavigateToPage(PageTokens.Lobby)) },
+                new MenuItemViewModel { DisplayName = "Matches", SymbolName = "\ue7fc", Command = new DelegateCommand(() => NavigateToPageAsync(PageTokens.Match), () => CanNavigateToPage(PageTokens.Match)) },
+                new MenuItemViewModel { DisplayName = "Log out", SymbolName = "\ue711", Command = new DelegateCommand(() => NavigateToPageAsync(PageTokens.Login), () => CanNavigateToPage(PageTokens.Login)) }
             };
 
             _canNavigateLookup = new Dictionary<PageTokens, bool>();

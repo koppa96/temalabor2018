@@ -12,7 +12,7 @@ namespace Czeum.Client.ViewModels
     {
         public string DisplayName { get; set; }
 
-        public string FontIcon { get; set; }
+        public string SymbolName { get; set; }
 
         public ICommand Command { get; set; }
 

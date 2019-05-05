@@ -16,7 +16,7 @@
                         Style="{StaticResource SplitViewMenuButtonStyle}"
                         ToolTipService.ToolTip="{x:Bind Path=DisplayName}">
                     <StackPanel Orientation="Horizontal">
-                        <FontIcon Glyph="{x:Bind Path=FontIcon}" Style="{StaticResource SplitViewMenuFontIconStyle}" />
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=SymbolName}" Style="{StaticResource SplitViewMenuFontIconStyle}" />
                         <TextBlock AutomationProperties.AccessibilityView="Raw"
                                    Style="{StaticResource SplitViewMenuItemTextStyle}"
                                    Text="{x:Bind Path=DisplayName}" />
