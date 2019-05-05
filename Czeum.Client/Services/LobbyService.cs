@@ -14,6 +14,11 @@ using Newtonsoft.Json;
 using Prism.Windows.Navigation;
 
 namespace Czeum.Client.Services {
+
+    /// <summary>
+    /// Service interfacing towards the remote hub. ViewModel calls into ILobbyService which in turn calls the corresponding function through the hub
+    /// TODO: register functions through IHubService instead of constantly accessing it's property.
+    /// </summary>
     class LobbyService : ILobbyService
     {
         private string BASE_URL = "https://localhost:44301";

@@ -13,6 +13,10 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
 namespace Czeum.Client.Clients {
+
+    /// <summary>
+    /// Provides the interface on which the remote hub can execute function calls. Most actions invoked by ILobbyService will cause a callback to arrive here.
+    /// </summary>
     class LobbyClient : ILobbyClient
     {
         private ILobbyService lobbyService;

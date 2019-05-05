@@ -12,6 +12,11 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 namespace Czeum.Client.Models {
+
+    /// <summary>
+    /// Stores a local cache of all the lobbies.
+    /// Also keeps track of the currently joined lobby.
+    /// </summary>
     class LobbyStore : ILobbyStore, INotifyPropertyChanged
     {
         public ObservableCollection<LobbyData> LobbyList { get; private set; }
@@ -47,6 +52,7 @@ namespace Czeum.Client.Models {
             var lobbyToUpdate = LobbyList.FirstOrDefault(x => x.LobbyId == lobby.LobbyId);
             int index = LobbyList.IndexOf(lobbyToUpdate);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                //dirty hack to refresh item in the list
                 LobbyList.RemoveAt(index);
                 LobbyList.Insert(index, lobby);
 
