@@ -44,13 +44,16 @@ namespace Czeum.Client
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             Container.RegisterType<IDialogService, DialogService>(new ContainerControlledLifetimeManager());
-            //Container.RegisterInstance<INavigationService>(NavigationService);
             Container.RegisterType<IUserManagerService, UserManagerService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyService, LobbyService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyStore, LobbyStore>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyClient, LobbyClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHubService, HubService>(new ContainerControlledLifetimeManager());
+
+            Container.RegisterType<IGameClient, GameClient>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IMatchService, MatchService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IMatchStore, MatchStore>(new ContainerControlledLifetimeManager());
             return Task.FromResult<object>(null);
         }
 

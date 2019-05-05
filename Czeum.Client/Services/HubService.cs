@@ -41,6 +41,10 @@ namespace Czeum.Client.Services {
 
         public async Task ConnectToHubAsync()
         {
+            if(Connection.State == HubConnectionState.Connected)
+            {
+                return;
+            }
             await Connection.StartAsync();
         }
 
