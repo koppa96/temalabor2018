@@ -7,10 +7,74 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dto="using:Czeum.DTO"
+    xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Page.Resources>
+        <DataTemplate x:Key="ChessMatchTemplate" x:DataType="dto:MatchStatus">
+            <Grid BorderThickness="2" BorderBrush="Gray" Background="LightGray" Margin="0, 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="ms-appx:///Assets/chess.png" Width="80" Height="80" Grid.Column="0" Margin="10"/>
+                <StackPanel Grid.Column="1" Margin="10, 0">
+                    <TextBlock FontWeight="Bold">
+                        <Run>Chess match #</Run>
+                        <Run Text="{Binding MatchId}"/>
+                        <Run> against </Run>
+                        <Run Text="{Binding OtherPlayer}"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding State}" Margin="30, 1, 1, 1"/>
+                </StackPanel>
+                <Button Grid.Column="2">
+                    <SymbolIcon Symbol="Play" Height="20" Width="20"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
 
+        <DataTemplate x:Key="Connect4MatchTemplate" x:DataType="dto:MatchStatus">
+            <Grid BorderThickness="2" BorderBrush="Gray" Background="LightGray" Margin="0, 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="ms-appx:///Assets/connect4.png" Width="80" Height="80" Grid.Column="0" Margin="10"/>
+                <StackPanel Grid.Column="1" Margin="10, 0">
+                    <TextBlock FontWeight="Bold">
+                        <Run>Connect4 match #</Run>
+                        <Run Text="{Binding MatchId}"/>
+                        <Run> against </Run>
+                        <Run Text="{Binding OtherPlayer}"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding State}" Margin="30, 1, 1, 1"/>
+                </StackPanel>
+                <Button Grid.Column="2">
+                    <SymbolIcon Symbol="Play" Height="20" Width="20"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <templateSelectors:MatchListDataTemplateSelector x:Key="MatchListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
+    </Page.Resources>
+
+    <Grid>
+        <ListView Name="MatchListView" ItemsSource="{Binding MatchStore.MatchList, Mode=OneWay}" ItemTemplateSelector="{StaticResource ResourceKey=MatchListDataTemplateSelector}">
+            <ListView.Header>
+                <Border Height="48" Background="LightBlue" CornerRadius="16">
+                    <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+                </Border>
+            </ListView.Header>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
     </Grid>
 </prism:SessionStateAwarePage>
