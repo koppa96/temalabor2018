@@ -11,15 +11,8 @@ namespace Czeum.Server.Hubs
     {
         public async Task CreateLobby(Type lobbyType, LobbyAccess access, string name)
         {
-            if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null)
+            if (!await this.LobbyJoinValidationCallbacks(_lobbyService, _soloQueueService))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.AlreadyInLobby);
-                return;
-            }
-
-            if (_soloQueueService.IsQueuing(Context.UserIdentifier))
-            {
-                await Clients.Caller.ReceiveError(ErrorCodes.AlreadyQueuing);
                 return;
             }
 
@@ -83,6 +76,11 @@ namespace Czeum.Server.Hubs
             if (!_lobbyService.LobbyExists(lobbyId))
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
+                return;
+            }
+
+            if (!await this.LobbyJoinValidationCallbacks(_lobbyService, _soloQueueService))
+            {
                 return;
             }
 
