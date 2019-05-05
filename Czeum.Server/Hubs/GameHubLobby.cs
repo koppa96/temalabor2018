@@ -148,9 +148,11 @@ namespace Czeum.Server.Hubs
             try
             {
                 var statuses = await _gameHandler.CreateMatchAsync(lobby);
+                _lobbyService.RemoveLobby(lobbyId);
 
                 await Clients.Caller.MatchCreated(statuses[lobby.Host]);
                 await Clients.User(lobby.Guest).MatchCreated(statuses[lobby.Guest]);
+                await Clients.All.LobbyDeleted(lobbyId);
             }
             catch (GameNotSupportedException)
             {

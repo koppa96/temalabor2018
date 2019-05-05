@@ -144,5 +144,10 @@ namespace Czeum.Server.Services.Lobby {
 			var lobby = _lobbyStorage.GetLobby(lobbyId);
 			lobby.InvitedPlayers.Remove(player);
 		}
+
+		public void RemoveLobby(int id)
+		{
+			_lobbyStorage.RemoveLobby(id);
+		}
 	}
 }
