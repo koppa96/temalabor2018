@@ -43,7 +43,13 @@ namespace Czeum.Client.Models {
         public async Task RemoveLobby(int lobbyId)
         {
             var lobbyToRemove = LobbyList.FirstOrDefault(x => x.LobbyId == lobbyId);
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { LobbyList.Remove(lobbyToRemove); }); 
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                LobbyList.Remove(lobbyToRemove);
+                if(selectedLobby.LobbyId == lobbyId)
+                {
+                    SelectedLobby = null;
+                }
+            }); 
         }
 
         public async Task UpdateLobby(LobbyData lobby)

@@ -41,6 +41,12 @@ namespace Czeum.Client.Clients {
 
         public async Task LobbyDeleted(int lobbyId)
         {
+            if(lobbyService.CurrentLobby.LobbyId == lobbyId)
+            {
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    navigationService.GoBack();
+                });
+            }
             await lobbyStore.RemoveLobby(lobbyId);
         }
 
@@ -60,7 +66,7 @@ namespace Czeum.Client.Clients {
         {
             CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 lobbyStore.SelectedLobby = lobbyData;
-                navigationService.Navigate("LobbyDetails", null);
+                navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
             });
         }
 
