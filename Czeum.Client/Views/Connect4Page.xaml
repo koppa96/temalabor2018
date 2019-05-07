@@ -7,10 +7,11 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Czeum.Client.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Text="Connect4 board goes here"/>
+        <controls:Connect4Grid Match="{Binding Match}"/>
     </Grid>
 </mvvm:SessionStateAwarePage>
