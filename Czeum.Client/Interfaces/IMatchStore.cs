@@ -17,5 +17,7 @@ namespace Czeum.Client.Interfaces
 
         ObservableCollection<MatchStatus> MatchList { get; }
         MatchStatus SelectedMatch{ get; set; }
+
+        void SelectMatch(MatchStatus match);
     }
 }

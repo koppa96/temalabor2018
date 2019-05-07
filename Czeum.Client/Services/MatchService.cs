@@ -1,8 +1,11 @@
 ﻿using Czeum.Abstractions.DTO;
 using Czeum.Client.Interfaces;
 using Czeum.DTO;
+using Czeum.DTO.Chess;
+using Czeum.DTO.Connect4;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
+using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,12 +23,14 @@ namespace Czeum.Client.Services
         private IUserManagerService userManagerService;
         private IMatchStore matchStore;
         private IHubService hubService;
+        private INavigationService navigationService;
 
-        public MatchService(IMatchStore matchStore, IHubService hubService, IUserManagerService userManagerService)
+        public MatchService(IMatchStore matchStore, IHubService hubService, IUserManagerService userManagerService, INavigationService navigationService)
         {
             this.matchStore = matchStore;
             this.hubService = hubService;
             this.userManagerService = userManagerService;
+            this.navigationService = navigationService;
         }
 
         public ObservableCollection<MatchStatus> MatchList { get => matchStore.MatchList; }
@@ -35,6 +40,27 @@ namespace Czeum.Client.Services
         public async Task DoMove(MoveData moveData)
         {
             await hubService.Connection.InvokeAsync("DoMove", moveData);
+        }
+
+        public void OpenMatch(MatchStatus match)
+        {
+            matchStore.SelectMatch(match);
+            PageTokens targetPage = GetPageToken(match);
+            navigationService.Navigate(targetPage.ToString(), null);
+        }
+
+        //TODO: Extract to another service
+        private PageTokens GetPageToken(MatchStatus match)
+        {
+            if(match.CurrentBoard.GetType() == typeof(ChessMoveResult))
+            {
+                return PageTokens.Chess;
+            }
+            if(match.CurrentBoard.GetType() == typeof(Connect4MoveResult))
+            {
+                return PageTokens.Connect4;
+            }
+            return PageTokens.Match;
         }
 
         public async Task QueryMatchList()

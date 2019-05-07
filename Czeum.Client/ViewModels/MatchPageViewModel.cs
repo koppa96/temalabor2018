@@ -2,6 +2,7 @@
 using Czeum.Client.Interfaces;
 using Czeum.ClientCallback;
 using Czeum.DTO;
+using Prism.Commands;
 using Prism.Logging;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
@@ -11,10 +12,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Czeum.Client.ViewModels
 {
-    public class MatchPageViewModel: ViewModelBase
+    public class MatchPageViewModel : ViewModelBase
     {
         private IMatchService matchService;
         private INavigationService navigationService;
@@ -26,6 +28,8 @@ namespace Czeum.Client.ViewModels
         public IMatchStore MatchStore { get; private set; }
 
         public ObservableCollection<MatchStatus> LobbyList { get => matchService.MatchList; }
+
+        public ICommand OpenGameCommand { get; set; }
 
         public MatchPageViewModel(IMatchService matchService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService,
             IGameClient gameClient, IUserManagerService userManagerService, IHubService hubService, IMatchStore matchStore)
@@ -40,6 +44,13 @@ namespace Czeum.Client.ViewModels
             this.MatchStore = matchStore;
 
             matchService.QueryMatchList();
+
+            OpenGameCommand = new DelegateCommand<MatchStatus>(OpenGame);
+        }
+
+        private void OpenGame(MatchStatus match)
+        {
+            matchService.OpenMatch(match);
         }
 
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

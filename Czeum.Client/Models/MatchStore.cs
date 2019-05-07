@@ -63,5 +63,11 @@ namespace Czeum.Client.Models
                 }
             });
         }
+
+        public void SelectMatch(MatchStatus match)
+        {
+            var matchToSelect = MatchList.Where(x => x.MatchId == match.MatchId).FirstOrDefault();
+            SelectedMatch = matchToSelect;
+        }
     }
 }

@@ -147,11 +147,19 @@
     <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\MatchListDataTemplateSelector.cs" />
+    <Compile Include="ViewModels\ChessPageViewModel.cs" />
+    <Compile Include="ViewModels\Connect4PageViewModel.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
     <Compile Include="ViewModels\MatchPageViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
+    <Compile Include="Views\ChessPage.xaml.cs">
+      <DependentUpon>ChessPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Connect4Page.xaml.cs">
+      <DependentUpon>Connect4Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LobbyDetailsPage.xaml.cs">
       <DependentUpon>LobbyDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -227,6 +235,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\SplitViewSampleStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChessPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Connect4Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

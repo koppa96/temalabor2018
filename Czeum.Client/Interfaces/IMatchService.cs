@@ -16,5 +16,6 @@ namespace Czeum.Client.Interfaces
 
         Task QueryMatchList();
         Task DoMove(MoveData moveData);
+        void OpenMatch(MatchStatus match);
     }
 }

@@ -13,6 +13,8 @@ namespace Czeum.Client
         LobbyDetails,
         Match,
         MatchDetails,
-        Statistics
+        Statistics,
+        Chess,
+        Connect4
     }
 }
