@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid x:Name="BoardContainer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="DodgerBlue" 
+    <Grid x:Name="BoardContainer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Navy" 
           BorderBrush="DarkGray" BorderThickness="2" CornerRadius="60, 60, 10, 10" Margin="20" Padding="20">
         <TextBlock x:Name="tb"/>
     </Grid>

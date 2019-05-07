@@ -12,6 +12,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <controls:Connect4Grid Match="{Binding Match}"/>
+        <controls:Connect4Grid Match="{Binding matchStore.SelectedMatch}"/>
     </Grid>
 </mvvm:SessionStateAwarePage>

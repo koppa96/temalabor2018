@@ -37,9 +37,10 @@ namespace Czeum.Client.Services
 
         public MatchStatus CurrentMatch { get => matchStore.SelectedMatch; }
 
-        public async Task DoMove(MoveData moveData)
+        public async Task DoMove(int column)
         {
-            await hubService.Connection.InvokeAsync("DoMove", moveData);
+            var moveData = new Connect4MoveData() { MatchId = CurrentMatch.MatchId, Column = column };
+            await hubService.Connection.InvokeAsync("ReceiveMove", moveData);
         }
 
         public void OpenMatch(MatchStatus match)

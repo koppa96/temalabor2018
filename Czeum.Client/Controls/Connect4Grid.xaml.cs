@@ -59,6 +59,8 @@ namespace Czeum.Client.Controls
             var board = boardData.Board;
 
             BoardContainer.Children.Clear();
+            BoardContainer.RowDefinitions.Clear();
+            BoardContainer.ColumnDefinitions.Clear();
 
             for (int i = 0; i < board.GetLength(0); i++)
             {
@@ -74,8 +76,8 @@ namespace Czeum.Client.Controls
                 for(int j = 0; j <board.GetLength(1); j++)
                 {
                     Ellipse e = new Ellipse() {
-                        Fill = new SolidColorBrush(Colors.Crimson),
-                        Stroke = new SolidColorBrush(Colors.DimGray), StrokeThickness = 4
+                        Fill = new SolidColorBrush(board[i,j] == Item.Red ? Colors.DarkRed : board[i,j] == Item.Yellow ? Colors.Gold : Colors.Gainsboro),
+                        Stroke = new SolidColorBrush(Colors.DarkGray), StrokeThickness = 4
                     };
                     e.Stretch = Stretch.Uniform;
                     //e.HorizontalAlignment = HorizontalAlignment.Stretch;

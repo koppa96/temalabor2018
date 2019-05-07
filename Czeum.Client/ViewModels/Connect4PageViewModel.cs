@@ -1,5 +1,6 @@
 ﻿using Czeum.Client.Interfaces;
 using Czeum.DTO;
+using Czeum.DTO.Connect4;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using System;
@@ -13,21 +14,24 @@ namespace Czeum.Client.ViewModels
 {
     class Connect4PageViewModel : ViewModelBase
     {
-        private IMatchStore matchStore;
+        public IMatchStore matchStore { get; }
+        private IMatchService matchService;
 
         public MatchStatus Match { get => matchStore.SelectedMatch; }
 
         public ICommand ObjectPlacedCommand { get; set; }
 
-        public Connect4PageViewModel(IMatchStore matchStore)
+        public Connect4PageViewModel(IMatchStore matchStore, IMatchService matchService)
         {
             this.matchStore = matchStore;
+            this.matchService = matchService;
+
             ObjectPlacedCommand = new DelegateCommand<Tuple<int, int>>(ObjectPlaced);
         }
 
         private void ObjectPlaced(Tuple<int, int> position)
         {
-            ;
+            matchService.DoMove(position.Item2);
         }
 
     }

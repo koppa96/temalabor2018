@@ -15,7 +15,7 @@ namespace Czeum.Client.Interfaces
         MatchStatus CurrentMatch{ get; }
 
         Task QueryMatchList();
-        Task DoMove(MoveData moveData);
+        Task DoMove(int column);
         void OpenMatch(MatchStatus match);
     }
 }
