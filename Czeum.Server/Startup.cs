@@ -89,7 +89,7 @@ namespace Czeum.Server
                 .AddCookie()
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "https://localhost:44301";
+                    options.Authority = Configuration["Authority"];
                     options.Audience = "czeum_api";
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
