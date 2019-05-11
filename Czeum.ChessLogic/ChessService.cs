@@ -15,13 +15,17 @@ namespace Czeum.ChessLogic
             var move = (ChessMoveData) moveData;
             var color = playerId == 1 ? Color.White : Color.Black;
             var enemyColor = playerId == 1 ? Color.Black : Color.White;
+            var serializedChessBoard = (SerializedChessBoard) serializedBoard;
 
             var board = new ChessBoard(false);
-            board.DeserializeContent((SerializedChessBoard) serializedBoard);
+            board.DeserializeContent(serializedChessBoard);
 
             var oldBoard = new ChessMoveResult
             {
-                
+                WhiteKingInCheck = !board.IsKingSafe(Color.White),
+                BlackKingInCheck = !board.IsKingSafe(Color.Black),
+                PieceInfos = board.GetPieceInfos(),
+                Status = Status.Fail
             };
             if (!board.ValidateMove(move, color) || 
                 !board.MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]) ||
@@ -29,7 +33,7 @@ namespace Czeum.ChessLogic
             {
                 return new InnerMoveResult
                 {
-                    UpdatedBoardData = null,
+                    UpdatedBoardData = serializedChessBoard.BoardData,
                     MoveResult = oldBoard
                 };
             }
@@ -44,7 +48,9 @@ namespace Czeum.ChessLogic
                     MoveResult = new ChessMoveResult
                     {
                         Status = Status.Draw,
-                        PieceInfos = board.GetPieceInfos()
+                        PieceInfos = board.GetPieceInfos(),
+                        WhiteKingInCheck = !board.IsKingSafe(Color.White),
+                        BlackKingInCheck = !board.IsKingSafe(Color.Black)
                     }
                 };
             }
@@ -57,7 +63,9 @@ namespace Czeum.ChessLogic
                     MoveResult = new ChessMoveResult
                     {
                         Status = Status.Win,
-                        PieceInfos = board.GetPieceInfos()
+                        PieceInfos = board.GetPieceInfos(),
+                        WhiteKingInCheck = !board.IsKingSafe(Color.White),
+                        BlackKingInCheck = !board.IsKingSafe(Color.Black)
                     }
                 };
             }
@@ -68,7 +76,9 @@ namespace Czeum.ChessLogic
                 MoveResult = new ChessMoveResult
                 {
                     Status = Status.Success,
-                    PieceInfos = board.GetPieceInfos()
+                    PieceInfos = board.GetPieceInfos(),
+                    WhiteKingInCheck = !board.IsKingSafe(Color.White),
+                    BlackKingInCheck = !board.IsKingSafe(Color.Black)
                 }
             };
         }

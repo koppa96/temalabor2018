@@ -11,15 +11,8 @@ namespace Czeum.Server.Hubs
     {
         public async Task CreateLobby(Type lobbyType, LobbyAccess access, string name)
         {
-            if (_lobbyService.FindUserLobby(Context.UserIdentifier) != null)
+            if (!await this.LobbyJoinValidationCallbacks(_lobbyService, _soloQueueService))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.AlreadyInLobby);
-                return;
-            }
-
-            if (_soloQueueService.IsQueuing(Context.UserIdentifier))
-            {
-                await Clients.Caller.ReceiveError(ErrorCodes.AlreadyQueuing);
                 return;
             }
 
@@ -80,7 +73,13 @@ namespace Czeum.Server.Hubs
 
         public async Task JoinLobby(int lobbyId)
         {
-            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
+            if (!_lobbyService.LobbyExists(lobbyId))
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
+                return;
+            }
+
+            if (!await this.LobbyJoinValidationCallbacks(_lobbyService, _soloQueueService))
             {
                 return;
             }
@@ -90,6 +89,7 @@ namespace Czeum.Server.Hubs
                 var lobby = _lobbyService.GetLobby(lobbyId);
                 await Clients.Caller.JoinedToLobby(lobby, _messageService.GetMessagesOfLobby(lobbyId));
                 await Clients.All.LobbyChanged(lobby);
+                return;
             }
 
             await Clients.Caller.ReceiveError(ErrorCodes.CouldNotJoinLobby);
@@ -146,9 +146,11 @@ namespace Czeum.Server.Hubs
             try
             {
                 var statuses = await _gameHandler.CreateMatchAsync(lobby);
+                _lobbyService.RemoveLobby(lobbyId);
 
                 await Clients.Caller.MatchCreated(statuses[lobby.Host]);
                 await Clients.User(lobby.Guest).MatchCreated(statuses[lobby.Guest]);
+                await Clients.All.LobbyDeleted(lobbyId);
             }
             catch (GameNotSupportedException)
             {

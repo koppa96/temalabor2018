@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -21,21 +23,22 @@ namespace Czeum.Server.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailService;
 
         public AccountController(UserManager<ApplicationUser> userManager, ILogger<AccountController> logger,
-            IEmailSender emailSender)
+            IEmailService emailService)
         {
             _userManager = userManager;
             _logger = logger;
-            _emailSender = emailSender;
+            _emailService = emailService;
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("register")]
-        public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model) {
+        public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model)
+        {
 	        if (!ModelState.IsValid)
 	        {
 		        return StatusCode(StatusCodes.Status500InternalServerError);
@@ -65,8 +68,14 @@ namespace Czeum.Server.Controllers
 		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
 		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id));
 
-                string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                await _emailSender.SendConfirmationEmailAsync(user.Email, confirmationToken);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var url = Url.Page(
+                    "/Account/ConfirmEmail",
+                    pageHandler: null,
+                    values: new { area = "Identity", id = user.Id, code = token },
+                    protocol: Request.Scheme);
+
+                await _emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
 		        return Ok();
 	        }
@@ -80,7 +89,8 @@ namespace Czeum.Server.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model) {
+		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
+        {
 			if (model.Password != model.ConfirmPassword) {
 				return BadRequest(ErrorCodes.PasswordsNotMatching);
 			}
@@ -145,7 +155,13 @@ namespace Czeum.Server.Controllers
                 }
 
                 var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await _emailSender.SendPasswordResetEmailAsync(email, resetToken);
+                var url = Url.Page(
+                    "/Account/ResetPassword",
+                    pageHandler: null,
+                    values: new { area = "Identity", resetToken },
+                    protocol: Request.Scheme);
+
+                await _emailService.SendPasswordResetEmailAsync(email, resetToken, url);
                 _logger.LogInformation($"Password reset email for {username} was sent to {email}.");
 
                 return Ok();
@@ -202,7 +218,13 @@ namespace Czeum.Server.Controllers
                 }
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                await _emailSender.SendConfirmationEmailAsync(email, token);
+                var url = Url.Page(
+                    "/Account/ConfirmEmail",
+                    pageHandler: null,
+                    values: new { area = "Identity", id = user.Id, code = token },
+                    protocol: Request.Scheme);
+
+                await _emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
                 _logger.LogInformation($"Confirmation email resent to {email}.");
 
                 return Ok();

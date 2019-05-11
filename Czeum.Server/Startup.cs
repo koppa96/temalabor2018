@@ -27,25 +27,40 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Hosting;
 using Czeum.Server.Configurations;
 using Czeum.Server.Services.EmailSender;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Czeum.Server
 {
     public class Startup {
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
+        public Startup(IWebHostEnvironment env) 
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", true, true);
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services) {
-            services.Configure<CookiePolicyOptions>(options => {
+        public void ConfigureServices(IServiceCollection services) 
+        {
+            services.Configure<CookiePolicyOptions>(options => 
+            {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-			services.Configure<IdentityOptions>(options => {
+			services.Configure<IdentityOptions>(options => 
+            {
 				options.Password.RequireDigit = true;
 				options.Password.RequireLowercase = true;
 				options.Password.RequireUppercase = true;
@@ -74,7 +89,7 @@ namespace Czeum.Server
                 .AddCookie()
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "https://localhost:44301";
+                    options.Authority = Configuration["Authority"];
                     options.Audience = "czeum_api";
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -83,7 +98,7 @@ namespace Czeum.Server
                     };
                 });
 
-            services.AddMvc()
+            services.AddMvc(options => options.EnableEndpointRouting = false)
                 .AddNewtonsoftJson(protocol =>
                 {
                     protocol.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
@@ -113,15 +128,20 @@ namespace Czeum.Server
 
             services.AddTransient<IFriendService, FriendService>();
             services.AddTransient<IMessageService, MessageService>();
-            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailSender, EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) 
+        {
+            if (env.IsDevelopment()) 
+            {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-            } else {
+            } 
+            else 
+            {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -133,9 +153,10 @@ namespace Czeum.Server
             app.UseIdentityServer();
             app.UseAuthentication();
 
-            app.UseSignalR(route => { route.MapHub<GameHub>("/gamehub"); });
+            app.UseSignalR(route => route.MapHub<GameHub>("/gamehub"));
 
-            app.UseMvc(routes => {
+            app.UseMvc(routes => 
+            {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

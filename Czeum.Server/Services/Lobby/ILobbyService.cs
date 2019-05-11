@@ -22,5 +22,6 @@ namespace Czeum.Server.Services.Lobby
         bool LobbyExists(int lobbyId);
         LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name);
         string GetOtherPlayer(int lobbyId, string player);
+        void RemoveLobby(int id);
     }
 }

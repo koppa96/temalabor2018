@@ -9,9 +9,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Czeum.Server {
-    public class Program {
-        public static void Main(string[] args) {
+namespace Czeum.Server 
+{
+    public class Program 
+    {
+        public static void Main(string[] args) 
+        {
             CreateWebHostBuilder(args).Build().Run();
         }
 

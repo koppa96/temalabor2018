@@ -63,13 +63,14 @@ namespace Czeum.DAL.Extensions
             }
         }
         
-        public static MatchStatus ToMatchStatus(this Match match, string player)
+        public static MatchStatus ToMatchStatus(this Match match, string player, MoveResult board = null)
         {
-            return new MatchStatus()
+            return new MatchStatus
             {
                 MatchId = match.MatchId,
+                PlayerId = match.GetPlayerId(player),
                 OtherPlayer = match.Player1.UserName == player ? match.Player2.UserName : match.Player1.UserName,
-                CurrentBoard = null,
+                CurrentBoard = board,
                 State = match.GetGameStateForPlayer(player)
             };
         }
