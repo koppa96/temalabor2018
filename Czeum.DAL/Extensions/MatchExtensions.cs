@@ -68,6 +68,7 @@ namespace Czeum.DAL.Extensions
             return new MatchStatus
             {
                 MatchId = match.MatchId,
+                PlayerId = match.GetPlayerId(player),
                 OtherPlayer = match.Player1.UserName == player ? match.Player2.UserName : match.Player1.UserName,
                 CurrentBoard = board,
                 State = match.GetGameStateForPlayer(player)
