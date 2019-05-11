@@ -30,7 +30,7 @@
                     </TextBlock>
                     <TextBlock Text="{Binding State}" Margin="30, 1, 1, 1"/>
                 </StackPanel>
-                <Button Grid.Column="2" Command="{Binding ElementName=MatchListView, Path=OpenGameCommand}" CommandParameter="{Binding}">
+                <Button Grid.Column="2" Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
                 </Button>
             </Grid>

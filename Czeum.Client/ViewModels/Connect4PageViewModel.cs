@@ -31,7 +31,8 @@ namespace Czeum.Client.ViewModels
 
         private void ObjectPlaced(Tuple<int, int> position)
         {
-            matchService.DoMove(position.Item2);
+            var moveData = new Connect4MoveData() { MatchId = matchService.CurrentMatch.MatchId, Column = position.Item2 };
+            matchService.DoMove(moveData);
         }
 
     }

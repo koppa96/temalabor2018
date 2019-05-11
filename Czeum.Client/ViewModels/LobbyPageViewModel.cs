@@ -18,6 +18,7 @@ using Prism.Logging;
 using Prism.Windows.Navigation;
 using Czeum.ClientCallback;
 using Windows.ApplicationModel.Core;
+using Czeum.DTO.Chess;
 
 namespace Czeum.Client.ViewModels {
     public class LobbyPageViewModel : ViewModelBase
@@ -68,7 +69,7 @@ namespace Czeum.Client.ViewModels {
         {
             if (lobbyType == null)
             {
-                lobbyType = typeof(Connect4LobbyData);
+                lobbyType = typeof(ChessLobbyData);
             }
             await lobbyService.CreateLobby(lobbyType);
         }

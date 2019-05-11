@@ -109,6 +109,9 @@
     </Compile>
     <Compile Include="Clients\LobbyClient.cs" />
     <Compile Include="Clients\GameClient.cs" />
+    <Compile Include="Controls\ChessGrid.xaml.cs">
+      <DependentUpon>ChessGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Connect4Grid.xaml.cs">
       <DependentUpon>Connect4Grid.xaml</DependentUpon>
     </Compile>
@@ -207,10 +210,22 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\b_bishop_svg_withShadow.png" />
+    <Content Include="Assets\b_king_svg_withShadow.png" />
+    <Content Include="Assets\b_knight_svg_withShadow.png" />
+    <Content Include="Assets\b_pawn_svg_withShadow.png" />
+    <Content Include="Assets\b_queen_svg_withShadow.png" />
+    <Content Include="Assets\b_rook_svg_withShadow.png" />
     <Content Include="Assets\chess.png" />
     <Content Include="Assets\closed.png" />
     <Content Include="Assets\connect4.png" />
     <Content Include="Assets\open.png" />
+    <Content Include="Assets\w_bishop_svg_withShadow.png" />
+    <Content Include="Assets\w_king_svg_withShadow.png" />
+    <Content Include="Assets\w_knight_svg_withShadow.png" />
+    <Content Include="Assets\w_pawn_svg_withShadow.png" />
+    <Content Include="Assets\w_queen_svg_withShadow.png" />
+    <Content Include="Assets\w_rook_svg_withShadow.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -226,6 +241,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="AppShell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ChessGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
