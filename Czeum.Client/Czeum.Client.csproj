@@ -212,6 +212,7 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\BadgeLogo.scale-400.jpg" />
     <Content Include="Assets\b_bishop_svg_withShadow.png" />
     <Content Include="Assets\b_king_svg_withShadow.png" />
     <Content Include="Assets\b_knight_svg_withShadow.png" />
