@@ -100,5 +100,10 @@ namespace Czeum.Client.Services {
             await hubService.Connection.InvokeAsync("CreateMatch", CurrentLobby.LobbyId);
 
         }
+
+        public async Task KickGuest()
+        {
+            await hubService.Connection.InvokeAsync("KickGuest", CurrentLobby.LobbyId);
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace Czeum.Client.ViewModels
         public ICommand SaveSettingsCommand { get; private set; }
         public ICommand CreateMatchCommand { get; private set; }
         public ICommand VisibilityChangeCommand { get; private set; }
+        public ICommand LeaveLobbyCommand{ get; private set; }
+        public ICommand KickGuestCommand { get; private set; }
         public ICommand InvitePlayerCommand { get; private set; }
 
         public bool IsUserGuest => lobbyService.CurrentLobby.Guest == userManagerService.Username;
@@ -46,6 +48,20 @@ namespace Czeum.Client.ViewModels
             CreateMatchCommand = new DelegateCommand(CreateMatch);
             VisibilityChangeCommand = new DelegateCommand<string>((s) => SetLobbyVisibility(s));
             InvitePlayerCommand = new DelegateCommand(InvitePlayer);
+            KickGuestCommand = new DelegateCommand(KickGuest);
+            LeaveLobbyCommand = new DelegateCommand(Leave);
+        }
+
+        private void Leave()
+        {
+            lobbyService.LeaveLobby();
+            navigationService.Navigate(PageTokens.Lobby.ToString(), null);
+            navigationService.ClearHistory();
+        }
+
+        private void KickGuest()
+        {
+            lobbyService.KickGuest();
         }
 
         private void InvitePlayer()
