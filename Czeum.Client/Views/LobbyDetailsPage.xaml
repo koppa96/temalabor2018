@@ -45,23 +45,51 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <RelativePanel Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
-            <TextBlock Name="IdTextBlock" RelativePanel.AlignTopWithPanel="True">
-                <Run Text="Current lobby is: #"/>
+        <Grid Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+                <Run Text="Current lobby:"/>
                 <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.Name}" FontWeight="Bold"/>
             </TextBlock>
-            <TextBlock Name="HostTextBlock" RelativePanel.AlignVerticalCenterWithPanel="True">
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
                 <Run Text="The host of the lobby is: "/>
                 <Run Text="{Binding lobbyStore.SelectedLobby.Host}" FontWeight="Bold"/>
             </TextBlock>
-            <TextBlock Name="GuestTextBlock" RelativePanel.AlignBottomWithPanel="True">
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="3">
                 <Run Text="The current guest of the lobby is: "/>
                 <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
             </TextBlock>
-            <Button RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Command="{Binding CreateMatchCommand}">
-                <SymbolIcon Symbol="Play"/>
+            <Button Grid.Row="3" Grid.Column="0" Command="{Binding LeaveLobbyCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Back"/>
+                    <TextBlock Text="Leave Lobby"/>
+                </StackPanel>
             </Button>
-        </RelativePanel>
+            <Button Grid.Row="3" Grid.Column="1" Command="{Binding KickGuestCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="BlockContact"/>
+                    <TextBlock Text="Kick Guest"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="3" Grid.Column="2" Command="{Binding CreateMatchCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Play"/>
+                    <TextBlock Text="Launch game"/>
+                </StackPanel>
+            </Button>
+        </Grid>
 
         <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">
             <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
