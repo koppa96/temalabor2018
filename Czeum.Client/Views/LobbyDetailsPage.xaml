@@ -58,7 +58,7 @@
                 <Run Text="The current guest of the lobby is: "/>
                 <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
             </TextBlock>
-            <Button RelativePanel.AlignRightWithPanel="True" Command="{Binding CreateMatchCommand}">
+            <Button RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Command="{Binding CreateMatchCommand}">
                 <SymbolIcon Symbol="Play"/>
             </Button>
         </RelativePanel>
@@ -95,10 +95,21 @@
 
         </StackPanel>
 
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
-            <TextBlock Text="Currently invited players: " FontWeight="Bold"/>
-            <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}"></ListView>
-        </StackPanel>
+        <RelativePanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
+            <TextBlock Text="Currently invited players: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="InvitedPlayersHeader"/>
+            <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}" RelativePanel.Below="InvitedPlayersHeader" x:Name="InvitedPlayersList"
+                      Margin="0, 0, 0, 40"/>
+
+            <TextBox x:Name="InviteeName" PlaceholderText="Invitee name" Text="{Binding InviteeName, Mode=TwoWay}" 
+                     RelativePanel.Below="InvitedPlayersList" RelativePanel.LeftOf="InviteButton" RelativePanel.AlignLeftWithPanel="True" />
+            <Button  x:Name="InviteButton" Margin="12, 0" Command="{Binding InvitePlayerCommand}"
+                     RelativePanel.Below="InvitedPlayersList" RelativePanel.AlignRightWithPanel="True">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="AddFriend"/>
+                    <TextBlock Text="Invite" Margin="10, 0"/>
+                </StackPanel>
+            </Button>
+        </RelativePanel>
 
     </Grid>
 </prism:SessionStateAwarePage>
