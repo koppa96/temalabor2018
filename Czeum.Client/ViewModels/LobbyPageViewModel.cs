@@ -57,12 +57,9 @@ namespace Czeum.Client.ViewModels {
         {
             if (!index.HasValue)
             {
-                loggerService.Log("Tried navigating to an invalid Lobby ID", Category.Debug, Priority.None);
                 return;
             }
             lobbyService.JoinLobby(index.Value);
-            loggerService.Log($"Navigating to Lobby #{index.Value}", Category.Debug, Priority.None);
-            navigationService.Navigate("LobbyDetails", null);
         }
 
         private async void CreateLobby(Type lobbyType)
