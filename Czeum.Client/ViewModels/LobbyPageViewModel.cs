@@ -33,6 +33,7 @@ namespace Czeum.Client.ViewModels {
         public ILobbyStore lobbyStore { get; private set; }
 
         public ObservableCollection<LobbyData> LobbyList { get => lobbyService.LobbyList; }
+        public string Username { get => userManagerService.Username; }
 
         public LobbyPageViewModel(ILobbyService lobbyService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService, 
             ILobbyClient lobbyClient, IUserManagerService userManagerService, IHubService hubService, ILobbyStore lobbyStore) {
@@ -67,14 +68,19 @@ namespace Czeum.Client.ViewModels {
             switch (lobbyTypeString)
             {
                 case "Chess":
-                    lobbyService.CreateLobby(typeof(ChessLobbyData));
+                    await lobbyService.CreateLobby(typeof(ChessLobbyData));
                     break;
                 case "Connect4":
-                    lobbyService.CreateLobby(typeof(Connect4LobbyData));
+                    await lobbyService.CreateLobby(typeof(Connect4LobbyData));
                     break;
                 default:
                     break;
             }
+        }
+
+        public bool IsUserInvited()
+        {
+            return true;
         }
 
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

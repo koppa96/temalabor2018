@@ -116,6 +116,7 @@
       <DependentUpon>Connect4Grid.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\AccessToBooleanConverter.cs" />
+    <Compile Include="Converters\AccessToStringConverter.cs" />
     <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
     <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
     <Compile Include="Converters\PlayerColorConverter.cs" />
