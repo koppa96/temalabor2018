@@ -81,12 +81,18 @@
             </ListView.ItemContainerStyle>
 
             <ListView.Footer>
-                <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray" Command="{Binding CreateLobbyCommand}">
+                <DropDownButton Height="80" HorizontalAlignment="Stretch" Background="DarkGray">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add" Margin="10,0,10,0" />
                         <TextBlock Text="Create new lobby" Style="{ThemeResource TitleTextBlockStyle}"/>
                     </StackPanel>
-                </Button>
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem Text="Chess" Command="{Binding CreateLobbyCommand}" CommandParameter="Chess"/>
+                            <MenuFlyoutItem Text="Connect Four" Command="{Binding CreateLobbyCommand}" CommandParameter="Connect4"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
             </ListView.Footer>
         </ListView>
     </Grid>

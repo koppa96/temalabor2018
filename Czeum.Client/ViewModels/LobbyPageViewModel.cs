@@ -47,7 +47,7 @@ namespace Czeum.Client.ViewModels {
 
             lobbyService.QueryLobbyList();
             JoinLobbyCommand = new DelegateCommand<int?>(JoinLobby);
-            CreateLobbyCommand = new DelegateCommand<Type>(CreateLobby);
+            CreateLobbyCommand = new DelegateCommand<string>(CreateLobby);
         }
 
         public ICommand JoinLobbyCommand { get; }
@@ -62,13 +62,19 @@ namespace Czeum.Client.ViewModels {
             lobbyService.JoinLobby(index.Value);
         }
 
-        private async void CreateLobby(Type lobbyType)
+        private async void CreateLobby(string lobbyTypeString)
         {
-            if (lobbyType == null)
+            switch (lobbyTypeString)
             {
-                lobbyType = typeof(ChessLobbyData);
+                case "Chess":
+                    lobbyService.CreateLobby(typeof(ChessLobbyData));
+                    break;
+                case "Connect4":
+                    lobbyService.CreateLobby(typeof(Connect4LobbyData));
+                    break;
+                default:
+                    break;
             }
-            await lobbyService.CreateLobby(lobbyType);
         }
 
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
