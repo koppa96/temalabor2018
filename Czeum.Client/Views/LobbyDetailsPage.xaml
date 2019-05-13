@@ -45,99 +45,104 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
-                <Run Text="Current lobby:"/>
-                <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
-                <Run Text="{Binding lobbyStore.SelectedLobby.Name}" FontWeight="Bold"/>
-            </TextBlock>
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
-                <Run Text="The host of the lobby is: "/>
-                <Run Text="{Binding lobbyStore.SelectedLobby.Host}" FontWeight="Bold"/>
-            </TextBlock>
-            <TextBlock Grid.Row="2" Grid.ColumnSpan="3">
-                <Run Text="The current guest of the lobby is: "/>
-                <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
-            </TextBlock>
-            <Button Grid.Row="3" Grid.Column="0" Command="{Binding LeaveLobbyCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Back"/>
-                    <TextBlock Text="Leave Lobby"/>
-                </StackPanel>
-            </Button>
-            <Button Grid.Row="3" Grid.Column="1" Command="{Binding KickGuestCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="BlockContact"/>
-                    <TextBlock Text="Kick Guest"/>
-                </StackPanel>
-            </Button>
-            <Button Grid.Row="3" Grid.Column="2" Command="{Binding CreateMatchCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Play"/>
-                    <TextBlock Text="Launch game"/>
-                </StackPanel>
-            </Button>
-        </Grid>
-
-        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">
-            <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
-            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding lobbyStore.SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
-
-            <TextBlock Text="Lobby visibility:"  Margin="0,20,0,0"/>
-            <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0" Grid.Column="0" Margin="20" BorderThickness="2" BorderBrush="Black">
+            <Grid Name="DetailsPanel" Padding="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <RadioButton Content="Public" GroupName="LobbyVisibility" Grid.Column="0" Command="{Binding VisibilityChangeCommand}" CommandParameter="Public"
-                             IsChecked="{Binding Path=lobbyStore.SelectedLobby.Access, Converter={StaticResource AccessToBooleanConverter}, ConverterParameter=Public}"/>
-                <RadioButton Content="Private" GroupName="LobbyVisibility" Grid.Column="1" Command="{Binding VisibilityChangeCommand}" CommandParameter="Private"
-                             IsChecked="{Binding Path=lobbyStore.SelectedLobby.Access, Converter={StaticResource AccessToBooleanConverter}, ConverterParameter=Private}"/>
-                <RadioButton Content="Friends Only" GroupName="LobbyVisibility" Grid.Column="2" Command="{Binding VisibilityChangeCommand}" CommandParameter="FriendsOnly"
-                             IsChecked="{Binding Path=lobbyStore.SelectedLobby.Access, Converter={StaticResource AccessToBooleanConverter}, ConverterParameter=FriendsOnly}"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+                    <Run Text="Current lobby:"/>
+                    <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
+                    <Run Text="{Binding lobbyStore.SelectedLobby.Name}" FontWeight="Bold"/>
+                </TextBlock>
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
+                    <Run Text="The host of the lobby is: "/>
+                    <Run Text="{Binding lobbyStore.SelectedLobby.Host}" FontWeight="Bold"/>
+                </TextBlock>
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="3">
+                    <Run Text="The current guest of the lobby is: "/>
+                    <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
+                </TextBlock>
+                <Button Grid.Row="3" Grid.Column="0" Command="{Binding LeaveLobbyCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Back"/>
+                        <TextBlock Text="Leave" Margin="10, 0"/>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Row="3" Grid.Column="1" Command="{Binding KickGuestCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="BlockContact"/>
+                        <TextBlock Text="Kick" Margin="10, 0"/>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Row="3" Grid.Column="2" Command="{Binding CreateMatchCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Play"/>
+                        <TextBlock Text="Start" Margin="10, 0"/>
+                    </StackPanel>
+                </Button>
             </Grid>
+        </ScrollViewer>
 
-            <!-- Lobby type specific control goes here -->
-            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding lobbyStore.SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
-                            HorizontalContentAlignment="Stretch"/>
-            <Button Margin="0,20,0,20" Command="{Binding SaveSettingsCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Width="20" Height="20" Symbol="Save"/>
-                    <TextBlock Text="Save settings"/>
-                </StackPanel>
-            </Button>
-            <Button Content="DEBUG BREAK" Margin="0,50,0,0" Click="ButtonBase_OnClick"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="0" Margin="20" BorderThickness="2" BorderBrush="Black">
+            <StackPanel Name="SettingsPanel" Padding="10">
+                <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
+                <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding lobbyStore.SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
 
-        </StackPanel>
+                <TextBlock Text="Lobby visibility:"  Margin="0,20,0,0"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Content="Public" GroupName="LobbyVisibility" Grid.Column="0" Command="{Binding VisibilityChangeCommand}" CommandParameter="Public"
+                                 IsChecked="{Binding Path=lobbyStore.SelectedLobby.Access, Converter={StaticResource AccessToBooleanConverter}, ConverterParameter=Public}"/>
+                    <RadioButton Content="Private" GroupName="LobbyVisibility" Grid.Column="1" Command="{Binding VisibilityChangeCommand}" CommandParameter="Private"
+                                 IsChecked="{Binding Path=lobbyStore.SelectedLobby.Access, Converter={StaticResource AccessToBooleanConverter}, ConverterParameter=Private}"/>
+                    <RadioButton Content="Friends Only" GroupName="LobbyVisibility" Grid.Column="2" Command="{Binding VisibilityChangeCommand}" CommandParameter="FriendsOnly"
+                                 IsChecked="{Binding Path=lobbyStore.SelectedLobby.Access, Converter={StaticResource AccessToBooleanConverter}, ConverterParameter=FriendsOnly}"/>
+                </Grid>
 
-        <RelativePanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
-            <TextBlock Text="Currently invited players: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="InvitedPlayersHeader"/>
-            <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}" RelativePanel.Below="InvitedPlayersHeader" x:Name="InvitedPlayersList"
-                      Margin="0, 0, 0, 40"/>
+                <!-- Lobby type specific control goes here -->
+                <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding lobbyStore.SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
+                                HorizontalContentAlignment="Stretch"/>
+                <Button Margin="0,20,0,20" Command="{Binding SaveSettingsCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Width="20" Height="20" Symbol="Save"/>
+                        <TextBlock Text="Save settings"/>
+                    </StackPanel>
+                </Button>
 
-            <TextBox x:Name="InviteeName" PlaceholderText="Invitee name" Text="{Binding InviteeName, Mode=TwoWay}" 
-                     RelativePanel.Below="InvitedPlayersList" RelativePanel.LeftOf="InviteButton" RelativePanel.AlignLeftWithPanel="True" />
-            <Button  x:Name="InviteButton" Margin="12, 0" Command="{Binding InvitePlayerCommand}"
-                     RelativePanel.Below="InvitedPlayersList" RelativePanel.AlignRightWithPanel="True">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="AddFriend"/>
-                    <TextBlock Text="Invite" Margin="10, 0"/>
-                </StackPanel>
-            </Button>
-        </RelativePanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Grid.Column="1" Margin="20" BorderThickness="2" BorderBrush="Black">
+            <RelativePanel Grid.Row="0" Padding="10">
+                <TextBlock Text="Currently invited players: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="InvitedPlayersHeader"/>
+                <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}" RelativePanel.Below="InvitedPlayersHeader" x:Name="InvitedPlayersList"
+                          Margin="0, 0, 0, 40"/>
+
+                <TextBox x:Name="InviteeName" PlaceholderText="Invitee name" Text="{Binding InviteeName, Mode=TwoWay}" 
+                         RelativePanel.Below="InvitedPlayersList" RelativePanel.LeftOf="InviteButton" RelativePanel.AlignLeftWithPanel="True" />
+                <Button  x:Name="InviteButton" Margin="12, 0" Command="{Binding InvitePlayerCommand}"
+                         RelativePanel.Below="InvitedPlayersList" RelativePanel.AlignRightWithPanel="True">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="AddFriend"/>
+                        <TextBlock Text="Invite" Margin="10, 0"/>
+                    </StackPanel>
+                </Button>
+            </RelativePanel>
+        </ScrollViewer>
 
     </Grid>
 </prism:SessionStateAwarePage>
