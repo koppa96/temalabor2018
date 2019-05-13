@@ -17,9 +17,11 @@ namespace Czeum.Client.ViewModels
         private ILoggerFacade loggerService;
         private INavigationService navigationService;
         private IUserManagerService userManagerService;
+
         public ILobbyStore lobbyStore { get; private set; }
         public ICommand SaveSettingsCommand { get; private set; }
         public ICommand CreateMatchCommand { get; private set; }
+        public ICommand VisibilityChangeCommand { get; private set; }
 
         public bool IsUserGuest => lobbyService.CurrentLobby.Guest == userManagerService.Username;
 
@@ -34,6 +36,13 @@ namespace Czeum.Client.ViewModels
             this.lobbyStore = lobbyStore;
             SaveSettingsCommand = new DelegateCommand(SaveLobbySettings);
             CreateMatchCommand = new DelegateCommand(CreateMatch);
+            VisibilityChangeCommand = new DelegateCommand<string>((s) => SetLobbyVisibility(s));
+        }
+
+        private void SetLobbyVisibility(string accessString)
+        {
+            LobbyAccess access = (LobbyAccess)Enum.Parse(typeof(LobbyAccess), accessString);
+            lobbyStore.SelectedLobby.Access = access;
         }
 
         private void CreateMatch()
