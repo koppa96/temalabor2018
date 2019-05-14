@@ -20,7 +20,7 @@ namespace Czeum.Client.TemplateSelectors
         {
             if (item == null)
             {
-                throw new ArgumentException("Tried selecting template for null match");
+                return null;
             }
 
             var match = (MatchStatus)item;
@@ -33,7 +33,7 @@ namespace Czeum.Client.TemplateSelectors
             {
                 return Connect4DataTemplate;
             }
-            throw new ArgumentException("No template found for this type.");
+            return null;
         }
     }
 }

@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dto="using:Czeum.DTO"
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
+    xmlns:converters="using:Czeum.Client.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -28,7 +29,11 @@
                         <Run> against </Run>
                         <Run Text="{Binding OtherPlayer}"/>
                     </TextBlock>
-                    <TextBlock Text="{Binding State}" Margin="30, 1, 1, 1"/>
+                    <TextBlock>
+                        <Run Text="You are playing as color "/>
+                        <Run Text="{Binding PlayerId, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Margin="30, 1, 1, 1"/>
                 </StackPanel>
                 <Button Grid.Column="2" Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
@@ -51,7 +56,11 @@
                         <Run> against </Run>
                         <Run Text="{Binding OtherPlayer}"/>
                     </TextBlock>
-                    <TextBlock Text="{Binding State}" Margin="30, 1, 1, 1"/>
+                    <TextBlock>
+                        <Run Text="You are playing as color "/>
+                        <Run Text="{Binding PlayerId, Converter={StaticResource Connect4IdToStringConverter}}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Margin="30, 1, 1, 1"/>
                 </StackPanel>
                 <Button Grid.Column="2" Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
@@ -60,6 +69,9 @@
         </DataTemplate>
 
         <templateSelectors:MatchListDataTemplateSelector x:Key="MatchListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
+        <converters:ChessIdToStringConverter x:Key="ChessIdToStringConverter"/>
+        <converters:Connect4IdToStringConverter x:Key="Connect4IdToStringConverter"/>
+        <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
     </Page.Resources>
 
     <Grid>
