@@ -68,7 +68,6 @@
 
         <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
         <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
-        <converters:InvitationToIconConverter x:Key="InvitationToIconConverter"/>
     </Page.Resources>
 
     <Grid>
