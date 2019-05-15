@@ -6,6 +6,9 @@ using Czeum.Abstractions.DTO;
 
 namespace Czeum.DTO
 {
+    /// <summary>
+    /// Represents a match stored in the server.
+    /// </summary>
     public class MatchStatus
     {
         public int MatchId { get; set; }

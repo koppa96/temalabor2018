@@ -8,6 +8,9 @@ using Czeum.Abstractions.GameServices;
 
 namespace Czeum.DTO.Chess
 {
+    /// <summary>
+    /// The MoveData of the chess game.
+    /// </summary>
     public class ChessMoveData : MoveData
     {
         public int FromRow { get; set; }

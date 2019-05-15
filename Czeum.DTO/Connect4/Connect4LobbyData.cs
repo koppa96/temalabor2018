@@ -4,6 +4,9 @@ using Czeum.Abstractions.GameServices;
 
 namespace Czeum.DTO.Connect4
 {
+    /// <summary>
+    /// A lobby that is used to create Connect4 games.
+    /// </summary>
     public class Connect4LobbyData : LobbyData
     {
         public int BoardWidth { get; set; }

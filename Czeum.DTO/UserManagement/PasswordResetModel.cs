@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Czeum.DTO.UserManagement
 {
+    /// <summary>
+    /// The data used by the AccountController to reset the user's password.
+    /// </summary>
     public class PasswordResetModel
     {
         public string Username { get; set; }

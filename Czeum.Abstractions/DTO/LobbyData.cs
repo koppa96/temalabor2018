@@ -2,6 +2,9 @@
 using Czeum.Abstractions.GameServices;
 
 namespace Czeum.Abstractions.DTO {
+    /// <summary>
+    /// An abstract base class for lobbies.
+    /// </summary>
 	public abstract class LobbyData {
 		public int LobbyId { get; set; }
 		public string Name { get; set; }

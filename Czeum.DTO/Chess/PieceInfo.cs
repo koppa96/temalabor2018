@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Czeum.DTO.Chess
 {
+    /// <summary>
+    /// A representation of a chess piece that is sent to the clients.
+    /// </summary>
     public class PieceInfo
     {
         public Color Color { get; set; }

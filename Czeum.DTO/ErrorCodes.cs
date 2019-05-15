@@ -1,5 +1,8 @@
 namespace Czeum.DTO
 {
+    /// <summary>
+    /// A list of error codes that are sent by the GameHub to their error handling clients.
+    /// </summary>
     public static class ErrorCodes
     {
         //Lobby management related errors
