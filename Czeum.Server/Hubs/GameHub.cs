@@ -1,44 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
+using Czeum.DAL.Extensions;
 using Czeum.DTO;
-using Czeum.Server.Services;
+using Czeum.Server.Services.FriendService;
+using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
+using Czeum.Server.Services.SoloQueue;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace Czeum.Server.Hubs
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public partial class GameHub : Hub<ICzeumClient>
     {
-        private readonly IEnumerable<IGameService> _gameServices;
-        private readonly IMatchRepository _matchRepository;
         private readonly IOnlineUserTracker _onlineUserTracker;
         private readonly ILobbyService _lobbyService;
         private readonly ILogger _logger;
         private readonly ISoloQueueService _soloQueueService;
-        private readonly IFriendRepository _friendRepository;
-
-        public GameHub(IEnumerable<IGameService> gameServices, IMatchRepository matchRepository, IOnlineUserTracker onlineUserTracker,
-            ILobbyService lobbyService, ILogger<GameHub> logger, ISoloQueueService soloQueueService, IFriendRepository friendRepository)
+        private readonly IGameHandler _gameHandler;
+        private readonly IFriendService _friendService;
+        private readonly IMessageService _messageService;
+        
+        public GameHub(IOnlineUserTracker onlineUserTracker, ILobbyService lobbyService, ILogger<GameHub> logger,
+            ISoloQueueService soloQueueService, IGameHandler gameHandler, IFriendService friendService,
+            IMessageService messageService)
         {
-            _gameServices = gameServices;
-            _matchRepository = matchRepository;
             _onlineUserTracker = onlineUserTracker;
             _lobbyService = lobbyService;
             _logger = logger;
             _soloQueueService = soloQueueService;
-            _friendRepository = friendRepository;
+            _gameHandler = gameHandler;
+            _friendService = friendService;
+            _messageService = messageService;
         }
 
         public override async Task OnConnectedAsync()
@@ -46,7 +47,7 @@ namespace Czeum.Server.Hubs
             await base.OnConnectedAsync();
             _onlineUserTracker.PutUser(Context.UserIdentifier);
 
-            var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
+            var friends = await _friendService.GetFriendsOfUserAsync(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendConnected(Context.UserIdentifier);
@@ -73,7 +74,7 @@ namespace Czeum.Server.Hubs
 
             _soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
-            var friends = _friendRepository.GetFriendsOf(Context.UserIdentifier);
+            var friends = await _friendService.GetFriendsOfUserAsync(Context.UserIdentifier);
             foreach (var friend in friends)
             {
                 await Clients.User(friend).FriendDisconnected(Context.UserIdentifier);
@@ -85,7 +86,7 @@ namespace Czeum.Server.Hubs
 
         public async Task ReceiveMove(MoveData moveData)
         {
-            var match = _matchRepository.GetMatchById(moveData.MatchId);
+            var match = await _gameHandler.GetMatchByIdAsync(moveData.MatchId);
 
             if (match == null)
             {
@@ -104,27 +105,44 @@ namespace Czeum.Server.Hubs
                 await Clients.Caller.ReceiveError(ErrorCodes.NotYourTurn);
                 return;
             }
+
+            if (match.HasEnded())
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.MatchEnded);
+                return;
+            }
             
             var playerId = match.GetPlayerId(Context.UserIdentifier);
 
             try
             {
-                var service = moveData.FindGameService(_gameServices);
-                var result = service.ExecuteMove(moveData, playerId);
-                _matchRepository.UpdateMatchByStatus(match.MatchId, result.Status);
-                var statues = _matchRepository.CreateMatchStatuses(match.MatchId, result);
+                var result = await _gameHandler.HandleMoveAsync(moveData, playerId);
                 
-                await Clients.Caller.ReceiveResult(statues[Context.UserIdentifier]);
-                if (result.Status != Status.Fail)
+                await Clients.Caller.ReceiveResult(result[Context.UserIdentifier]);
+                if (result[Context.UserIdentifier].CurrentBoard.Status != Status.Fail)
                 {
                     var otherPlayer = match.GetOtherPlayerName(Context.UserIdentifier);
-                    await Clients.User(otherPlayer).ReceiveResult(statues[otherPlayer]);
+                    await Clients.User(otherPlayer).ReceiveResult(result[otherPlayer]);
                 }
             }
             catch (GameNotSupportedException)
             {
                 await Clients.Caller.ReceiveError(ErrorCodes.GameNotSupported);
             }
+        }
+
+        public async Task SendMessageToMatch(int matchId, string message)
+        {
+            var msg = await _messageService.SendToMatchAsync(matchId, message, Context.UserIdentifier);
+            if (msg == null)
+            {
+                await Clients.Caller.ReceiveError(ErrorCodes.CannotSendMessage);
+                return;
+            }
+
+            var match = await _gameHandler.GetMatchByIdAsync(matchId);
+            await Clients.Caller.MatchMessageSent(matchId, msg);
+            await Clients.User(match.GetOtherPlayerName(Context.UserIdentifier)).ReceiveMatchMessage(matchId, msg);
         }
     }
 }

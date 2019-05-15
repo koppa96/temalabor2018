@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
+    <!--<Page.Resources>
         <converters:PlayerColorConverter x:Key="PlayerColorConverter"/>
         <converters:MatchStatusVisibilityConverter x:Key="MatchStatusVisibilityConverter"/>
         <converters:MatchStatusSymbolConverter x:Key="MatchStatusSymbolConverter"/>
@@ -62,5 +62,5 @@
 
             </Viewbox>
         </SplitView>
-    </Grid>
+    </Grid>-->
 </Page>

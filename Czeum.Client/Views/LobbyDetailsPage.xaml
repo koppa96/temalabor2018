@@ -1,0 +1,87 @@
+﻿<prism:SessionStateAwarePage
+    xmlns:prism="using:Prism.Windows.Mvvm"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="Czeum.Client.Views.LobbyDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Czeum.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chess="using:Czeum.DTO.Chess"
+    xmlns:connect4="using:Czeum.DTO.Connect4"
+    xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ChessLobbyTemplate" x:DataType="chess:ChessLobbyData">
+            <TextBlock Text="Chess lobbies do not contain additional settings"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Connect4LobbyTemplate" x:DataType="connect4:Connect4LobbyData">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Header="Board width" Text="{Binding BoardWidth, Mode=TwoWay}" Margin="0,10"/>
+                <TextBox Grid.Row="1" Header="Board height" Text="{Binding BoardHeight, Mode=TwoWay}" Margin="0,10"/>
+            </Grid>
+        </DataTemplate>
+
+        <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+    </Page.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <RelativePanel Name="DetailsPanel" Grid.Row="0" Grid.Column="0" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black">
+            <TextBlock Name="IdTextBlock" RelativePanel.AlignTopWithPanel="True">
+                <Run Text="Current lobby is: #"/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock Name="HostTextBlock" RelativePanel.AlignVerticalCenterWithPanel="True">
+                <Run Text="The host of the lobby is: "/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.Host}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock Name="GuestTextBlock" RelativePanel.AlignBottomWithPanel="True">
+                <Run Text="The current guest of the lobby is: "/>
+                <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
+            </TextBlock>
+            <Button RelativePanel.AlignRightWithPanel="True" Command="{Binding CreateMatchCommand}">
+                <SymbolIcon Symbol="Play"/>
+            </Button>
+        </RelativePanel>
+
+        <StackPanel Name="SettingsPanel" Grid.Row="1" Grid.Column="0" Margin="20" Padding="10" BorderThickness="2" BorderBrush="Black">
+            <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
+            <TextBox Header="Lobby name" PlaceholderText="Lobby Name" Text="{Binding lobbyStore.SelectedLobby.Name, Mode=TwoWay}" Margin="0,10"/>
+
+            <!-- Lobby type specific control goes here -->
+            <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding lobbyStore.SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
+                            HorizontalContentAlignment="Stretch"/>
+            <Button Margin="0,20,0,20" Command="{Binding SaveSettingsCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Width="20" Height="20" Symbol="Save"/>
+                    <TextBlock Text="Save settings"/>
+                </StackPanel>
+            </Button>
+            <Button Content="DEBUG BREAK" Margin="0,50,0,0" Click="ButtonBase_OnClick"/>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="20" Padding="20" BorderThickness="2" BorderBrush="Black" >
+            <TextBlock Text="Currently invited players: " FontWeight="Bold"/>
+            <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}"></ListView>
+        </StackPanel>
+
+    </Grid>
+</prism:SessionStateAwarePage>

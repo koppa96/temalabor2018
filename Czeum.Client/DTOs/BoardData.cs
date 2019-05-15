@@ -1,8 +1,8 @@
 ﻿using System;
-using Connect4Dtos;
+using Czeum.DTO;
 
 namespace Czeum.Client {
-    public class BoardData {
+    public class BoardData {/*
         private Item[] board;
 
         public int Width { get; set; }
@@ -23,6 +23,6 @@ namespace Czeum.Client {
         }
         public Item GetItemAt(int row, int column) {
             return board[Height * column + row];
-        }
+        }*/
     }
 }

@@ -11,87 +11,83 @@ using System.Windows.Input;
 using Prism.Commands;
 using Microsoft.Practices.Unity;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Prism.Windows.Navigation;
+using Czeum.ClientCallback;
+using Czeum.Abstractions.DTO;
 
 namespace Czeum.Client.ViewModels
 {
-    class LoginPageViewModel : ViewModelBase, ILoginPageViewModel, INotifyPropertyChanged
+    public class LoginPageViewModel : ViewModelBase
     {
-        private enum PageState { Login, Register}
-        private PageState pageState = PageState.Login;
-        private IUserManagerService ums;
+        private IUserManagerService userManagerService;
+        private INavigationService navigationService;
+        private IDialogService dialogService;
+        private string name;
+        public string Name {
+            get => name;
+            set => SetProperty(ref name, value);
+        }
+        private string password;
+        public string Password { 
+			get => password;
+            set => SetProperty(ref password, value);
+        }
+        private string confirmPassword;
+        public string ConfirmPassword {
+			get => confirmPassword;
+            set => SetProperty(ref confirmPassword, value);
+        }
+        private string email;
+        public string Email
+        {
+            get => email;
+            set => SetProperty(ref email, value);
+        }
 
-        private String _Name;
-        public String Name {
-            get { return _Name; }
-            set { SetProperty(ref _Name, value);  }
-        }
-        private String m_Password;
-        public String Password { 
-			get { return m_Password; }
-            set { SetProperty(ref m_Password, value); }
-		}
-        private String _ConfirmPassword;
-        public String ConfirmPassword {
-			get { return _ConfirmPassword; }
-            set {SetProperty(ref _ConfirmPassword, value); }
-		}
-        private String _PasswordRepeat;
-        public String PasswordRepeat
-        {
-            get { return _PasswordRepeat; }
-            set { SetProperty(ref _PasswordRepeat, value); }
-        }
-        private String _Email;
-        public String Email
-        {
-            get { return _Email; }
-            set { SetProperty(ref _Email, value); }
-        }
-        private Visibility _PasswordRepeatVisibility = Visibility.Collapsed;
-        public Visibility PasswordRepeatVisibility
-        {
-            get { return _PasswordRepeatVisibility; }
-            set { SetProperty(ref _PasswordRepeatVisibility, value); }
-        }
-        
-        public ICommand ToggleClickCommand { get; private set; }
-        public ICommand PerformClickCommand { get; private set; }
-        
+        public ICommand LoginCommand { get; private set; }
+        public ICommand RegisterCommand { get; private set; }
 
-        private void PerformClick()
+        private async void LoginAsync()
         {
-            if (pageState == PageState.Login)
-            {
-                ums.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+            dialogService.ShowLoadingDialog();
+            bool result = await userManagerService.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+            if (result) {
+                navigationService.Navigate("Lobby", null);
             }
-            else
-            {
-                ums.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, ConfirmPassword = PasswordRepeat });
+            else {
+                await dialogService.ShowError("Login failed. Please try again.");
             }
+            dialogService.HideLoadingDialog();
+            
         }
 
-        private void ToggleClick()
-        {
-            switch (pageState)
-            {
-                case PageState.Register:
-                    PasswordRepeatVisibility = Visibility.Collapsed;
-                    pageState = PageState.Login;
-                    break;
-                case PageState.Login:
-                    PasswordRepeatVisibility = Visibility.Visible;
-                    pageState = PageState.Register;
-                    break;
+        private async void RegisterAsync() {
+            dialogService.ShowLoadingDialog();
+            bool result = await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, Email = Email, ConfirmPassword = ConfirmPassword });
+            if (result) {
+                await dialogService.ShowSuccess("Registration completed successfully. You can now log in with your new account.");
             }
+            else {
+                await dialogService.ShowError("Registration failed. Please try again.");
+            }
+            dialogService.HideLoadingDialog();
         }
 
-        public LoginPageViewModel(IUserManagerService userManagerService)
+        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService, IDialogService dialogService)
         {
-            ums = userManagerService;
-            PerformClickCommand = new DelegateCommand(PerformClick);
-            ToggleClickCommand = new DelegateCommand(ToggleClick);
-            PasswordRepeatVisibility = Visibility.Collapsed;
+            this.navigationService = navigationService;   
+            this.userManagerService = userManagerService;
+            this.dialogService = dialogService;
+
+            LoginCommand = new DelegateCommand(LoginAsync);
+            RegisterCommand = new DelegateCommand(RegisterAsync);
         }
 
+        public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
+        {
+            navigationService.ClearHistory(); //This way the back button disappears after logging out
+            base.OnNavigatedTo(e, viewModelState);
+        }
     }
 }

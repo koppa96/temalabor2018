@@ -1,4 +1,4 @@
-﻿using Connect4Dtos;
+﻿using Czeum.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Czeum.Client.DTOs
-{
+{/*
     public class NotifyingLobbyData : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -70,5 +70,5 @@ namespace Czeum.Client.DTOs
         public NotifyingLobbyData(LobbyData data) {
             innerLobby = data;
         }
-    }
+    }*/
 }

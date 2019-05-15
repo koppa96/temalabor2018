@@ -14,12 +14,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Navigation;
-using Connect4Dtos;
+using Czeum.DTO;
 using System.Collections.ObjectModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Czeum.Client {
+namespace Czeum.Client {/*
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -108,5 +108,5 @@ namespace Czeum.Client {
             ConnectionManager.Instance.PlaceItem(SelectedMatch.MatchId, column);
         }
         
-    }
+    }*/
 }

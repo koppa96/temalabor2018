@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     
-    <NavigationView x:Name="NavigationViewControl"
+    <!--<NavigationView x:Name="NavigationViewControl"
                     IsSettingsVisible="True"
                     ItemInvoked="NavigationViewControl_ItemInvoked"
                     Header="Connect4"
@@ -29,5 +29,5 @@
             <Frame x:Name="ContentFrame"
                    Padding="20 20 20 20"/>
         </ScrollViewer>
-    </NavigationView>
+    </NavigationView>-->
 </Page>

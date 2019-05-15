@@ -1,37 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
-using Czeum.DAL.Interfaces;
+using Czeum.DAL;
+using Czeum.DTO;
+using IdentityServer4.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Server.Services.Lobby {
 	public class LobbyService : ILobbyService
 	{
 		private readonly ILobbyStorage _lobbyStorage;
-		private readonly IFriendRepository _repository;
+		private readonly ApplicationDbContext _context;
 
-		public LobbyService(ILobbyStorage lobbyStorage, IFriendRepository repository)
+		public LobbyService(ILobbyStorage lobbyStorage, ApplicationDbContext context)
 		{
 			_lobbyStorage = lobbyStorage;
-			_repository = repository;
+			_context = context;
 		}
 
-		public void AddLobby(LobbyData lobbyData)
-		{
-			_lobbyStorage.AddLobby(lobbyData);
-		}
-
-		public bool JoinPlayerToLobby(string player, int lobbyId)
+		public async Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId)
 		{
 			var lobby = _lobbyStorage.GetLobby(lobbyId);
 			if (lobby == null) {
 				throw new ArgumentException("Invalid lobby id");
 			}
 
-			return lobby.JoinGuest(player, _repository.GetFriendsOf(player));
+			var friends = await _context.Friendships
+				.Where(f => f.User1.UserName == player || f.User2.UserName == player)
+				.Select(f => f.User1.UserName == player ? f.User2.UserName : f.User1.UserName)
+				.ToListAsync();
+			
+			return lobby.JoinGuest(player, friends);
 		}
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId)
@@ -95,7 +96,7 @@ namespace Czeum.Server.Services.Lobby {
 			return _lobbyStorage.GetLobby(lobbyData);
 		}
 
-		public bool ValidateModifier(string modifier, int lobbyId)
+		public bool ValidateModifier(int lobbyId, string modifier)
 		{
 			return _lobbyStorage.GetLobby(lobbyId).Host == modifier;
 		}
@@ -105,20 +106,48 @@ namespace Czeum.Server.Services.Lobby {
 			return _lobbyStorage.GetLobby(lobbyId) != null;
 		}
 
-		public LobbyData CreateLobby(Type type)
+		public LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name)
 		{
 			if (!type.IsSubclassOf(typeof(LobbyData)))
 			{
 				throw new ArgumentException("Invalid lobby type.");
 			}
 			
-			return (LobbyData) Activator.CreateInstance(type);
+			var lobby = (LobbyData) Activator.CreateInstance(type);
+			lobby.Host = host;
+			lobby.Access = access;
+			lobby.Name = name.IsNullOrEmpty() ? host + "'s lobby" : name;
+			_lobbyStorage.AddLobby(lobby);
+			
+			return lobby;
+		}
+
+		public void AddMessageNow(int lobbyId, Message message)
+		{
+			message.Timestamp = DateTime.UtcNow;
+			_lobbyStorage.AddMessage(lobbyId, message);
+		}
+
+		public List<Message> GetMessages(int lobbyId)
+		{
+			return _lobbyStorage.GetMessages(lobbyId);
+		}
+
+		public string GetOtherPlayer(int lobbyId, string player)
+		{
+			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			return player == lobby.Host ? lobby.Guest : lobby.Host;
 		}
 
 		public void CancelInviteFromLobby(int lobbyId, string player)
 		{
 			var lobby = _lobbyStorage.GetLobby(lobbyId);
 			lobby.InvitedPlayers.Remove(player);
+		}
+
+		public void RemoveLobby(int id)
+		{
+			_lobbyStorage.RemoveLobby(id);
 		}
 	}
 }

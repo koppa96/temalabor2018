@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Czeum.Abstractions
 {
+    /// <summary>
+    /// An exception thrown when there is no suitable IGameService.
+    /// </summary>
     [Serializable]
     public class GameNotSupportedException : Exception
     {

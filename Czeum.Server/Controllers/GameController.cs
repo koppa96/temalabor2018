@@ -1,94 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
-using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO;
 using Czeum.DTO.UserManagement;
-using Czeum.Server.Hubs;
+using Czeum.Server.Services.FriendService;
+using Czeum.Server.Services.GameHandler;
 using Czeum.Server.Services.Lobby;
+using Czeum.Server.Services.MessageService;
 using Czeum.Server.Services.OnlineUsers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GameController : ControllerBase
     {
-        private readonly IBoardRepository<SerializedBoard> _boardRepository;
-        private readonly IMatchRepository _matchRepository;
         private readonly ILobbyService _lobbyService;
-        private readonly IFriendRepository _friendRepository;
         private readonly IOnlineUserTracker _onlineUserTracker;
+        private readonly IGameHandler _gameHandler;
+        private readonly IFriendService _friendService;
+        private readonly IMessageService _messageService;
 
-        public GameController(IBoardRepository<SerializedBoard> boardRepository, IMatchRepository matchRepository, 
-            ILobbyService lobbyService, IFriendRepository friendRepository, IOnlineUserTracker onlineUserTracker)
+        public GameController(ILobbyService lobbyService, IOnlineUserTracker onlineUserTracker, IGameHandler gameHandler,
+            IFriendService friendService, IMessageService messageService)
         {
-            _boardRepository = boardRepository;
-            _matchRepository = matchRepository;
             _lobbyService = lobbyService;
-            _friendRepository = friendRepository;
             _onlineUserTracker = onlineUserTracker;
+            _gameHandler = gameHandler;
+            _friendService = friendService;
+            _messageService = messageService;
         }
 
         [HttpGet]
-        [Route("/matches")]
-        public ActionResult<List<MatchStatus>> GetMatches()
+        [Route("matches")]
+        public async Task<ActionResult<List<MatchStatus>>> GetMatchesAsync()
         {
-            return _matchRepository.GetMatchesOf(User.Identity.Name).Select(m => new MatchStatus
+            return await _gameHandler.GetMatchesOfPlayerAsync(User.Identity.Name);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("boards/{id}")]
+        public async Task<ActionResult<MoveResult>> GetBoardByMatchIdAsync(int id)
+        {
+            var result = await _gameHandler.GetBoardByMatchIdAsync(id);
+
+            if (result == null)
             {
-                MatchId = m.MatchId,
-                OtherPlayer = m.GetOtherPlayerName(User.Identity.Name),
-                CurrentBoard = null,
-                State = m.GetGameStateForPlayer(User.Identity.Name)
-            }).ToList();
+                return NotFound();
+            }
+            
+            return result;
         }
 
         [HttpGet]
-        [Route("/boards/{id}")]
-        public ActionResult<MoveResult> GetBoardByMatchId(int id)
-        {
-            var serializedBoard = _boardRepository.GetByMatchId(id);
-            return serializedBoard.ToMoveResult();
-        }
-
-        [HttpGet]
-        [Route("/lobbies")]
+        [Route("lobbies")]
         public ActionResult<List<LobbyData>> GetLobbies()
         {
             return _lobbyService.GetLobbies();
         }
 
         [HttpGet]
-        [Route("/requests")]
-        public ActionResult<List<string>> GetFriendRequests()
+        [Route("requests")]
+        public async Task<ActionResult<List<string>>> GetFriendRequestsAsync()
         {
-            return _friendRepository.GetRequestsReceivedBy(User.Identity.Name);
+            return await _friendService.GetRequestsReceivedByUserAsync(User.Identity.Name);
         }
 
         [HttpGet]
-        [Route("/myrequests")]
-        public ActionResult<List<string>> GetSentRequests()
+        [Route("sent-requests")]
+        public async Task<ActionResult<List<string>>> GetSentRequests()
         {
-            return _friendRepository.GetRequestsSentBy(User.Identity.Name);
+            return await _friendService.GetRequestsSentByUserAsync(User.Identity.Name);
         }
 
         [HttpGet]
-        [Route("/friends")]
-        public ActionResult<List<Friend>> GetFriends()
+        [Route("friends")]
+        public async Task<ActionResult<List<Friend>>> GetFriends()
         {
-            return _friendRepository.GetFriendsOf(User.Identity.Name)
-                .Select(f => new Friend { IsOnline = _onlineUserTracker.GetUsers().Contains(f), Username = f })
+            return (await _friendService.GetFriendsOfUserAsync(User.Identity.Name))
+                .Select(f => new Friend { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
                 .ToList();
+        }
+
+        [HttpGet]
+        [Route("messages/{id}")]
+        public async Task<ActionResult<List<Message>>> GetMessages(int id)
+        {
+            return await _messageService.GetMessagesOfMatchAsync(id);
         }
     }
 }

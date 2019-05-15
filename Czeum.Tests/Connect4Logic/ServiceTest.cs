@@ -4,7 +4,9 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
+using Czeum.DAL.Entities;
 using Czeum.DTO.Connect4;
+using Czeum.Server.Services.ServiceContainer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Czeum.Tests.Connect4Logic
@@ -13,8 +15,8 @@ namespace Czeum.Tests.Connect4Logic
     public class ServiceTest
     {
         private Connect4MoveData move;
-        private List<IGameService> services;
-        private DummyRepository repository;
+        private Connect4Service originalService;
+        private IServiceContainer serviceContainer;
 
         [TestInitialize]
         public void Init()
@@ -25,30 +27,33 @@ namespace Czeum.Tests.Connect4Logic
                 MatchId = 1
             };
 
-            repository = new DummyRepository();
-            services = new List<IGameService>
+            originalService = new Connect4Service();
+            var services = new List<IGameService>
             {
-                new ChessService(null),
-                new Connect4Service(repository)
+                new ChessService(),
+                originalService
             };
+            serviceContainer = new ServiceContainer(services);
         }
 
         [TestMethod]
         public void MoveDataFindsService()
         {
-            var service = move.FindGameService(services);
-            Assert.AreSame(services[1], service);
+            var service = serviceContainer.FindByMoveData(move);
+            Assert.AreSame(originalService, service);
         }
 
         [TestMethod]
         public void ExecutionTest()
         {
-            var service = move.FindGameService(services);
-            var result = (Connect4MoveResult) service.ExecuteMove(move, 1);
+            var service = serviceContainer.FindByMoveData(move);
+            var result = service.ExecuteMove(move, 1, new Connect4Board().SerializeContent());
             
-            Assert.AreEqual(Status.Success, result.Status);
-            Assert.AreEqual(Item.Red, result.Board[result.Board.GetLength(0) - 1, 0]);
-            Assert.IsTrue(repository.GetByMatchId(1).BoardData.Contains('R'));
+            Assert.AreEqual(Status.Success, result.MoveResult.Status);
+
+            var connect4Result = (Connect4MoveResult) result.MoveResult;
+            Assert.AreEqual(Item.Red, connect4Result.Board[connect4Result.Board.GetLength(0) - 1, 0]);
+            Assert.IsTrue(result.UpdatedBoardData.Contains('R'));
         }
     }
 }

@@ -6,6 +6,9 @@ using Czeum.Abstractions.DTO;
 
 namespace Czeum.DTO.Chess
 {
+    /// <summary>
+    /// The MoveResult representation of a chess board.
+    /// </summary>
     public class ChessMoveResult : MoveResult
     {
         public bool WhiteKingInCheck { get; set; }

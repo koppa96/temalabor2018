@@ -1,71 +1,83 @@
-﻿using Czeum.Abstractions.DTO;
+﻿using Czeum.Abstractions;
+using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
-using Czeum.DAL.Interfaces;
 using Czeum.DTO.Connect4;
 
 namespace Czeum.Connect4Logic
 {
-    [GameService(ServiceFinder.Connect4)]
+    [GameService(typeof(Connect4MoveData), typeof(Connect4LobbyData), typeof(SerializedConnect4Board))]
     public class Connect4Service : IGameService
     {
-        private readonly IBoardRepository<SerializedConnect4Board> _repository;
-
-        public Connect4Service(IBoardRepository<SerializedConnect4Board> repository)
-        {
-            _repository = repository;
-        }
-
-        public MoveResult ExecuteMove(MoveData moveData, int playerId)
+        public InnerMoveResult ExecuteMove(MoveData moveData, int playerId, ISerializedBoard serializedBoard)
         {
             var move = (Connect4MoveData) moveData;
             var board = new Connect4Board();
-            var serializedBoard = _repository.GetByMatchId(move.MatchId);
-            board.DeserializeContent(serializedBoard);
+            board.DeserializeContent((SerializedConnect4Board) serializedBoard);
             
             var item = playerId == 1 ? Item.Red : Item.Yellow;
 
             if (!board.PlaceItem(item, move.Column))
             {
-                return new Connect4MoveResult
+                return new InnerMoveResult
                 {
-                    Status = Status.Fail,
-                    Board = board.Board
+                    UpdatedBoardData = serializedBoard.BoardData,
+                    MoveResult = new Connect4MoveResult
+                    {
+                        Status = Status.Fail,
+                        Board = board.Board
+                    }
                 };
             }
 
-            _repository.UpdateBoardData(serializedBoard.BoardId, board.SerializeContent().BoardData);
-            var result = new Connect4MoveResult
+            var newBoardData = board.SerializeContent().BoardData;
+            var result = new InnerMoveResult
             {
-                Board = board.Board
+                UpdatedBoardData = newBoardData,
+                MoveResult = new Connect4MoveResult
+                {
+                    Board = board.Board
+                }
             };
+            
             if (board.CheckWinner() == item)
             {
-                result.Status = Status.Win;
+                result.MoveResult.Status = Status.Win;
                 return result;
             }
 
             if (board.Full)
             {
-                result.Status = Status.Draw;
+                result.MoveResult.Status = Status.Draw;
                 return result;
             }
 
-            result.Status = Status.Success;
+            result.MoveResult.Status = Status.Success;
             return result;
         }
 
-        public int CreateNewBoard(LobbyData lobbyData)
+        public ISerializedBoard CreateNewBoard(LobbyData lobbyData)
         {
             var lobby = (Connect4LobbyData) lobbyData;
-            var board = new Connect4Board(lobby.BoardWidth, lobby.BoardHeight).SerializeContent();
-            return _repository.InsertBoard(board);
+            return new Connect4Board(lobby.BoardWidth, lobby.BoardHeight).SerializeContent();
         }
 
-        public int CreateDefaultBoard()
+        public ISerializedBoard CreateDefaultBoard()
         {
             var lobby = new Connect4LobbyData();
             return CreateNewBoard(lobby);
+        }
+
+        public MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
+        {
+            var board = new Connect4Board();
+            board.DeserializeContent((SerializedConnect4Board) serializedBoard);
+            
+            return new Connect4MoveResult
+            {
+                Status = Status.Requested,
+                Board = board.Board
+            };
         }
     }
 }

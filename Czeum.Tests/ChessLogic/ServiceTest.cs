@@ -6,7 +6,9 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;
+using Czeum.DAL.Entities;
 using Czeum.DTO.Chess;
+using Czeum.Server.Services.ServiceContainer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Czeum.Tests.ChessLogic
@@ -15,8 +17,8 @@ namespace Czeum.Tests.ChessLogic
     public class ServiceTest
     {
         private ChessMoveData move;
-        private DummyRepository repository;
-        private List<IGameService> services;
+        private IServiceContainer serviceContainer;
+        private ChessService originalService;
 
         [TestInitialize]
         public void Init()
@@ -30,32 +32,35 @@ namespace Czeum.Tests.ChessLogic
                 MatchId = 1
             };
             
-            repository = new DummyRepository();
-            services = new List<IGameService>
+            originalService = new ChessService();
+            var services = new List<IGameService>
             {
-                new Connect4Service(null),
-                new ChessService(repository)
+                new Connect4Service(),
+                originalService
             };
+            serviceContainer = new ServiceContainer(services);
         }
 
         [TestMethod]
         public void MoveDataFindsService()
         {
-            var service = move.FindGameService(services);
-            Assert.AreSame(services[1], service);
+            var foundService = serviceContainer.FindByMoveData(move);
+            Assert.AreSame(originalService, foundService);
         }
 
         [TestMethod]
         public void TestExecute()
         {
-            var service = move.FindGameService(services);
-            var result = (ChessMoveResult) service.ExecuteMove(move, 1);
+            var service = serviceContainer.FindByMoveData(move);
+            var result = service.ExecuteMove(move, 1, new ChessBoard(true).SerializeContent());
             
-            Assert.AreEqual(Status.Success, result.Status);
-            Assert.IsTrue(result.PieceInfos.Any(p => p.Row == move.ToRow && p.Column == move.ToColumn));
+            Assert.AreEqual(Status.Success, result.MoveResult.Status);
 
-            var pieceInfos = repository.GetById(1).BoardData.Trim().Split(' ');
-            Assert.IsTrue(pieceInfos.Contains($"WP_{move.ToRow},{move.ToColumn}"));
+            var chessResult = (ChessMoveResult) result.MoveResult;
+            Assert.IsTrue(chessResult.PieceInfos.Any(p => p.Row == move.ToRow && p.Column == move.ToColumn));
+
+            var pieceInfos = result.UpdatedBoardData.Trim().Split(' ');
+            Assert.IsTrue(pieceInfos.Contains($"WP_{move.ToRow},{move.ToColumn}_t"));
         }
     }
 }

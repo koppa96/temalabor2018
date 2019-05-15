@@ -1,130 +1,98 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
-using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Czeum.DAL.Entities;
+using Czeum.DTO;
 using Czeum.DTO.UserManagement;
+using Czeum.Server.Services.EmailSender;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 
-namespace Czeum.Server.Controllers {
+namespace Czeum.Server.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase {
+    public class AccountController : ControllerBase
+    {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
+        private readonly IEmailService _emailService;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
-                                 SignInManager<ApplicationUser> signInManager,
-                                 ILogger<AccountController> logger) {
+        public AccountController(UserManager<ApplicationUser> userManager, ILogger<AccountController> logger,
+            IEmailService emailService)
+        {
             _userManager = userManager;
-            _signInManager = signInManager;
             _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpPost]
-        [Route("/login")]
-        public async Task<ActionResult> Login([FromBody]LoginModel model) {
-            if (ModelState.IsValid) {
-                var user = await _userManager.FindByNameAsync(model.Username);
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Route("register")]
+        public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model)
+        {
+	        if (!ModelState.IsValid)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError);
+	        }
 
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-                if (result.Succeeded) {
-                    _logger.LogInformation($"{model.Username} logged in.");
+	        if (await _userManager.FindByNameAsync(model.Username) != null)
+	        {
+		        return BadRequest(ErrorCodes.UsernameAlreadyTaken);
+	        }
 
-					var claims = new Claim[] {
-						new Claim(ClaimTypes.Name, model.Username),
-					};
+	        if (model.Password != model.ConfirmPassword)
+	        {
+		        return BadRequest(ErrorCodes.PasswordsNotMatching);
+	        }
 
-					var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
-                    var securityToken = new JwtSecurityToken(
-                        issuer: "Czeum.Server",
-                        audience: "Czeum.Server",
-                        claims: claims,
-						expires: DateTime.Now.AddHours(1),
-                        signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
-                        );
+	        var user = new ApplicationUser
+	        {
+				UserName = model.Username,
+				Email = model.Email
+	        };
 
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
-                }
+	        var result = await _userManager.CreateAsync(user, model.Password);
+	        if (result.Succeeded)
+	        {
+		        _logger.LogInformation($"New user created: {user.UserName}");
+		        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
+		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id));
 
-	            return BadRequest("ErrorIncorrectLogin");
-            }
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var url = Url.Page(
+                    "/Account/ConfirmEmail",
+                    pageHandler: null,
+                    values: new { area = "Identity", id = user.Id, code = token },
+                    protocol: Request.Scheme);
 
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
+                await _emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
-        [HttpPost]
-        [Route("/logout")]
-		[Authorize]
-        public async Task<ActionResult> Logout() {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation($"{User.Identity.Name} logged out.");
-            return Ok();
-        }
+		        return Ok();
+	        }
 
-        [HttpPost]
-        [Route("/register")]
-        public async Task<ActionResult> Register([FromBody]RegisterModel model) {
-            if (ModelState.IsValid) {
-                if (await _userManager.FindByNameAsync(model.Username) != null) {
-                    return BadRequest("ErrorUserExists");
-                }
-
-                if (model.Password != model.ConfirmPassword) {
-                    return BadRequest("ErrorPasswordsNotMatching");
-                }
-
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded) {
-                    await _signInManager.SignInAsync(user, false);
-                    _logger.LogInformation($"{model.Username} created new account");
-
-					var claims = new Claim[] {
-						new Claim(ClaimTypes.Name, model.Username)
-					};
-
-					var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Connect4SecureSigningKey"));
-                    var securityToken = new JwtSecurityToken(
-                        issuer: "Czeum.Server",
-                        audience: "Czeum.Server",
-                        expires: DateTime.UtcNow.AddHours(1),
-						claims: claims,
-                        signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
-                        );
-
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(securityToken));
-                }
-
-                if (result.Errors.Count(e => e.Code == "DuplicateEmail") == 1) {
-                    return BadRequest("ErrorDuplicateEmail");
-                }
-
-                if (result.Errors.Count(e =>
-                        e.Code == "PasswordTooShort" || e.Code == "PasswordRequiresDigit" ||
-                        e.Code == "PasswordRequiresUpper") > 0) {
-                    return BadRequest("ErrorPasswordIncorrect");
-                }
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError);
+	        var errors = result.Errors.Select(e => e.Code);
+	        return BadRequest(errors);
         }
 
 		[HttpPost]
-        [Route("/changePass")]
-		[Authorize]
-		public async Task<ActionResult> ChangePassword([FromBody]ChangePasswordModel model) {
+        [Route("change-password")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
+        {
 			if (model.Password != model.ConfirmPassword) {
-				return BadRequest("ErrorPasswordsNotMatching");
+				return BadRequest(ErrorCodes.PasswordsNotMatching);
 			}
 
 			if (ModelState.IsValid) {
@@ -133,13 +101,136 @@ namespace Czeum.Server.Controllers {
 
 				if (result.Succeeded) {
 					_logger.LogInformation($"{User.Identity.Name} changed their password.");
-					return Ok("SuccessfulPasswordChange");
+					return Ok();
 				}
 
-				return BadRequest("OldPasswordIncorrect");
+				return BadRequest(ErrorCodes.BadOldPassword);
 			}
 
 			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Route("confirm-email")]
+        public async Task<ActionResult> ConfirmEmailAsync(string username, string token)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(username);
+                if (user == null)
+                {
+                    return NotFound(ErrorCodes.NoSuchUser);
+                }
+
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"{username} has confirmed their email.");
+                    return Ok();
+                }
+
+                return BadRequest();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpGet]
+        [Route("reset-password")]
+        public async Task<ActionResult> GetPasswordResetTokenAsync(string username, string email)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound(ErrorCodes.NoSuchUser);
+                }
+                if (user.UserName != username)
+                {
+                    return BadRequest(ErrorCodes.NoSuchUser);
+                }
+
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var url = Url.Page(
+                    "/Account/ResetPassword",
+                    pageHandler: null,
+                    values: new { area = "Identity", resetToken },
+                    protocol: Request.Scheme);
+
+                await _emailService.SendPasswordResetEmailAsync(email, resetToken, url);
+                _logger.LogInformation($"Password reset email for {username} was sent to {email}.");
+
+                return Ok();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPost]
+        [Route("reset-password")]
+        public async Task<ActionResult> ResetPasswordAsync([FromBody]PasswordResetModel model)
+        {
+            if (model.Password != model.ConfirmPassword)
+            {
+                return BadRequest(ErrorCodes.PasswordsNotMatching);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(model.Username);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"{user.UserName} has successfully reset their password.");
+                    return Ok();
+                }
+
+                var errors = result.Errors.Select(e => e.Code);
+                return BadRequest(errors);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpGet]
+        [Route("resend-confirm-email")]
+        public async Task<ActionResult> ResendConfirmationEmailAsync(string email)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound(ErrorCodes.NoSuchUser);
+                }
+                if (user.EmailConfirmed)
+                {
+                    return BadRequest();
+                }
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var url = Url.Page(
+                    "/Account/ConfirmEmail",
+                    pageHandler: null,
+                    values: new { area = "Identity", id = user.Id, code = token },
+                    protocol: Request.Scheme);
+
+                await _emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
+                _logger.LogInformation($"Confirmation email resent to {email}.");
+
+                return Ok();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

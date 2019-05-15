@@ -14,7 +14,7 @@ namespace Czeum.Client.Interfaces
         String Password { get; set; }
         String ConfirmPassword { get; set; }
         String Email { get; set; }
-        Visibility PasswordRepeatVisibility { get; set; }
+        Visibility RegistrationInfoVisibility { get; set; }
 
         ICommand ToggleClickCommand
         {

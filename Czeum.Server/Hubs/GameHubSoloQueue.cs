@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Czeum.DTO;
 
@@ -19,11 +17,8 @@ namespace Czeum.Server.Hubs
             var players = _soloQueueService.PopFirstTwoPlayers();
             if (players != null)
             {
-                var service = _gameServices.ToList()[new Random().Next(_gameServices.Count()) - 1];
-                var boardId = service.CreateDefaultBoard();
-                var matchId = _matchRepository.CreateMatch(players[0], players[1], boardId);
+                var statuses = await _gameHandler.CreateRandomMatchAsync(players[0], players[1]);
 
-                var statuses = _matchRepository.CreateMatchStatuses(matchId, boardId);
                 await Clients.User(players[0]).MatchCreated(statuses[players[0]]);
                 await Clients.User(players[1]).MatchCreated(statuses[players[1]]);
             }

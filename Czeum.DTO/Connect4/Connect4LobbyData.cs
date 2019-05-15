@@ -4,6 +4,9 @@ using Czeum.Abstractions.GameServices;
 
 namespace Czeum.DTO.Connect4
 {
+    /// <summary>
+    /// A lobby that is used to create Connect4 games.
+    /// </summary>
     public class Connect4LobbyData : LobbyData
     {
         public int BoardWidth { get; set; }
@@ -13,11 +16,6 @@ namespace Czeum.DTO.Connect4
         {
             BoardWidth = 7;
             BoardHeight = 6;
-        }
-        
-        public override IGameService FindGameService(IEnumerable<IGameService> services)
-        {
-            return ServiceFinder.FindService(ServiceFinder.Connect4, services);
         }
 
         public override string ValidateSettings()

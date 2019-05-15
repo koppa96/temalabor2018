@@ -7,12 +7,14 @@ using Czeum.DTO.UserManagement;
 
 namespace Czeum.Client.Interfaces
 {
-    interface IUserManagerService
+    public interface IUserManagerService
     {
         string AccessToken { get; }
-        
-        Task LoginAsync(LoginModel data);
-        Task ChangePasswordAsync(ChangePasswordModel data);
-        Task RegisterAsync(RegisterModel data);
+        string Username { get; }
+
+        Task<bool> LoginAsync(LoginModel data);
+        Task<bool> LogOutAsync();
+        Task<bool> ChangePasswordAsync(ChangePasswordModel data);
+        Task<bool> RegisterAsync(RegisterModel data);
     }
 }
