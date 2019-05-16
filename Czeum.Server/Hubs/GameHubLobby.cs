@@ -99,7 +99,6 @@ namespace Czeum.Server.Hubs
         {
             if (!_lobbyService.LobbyExists(lobbyId))
             {
-                await Clients.Caller.ReceiveError(ErrorCodes.NoSuchLobby);
                 return;
             }
             
