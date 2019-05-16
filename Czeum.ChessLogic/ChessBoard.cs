@@ -88,6 +88,11 @@ namespace Czeum.ChessLogic
             return from.Piece.Move(to);
         }
 
+        public bool TestMovePiece(Field from, Field to)
+        {
+            return from.Piece.TestMove(to);
+        }
+
         private void UndoMove(Field from, Field to)
         {
             to.Piece.UndoMove(from);
@@ -228,7 +233,7 @@ namespace Czeum.ChessLogic
             hitPiece = null;
             foreach (var move in possibleMoves)
             {
-                MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]);
+                TestMovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]);
 
                 if (IsKingSafe(color))
                 {

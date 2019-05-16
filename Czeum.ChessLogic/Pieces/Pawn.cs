@@ -60,6 +60,11 @@ namespace Czeum.ChessLogic.Pieces
             return result;
         }
 
+        internal override bool TestMove(Field targetField)
+        {
+            return base.Move(targetField);
+        }
+
         public override string ToString()
         {
             return base.ToString() + "_" + (hasMoved ? 't' : 'f');

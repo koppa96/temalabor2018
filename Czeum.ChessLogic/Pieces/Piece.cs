@@ -29,6 +29,11 @@ namespace Czeum.ChessLogic.Pieces
             return false;
         }
 
+        internal virtual bool TestMove(Field targetField)
+        {
+            return Move(targetField);
+        }
+
         internal bool UndoMove(Field targetField)
         {
             return SwitchPosition(targetField);
