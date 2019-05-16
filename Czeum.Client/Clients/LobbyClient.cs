@@ -37,14 +37,16 @@ namespace Czeum.Client.Clients {
             hubService.Connection.On<LobbyData>(nameof(LobbyCreated), LobbyCreated);
             hubService.Connection.On<LobbyData>(nameof(LobbyChanged), LobbyChanged);
             hubService.Connection.On<LobbyData, List<Message>>(nameof(JoinedToLobby), JoinedToLobby);
+            hubService.Connection.On(nameof(KickedFromLobby), KickedFromLobby);
         }
 
         public async Task LobbyDeleted(int lobbyId)
         {
-            if(lobbyService.CurrentLobby.LobbyId == lobbyId)
+            if(lobbyService.CurrentLobby?.LobbyId == lobbyId)
             {
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                    navigationService.GoBack();
+                    navigationService.Navigate(PageTokens.Lobby.ToString(), null);
+                    navigationService.ClearHistory();
                 });
             }
             await lobbyStore.RemoveLobby(lobbyId);
@@ -72,7 +74,11 @@ namespace Czeum.Client.Clients {
 
         public async Task KickedFromLobby()
         {
-            throw new NotImplementedException();
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                navigationService.Navigate(PageTokens.Lobby.ToString(), null);
+                navigationService.ClearHistory();
+                lobbyStore.SelectedLobby = null;
+            });
         }
 
         public async Task LobbyMessageSent(Message message)

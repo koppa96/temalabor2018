@@ -67,5 +67,10 @@ namespace Czeum.Client.Services {
         {
             throw new NotImplementedException();
         }
+
+        public Task KickGuest()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

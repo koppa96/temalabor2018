@@ -21,7 +21,8 @@ namespace Czeum.Client.Services {
     /// </summary>
     class LobbyService : ILobbyService
     {
-        private string BASE_URL = "https://localhost:44301";
+        //private string BASE_URL = "https://localhost:44301";
+        private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
         private IUserManagerService userManagerService;
         private INavigationService navigationService;
         private ILobbyStore lobbyStore;
@@ -99,6 +100,11 @@ namespace Czeum.Client.Services {
         {
             await hubService.Connection.InvokeAsync("CreateMatch", CurrentLobby.LobbyId);
 
+        }
+
+        public async Task KickGuest()
+        {
+            await hubService.Connection.InvokeAsync("KickGuest", CurrentLobby.LobbyId);
         }
     }
 }

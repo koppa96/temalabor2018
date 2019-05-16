@@ -16,5 +16,6 @@ namespace Czeum.Client.Interfaces
         Task<bool> LogOutAsync();
         Task<bool> ChangePasswordAsync(ChangePasswordModel data);
         Task<bool> RegisterAsync(RegisterModel data);
+        Task<bool> ConfirmAsync(string name, string confirmationToken);
     }
 }

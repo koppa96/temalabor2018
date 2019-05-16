@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <Viewbox Stretch="Uniform">
-        <Grid x:Name="BoardContainer"  HorizontalAlignment="Left" VerticalAlignment="Top"
+        <Grid x:Name="BoardContainer"  HorizontalAlignment="Center" VerticalAlignment="Center"
                   BorderBrush="DarkGray" BorderThickness="2" Margin="20" Width="800" Height="800">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

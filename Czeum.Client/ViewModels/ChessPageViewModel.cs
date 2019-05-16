@@ -51,7 +51,14 @@ namespace Czeum.Client.ViewModels
         private void PieceSelected(Tuple<int, int> selectedPieceCoords)
         {
             ChessMoveResult moveResult = (ChessMoveResult) matchService.CurrentMatch.CurrentBoard;
-            matchService.CurrentMatch.State
+            var clickedPiece = moveResult.PieceInfos.FirstOrDefault(p => p.Column == selectedPieceCoords.Item1 && p.Row == selectedPieceCoords.Item2);
+            //If we clicked on the opponent's piece
+            if((matchService.CurrentMatch.PlayerId == 1 && clickedPiece.Color == Color.Black)
+                || (matchService.CurrentMatch.PlayerId == 2 && clickedPiece.Color == Color.White))
+            {
+                FieldSelected(selectedPieceCoords);
+                return;
+            }
             selectedPiece = selectedPieceCoords;
         }
     }

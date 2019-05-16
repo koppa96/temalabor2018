@@ -45,7 +45,7 @@ namespace Czeum.Client.Models {
             var lobbyToRemove = LobbyList.FirstOrDefault(x => x.LobbyId == lobbyId);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 LobbyList.Remove(lobbyToRemove);
-                if(selectedLobby.LobbyId == lobbyId)
+                if(selectedLobby?.LobbyId == lobbyId)
                 {
                     SelectedLobby = null;
                 }
@@ -61,7 +61,7 @@ namespace Czeum.Client.Models {
                 LobbyList.RemoveAt(index);
                 LobbyList.Insert(index, lobby);
 
-                if((selectedLobby != null) && (selectedLobby.LobbyId == lobby.LobbyId))
+                if((selectedLobby != null) && (selectedLobby?.LobbyId == lobby.LobbyId))
                 {
                     SelectedLobby = lobby;
                 }

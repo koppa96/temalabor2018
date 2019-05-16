@@ -29,13 +29,15 @@ namespace Czeum.Client.ViewModels {
         private IDialogService dialogService;
         private IUserManagerService userManagerService;
         private ILobbyClient lobbyClient;
+        private IErrorClient errorClient;
         private IHubService hubService;
         public ILobbyStore lobbyStore { get; private set; }
 
         public ObservableCollection<LobbyData> LobbyList { get => lobbyService.LobbyList; }
+        public string Username { get => userManagerService.Username; }
 
         public LobbyPageViewModel(ILobbyService lobbyService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService, 
-            ILobbyClient lobbyClient, IUserManagerService userManagerService, IHubService hubService, ILobbyStore lobbyStore) {
+            ILobbyClient lobbyClient, IUserManagerService userManagerService, IHubService hubService, ILobbyStore lobbyStore, IErrorClient errorClient) {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
             this.loggerService = loggerService;
@@ -44,10 +46,11 @@ namespace Czeum.Client.ViewModels {
             this.lobbyClient = lobbyClient;
             this.hubService = hubService;
             this.lobbyStore = lobbyStore;
+            this.errorClient = errorClient;
 
             lobbyService.QueryLobbyList();
             JoinLobbyCommand = new DelegateCommand<int?>(JoinLobby);
-            CreateLobbyCommand = new DelegateCommand<Type>(CreateLobby);
+            CreateLobbyCommand = new DelegateCommand<string>(CreateLobby);
         }
 
         public ICommand JoinLobbyCommand { get; }
@@ -57,21 +60,29 @@ namespace Czeum.Client.ViewModels {
         {
             if (!index.HasValue)
             {
-                loggerService.Log("Tried navigating to an invalid Lobby ID", Category.Debug, Priority.None);
                 return;
             }
             lobbyService.JoinLobby(index.Value);
-            loggerService.Log($"Navigating to Lobby #{index.Value}", Category.Debug, Priority.None);
-            navigationService.Navigate("LobbyDetails", null);
         }
 
-        private async void CreateLobby(Type lobbyType)
+        private async void CreateLobby(string lobbyTypeString)
         {
-            if (lobbyType == null)
+            switch (lobbyTypeString)
             {
-                lobbyType = typeof(ChessLobbyData);
+                case "Chess":
+                    await lobbyService.CreateLobby(typeof(ChessLobbyData));
+                    break;
+                case "Connect4":
+                    await lobbyService.CreateLobby(typeof(Connect4LobbyData));
+                    break;
+                default:
+                    break;
             }
-            await lobbyService.CreateLobby(lobbyType);
+        }
+
+        public bool IsUserInvited()
+        {
+            return true;
         }
 
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

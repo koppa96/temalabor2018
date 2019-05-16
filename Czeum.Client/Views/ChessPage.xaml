@@ -8,10 +8,34 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Czeum.Client.Controls"
+    xmlns:converters="using:Czeum.Client.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <converters:ChessIdToStringConverter x:Key="ChessIdToStringConverter"/>
+        <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
+    </Page.Resources>
+    
     <Grid>
-        <controls:ChessGrid Match="{Binding matchStore.SelectedMatch}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <controls:ChessGrid Match="{Binding matchStore.SelectedMatch}" Grid.Column="0"/>
+        <StackPanel Grid.Column="1">
+            <TextBlock TextWrapping="WrapWholeWords">
+                <Run Text="You are playing against "/>
+                <Run Text="{Binding matchStore.SelectedMatch.OtherPlayer}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock TextWrapping="WrapWholeWords">
+                <Run Text="You are playing as "/>
+                <Run Text="{Binding matchStore.SelectedMatch.PlayerId, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock TextWrapping="WrapWholeWords">
+                <Run Text="{Binding matchStore.SelectedMatch.State, Converter={StaticResource GameStateToStringConverter}}"/>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </prism:SessionStateAwarePage>

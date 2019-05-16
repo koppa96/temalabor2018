@@ -51,6 +51,7 @@ namespace Czeum.Client
             Container.RegisterType<ILobbyClient, LobbyClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHubService, HubService>(new ContainerControlledLifetimeManager());
 
+            Container.RegisterType<IErrorClient, ErrorClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IGameClient, GameClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMatchService, MatchService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMatchStore, MatchStore>(new ContainerControlledLifetimeManager());

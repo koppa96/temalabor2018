@@ -12,6 +12,7 @@
     xmlns:chess="using:Czeum.DTO.Chess"
     xmlns:connect4="using:Czeum.DTO.Connect4"
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
+    xmlns:converters="using:Czeum.Client.Converters"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
@@ -32,6 +33,7 @@
                     </TextBlock>
                     <TextBlock Text="{Binding Host}" Margin="30, 1, 1, 1"/>
                     <TextBlock Text="{Binding Guest}" Margin="30, 1, 1, 1"/>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left"/>
                 </StackPanel>
                 <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
@@ -56,6 +58,7 @@
                     </TextBlock>
                     <TextBlock Text="{Binding Host}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
                     <TextBlock Text="{Binding Guest}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left"/>
                 </StackPanel>
                 <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding LobbyId}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
@@ -64,6 +67,7 @@
         </DataTemplate>
 
         <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+        <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -81,12 +85,18 @@
             </ListView.ItemContainerStyle>
 
             <ListView.Footer>
-                <Button Height="80" HorizontalAlignment="Stretch" Background="DarkGray" Command="{Binding CreateLobbyCommand}">
+                <DropDownButton Height="80" HorizontalAlignment="Stretch" Background="DarkGray">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add" Margin="10,0,10,0" />
                         <TextBlock Text="Create new lobby" Style="{ThemeResource TitleTextBlockStyle}"/>
                     </StackPanel>
-                </Button>
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem Text="Chess" Command="{Binding CreateLobbyCommand}" CommandParameter="Chess"/>
+                            <MenuFlyoutItem Text="Connect Four" Command="{Binding CreateLobbyCommand}" CommandParameter="Connect4"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
             </ListView.Footer>
         </ListView>
     </Grid>
