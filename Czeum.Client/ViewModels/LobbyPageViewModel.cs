@@ -29,6 +29,7 @@ namespace Czeum.Client.ViewModels {
         private IDialogService dialogService;
         private IUserManagerService userManagerService;
         private ILobbyClient lobbyClient;
+        private IErrorClient errorClient;
         private IHubService hubService;
         public ILobbyStore lobbyStore { get; private set; }
 
@@ -36,7 +37,7 @@ namespace Czeum.Client.ViewModels {
         public string Username { get => userManagerService.Username; }
 
         public LobbyPageViewModel(ILobbyService lobbyService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService, 
-            ILobbyClient lobbyClient, IUserManagerService userManagerService, IHubService hubService, ILobbyStore lobbyStore) {
+            ILobbyClient lobbyClient, IUserManagerService userManagerService, IHubService hubService, ILobbyStore lobbyStore, IErrorClient errorClient) {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
             this.loggerService = loggerService;
@@ -45,6 +46,7 @@ namespace Czeum.Client.ViewModels {
             this.lobbyClient = lobbyClient;
             this.hubService = hubService;
             this.lobbyStore = lobbyStore;
+            this.errorClient = errorClient;
 
             lobbyService.QueryLobbyList();
             JoinLobbyCommand = new DelegateCommand<int?>(JoinLobby);

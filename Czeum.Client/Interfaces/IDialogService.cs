@@ -10,7 +10,7 @@ namespace Czeum.Client.Interfaces {
     public interface IDialogService {
         IAsyncOperation<ContentDialogResult> ShowConfirmation(string message);
         IAsyncOperation<ContentDialogResult> ShowSuccess(string message);
-        IAsyncOperation<ContentDialogResult> ShowError(string message);
+        Task ShowError(string message);
         void ShowLoadingDialog();
         void HideLoadingDialog();
     }

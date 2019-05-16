@@ -8,6 +8,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Czeum.Client.Interfaces;
 using ProgressRing = Windows.UI.Xaml.Controls.ProgressRing;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 
 namespace Czeum.Client.Services {
     public class DialogService : IDialogService
@@ -39,15 +41,19 @@ namespace Czeum.Client.Services {
             return contentDialog.ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowError(string message) 
+        public async Task ShowError(string message) 
         {
-            HideLoadingDialog();
-            var contentDialog = new ContentDialog() {
-                Title = "Error",
-                Content = message,
-                PrimaryButtonText = "Ok"
-            };
-            return contentDialog.ShowAsync();
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                HideLoadingDialog();
+                var contentDialog = new ContentDialog()
+                {
+                    Title = "Error",
+                    Content = message,
+                    PrimaryButtonText = "Ok"
+                };
+                await contentDialog.ShowAsync();
+            });
         }
 
         public void ShowLoadingDialog()

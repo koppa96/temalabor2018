@@ -107,6 +107,7 @@
     <Compile Include="AppShell.xaml.cs">
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Clients\ErrorClient.cs" />
     <Compile Include="Clients\LobbyClient.cs" />
     <Compile Include="Clients\GameClient.cs" />
     <Compile Include="Controls\ChessGrid.xaml.cs">
