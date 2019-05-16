@@ -54,7 +54,6 @@ namespace Czeum.Client.ViewModels
 
         private void Leave()
         {
-            lobbyService.LeaveLobby();
             navigationService.Navigate(PageTokens.Lobby.ToString(), null);
             navigationService.ClearHistory();
         }
