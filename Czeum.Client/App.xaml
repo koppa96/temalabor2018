@@ -11,8 +11,8 @@
                 <ResourceDictionary Source="ms-appx:///Themes/SplitViewSampleStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!--<x:String x:Key="BaseUrl">https://czeum.azurewebsites.net</x:String>-->
-            <x:String x:Key="BaseUrl">https://localhost:44301</x:String>
+            <x:String x:Key="BaseUrl">https://czeum.azurewebsites.net</x:String>
+            <!--<x:String x:Key="BaseUrl">https://localhost:44301</x:String>-->
         </ResourceDictionary>
     </prismUnity:PrismUnityApplication.Resources>
 
