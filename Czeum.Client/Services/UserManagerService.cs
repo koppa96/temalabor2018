@@ -153,6 +153,37 @@ namespace Czeum.Client.Services {
                 return false;
             }
         }
+        public async Task<bool> ConfirmAsync(string name, string confirmationToken)
+        {
+            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
+            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            using (var client = new HttpClient(ignoreCertHandler))
+            {
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("username", name),
+                    new KeyValuePair<string, string>("token", confirmationToken)
+                });
+
+                try
+                {
+                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/confirm-url");
+                    var response = await client.PostAsync(targetUrl, formContent);
+                    string responseString = await response.Content.ReadAsStringAsync();
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //Timeout
+                    return false;
+                }
+
+                return false;
+            }
+        }
 
         private void ParseJsonResponse(string jsonString)
         {
@@ -160,5 +191,6 @@ namespace Czeum.Client.Services {
             AccessToken = jsonObject.GetValue("access_token").ToString();
             refreshToken = jsonObject.GetValue("refresh_token").ToString();
         }
+
     }
 }

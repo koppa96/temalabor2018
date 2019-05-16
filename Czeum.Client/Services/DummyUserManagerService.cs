@@ -50,5 +50,10 @@ namespace Czeum.Client.Services
             await Task.Delay(2000);
             return true;
         }
+
+        public Task<bool> ConfirmAsync(string name, string confirmationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

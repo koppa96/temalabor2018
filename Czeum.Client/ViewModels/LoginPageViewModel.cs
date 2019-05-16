@@ -44,9 +44,17 @@ namespace Czeum.Client.ViewModels
             get => email;
             set => SetProperty(ref email, value);
         }
+        private string confirmationToken;
+
+        public string ConfirmationToken {
+            get { return confirmationToken; }
+            set { confirmationToken = value; }
+        }
+
 
         public ICommand LoginCommand { get; private set; }
         public ICommand RegisterCommand { get; private set; }
+        public ICommand ConfirmCommand { get; private set; }
 
         private async void LoginAsync()
         {
@@ -58,19 +66,37 @@ namespace Czeum.Client.ViewModels
             else {
                 await dialogService.ShowError("Login failed. Please try again.");
             }
+            ResetFields();
             dialogService.HideLoadingDialog();
-            
         }
 
         private async void RegisterAsync() {
             dialogService.ShowLoadingDialog();
             bool result = await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, Email = Email, ConfirmPassword = ConfirmPassword });
             if (result) {
-                await dialogService.ShowSuccess("Registration completed successfully. You can now log in with your new account.");
+                await dialogService.ShowSuccess("Registration completed successfully. Please confirm your account with the token sent to your email address.");
             }
             else {
                 await dialogService.ShowError("Registration failed. Please try again.");
             }
+            ResetFields();
+            dialogService.HideLoadingDialog();
+        }
+
+
+        private async void ConfirmAsync()
+        {
+            dialogService.ShowLoadingDialog();
+            bool result = await userManagerService.ConfirmAsync(Name, ConfirmationToken);
+            if (result)
+            {
+                await dialogService.ShowSuccess("You have successfully confirmed your registration. You can now log in to your account.");
+            }
+            else
+            {
+                await dialogService.ShowError("Process failed. Please try again.");
+            }
+            ResetFields();
             dialogService.HideLoadingDialog();
         }
 
@@ -82,6 +108,14 @@ namespace Czeum.Client.ViewModels
 
             LoginCommand = new DelegateCommand(LoginAsync);
             RegisterCommand = new DelegateCommand(RegisterAsync);
+            ConfirmCommand = new DelegateCommand(ConfirmAsync);
+        }
+        private void ResetFields()
+        {
+            Name = "";
+            Password = "";
+            ConfirmationToken = "";
+            Email = "";
         }
 
         public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
