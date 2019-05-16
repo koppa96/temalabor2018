@@ -57,9 +57,73 @@ namespace Czeum.Client.Controls
             {
                 return;
             }
-            
-            BoardContainer.Children.Clear();
 
+            BoardContainer.Children.Clear();
+            if(Match.PlayerId == 1)
+            {
+                DrawBoard();
+                PlacePieces(boardData);
+            }
+            else
+            {
+                DrawBoardFlipped();
+                PlacePiecesFlipped(boardData);
+            }
+        }
+
+        private void PlacePieces(ChessMoveResult boardData)
+        {
+            foreach (var piece in boardData.PieceInfos)
+            {
+                Image i = new Image();
+                i.Stretch = Stretch.Uniform;
+                i.HorizontalAlignment = HorizontalAlignment.Center;
+                i.VerticalAlignment = VerticalAlignment.Center;
+                string colorChar = piece.Color == DTO.Chess.Color.White ? "w" : "b";
+                string typeChar = GetPieceTypeString(piece);
+                string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
+                i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));
+                i.SetValue(Grid.RowProperty, piece.Row);
+                i.SetValue(Grid.ColumnProperty, piece.Column);
+
+                var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) };
+                var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
+                behavior.Actions.Add(action);
+                var bColl = new BehaviorCollection();
+                bColl.Add(behavior);
+                Interaction.SetBehaviors(i, bColl);
+
+                BoardContainer.Children.Add(i);
+            }
+        }
+        private void PlacePiecesFlipped(ChessMoveResult boardData)
+        {
+            foreach (var piece in boardData.PieceInfos)
+            {
+                Image i = new Image();
+                i.Stretch = Stretch.Uniform;
+                i.HorizontalAlignment = HorizontalAlignment.Center;
+                i.VerticalAlignment = VerticalAlignment.Center;
+                string colorChar = piece.Color == DTO.Chess.Color.White ? "w" : "b";
+                string typeChar = GetPieceTypeString(piece);
+                string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
+                i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));
+                i.SetValue(Grid.RowProperty, 7 - piece.Row);
+                i.SetValue(Grid.ColumnProperty, 7 - piece.Column);
+
+                var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) };
+                var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
+                behavior.Actions.Add(action);
+                var bColl = new BehaviorCollection();
+                bColl.Add(behavior);
+                Interaction.SetBehaviors(i, bColl);
+
+                BoardContainer.Children.Add(i);
+            }
+        }
+
+        private void DrawBoard()
+        {
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -84,27 +148,32 @@ namespace Czeum.Client.Controls
                     BoardContainer.Children.Add(field);
                 }
             }
-            foreach(var piece in boardData.PieceInfos)
+        }
+        private void DrawBoardFlipped()
+        {
+            for (int i = 7; i >= 0; i--)
             {
-                Image i = new Image();
-                i.Stretch = Stretch.Uniform;
-                i.HorizontalAlignment = HorizontalAlignment.Center;
-                i.VerticalAlignment = VerticalAlignment.Center;
-                string colorChar = piece.Color == DTO.Chess.Color.White ? "w" : "b";
-                string typeChar = GetPieceTypeString(piece);
-                string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
-                i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));
-                i.SetValue(Grid.RowProperty, piece.Row);
-                i.SetValue(Grid.ColumnProperty, piece.Column);
+                for (int j = 7; j >= 0; j--)
+                {
+                    var field = new Rectangle
+                    {
+                        Fill = new SolidColorBrush((i + j) % 2 == 0 ? Colors.White : Colors.DarkGray),
+                        Width = 100,
+                        Height = 100,
+                        Stretch = Stretch.Uniform
+                    };
+                    field.SetValue(Grid.RowProperty, i);
+                    field.SetValue(Grid.ColumnProperty, j);
 
-                var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) };
-                var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
-                behavior.Actions.Add(action);
-                var bColl = new BehaviorCollection();
-                bColl.Add(behavior);
-                Interaction.SetBehaviors(i, bColl);
+                    var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.FieldSelectedCommand, CommandParameter = new Tuple<int, int>(7 - j, 7 - i) };
+                    var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
+                    behavior.Actions.Add(action);
+                    var bColl = new BehaviorCollection();
+                    bColl.Add(behavior);
+                    Interaction.SetBehaviors(field, bColl);
 
-                BoardContainer.Children.Add(i);
+                    BoardContainer.Children.Add(field);
+                }
             }
         }
 
