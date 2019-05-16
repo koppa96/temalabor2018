@@ -225,6 +225,7 @@ namespace Czeum.ChessLogic
                 return false;
             }
 
+            hitPiece = null;
             foreach (var move in possibleMoves)
             {
                 MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]);
