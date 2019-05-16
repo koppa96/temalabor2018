@@ -14,7 +14,8 @@ using Newtonsoft.Json.Linq;
 namespace Czeum.Client.Services {
     public class UserManagerService : IUserManagerService
     {
-        private string BASE_URL = "https://localhost:44301";
+        //private string BASE_URL = "https://localhost:44301";
+        private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
 
         public string AccessToken { get; private set; }
         private string refreshToken;
@@ -159,16 +160,13 @@ namespace Czeum.Client.Services {
             ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             using (var client = new HttpClient(ignoreCertHandler))
             {
-                var formContent = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("username", name),
-                    new KeyValuePair<string, string>("token", confirmationToken)
-                });
-
                 try
                 {
-                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/confirm-url");
-                    var response = await client.PostAsync(targetUrl, formContent);
+                    var targetUrl = new Flurl.Url(BASE_URL)
+                        .AppendPathSegments(new[] { "api", "confirm-email" })
+                        .SetQueryParams(new { username = name, token = confirmationToken })
+                        .ToString();
+                    var response = await client.PostAsync(targetUrl, null);
                     string responseString = await response.Content.ReadAsStringAsync();
                     if (response.StatusCode == HttpStatusCode.OK)
                     {

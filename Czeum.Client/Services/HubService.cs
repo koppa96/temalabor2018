@@ -15,7 +15,8 @@ namespace Czeum.Client.Services {
         private INavigationService navigationService;
         private IDialogService dialogService;
 
-        private string BASE_URL = "https://localhost:44301";
+        //private string BASE_URL = "https://localhost:44301";
+        private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
         private IUserManagerService userManagerService;
 
         public HubConnection Connection { get; private set; }

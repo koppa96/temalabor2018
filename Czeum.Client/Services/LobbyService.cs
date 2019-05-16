@@ -21,7 +21,8 @@ namespace Czeum.Client.Services {
     /// </summary>
     class LobbyService : ILobbyService
     {
-        private string BASE_URL = "https://localhost:44301";
+        //private string BASE_URL = "https://localhost:44301";
+        private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
         private IUserManagerService userManagerService;
         private INavigationService navigationService;
         private ILobbyStore lobbyStore;

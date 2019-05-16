@@ -19,7 +19,8 @@ namespace Czeum.Client.Services
 {
     class MatchService : IMatchService
     {
-        private string BASE_URL = "https://localhost:44301";
+        //private string BASE_URL = "https://localhost:44301";
+        private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
         private IUserManagerService userManagerService;
         private IMatchStore matchStore;
         private IHubService hubService;

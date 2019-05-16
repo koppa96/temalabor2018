@@ -52,7 +52,7 @@
                 <StackPanel>
                     <TextBox Header="Username" PlaceholderText="Username" Text="{Binding Path=Name, Mode=TwoWay}"/>
                     <TextBox Header="Confirmation token" PlaceholderText="Confirmation token" Text="{Binding Path=ConfirmationToken, Mode=TwoWay}"/>
-                    <Button Content="Register" Command="{Binding ConfirmCommand}" HorizontalAlignment="Stretch" Margin="0,30"/>
+                    <Button Content="Confirm" Command="{Binding ConfirmCommand}" HorizontalAlignment="Stretch" Margin="0,30"/>
                 </StackPanel>
             </PivotItem>
 
