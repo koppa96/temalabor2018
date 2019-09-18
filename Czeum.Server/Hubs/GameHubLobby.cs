@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 using Microsoft.Extensions.Logging;
 
@@ -51,6 +52,7 @@ namespace Czeum.Server.Hubs
 
         public async Task InvitePlayer(int lobbyId, string player)
         {
+            //TODO: Validate the inviting player's identity
             if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
             {
                 return;

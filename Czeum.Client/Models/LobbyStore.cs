@@ -10,6 +10,7 @@ using Czeum.Client.Interfaces;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.Models {
 

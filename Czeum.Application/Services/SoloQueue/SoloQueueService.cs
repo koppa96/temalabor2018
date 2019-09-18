@@ -3,45 +3,45 @@
 namespace Czeum.Application.Services.SoloQueue {
 	public class SoloQueueService : ISoloQueueService
 	{
-		private readonly List<string> _queuingPlayers;
-		private readonly object _syncObj;
+		private readonly List<string> queuingPlayers;
+		private readonly object syncObj;
 
 		public SoloQueueService()
 		{
-			_queuingPlayers = new List<string>();
-			_syncObj = new object();
+			queuingPlayers = new List<string>();
+			syncObj = new object();
 		}
 
 		public void JoinSoloQueue(string user)
 		{
-			lock (_syncObj)
+			lock (syncObj)
 			{
-				_queuingPlayers.Add(user);
+				queuingPlayers.Add(user);
 			}
 		}
 
 		public void LeaveSoloQueue(string user)
 		{
-			lock (_syncObj)
+			lock (syncObj)
 			{
-				_queuingPlayers.Remove(user);
+				queuingPlayers.Remove(user);
 			}
 		}
 
 		public string[] PopFirstTwoPlayers()
 		{
 			string[] players = new string[2];
-			lock (_syncObj)
+			lock (syncObj)
 			{
-				if (_queuingPlayers.Count < 2)
+				if (queuingPlayers.Count < 2)
 				{
 					return null;
 				}
 
-				players[0] = _queuingPlayers[0];
-				players[1] = _queuingPlayers[1];
-				_queuingPlayers.RemoveAt(0);
-				_queuingPlayers.RemoveAt(0);
+				players[0] = queuingPlayers[0];
+				players[1] = queuingPlayers[1];
+				queuingPlayers.RemoveAt(0);
+				queuingPlayers.RemoveAt(0);
 			}
 
 			return players;
@@ -49,9 +49,9 @@ namespace Czeum.Application.Services.SoloQueue {
 
 		public bool IsQueuing(string user)
 		{
-			lock (_syncObj)
+			lock (syncObj)
 			{
-				return _queuingPlayers.Contains(user);
+				return queuingPlayers.Contains(user);
 			}
 		}
 	}

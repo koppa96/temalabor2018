@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.ClientCallback;
 
 namespace Czeum.Client.Interfaces {

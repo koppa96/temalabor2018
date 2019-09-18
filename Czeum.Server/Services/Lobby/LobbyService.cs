@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DAL;
 using Czeum.DTO;
 using IdentityServer4.Extensions;

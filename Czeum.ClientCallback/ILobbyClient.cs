@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 
 namespace Czeum.ClientCallback

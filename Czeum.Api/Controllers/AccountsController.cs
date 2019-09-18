@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Czeum.Api.Common;
 using Czeum.Application.Services.EmailSender;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
@@ -15,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Czeum.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route(ApiResources.Accounts.BasePath)]
     [ApiController]
     public class AccountsController : ControllerBase
     {

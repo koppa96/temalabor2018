@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using NSwag;
 
 namespace Czeum.Api
@@ -70,7 +71,7 @@ namespace Czeum.Api
             });
             
             services.AddControllers()
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson(protocol => { protocol.SerializerSettings.TypeNameHandling = TypeNameHandling.All; });
 
             services.AddAuthentication()
                 .AddJwtBearer(options =>
@@ -109,7 +110,11 @@ namespace Czeum.Api
                 });
             });
 
-            services.AddSignalR();
+            services.AddSignalR()
+                .AddNewtonsoftJsonProtocol(protocol =>
+                    {
+                        protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

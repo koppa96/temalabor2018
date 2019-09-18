@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 using Czeum.DTO.UserManagement;
 using Czeum.Server.Services.FriendService;

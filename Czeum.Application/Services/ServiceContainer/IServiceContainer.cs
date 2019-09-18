@@ -1,5 +1,6 @@
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
 

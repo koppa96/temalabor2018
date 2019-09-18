@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Czeum.Abstractions.GameServices;
 
-namespace Czeum.Abstractions.DTO {
+namespace Czeum.Abstractions.DTO.Lobbies {
     /// <summary>
     /// An abstract base class for lobbies.
     /// </summary>

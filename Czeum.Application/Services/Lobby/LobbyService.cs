@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DAL;
 using Czeum.DTO;
 using Microsoft.EntityFrameworkCore;
@@ -10,23 +11,23 @@ using Microsoft.EntityFrameworkCore;
 namespace Czeum.Application.Services.Lobby {
 	public class LobbyService : ILobbyService
 	{
-		private readonly ILobbyStorage _lobbyStorage;
-		private readonly ApplicationDbContext _context;
+		private readonly ILobbyStorage lobbyStorage;
+		private readonly ApplicationDbContext context;
 
 		public LobbyService(ILobbyStorage lobbyStorage, ApplicationDbContext context)
 		{
-			_lobbyStorage = lobbyStorage;
-			_context = context;
+			this.lobbyStorage = lobbyStorage;
+			this.context = context;
 		}
 
 		public async Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId)
 		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby == null) {
 				throw new ArgumentException("Invalid lobby id");
 			}
 
-			var friends = await _context.Friendships
+			var friends = await context.Friendships
 				.Where(f => f.User1.UserName == player || f.User2.UserName == player)
 				.Select(f => f.User1.UserName == player ? f.User2.UserName : f.User1.UserName)
 				.ToListAsync();
@@ -36,17 +37,17 @@ namespace Czeum.Application.Services.Lobby {
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId)
 		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			var lobby = lobbyStorage.GetLobby(lobbyId);
 			lobby.DisconnectPlayer(player);
 
 			if (lobby.Empty) {
-				_lobbyStorage.RemoveLobby(lobbyId);
+				lobbyStorage.RemoveLobby(lobbyId);
 			}			
 		}
 
 		public void InvitePlayerToLobby(int lobbyId, string player)
 		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			var lobby = lobbyStorage.GetLobby(lobbyId);
 
 			if (!lobby.InvitedPlayers.Contains(player))
 			{
@@ -56,7 +57,7 @@ namespace Czeum.Application.Services.Lobby {
 
 		public string KickGuest(int lobbyId)
 		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			var lobby = lobbyStorage.GetLobby(lobbyId);
 
 			string guestName = lobby.Guest;
 			if (lobby.Guest != null) {
@@ -67,17 +68,17 @@ namespace Czeum.Application.Services.Lobby {
 		}
 
 		public LobbyData FindUserLobby(string user) {
-			return _lobbyStorage.GetLobbyOfUser(user);
+			return lobbyStorage.GetLobbyOfUser(user);
 		}
 
 		public List<LobbyData> GetLobbies()
 		{
-			return _lobbyStorage.GetLobbies().ToList();
+			return lobbyStorage.GetLobbies().ToList();
 		}
 
 		public void UpdateLobbySettings(LobbyData lobbyData)
 		{
-			var oldLobby = _lobbyStorage.GetLobby(lobbyData.LobbyId);
+			var oldLobby = lobbyStorage.GetLobby(lobbyData.LobbyId);
 			if (oldLobby == null)
 			{
 				throw new ArgumentException("Lobby does not exist.");
@@ -87,22 +88,22 @@ namespace Czeum.Application.Services.Lobby {
 			lobbyData.Guest = oldLobby.Guest;
 			lobbyData.InvitedPlayers = oldLobby.InvitedPlayers;
 			
-			_lobbyStorage.UpdateLobby(lobbyData);
+			lobbyStorage.UpdateLobby(lobbyData);
 		}
 
 		public LobbyData GetLobby(int lobbyData)
 		{
-			return _lobbyStorage.GetLobby(lobbyData);
+			return lobbyStorage.GetLobby(lobbyData);
 		}
 
 		public bool ValidateModifier(int lobbyId, string modifier)
 		{
-			return _lobbyStorage.GetLobby(lobbyId).Host == modifier;
+			return lobbyStorage.GetLobby(lobbyId).Host == modifier;
 		}
 
 		public bool LobbyExists(int lobbyId)
 		{
-			return _lobbyStorage.GetLobby(lobbyId) != null;
+			return lobbyStorage.GetLobby(lobbyId) != null;
 		}
 
 		public LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name)
@@ -116,7 +117,7 @@ namespace Czeum.Application.Services.Lobby {
 			lobby.Host = host;
 			lobby.Access = access;
 			lobby.Name = string.IsNullOrEmpty(name) ? host + "'s lobby" : name;
-			_lobbyStorage.AddLobby(lobby);
+			lobbyStorage.AddLobby(lobby);
 			
 			return lobby;
 		}
@@ -124,29 +125,30 @@ namespace Czeum.Application.Services.Lobby {
 		public void AddMessageNow(int lobbyId, Message message)
 		{
 			message.Timestamp = DateTime.UtcNow;
-			_lobbyStorage.AddMessage(lobbyId, message);
+			lobbyStorage.AddMessage(lobbyId, message);
 		}
 
 		public List<Message> GetMessages(int lobbyId)
 		{
-			return _lobbyStorage.GetMessages(lobbyId);
+			return lobbyStorage.GetMessages(lobbyId);
 		}
 
 		public string GetOtherPlayer(int lobbyId, string player)
 		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			var lobby = lobbyStorage.GetLobby(lobbyId);
 			return player == lobby.Host ? lobby.Guest : lobby.Host;
 		}
 
 		public void CancelInviteFromLobby(int lobbyId, string player)
 		{
-			var lobby = _lobbyStorage.GetLobby(lobbyId);
+			//TODO: Check the inviting player's identity
+			var lobby = lobbyStorage.GetLobby(lobbyId);
 			lobby.InvitedPlayers.Remove(player);
 		}
 
 		public void RemoveLobby(int id)
 		{
-			_lobbyStorage.RemoveLobby(id);
+			lobbyStorage.RemoveLobby(id);
 		}
 	}
 }

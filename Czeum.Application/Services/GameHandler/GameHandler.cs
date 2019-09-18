@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Application.Services.ServiceContainer;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
@@ -13,18 +14,18 @@ namespace Czeum.Application.Services.GameHandler
 {
     public class GameHandler : IGameHandler
     {
-        private readonly IServiceContainer _serviceContainer;
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceContainer serviceContainer;
+        private readonly ApplicationDbContext context;
 
         public GameHandler(IServiceContainer serviceContainer, ApplicationDbContext context)
         {
-            _serviceContainer = serviceContainer;
-            _context = context;
+            this.serviceContainer = serviceContainer;
+            this.context = context;
         }
 
         public async Task<Dictionary<string, MatchStatus>> CreateMatchAsync(LobbyData lobbyData)
         {
-            var service = _serviceContainer.FindByLobbyData(lobbyData);
+            var service = serviceContainer.FindByLobbyData(lobbyData);
             var board = (SerializedBoard) service.CreateNewBoard(lobbyData);
 
             return await CreateMatchWithBoardAsync(lobbyData.Host, lobbyData.Guest, board);
@@ -32,7 +33,7 @@ namespace Czeum.Application.Services.GameHandler
         
         public async Task<Dictionary<string, MatchStatus>> CreateRandomMatchAsync(string player1, string player2)
         {
-            var service = _serviceContainer.GetRandomService();
+            var service = serviceContainer.GetRandomService();
             var board = (SerializedBoard) service.CreateDefaultBoard();
 
             return await CreateMatchWithBoardAsync(player1, player2, board);
@@ -43,14 +44,14 @@ namespace Czeum.Application.Services.GameHandler
             var match = new Match
             {
                 Board = board,
-                Player1 = await _context.Users.SingleAsync(u => u.UserName == player1),
-                Player2 = await _context.Users.SingleAsync(u => u.UserName == player2),
+                Player1 = await context.Users.SingleAsync(u => u.UserName == player1),
+                Player2 = await context.Users.SingleAsync(u => u.UserName == player2),
                 State = MatchState.Player1Moves
             };
 
-            _context.Matches.Add(match);
-            _context.Boards.Add(board);
-            await _context.SaveChangesAsync();
+            context.Matches.Add(match);
+            context.Boards.Add(board);
+            await context.SaveChangesAsync();
             
             return new Dictionary<string, MatchStatus>
             {
@@ -61,9 +62,9 @@ namespace Czeum.Application.Services.GameHandler
 
         public async Task<Dictionary<string, MatchStatus>> HandleMoveAsync(MoveData moveData, int playerId)
         {
-            var match = await _context.Matches.FindAsync(moveData.MatchId);
-            var service = _serviceContainer.FindByMoveData(moveData);
-            var board = await _context.Boards.SingleAsync(b => b.Match.MatchId == moveData.MatchId);
+            var match = await context.Matches.FindAsync(moveData.MatchId);
+            var service = serviceContainer.FindByMoveData(moveData);
+            var board = await context.Boards.SingleAsync(b => b.Match.MatchId == moveData.MatchId);
             var result = service.ExecuteMove(moveData, playerId, board);
 
             if (result.MoveResult.Status != Status.Fail || result.MoveResult.Status != Status.Requested)
@@ -82,7 +83,7 @@ namespace Czeum.Application.Services.GameHandler
                         break;
                 }
 
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             
             var status1 = match.ToMatchStatus(match.Player1.UserName);
@@ -99,14 +100,14 @@ namespace Czeum.Application.Services.GameHandler
 
         public async Task<Match> GetMatchByIdAsync(int id)
         {
-            return await _context.Matches.Include(m => m.Player1)
+            return await context.Matches.Include(m => m.Player1)
                 .Include(m => m.Player2)
                 .SingleAsync(m => m.MatchId == id);
         }
 
         public async Task<List<MatchStatus>> GetMatchesOfPlayerAsync(string player)
         {
-            var matches = await _context.Matches
+            var matches = await context.Matches
                 .Include(m => m.Board)
                 .Include(m => m.Player1)
                 .Include(m => m.Player2)
@@ -116,7 +117,7 @@ namespace Czeum.Application.Services.GameHandler
             var statuses = new List<MatchStatus>();
             foreach (var match in matches)
             {
-                var service = _serviceContainer.FindBySerializedBoard(match.Board);
+                var service = serviceContainer.FindBySerializedBoard(match.Board);
                 var board = service.ConvertToMoveResult(match.Board);
                 statuses.Add(match.ToMatchStatus(player, board));
             }
@@ -126,8 +127,8 @@ namespace Czeum.Application.Services.GameHandler
 
         public async Task<MoveResult> GetBoardByMatchIdAsync(int matchId)
         {
-            var board = await _context.Boards.SingleAsync(b => b.Match.MatchId == matchId);
-            var service = _serviceContainer.FindBySerializedBoard(board);
+            var board = await context.Boards.SingleAsync(b => b.Match.MatchId == matchId);
+            var service = serviceContainer.FindBySerializedBoard(board);
             return service.ConvertToMoveResult(board);
         }
     }

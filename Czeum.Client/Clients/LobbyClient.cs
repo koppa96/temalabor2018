@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Prism.Windows.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
+using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.Clients {
 

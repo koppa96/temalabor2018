@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Abstractions.GameServices;
 using Czeum.ChessLogic;
 using Czeum.Connect4Logic;

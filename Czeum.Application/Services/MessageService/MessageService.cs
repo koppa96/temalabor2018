@@ -13,18 +13,18 @@ namespace Czeum.Application.Services.MessageService
 {
     public class MessageService : IMessageService
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ILobbyStorage _lobbyStorage;
+        private readonly ApplicationDbContext context;
+        private readonly ILobbyStorage lobbyStorage;
 
         public MessageService(ApplicationDbContext context, ILobbyStorage lobbyStorage)
         {
-            _context = context;
-            _lobbyStorage = lobbyStorage;
+            this.context = context;
+            this.lobbyStorage = lobbyStorage;
         }
 
         public Message SendToLobby(int lobbyId, string message, string sender)
         {
-            var lobby = _lobbyStorage.GetLobby(lobbyId);
+            var lobby = lobbyStorage.GetLobby(lobbyId);
             if (lobby == null || lobby.Host != sender && lobby.Guest != sender)
             {
                 return null;
@@ -36,19 +36,19 @@ namespace Czeum.Application.Services.MessageService
                 Text = message,
                 Timestamp = DateTime.UtcNow
             };
-            _lobbyStorage.AddMessage(lobbyId, msg);
+            lobbyStorage.AddMessage(lobbyId, msg);
             return msg;
         }
 
         public async Task<Message> SendToMatchAsync(int matchId, string message, string sender)
         {
-            var match = await _context.Matches.FindAsync(matchId);
+            var match = await context.Matches.FindAsync(matchId);
             if (match == null || !match.HasPlayer(sender))
             {
                 return null;
             }
 
-            var senderUser = await _context.Users.SingleAsync(u => u.UserName == sender);
+            var senderUser = await context.Users.SingleAsync(u => u.UserName == sender);
             var storedMessage = new StoredMessage
             {
                 Sender = senderUser,
@@ -56,20 +56,20 @@ namespace Czeum.Application.Services.MessageService
                 Text = message,
                 Timestamp = DateTime.UtcNow
             };
-            _context.Messages.Add(storedMessage);
-            await _context.SaveChangesAsync();
+            context.Messages.Add(storedMessage);
+            await context.SaveChangesAsync();
             
             return storedMessage.ToMessage();
         }
 
         public List<Message> GetMessagesOfLobby(int lobbyId)
         {
-            return _lobbyStorage.GetMessages(lobbyId);
+            return lobbyStorage.GetMessages(lobbyId);
         }
 
         public async Task<List<Message>> GetMessagesOfMatchAsync(int matchId)
         {
-            return await _context.Messages.Where(m => m.Match.MatchId == matchId)
+            return await context.Messages.Where(m => m.Match.MatchId == matchId)
                 .Select(m => m.ToMessage())
                 .ToListAsync();
         }

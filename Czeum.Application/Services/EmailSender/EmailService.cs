@@ -7,13 +7,13 @@ namespace Czeum.Application.Services.EmailSender
 {
     public class EmailService : IEmailService
     {
-        private readonly string _gmailAccount;
-        private readonly string _gmailPassword;
+        private readonly string gmailAccount;
+        private readonly string gmailPassword;
 
         public EmailService(IConfiguration config)
         {
-            _gmailAccount = config.GetValue<string>("Gmail:Username");
-            _gmailPassword = config.GetValue<string>("Gmail:Password");
+            gmailAccount = config.GetValue<string>("Gmail:Username");
+            gmailPassword = config.GetValue<string>("Gmail:Password");
         }
 
         public async Task SendConfirmationEmailAsync(string to, string uid, string token, string callbackUrl)
@@ -53,7 +53,7 @@ namespace Czeum.Application.Services.EmailSender
             using (var client = new SmtpClient())
             {
                 await client.ConnectAsync("smtp.gmail.com", 587, false);
-                await client.AuthenticateAsync(_gmailAccount, _gmailPassword);
+                await client.AuthenticateAsync(gmailAccount, gmailPassword);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }

@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Client.Interfaces;
 using Czeum.DTO;
 using Microsoft.AspNetCore.SignalR.Client;

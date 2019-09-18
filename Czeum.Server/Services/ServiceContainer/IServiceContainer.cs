@@ -2,6 +2,7 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL.Entities;
 using Czeum.Abstractions;
+using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Server.Services.ServiceContainer
 {

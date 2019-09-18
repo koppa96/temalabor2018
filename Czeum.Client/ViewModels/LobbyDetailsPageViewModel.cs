@@ -8,6 +8,7 @@ using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.ViewModels
 {

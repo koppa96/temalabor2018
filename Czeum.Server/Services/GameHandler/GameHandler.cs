@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Server.Services.ServiceContainer;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Abstractions.GameServices;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
