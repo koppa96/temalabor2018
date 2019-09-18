@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj" />
+      <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
+      <ProjectReference Include="..\Czeum.DTO\Czeum.DTO.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MailKit" Version="2.3.1.6" />
+      <PackageReference Include="System.ServiceModel.Primitives" Version="4.6.0-preview9.final" />
+    </ItemGroup>
+
+</Project>
