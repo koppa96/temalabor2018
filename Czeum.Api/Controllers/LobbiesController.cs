@@ -4,6 +4,7 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Api.Common;
 using Czeum.Application.Services.Lobby;
+using Czeum.DTO.Extensions;
 using Czeum.DTO.Lobbies;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +31,7 @@ namespace Czeum.Api.Controllers
         public ActionResult<LobbyData> CreateLobby([FromBody] CreateLobbyDto dto)
         {
             return lobbyService.CreateAndAddLobby(
-                dto.LobbyType, 
+                dto.LobbyType.GetLobbyType(), 
                 User.Identity.Name, 
                 dto.LobbyAccess, 
                 dto.Name);

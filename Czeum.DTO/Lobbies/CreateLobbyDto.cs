@@ -6,7 +6,7 @@ namespace Czeum.DTO.Lobbies
 {
     public class CreateLobbyDto
     {
-        public Type LobbyType { get; set; }
+        public LobbyType LobbyType { get; set; }
         public LobbyAccess LobbyAccess { get; set; }
         public string Name { get; set; }
     }

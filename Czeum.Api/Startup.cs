@@ -2,8 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Czeum.Api.AutofacModules;
 using Czeum.Api.IdentityServer;
 using Czeum.Api.SignalR;
+using Czeum.Application.Services.Lobby;
+using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
 using IdentityModel;
@@ -115,6 +120,14 @@ namespace Czeum.Api
                     {
                         protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
                     });
+
+            services.AddSingleton<ILobbyStorage, LobbyStorage>();
+            services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule<ServiceModule>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
