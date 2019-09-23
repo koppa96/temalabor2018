@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Czeum.Api.AutofacModules;
 using Czeum.Api.IdentityServer;
 using Czeum.Api.SignalR;
@@ -75,8 +77,7 @@ namespace Czeum.Api
                 });
             });
             
-            services.AddControllers()
-                .AddNewtonsoftJson(protocol => { protocol.SerializerSettings.TypeNameHandling = TypeNameHandling.All; });
+            services.AddControllers().AddNewtonsoftJson();
 
             services.AddAuthentication()
                 .AddJwtBearer(options =>
@@ -116,13 +117,12 @@ namespace Czeum.Api
             });
 
             services.AddSignalR()
-                .AddNewtonsoftJsonProtocol(protocol =>
-                    {
-                        protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
-                    });
+                .AddNewtonsoftJsonProtocol();
 
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
+
+            services.AddAutoMapper(Assembly.Load("Czeum.Application"));
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

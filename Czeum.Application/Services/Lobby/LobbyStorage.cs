@@ -41,6 +41,7 @@ namespace Czeum.Application.Services.Lobby
                 newLobbyId++;
             }
 
+            lobbyData.LobbyId = newLobbyId;
             lobbies[lobbyData.LobbyId] = lobbyData;
             messages[lobbyData.LobbyId] = new List<Message>();
         }

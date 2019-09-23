@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.DTO;
+using Czeum.DTO.Lobbies;
+using Czeum.DTO.Wrappers;
 
 namespace Czeum.Application.Services.Lobby
 {
@@ -58,20 +61,20 @@ namespace Czeum.Application.Services.Lobby
         /// Gets a list of the current lobbies stored in the LobbyStorage.
         /// </summary>
         /// <returns>The list of lobbies</returns>
-        List<LobbyData> GetLobbies();
+        List<LobbyDataWrapper> GetLobbies();
 
         /// <summary>
         /// Updates the settings of a lobby.
         /// </summary>
         /// <param name="lobbyData">The lobby with the updated settings</param>
-        void UpdateLobbySettings(LobbyData lobbyData);
+        void UpdateLobbySettings(LobbyDataWrapper lobbyData);
 
         /// <summary>
         /// Gets a lobby with the given identifier.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The lobby</returns>
-        LobbyData GetLobby(int lobbyId);
+        LobbyDataWrapper GetLobby(int lobbyId);
 
         /// <summary>
         /// Determines whether the given user can modify the lobby's settings.
@@ -96,7 +99,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="access">The access type of the lobby</param>
         /// <param name="name">The name of the lobby</param>
         /// <returns>The created lobby</returns>
-        LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name);
+        LobbyDataWrapper CreateAndAddLobby(GameType type, string host, LobbyAccess access, string name);
 
         /// <summary>
         /// Returns the other user of the lobby.

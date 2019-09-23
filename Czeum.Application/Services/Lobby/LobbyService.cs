@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DAL;
 using Czeum.DTO;
+using Czeum.DTO.Extensions;
+using Czeum.DTO.Lobbies;
+using Czeum.DTO.Wrappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Application.Services.Lobby {
@@ -13,11 +17,15 @@ namespace Czeum.Application.Services.Lobby {
 	{
 		private readonly ILobbyStorage lobbyStorage;
 		private readonly ApplicationDbContext context;
+		private readonly IMapper mapper;
 
-		public LobbyService(ILobbyStorage lobbyStorage, ApplicationDbContext context)
+		public LobbyService(ILobbyStorage lobbyStorage, 
+			ApplicationDbContext context,
+			IMapper mapper)
 		{
 			this.lobbyStorage = lobbyStorage;
 			this.context = context;
+			this.mapper = mapper;
 		}
 
 		public async Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId)
@@ -71,29 +79,30 @@ namespace Czeum.Application.Services.Lobby {
 			return lobbyStorage.GetLobbyOfUser(user);
 		}
 
-		public List<LobbyData> GetLobbies()
+		public List<LobbyDataWrapper> GetLobbies()
 		{
-			return lobbyStorage.GetLobbies().ToList();
+			return lobbyStorage.GetLobbies().Select(mapper.Map<LobbyDataWrapper>).ToList();
 		}
 
-		public void UpdateLobbySettings(LobbyData lobbyData)
+		public void UpdateLobbySettings(LobbyDataWrapper lobbyData)
 		{
-			var oldLobby = lobbyStorage.GetLobby(lobbyData.LobbyId);
+			var oldLobby = lobbyStorage.GetLobby(lobbyData.Content.LobbyId);
 			if (oldLobby == null)
 			{
 				throw new ArgumentException("Lobby does not exist.");
 			}
 
-			lobbyData.Host = oldLobby.Host;
-			lobbyData.Guest = oldLobby.Guest;
-			lobbyData.InvitedPlayers = oldLobby.InvitedPlayers;
+			lobbyData.Content.Host = oldLobby.Host;
+			lobbyData.Content.Guest = oldLobby.Guest;
+			lobbyData.Content.InvitedPlayers = oldLobby.InvitedPlayers;
 			
-			lobbyStorage.UpdateLobby(lobbyData);
+			lobbyStorage.UpdateLobby(lobbyData.Content);
 		}
 
-		public LobbyData GetLobby(int lobbyData)
+		public LobbyDataWrapper GetLobby(int lobbyId)
 		{
-			return lobbyStorage.GetLobby(lobbyData);
+            var lobby = lobbyStorage.GetLobby(lobbyId);
+			return mapper.Map<LobbyDataWrapper>(lobby);
 		}
 
 		public bool ValidateModifier(int lobbyId, string modifier)
@@ -106,20 +115,21 @@ namespace Czeum.Application.Services.Lobby {
 			return lobbyStorage.GetLobby(lobbyId) != null;
 		}
 
-		public LobbyData CreateAndAddLobby(Type type, string host, LobbyAccess access, string name)
+		public LobbyDataWrapper CreateAndAddLobby(GameType type, string host, LobbyAccess access, string name)
 		{
-			if (!type.IsSubclassOf(typeof(LobbyData)))
+			var lobbyType = type.GetLobbyType();
+			if (!lobbyType.IsSubclassOf(typeof(LobbyData)))
 			{
 				throw new ArgumentException("Invalid lobby type.");
 			}
 			
-			var lobby = (LobbyData) Activator.CreateInstance(type);
+			var lobby = (LobbyData) Activator.CreateInstance(lobbyType);
 			lobby.Host = host;
 			lobby.Access = access;
 			lobby.Name = string.IsNullOrEmpty(name) ? host + "'s lobby" : name;
 			lobbyStorage.AddLobby(lobby);
 			
-			return lobby;
+			return mapper.Map<LobbyDataWrapper>(lobby);
 		}
 
 		public void AddMessageNow(int lobbyId, Message message)
