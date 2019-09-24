@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Czeum.Application\Czeum.Application.csproj" />
+      <ProjectReference Include="..\Czeum.ClientCallback\Czeum.ClientCallback.csproj" />
       <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
     </ItemGroup>
 

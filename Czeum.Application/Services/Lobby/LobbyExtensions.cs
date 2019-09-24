@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
@@ -6,18 +7,21 @@ namespace Czeum.Application.Services.Lobby
 {
     public static class LobbyExtensions
     {
-        public static bool JoinGuest(this LobbyData lobby, string player, List<string> friends)
+        public static void JoinGuest(this LobbyData lobby, string player, List<string> friends)
         {
-            if (lobby.Guest == null && (lobby.Access == LobbyAccess.Public ||
-                                        lobby.InvitedPlayers.Contains(player) ||
-                                        lobby.Access == LobbyAccess.FriendsOnly && friends.Contains(player)))
+            if (lobby.Guest != null)
             {
-                lobby.InvitedPlayers.Remove(player);
-                lobby.Guest = player;
-                return true;
+                throw new InvalidOperationException("The lobby is full.");
             }
 
-            return false;
+            if (lobby.Access == LobbyAccess.Private && !lobby.InvitedPlayers.Contains(player) ||
+                lobby.Access == LobbyAccess.FriendsOnly && !friends.Contains(player))
+            {
+                throw new UnauthorizedAccessException("The user is not authorized to join the lobby.");
+            }
+            
+            lobby.InvitedPlayers.Remove(player);
+            lobby.Guest = player;
         }
 
         public static void DisconnectPlayer(this LobbyData lobby, string player)

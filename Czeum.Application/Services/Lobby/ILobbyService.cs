@@ -20,7 +20,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="player">The name of the player</param>
         /// <param name="lobbyId">The target lobby's identifier</param>
         /// <returns>Whether the joining was successful</returns>
-        Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId);
+        Task JoinPlayerToLobbyAsync(string player, int lobbyId);
 
         /// <summary>
         /// Disconnects a player from the specified lobby.
@@ -33,8 +33,9 @@ namespace Czeum.Application.Services.Lobby
         /// Adds a player to the invited players of the given lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
+        /// <param name="invitingPlayer">The name of the inviting player</param>
         /// <param name="player">The player to be invited</param>
-        void InvitePlayerToLobby(int lobbyId, string player);
+        void InvitePlayerToLobby(int lobbyId, string invitingPlayer, string player);
 
         /// <summary>
         /// Removes a player from the invited players of the given lobby.
@@ -47,15 +48,16 @@ namespace Czeum.Application.Services.Lobby
         /// Kicks the current guest of the lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
+        /// <param name="kickingPlayer"></param>
         /// <returns>The kicked guest's name</returns>
-        string KickGuest(int lobbyId);
+        string KickGuest(int lobbyId, string kickingPlayer);
 
         /// <summary>
         /// Finds the lobby to which the given user is currently joined.
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The lobby</returns>
-        LobbyData FindUserLobby(string user);
+        LobbyData GetLobbyOfUser(string user);
 
         /// <summary>
         /// Gets a list of the current lobbies stored in the LobbyStorage.
@@ -67,7 +69,8 @@ namespace Czeum.Application.Services.Lobby
         /// Updates the settings of a lobby.
         /// </summary>
         /// <param name="lobbyData">The lobby with the updated settings</param>
-        void UpdateLobbySettings(LobbyDataWrapper lobbyData);
+        /// <param name="updatingUser"></param>
+        void UpdateLobbySettings(LobbyDataWrapper lobbyData, string updatingUser);
 
         /// <summary>
         /// Gets a lobby with the given identifier.
@@ -75,15 +78,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The lobby</returns>
         LobbyDataWrapper GetLobby(int lobbyId);
-
-        /// <summary>
-        /// Determines whether the given user can modify the lobby's settings.
-        /// </summary>
-        /// <param name="lobbyId">The identifier of the lobby</param>
-        /// <param name="modifier">The user who wants to modify the lobby</param>
-        /// <returns>Whether they can modify the lobby</returns>
-        bool ValidateModifier(int lobbyId, string modifier);
-
+        
         /// <summary>
         /// Determines whether there is a lobby with the given identifier.
         /// </summary>

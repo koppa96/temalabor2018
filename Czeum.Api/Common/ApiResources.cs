@@ -56,7 +56,7 @@ namespace Czeum.Api.Common
         
         public static class SoloQueue
         {
-            public const string BasePath = ApiResources.BasePath + "solo-queue";
+            public const string BasePath = ApiResources.BasePath + "/solo-queue";
         }
     }
 }

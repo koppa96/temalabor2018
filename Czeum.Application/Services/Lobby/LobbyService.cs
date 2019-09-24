@@ -28,11 +28,12 @@ namespace Czeum.Application.Services.Lobby {
 			this.mapper = mapper;
 		}
 
-		public async Task<bool> JoinPlayerToLobbyAsync(string player, int lobbyId)
+		public async Task JoinPlayerToLobbyAsync(string player, int lobbyId)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
-			if (lobby == null) {
-				throw new ArgumentException("Invalid lobby id");
+			if (lobby == null)
+			{
+				throw new ArgumentOutOfRangeException(nameof(lobbyId), "Invalid lobby id.");
 			}
 
 			var friends = await context.Friendships
@@ -40,7 +41,7 @@ namespace Czeum.Application.Services.Lobby {
 				.Select(f => f.User1.UserName == player ? f.User2.UserName : f.User1.UserName)
 				.ToListAsync();
 			
-			return lobby.JoinGuest(player, friends);
+			lobby.JoinGuest(player, friends);
 		}
 
 		public void DisconnectPlayerFromLobby(string player, int lobbyId)
@@ -48,14 +49,19 @@ namespace Czeum.Application.Services.Lobby {
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			lobby.DisconnectPlayer(player);
 
-			if (lobby.Empty) {
+			if (lobby.Empty)
+			{
 				lobbyStorage.RemoveLobby(lobbyId);
 			}			
 		}
 
-		public void InvitePlayerToLobby(int lobbyId, string player)
+		public void InvitePlayerToLobby(int lobbyId, string invitingPlayer, string player)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
+			if (lobby.Host != invitingPlayer)
+			{
+				throw new UnauthorizedAccessException("Not authorized to invite to this lobby.");
+			}
 
 			if (!lobby.InvitedPlayers.Contains(player))
 			{
@@ -63,19 +69,24 @@ namespace Czeum.Application.Services.Lobby {
 			}
 		}
 
-		public string KickGuest(int lobbyId)
+		public string KickGuest(int lobbyId, string kickingPlayer)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
+			if (lobby.Host != kickingPlayer)
+			{
+				throw new UnauthorizedAccessException("Not authorized to kick a player from this lobby.");
+			}
 
-			string guestName = lobby.Guest;
-			if (lobby.Guest != null) {
+			var guestName = lobby.Guest;
+			if (lobby.Guest != null) 
+			{
 				lobby.DisconnectPlayer(guestName);
 			}
 
 			return guestName;
 		}
 
-		public LobbyData FindUserLobby(string user) {
+		public LobbyData GetLobbyOfUser(string user) {
 			return lobbyStorage.GetLobbyOfUser(user);
 		}
 
@@ -84,12 +95,17 @@ namespace Czeum.Application.Services.Lobby {
 			return lobbyStorage.GetLobbies().Select(mapper.Map<LobbyDataWrapper>).ToList();
 		}
 
-		public void UpdateLobbySettings(LobbyDataWrapper lobbyData)
+		public void UpdateLobbySettings(LobbyDataWrapper lobbyData, string updatingUser)
 		{
 			var oldLobby = lobbyStorage.GetLobby(lobbyData.Content.LobbyId);
 			if (oldLobby == null)
 			{
-				throw new ArgumentException("Lobby does not exist.");
+				throw new ArgumentOutOfRangeException(nameof(lobbyData.Content.LobbyId), "Lobby does not exist.");
+			}
+
+			if (updatingUser != oldLobby.Host)
+			{
+				throw new UnauthorizedAccessException("Not authorized to update this lobby's settings.");
 			}
 
 			lobbyData.Content.Host = oldLobby.Host;
@@ -103,11 +119,6 @@ namespace Czeum.Application.Services.Lobby {
 		{
             var lobby = lobbyStorage.GetLobby(lobbyId);
 			return mapper.Map<LobbyDataWrapper>(lobby);
-		}
-
-		public bool ValidateModifier(int lobbyId, string modifier)
-		{
-			return lobbyStorage.GetLobby(lobbyId).Host == modifier;
 		}
 
 		public bool LobbyExists(int lobbyId)

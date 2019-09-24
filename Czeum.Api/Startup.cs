@@ -8,6 +8,7 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Czeum.Api.AutofacModules;
 using Czeum.Api.IdentityServer;
+using Czeum.Api.Middlewares;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.OnlineUsers;
@@ -93,7 +94,7 @@ namespace Czeum.Api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("DefaultPolicy", options => options.RequireAuthenticatedUser()
+                options.AddPolicy("DefaultPolicy", policy => policy.RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
 
                 options.DefaultPolicy = options.GetPolicy("DefaultPolicy");
@@ -138,6 +139,7 @@ namespace Czeum.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseCors();
             
             app.UseHttpsRedirection();
