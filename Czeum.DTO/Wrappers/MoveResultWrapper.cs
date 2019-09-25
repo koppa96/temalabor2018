@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Czeum.DTO.Wrappers
 {
     [JsonConverter(typeof(MoveResultWrapperConverter))]
-    public class MoveResultWrapper : Wrapper<MoveResult>
+    public class MoveResultWrapper : Wrapper<IMoveResult>
     {
     }
 }

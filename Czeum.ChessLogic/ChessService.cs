@@ -1,4 +1,5 @@
-﻿using Czeum.Abstractions;
+﻿using System;
+using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Abstractions.GameServices;
@@ -21,22 +22,15 @@ namespace Czeum.ChessLogic
             var board = new ChessBoard(false);
             board.DeserializeContent(serializedChessBoard);
 
-            var oldBoard = new ChessMoveResult
-            {
-                WhiteKingInCheck = !board.IsKingSafe(Color.White),
-                BlackKingInCheck = !board.IsKingSafe(Color.Black),
-                PieceInfos = board.GetPieceInfos(),
-                Status = Status.Fail
-            };
             if (!board.ValidateMove(move, color) || 
-                !board.MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]) ||
-                !board.IsKingSafe(color))
+                !board.MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]))
             {
-                return new InnerMoveResult
-                {
-                    UpdatedBoardData = serializedChessBoard.BoardData,
-                    MoveResult = oldBoard
-                };
+                throw new InvalidOperationException("Invalid move.");
+            }
+
+            if (!board.IsKingSafe(color))
+            {
+                throw new InvalidOperationException("This move would put the king in check.");
             }
 
             var newBoardData = board.SerializeContent().BoardData;
@@ -46,9 +40,9 @@ namespace Czeum.ChessLogic
                 return new InnerMoveResult
                 {
                     UpdatedBoardData = newBoardData,
+                    Status = Status.Draw,
                     MoveResult = new ChessMoveResult
                     {
-                        Status = Status.Draw,
                         PieceInfos = board.GetPieceInfos(),
                         WhiteKingInCheck = !board.IsKingSafe(Color.White),
                         BlackKingInCheck = !board.IsKingSafe(Color.Black)
@@ -61,9 +55,9 @@ namespace Czeum.ChessLogic
                 return new InnerMoveResult
                 {
                     UpdatedBoardData = newBoardData,
+                    Status = Status.Win,
                     MoveResult = new ChessMoveResult
                     {
-                        Status = Status.Win,
                         PieceInfos = board.GetPieceInfos(),
                         WhiteKingInCheck = !board.IsKingSafe(Color.White),
                         BlackKingInCheck = !board.IsKingSafe(Color.Black)
@@ -74,9 +68,9 @@ namespace Czeum.ChessLogic
             return new InnerMoveResult
             {
                 UpdatedBoardData = newBoardData,
+                Status = Status.Success,
                 MoveResult = new ChessMoveResult
                 {
-                    Status = Status.Success,
                     PieceInfos = board.GetPieceInfos(),
                     WhiteKingInCheck = !board.IsKingSafe(Color.White),
                     BlackKingInCheck = !board.IsKingSafe(Color.Black)
@@ -94,14 +88,13 @@ namespace Czeum.ChessLogic
             return CreateNewBoard(null);
         }
 
-        public MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
+        public IMoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
         {
             var board = new ChessBoard(false);
             board.DeserializeContent((SerializedChessBoard) serializedBoard);
 
             return new ChessMoveResult
             {
-                Status = Status.Requested,
                 BlackKingInCheck = !board.IsKingSafe(Color.Black),
                 WhiteKingInCheck = board.IsKingSafe(Color.White),
                 PieceInfos = board.GetPieceInfos()

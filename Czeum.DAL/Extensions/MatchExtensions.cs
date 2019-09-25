@@ -2,6 +2,7 @@ using System;
 using Czeum.Abstractions.DTO;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
+using Czeum.DTO.Wrappers;
 
 namespace Czeum.DAL.Extensions
 {
@@ -63,7 +64,7 @@ namespace Czeum.DAL.Extensions
             }
         }
         
-        public static MatchStatus ToMatchStatus(this Match match, string player, MoveResult board = null)
+        public static MatchStatus ToMatchStatus(this Match match, string player, MoveResultWrapper board = null)
         {
             return new MatchStatus
             {

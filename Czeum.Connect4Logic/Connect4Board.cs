@@ -45,7 +45,7 @@ namespace Czeum.Connect4Logic
             }
         }
 
-        public bool PlaceItem(Item item, int column)
+        public void PlaceItem(Item item, int column)
         {
             if (column > width - 1)
             {
@@ -57,11 +57,11 @@ namespace Czeum.Connect4Logic
                 if (Board[i, column] == Item.None)
                 {
                     Board[i, column] = item;
-                    return true;
+                    return;
                 }
             }
 
-            return false;
+            throw new InvalidOperationException("The selected column is full.");
         }
 
         public void DeserializeContent(SerializedConnect4Board serializedBoard)

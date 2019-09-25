@@ -35,6 +35,6 @@ namespace Czeum.Abstractions.GameServices
         /// </summary>
         /// <param name="serializedBoard">The serialized board</param>
         /// <returns>The MoveResult representation of the board</returns>
-        MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard);
+        IMoveResult ConvertToMoveResult(ISerializedBoard serializedBoard);
     }
 }

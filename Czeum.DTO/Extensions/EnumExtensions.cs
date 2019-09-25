@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO.Lobbies;
 
@@ -21,6 +22,24 @@ namespace Czeum.DTO.Extensions
         public static Type GetMoveResultType(this Enum @enum)
         {
             return @enum.GetGameTypeAttribute().MoveResultType;
+        }
+
+        public static GameType GetGameType(this LobbyData lobbyData)
+        {
+            return Enum.GetValues(typeof(GameType)).Cast<GameType>()
+                .First(v => v.GetGameTypeAttribute().LobbyType == lobbyData.GetType());
+        }
+
+        public static GameType GetGameType(this IMoveResult moveResult)
+        {
+            return Enum.GetValues(typeof(GameType)).Cast<GameType>()
+                .First(v => v.GetGameTypeAttribute().MoveResultType == moveResult.GetType());
+        }
+
+        public static GameType GetGameType(this MoveData moveData)
+        {
+            return Enum.GetValues(typeof(GameType)).Cast<GameType>()
+                .First(v => v.GetGameTypeAttribute().MoveDataType == moveData.GetType());
         }
 
         private static GameTypeAttribute GetGameTypeAttribute(this Enum @enum)

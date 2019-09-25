@@ -4,6 +4,7 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DAL.Entities;
 using Czeum.DTO;
+using Czeum.DTO.Wrappers;
 
 namespace Czeum.Application.Services.GameHandler
 {
@@ -31,9 +32,9 @@ namespace Czeum.Application.Services.GameHandler
         /// Dispatches the moves to the appropriate services that can execute them, and handles the execution results.
         /// </summary>
         /// <param name="moveData">The move</param>
-        /// <param name="playerId">The id of the player in the match</param>
+        /// <param name="username">The name of the player</param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<Dictionary<string, MatchStatus>> HandleMoveAsync(MoveData moveData, int playerId);
+        Task<Dictionary<string, MatchStatus>> HandleMoveAsync(MoveData moveData, string username);
 
         /// <summary>
         /// Gets a match by its match identifier asynchronously
@@ -47,13 +48,13 @@ namespace Czeum.Application.Services.GameHandler
         /// </summary>
         /// <param name="player">The name of the player</param>
         /// <returns>The list of matches</returns>
-        Task<List<MatchStatus>> GetMatchesOfPlayerAsync(string player);
+        Task<IEnumerable<MatchStatus>> GetMatchesOfPlayerAsync(string player);
 
         /// <summary>
         /// Gets a board by the identifier of the match associated with the board.
         /// </summary>
         /// <param name="matchId">The identifier of the match</param>
         /// <returns>The board as a MoveResult</returns>
-        Task<MoveResult> GetBoardByMatchIdAsync(int matchId);
+        Task<MoveResultWrapper> GetBoardByMatchIdAsync(int matchId);
     }
 }

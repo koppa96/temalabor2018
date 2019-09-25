@@ -18,19 +18,7 @@ namespace Czeum.Connect4Logic
             
             var item = playerId == 1 ? Item.Red : Item.Yellow;
 
-            if (!board.PlaceItem(item, move.Column))
-            {
-                return new InnerMoveResult
-                {
-                    UpdatedBoardData = serializedBoard.BoardData,
-                    MoveResult = new Connect4MoveResult
-                    {
-                        Status = Status.Fail,
-                        Board = board.Board
-                    }
-                };
-            }
-
+            board.PlaceItem(item, move.Column);
             var newBoardData = board.SerializeContent().BoardData;
             var result = new InnerMoveResult
             {
@@ -43,17 +31,17 @@ namespace Czeum.Connect4Logic
             
             if (board.CheckWinner() == item)
             {
-                result.MoveResult.Status = Status.Win;
+                result.Status = Status.Win;
                 return result;
             }
 
             if (board.Full)
             {
-                result.MoveResult.Status = Status.Draw;
+                result.Status = Status.Draw;
                 return result;
             }
 
-            result.MoveResult.Status = Status.Success;
+            result.Status = Status.Success;
             return result;
         }
 
@@ -69,14 +57,13 @@ namespace Czeum.Connect4Logic
             return CreateNewBoard(lobby);
         }
 
-        public MoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
+        public IMoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
         {
             var board = new Connect4Board();
             board.DeserializeContent((SerializedConnect4Board) serializedBoard);
             
             return new Connect4MoveResult
             {
-                Status = Status.Requested,
                 Board = board.Board
             };
         }
