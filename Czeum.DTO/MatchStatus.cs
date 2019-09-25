@@ -12,7 +12,7 @@ namespace Czeum.DTO
     /// </summary>
     public class MatchStatus
     {
-        public int MatchId { get; set; }
+        public Guid Id { get; set; }
         public int PlayerId { get; set; }
         public string OtherPlayer { get; set; }
         public MoveResultWrapper CurrentBoard { get; set; }

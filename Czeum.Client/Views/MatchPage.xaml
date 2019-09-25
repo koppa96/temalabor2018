@@ -25,7 +25,7 @@
                 <StackPanel Grid.Column="1" Margin="10, 0">
                     <TextBlock FontWeight="Bold">
                         <Run>Chess match #</Run>
-                        <Run Text="{Binding MatchId}"/>
+                        <Run Text="{Binding Id}"/>
                         <Run> against </Run>
                         <Run Text="{Binding OtherPlayer}"/>
                     </TextBlock>
@@ -52,7 +52,7 @@
                 <StackPanel Grid.Column="1" Margin="10, 0">
                     <TextBlock FontWeight="Bold">
                         <Run>Connect4 match #</Run>
-                        <Run Text="{Binding MatchId}"/>
+                        <Run Text="{Binding Id}"/>
                         <Run> against </Run>
                         <Run Text="{Binding OtherPlayer}"/>
                     </TextBlock>

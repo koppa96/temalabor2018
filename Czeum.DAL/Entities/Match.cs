@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Czeum.DAL.Entities
 {
-    public class Match
+    public class Match : EntityBase
     {
-        public int MatchId { get; set; }
-
         public ApplicationUser Player1 { get; set; }
         public ApplicationUser Player2 { get; set; }
 

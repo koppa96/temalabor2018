@@ -41,7 +41,7 @@ namespace Czeum.Client.ViewModels
             }
             selectedField = selectedFieldCoords;
 
-            var moveData = new ChessMoveData() { MatchId = matchService.CurrentMatch.MatchId, FromColumn = selectedPiece.Item1, FromRow = selectedPiece.Item2, ToColumn = selectedField.Item1, ToRow = selectedField.Item2};
+            var moveData = new ChessMoveData() { MatchId = matchService.CurrentMatch.Id, FromColumn = selectedPiece.Item1, FromRow = selectedPiece.Item2, ToColumn = selectedField.Item1, ToRow = selectedField.Item2};
             matchService.DoMove(moveData);
 
             selectedField = null;

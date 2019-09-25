@@ -2,9 +2,8 @@
 
 namespace Czeum.DAL.Entities
 {
-    public abstract class SerializedBoard : ISerializedBoard
+    public abstract class SerializedBoard : EntityBase, ISerializedBoard
     {
-        public int BoardId { get; set; }
         public string BoardData { get; set; }
 
         public Match Match { get; set; }

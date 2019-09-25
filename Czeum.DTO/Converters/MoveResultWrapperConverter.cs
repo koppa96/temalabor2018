@@ -26,7 +26,7 @@ namespace Czeum.DTO.Converters
             return new MoveResultWrapper
             {
                 GameType = gameType,
-                Content = JsonConvert.DeserializeObject(obj.GetValue("Content", StringComparison.OrdinalIgnoreCase).ToString(), moveType) as MoveResult
+                Content = JsonConvert.DeserializeObject(obj.GetValue("Content", StringComparison.OrdinalIgnoreCase).ToString(), moveType) as IMoveResult
             };
         }
     }

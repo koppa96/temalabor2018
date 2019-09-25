@@ -69,7 +69,7 @@ namespace Czeum.Application.Services.GameHandler
         {
             var match = await context.Matches.FindAsync(moveData.MatchId);
             var service = serviceContainer.FindByMoveData(moveData);
-            var board = await context.Boards.SingleAsync(b => b.Match.MatchId == moveData.MatchId);
+            var board = await context.Boards.SingleAsync(b => b.Match.Id == moveData.MatchId);
             var result = service.ExecuteMove(moveData, match.GetPlayerId(username), board);
             
             board.BoardData = result.UpdatedBoardData;
@@ -102,7 +102,7 @@ namespace Czeum.Application.Services.GameHandler
         {
             return await context.Matches.Include(m => m.Player1)
                 .Include(m => m.Player2)
-                .SingleAsync(m => m.MatchId == id);
+                .SingleAsync(m => m.Id == id);
         }
 
         public async Task<IEnumerable<MatchStatus>> GetMatchesOfPlayerAsync(string player)
@@ -127,7 +127,7 @@ namespace Czeum.Application.Services.GameHandler
 
         public async Task<MoveResultWrapper> GetBoardByMatchIdAsync(int matchId)
         {
-            var board = await context.Boards.SingleAsync(b => b.Match.MatchId == matchId);
+            var board = await context.Boards.SingleAsync(b => b.Match.Id == matchId);
             var service = serviceContainer.FindBySerializedBoard(board);
             return mapper.Map<MoveResultWrapper>(service.ConvertToMoveResult(board));
         }

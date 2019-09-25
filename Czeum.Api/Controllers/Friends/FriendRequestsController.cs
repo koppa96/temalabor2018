@@ -1,5 +1,10 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Czeum.Api.Common;
+using Czeum.Api.SignalR;
+using Czeum.Application.Services.FriendService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Controllers.Friends
 {
@@ -7,6 +12,20 @@ namespace Czeum.Api.Controllers.Friends
     [ApiController]
     public class FriendRequestsController : ControllerBase
     {
-        
+        private readonly IFriendService friendService;
+        private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
+
+        public FriendRequestsController(IFriendService friendService,
+            IHubContext<NotificationHub, ICzeumClient> hubContext)
+        {
+            this.friendService = friendService;
+            this.hubContext = hubContext;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<string>>> GetFriendRequestsAsync()
+        {
+            return Ok(await friendService.get);
+        }
     }
 }

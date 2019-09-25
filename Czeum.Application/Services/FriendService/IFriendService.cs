@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Czeum.DTO.UserManagement;
 
 namespace Czeum.Application.Services.FriendService
 {
@@ -18,18 +20,16 @@ namespace Czeum.Application.Services.FriendService
         /// <summary>
         /// Accepts the request sent by the sender and received by the receiver.
         /// </summary>
-        /// <param name="sender">The sender of the request</param>
-        /// <param name="receiver">The receiver of the request</param>
+        /// <param name="requestId">The identifier of the friend request</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task AcceptRequestAsync(string sender, string receiver);
+        Task AcceptRequestAsync(Guid requestId);
 
         /// <summary>
         /// Removes a friend from the friends of the user.
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="friend">The friend of the user</param>
+        /// <param name="friendshipId">The identifier of the friendship</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task RemoveFriendAsync(string user, string friend);
+        Task RemoveFriendAsync(Guid friendshipId);
 
         /// <summary>
         /// Adds a friend request.
@@ -37,28 +37,27 @@ namespace Czeum.Application.Services.FriendService
         /// <param name="sender">The sender of the request</param>
         /// <param name="receiver">The receiver of the request</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task AddRequestAsync(string sender, string receiver);
+        Task<FriendRequestDto> AddRequestAsync(string sender, string receiver);
 
         /// <summary>
         /// Removes a friend request sent by the sender and received by the receiver.
         /// </summary>
-        /// <param name="sender">The sender of the request</param>
-        /// <param name="receiver">The receiver of the request</param>
+        /// <param name="requestId">The identifier of the request</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task RemoveRequestAsync(string sender, string receiver);
+        Task RemoveRequestAsync(Guid requestId);
 
         /// <summary>
         /// Gets the names of the users to whom the given user has sent friend request.
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The list of usernames</returns>
-        Task<List<string>> GetRequestsSentByUserAsync(string user);
+        Task<IEnumerable<FriendRequestDto>> GetRequestsSentByUserAsync(string user);
 
         /// <summary>
         /// Gets the names of the users from whom the given user has received friend request.
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The list of usernames</returns>
-        Task<List<string>> GetRequestsReceivedByUserAsync(string user);
+        Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedByUserAsync(string user);
     }
 }

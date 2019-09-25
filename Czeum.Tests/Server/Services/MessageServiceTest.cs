@@ -58,13 +58,13 @@ namespace Czeum.Tests.Server.Services
             context.Matches.Add(match);
             await context.SaveChangesAsync();
 
-            var result = await service.SendToMatchAsync(match.MatchId, message, username);
+            var result = await service.SendToMatchAsync(match.Id, message, username);
 
             Assert.AreNotEqual(null, result);
             Assert.AreEqual(username, result.Sender);
             Assert.AreEqual(message, result.Text);
             Assert.AreEqual(1, match.Messages.Count);
-            Assert.AreEqual(message, (await context.Messages.SingleAsync(m => m.Match.MatchId == match.MatchId)).Text);
+            Assert.AreEqual(message, (await context.Messages.SingleAsync(m => m.Match.Id == match.Id)).Text);
         }
 
         [TestCleanup]

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
+using Czeum.DTO.UserManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Application.Services.FriendService
@@ -11,10 +13,13 @@ namespace Czeum.Application.Services.FriendService
     public class FriendService : IFriendService
     {
         private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
 
-        public FriendService(ApplicationDbContext context)
+        public FriendService(ApplicationDbContext context,
+            IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
         public async Task<List<string>> GetFriendsOfUserAsync(string user)
@@ -25,10 +30,11 @@ namespace Czeum.Application.Services.FriendService
                 .ToListAsync();
         }
 
-        public async Task AcceptRequestAsync(string sender, string receiver)
+        public async Task AcceptRequestAsync(Guid requestId)
         {
-            var request = await context.Requests
-                .SingleAsync(r => r.Sender.UserName == sender && r.Receiver.UserName == receiver);
+            var request = await context.Requests.Include(r => r.Sender)
+                .Include(r => r.Receiver)
+                .SingleAsync(r => r.Id == requestId);
 
             var friendship = new Friendship
             {
@@ -41,17 +47,15 @@ namespace Czeum.Application.Services.FriendService
             await context.SaveChangesAsync();
         }
 
-        public async Task RemoveFriendAsync(string user, string friend)
+        public async Task RemoveFriendAsync(Guid friendshipId)
         {
-            var friendship = await context.Friendships
-                .SingleAsync(f => f.User1.UserName == user && f.User2.UserName == friend ||
-                                  f.User2.UserName == user && f.User1.UserName == friend);
+            var friendship = await context.Friendships.FindAsync(friendshipId);
 
             context.Friendships.Remove(friendship);
             await context.SaveChangesAsync();
         }
 
-        public async Task AddRequestAsync(string sender, string receiver)
+        public async Task<FriendRequestDto> AddRequestAsync(string sender, string receiver)
         {
             var alreadyRequestedOrFriends = await context.Users.Where(u => u.UserName == sender)
                 .AnyAsync(u => u.SentRequests.Any(r => r.Receiver.UserName == receiver) ||
@@ -72,29 +76,34 @@ namespace Czeum.Application.Services.FriendService
 
             context.Requests.Add(request);
             await context.SaveChangesAsync();
+
+            return mapper.Map<FriendRequestDto>(request);
         }
 
-        public async Task RemoveRequestAsync(string sender, string receiver)
+        public async Task RemoveRequestAsync(Guid requestId)
         {
-            var request = await context.Requests
-                .SingleAsync(r => r.Sender.UserName == sender && r.Receiver.UserName == receiver);
+            var request = await context.Requests.FindAsync(requestId);
 
             context.Requests.Remove(request);
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<string>> GetRequestsSentByUserAsync(string user)
+        public async Task<IEnumerable<FriendRequestDto>> GetRequestsSentByUserAsync(string user)
         {
-            return await context.Requests.Where(r => r.Sender.UserName == user)
-                .Select(r => r.Receiver.UserName)
-                .ToListAsync();
+            return (await context.Requests.Include(r => r.Sender)
+                .Include(r => r.Receiver)
+                .Where(r => r.Sender.UserName == user)
+                .ToListAsync())
+                .Select(r => mapper.Map<FriendRequestDto>(r));
         }
 
-        public async Task<List<string>> GetRequestsReceivedByUserAsync(string user)
+        public async Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedByUserAsync(string user)
         {
-            return await context.Requests.Where(r => r.Receiver.UserName == user)
-                .Select(r => r.Sender.UserName)
-                .ToListAsync();
+            return (await context.Requests.Include(r => r.Sender)
+                .Include(r => r.Receiver)
+                .Where(r => r.Receiver.UserName == user)
+                .ToListAsync())
+                .Select(r => mapper.Map<FriendRequestDto>(r));
         }
     }
 }

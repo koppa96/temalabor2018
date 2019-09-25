@@ -1,11 +1,12 @@
 ﻿using System;
 using Czeum.DAL.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.DAL
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public DbSet<Match> Matches { get; set; }
         public DbSet<SerializedBoard> Boards { get; set; }
@@ -52,7 +53,7 @@ namespace Czeum.DAL
                 .WithOne(r => r.Receiver);
 
             builder.Entity<Match>()
-                .HasKey(m => m.MatchId);
+                .HasKey(m => m.Id);
 
             builder.Entity<Match>()
                 .HasMany(m => m.Messages)
@@ -62,18 +63,6 @@ namespace Czeum.DAL
                 .HasOne(m => m.Board)
                 .WithOne(b => b.Match)
                 .HasForeignKey<SerializedBoard>(b => b.MatchId);
-
-            builder.Entity<SerializedBoard>()
-                .HasKey(b => b.BoardId);
-
-            builder.Entity<StoredMessage>()
-                .HasKey(m => m.MessageId);
-
-            builder.Entity<FriendRequest>()
-                .HasKey(r => r.RequestId);
-
-            builder.Entity<Friendship>()
-                .HasKey(f => f.FriendshipId);
 
             base.OnModelCreating(builder);
         }

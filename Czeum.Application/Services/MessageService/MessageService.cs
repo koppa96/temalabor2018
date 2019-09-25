@@ -40,7 +40,7 @@ namespace Czeum.Application.Services.MessageService
             return msg;
         }
 
-        public async Task<Message> SendToMatchAsync(int matchId, string message, string sender)
+        public async Task<Message> SendToMatchAsync(Guid matchId, string message, string sender)
         {
             var match = await context.Matches.FindAsync(matchId);
             if (match == null || !match.HasPlayer(sender))
@@ -67,9 +67,9 @@ namespace Czeum.Application.Services.MessageService
             return lobbyStorage.GetMessages(lobbyId);
         }
 
-        public async Task<List<Message>> GetMessagesOfMatchAsync(int matchId)
+        public async Task<List<Message>> GetMessagesOfMatchAsync(Guid matchId)
         {
-            return await context.Messages.Where(m => m.Match.MatchId == matchId)
+            return await context.Messages.Where(m => m.Match.Id == matchId)
                 .Select(m => m.ToMessage())
                 .ToListAsync();
         }

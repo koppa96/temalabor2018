@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
@@ -42,10 +44,15 @@ namespace Czeum.Api.Controllers
             return Ok(statuses[lobbyDataWrapper.Content.Host]);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<MoveResultWrapper>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
+        [HttpPut("moves")]
+        public async Task<ActionResult<MatchStatus>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
         {
             var statuses = await gameHandler.HandleMoveAsync(moveDataWrapper.Content, User.Identity.Name);
+
+            await Task.WhenAll(statuses.Where(x => x.Key != User.Identity.Name)
+                .Select(x => hubContext.Clients.User(x.Key).ReceiveResult(x.Value)));
+
+            return statuses[User.Identity.Name];
         }
     }
 }

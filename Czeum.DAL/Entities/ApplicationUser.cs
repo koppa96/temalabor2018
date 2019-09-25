@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace Czeum.DAL.Entities
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser<Guid>
     {
         public List<Match> Player1Matches { get; set; }
         public List<Match> Player2Matches { get; set; }

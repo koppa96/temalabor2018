@@ -70,7 +70,7 @@ namespace Czeum.Server.Services.MessageService
 
         public async Task<List<Message>> GetMessagesOfMatchAsync(int matchId)
         {
-            return await _context.Messages.Where(m => m.Match.MatchId == matchId)
+            return await _context.Messages.Where(m => m.Match.Id == matchId)
                 .Select(m => m.ToMessage())
                 .ToListAsync();
         }
