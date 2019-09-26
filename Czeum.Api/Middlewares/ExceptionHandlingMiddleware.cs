@@ -1,17 +1,21 @@
 using System;
 using System.Threading.Tasks;
+using Czeum.DAL.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Czeum.Api.Middlewares
 {
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<ExceptionHandlingMiddleware> logger;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             this.next = next;
+            this.logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -22,6 +26,7 @@ namespace Czeum.Api.Middlewares
             }
             catch (Exception e)
             {
+                logger.LogError(e, e.Message);
                 await HandleExceptionAsync(context, e);
             }
         }
@@ -30,7 +35,7 @@ namespace Czeum.Api.Middlewares
         {
             context.Response.ContentType = "application/json";
 
-            if (e is ArgumentOutOfRangeException)
+            if (e is EntityNotFoundException)
             {
                 context.Response.StatusCode = 404;
                 return context.Response.WriteJsonAsync(new ProblemDetails

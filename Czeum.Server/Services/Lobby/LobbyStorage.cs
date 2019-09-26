@@ -42,8 +42,8 @@ namespace Czeum.Server.Services.Lobby
                 newLobbyId++;
             }
 
-            lobbies[lobbyData.LobbyId] = lobbyData;
-            messages[lobbyData.LobbyId] = new List<Message>();
+            lobbies[lobbyData.Id] = lobbyData;
+            messages[lobbyData.Id] = new List<Message>();
         }
 
         public void RemoveLobby(int lobbyId)
@@ -54,9 +54,9 @@ namespace Czeum.Server.Services.Lobby
 
         public void UpdateLobby(LobbyData lobbyData)
         {
-            if (lobbies.ContainsKey(lobbyData.LobbyId))
+            if (lobbies.ContainsKey(lobbyData.Id))
             {
-                lobbies[lobbyData.LobbyId] = lobbyData;
+                lobbies[lobbyData.Id] = lobbyData;
             }
         }
 

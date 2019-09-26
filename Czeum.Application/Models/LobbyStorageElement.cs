@@ -4,9 +4,9 @@ using Czeum.DTO;
 
 namespace Czeum.Application.Models
 {
-    public class LobbyStoreElement
+    public class LobbyStorageElement
     {
         public LobbyData LobbyData { get; set; }
-        public List<Message> Message { get; set; }
+        public List<Message> Messages { get; set; }
     }
 }

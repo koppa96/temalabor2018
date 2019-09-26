@@ -43,10 +43,10 @@ namespace Czeum.Client.Models {
 
         public async Task RemoveLobby(int lobbyId)
         {
-            var lobbyToRemove = LobbyList.FirstOrDefault(x => x.LobbyId == lobbyId);
+            var lobbyToRemove = LobbyList.FirstOrDefault(x => x.Id == lobbyId);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 LobbyList.Remove(lobbyToRemove);
-                if(selectedLobby?.LobbyId == lobbyId)
+                if(selectedLobby?.Id == lobbyId)
                 {
                     SelectedLobby = null;
                 }
@@ -55,14 +55,14 @@ namespace Czeum.Client.Models {
 
         public async Task UpdateLobby(LobbyData lobby)
         {
-            var lobbyToUpdate = LobbyList.FirstOrDefault(x => x.LobbyId == lobby.LobbyId);
+            var lobbyToUpdate = LobbyList.FirstOrDefault(x => x.Id == lobby.Id);
             int index = LobbyList.IndexOf(lobbyToUpdate);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 //dirty hack to refresh item in the list
                 LobbyList.RemoveAt(index);
                 LobbyList.Insert(index, lobby);
 
-                if((selectedLobby != null) && (selectedLobby?.LobbyId == lobby.LobbyId))
+                if((selectedLobby != null) && (selectedLobby?.Id == lobby.Id))
                 {
                     SelectedLobby = lobby;
                 }

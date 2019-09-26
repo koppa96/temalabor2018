@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
@@ -21,7 +22,7 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The lobby</returns>
-        LobbyData GetLobby(int lobbyId);
+        LobbyData GetLobby(Guid lobbyId);
 
         /// <summary>
         /// Adds a lobby to the storage.
@@ -33,7 +34,7 @@ namespace Czeum.Application.Services.Lobby
         /// Removes the lobby with the given ID from the storage.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
-        void RemoveLobby(int lobbyId);
+        void RemoveLobby(Guid lobbyId);
 
         /// <summary>
         /// Updates the given lobby's settings.
@@ -53,13 +54,13 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <param name="message">The message to be added</param>
-        void AddMessage(int lobbyId, Message message);
+        void AddMessage(Guid lobbyId, Message message);
 
         /// <summary>
         /// Gets the messages associated with the given lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The list of messages</returns>
-        List<Message> GetMessages(int lobbyId);
+        List<Message> GetMessages(Guid lobbyId);
     }
 }

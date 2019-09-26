@@ -40,19 +40,18 @@ namespace Czeum.Api.SignalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            
             var lobby = lobbyService.GetLobbyOfUser(Context.UserIdentifier);
 
             if (lobby != null)
             {
-                lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobby.LobbyId);
-                if (lobbyService.LobbyExists(lobby.LobbyId))
+                lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobby.Id);
+                if (lobbyService.LobbyExists(lobby.Id))
                 {
-                    await Clients.All.LobbyChanged(lobbyService.GetLobby(lobby.LobbyId));
+                    await Clients.All.LobbyChanged(lobbyService.GetLobby(lobby.Id));
                 }
                 else
                 {
-                    await Clients.All.LobbyDeleted(lobby.LobbyId);
+                    await Clients.All.LobbyDeleted(lobby.Id);
                 }
             }
 

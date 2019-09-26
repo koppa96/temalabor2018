@@ -1,33 +1,33 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.Application.Models;
 using Czeum.DTO;
 
 namespace Czeum.Application.Services.Lobby
 {
     public class LobbyStorage : ILobbyStorage
     {
-        private readonly ConcurrentDictionary<int, LobbyData> lobbies;
-        private readonly ConcurrentDictionary<int, List<Message>> messages;
+        private readonly ConcurrentDictionary<Guid, LobbyStorageElement> content;
 
         public LobbyStorage()
         {
-            lobbies = new ConcurrentDictionary<int, LobbyData>();
-            messages = new ConcurrentDictionary<int, List<Message>>();
+            content = new ConcurrentDictionary<Guid, LobbyStorageElement>();
         }
         
         public IEnumerable<LobbyData> GetLobbies()
         {
-            return lobbies.Values;
+            return content.Values.Select(x => x.LobbyData);
         }
 
-        public LobbyData GetLobby(int lobbyId)
+        public LobbyData GetLobby(Guid lobbyId)
         {
-            if (lobbies.ContainsKey(lobbyId))
+            if (content.ContainsKey(lobbyId))
             {
-                return lobbies[lobbyId];
+                return content[lobbyId].LobbyData;
             }
 
             return null;
@@ -35,44 +35,42 @@ namespace Czeum.Application.Services.Lobby
 
         public void AddLobby(LobbyData lobbyData)
         {
-            int newLobbyId = 1;
-            while (lobbies.ContainsKey(newLobbyId))
+            lobbyData.Id = Guid.NewGuid();
+            content[lobbyData.Id] = new LobbyStorageElement
             {
-                newLobbyId++;
-            }
-
-            lobbyData.LobbyId = newLobbyId;
-            lobbies[lobbyData.LobbyId] = lobbyData;
-            messages[lobbyData.LobbyId] = new List<Message>();
+                LobbyData = lobbyData,
+                Messages = new List<Message>()
+            };
         }
 
-        public void RemoveLobby(int lobbyId)
+        public void RemoveLobby(Guid lobbyId)
         {
-            lobbies.TryRemove(lobbyId, out _);
-            messages.TryRemove(lobbyId, out _);
+            content.TryRemove(lobbyId, out _);
         }
 
         public void UpdateLobby(LobbyData lobbyData)
         {
-            if (lobbies.ContainsKey(lobbyData.LobbyId))
+            if (content.ContainsKey(lobbyData.Id))
             {
-                lobbies[lobbyData.LobbyId] = lobbyData;
+                content[lobbyData.Id].LobbyData = lobbyData;
             }
         }
 
         public LobbyData GetLobbyOfUser(string user)
         {
-            return lobbies.Values.SingleOrDefault(l => l.Host == user || l.Guest == user);
+            return content.Values
+                .SingleOrDefault(x => x.LobbyData.Host == user || x.LobbyData.Guest == user)
+                ?.LobbyData;
         }
 
-        public void AddMessage(int lobbyId, Message message)
+        public void AddMessage(Guid lobbyId, Message message)
         {
-            messages[lobbyId].Add(message);
+            content[lobbyId].Messages.Add(message);
         }
 
-        public List<Message> GetMessages(int lobbyId)
+        public List<Message> GetMessages(Guid lobbyId)
         {
-            return messages[lobbyId];
+            return content[lobbyId].Messages;
         }
     }
 }

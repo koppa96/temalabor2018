@@ -6,6 +6,7 @@ using AutoMapper;
 using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
+using Czeum.DAL.Extensions;
 using Czeum.DTO.UserManagement;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +43,7 @@ namespace Czeum.Application.Services.FriendService
             var currentUser = identityService.GetCurrentUser();
             var request = await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)
-                .SingleAsync(r => r.Id == requestId);
+                .CustomSingleAsync(r => r.Id == requestId, "No friend request found with the given id.");
 
             if (request.Receiver.UserName != currentUser)
             {
@@ -80,7 +81,7 @@ namespace Czeum.Application.Services.FriendService
             var currentUser = identityService.GetCurrentUser();
             var friendship = await context.Friendships.Include(f => f.User1)
                 .Include(f => f.User2)
-                .SingleAsync(f => f.Id == friendshipId);
+                .CustomSingleAsync(f => f.Id == friendshipId, "No friendship found with the given id.");
 
             if (currentUser != friendship.User1.UserName && currentUser != friendship.User2.UserName)
             {
@@ -108,7 +109,8 @@ namespace Czeum.Application.Services.FriendService
             var request = new FriendRequest
             {
                 Sender = await context.Users.SingleAsync(u => u.UserName == currentUser),
-                Receiver = await context.Users.SingleAsync(u => u.UserName == receiver)
+                Receiver = await context.Users.CustomSingleAsync(u => u.UserName == receiver, 
+                    "No user with the given name exists.")
             };
 
             context.Requests.Add(request);
@@ -119,7 +121,8 @@ namespace Czeum.Application.Services.FriendService
 
         public async Task RemoveRequestAsync(Guid requestId)
         {
-            var request = await context.Requests.FindAsync(requestId);
+            var request = await context.Requests.CustomFindAsync(requestId, 
+                "No friend request found with the given id.");
 
             context.Requests.Remove(request);
             await context.SaveChangesAsync();

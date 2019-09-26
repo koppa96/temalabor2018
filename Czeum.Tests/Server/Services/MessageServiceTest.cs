@@ -36,13 +36,13 @@ namespace Czeum.Tests.Server.Services
             lobby.Host = username;
             storage.AddLobby(lobby);
 
-            var result = service.SendToLobby(lobby.LobbyId, message, username);
+            var result = service.SendToLobby(lobby.Id, message, username);
             
             Assert.AreNotEqual(null, result);
             Assert.AreEqual(username, result.Sender);
             Assert.AreEqual(message, result.Text);
-            Assert.AreEqual(1, storage.GetMessages(lobby.LobbyId).Count);
-            Assert.AreEqual(message, storage.GetMessages(lobby.LobbyId)[0].Text);
+            Assert.AreEqual(1, storage.GetMessages(lobby.Id).Count);
+            Assert.AreEqual(message, storage.GetMessages(lobby.Id)[0].Text);
         }
 
         [TestMethod]

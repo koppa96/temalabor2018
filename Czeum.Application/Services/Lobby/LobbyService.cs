@@ -28,7 +28,7 @@ namespace Czeum.Application.Services.Lobby {
 			this.mapper = mapper;
 		}
 
-		public async Task JoinPlayerToLobbyAsync(string player, int lobbyId)
+		public async Task JoinPlayerToLobbyAsync(string player, Guid lobbyId)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby == null)
@@ -44,7 +44,7 @@ namespace Czeum.Application.Services.Lobby {
 			lobby.JoinGuest(player, friends);
 		}
 
-		public void DisconnectPlayerFromLobby(string player, int lobbyId)
+		public void DisconnectPlayerFromLobby(string player, Guid lobbyId)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			lobby.DisconnectPlayer(player);
@@ -55,7 +55,7 @@ namespace Czeum.Application.Services.Lobby {
 			}			
 		}
 
-		public void InvitePlayerToLobby(int lobbyId, string invitingPlayer, string player)
+		public void InvitePlayerToLobby(Guid lobbyId, string invitingPlayer, string player)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby.Host != invitingPlayer)
@@ -69,7 +69,7 @@ namespace Czeum.Application.Services.Lobby {
 			}
 		}
 
-		public string KickGuest(int lobbyId, string kickingPlayer)
+		public string KickGuest(Guid lobbyId, string kickingPlayer)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby.Host != kickingPlayer)
@@ -97,10 +97,10 @@ namespace Czeum.Application.Services.Lobby {
 
 		public void UpdateLobbySettings(LobbyDataWrapper lobbyData, string updatingUser)
 		{
-			var oldLobby = lobbyStorage.GetLobby(lobbyData.Content.LobbyId);
+			var oldLobby = lobbyStorage.GetLobby(lobbyData.Content.Id);
 			if (oldLobby == null)
 			{
-				throw new ArgumentOutOfRangeException(nameof(lobbyData.Content.LobbyId), "Lobby does not exist.");
+				throw new ArgumentOutOfRangeException(nameof(lobbyData.Content.Id), "Lobby does not exist.");
 			}
 
 			if (updatingUser != oldLobby.Host)
@@ -115,13 +115,13 @@ namespace Czeum.Application.Services.Lobby {
 			lobbyStorage.UpdateLobby(lobbyData.Content);
 		}
 
-		public LobbyDataWrapper GetLobby(int lobbyId)
+		public LobbyDataWrapper GetLobby(Guid lobbyId)
 		{
             var lobby = lobbyStorage.GetLobby(lobbyId);
 			return mapper.Map<LobbyDataWrapper>(lobby);
 		}
 
-		public bool LobbyExists(int lobbyId)
+		public bool LobbyExists(Guid lobbyId)
 		{
 			return lobbyStorage.GetLobby(lobbyId) != null;
 		}
@@ -143,31 +143,31 @@ namespace Czeum.Application.Services.Lobby {
 			return mapper.Map<LobbyDataWrapper>(lobby);
 		}
 
-		public void AddMessageNow(int lobbyId, Message message)
+		public void AddMessageNow(Guid lobbyId, Message message)
 		{
 			message.Timestamp = DateTime.UtcNow;
 			lobbyStorage.AddMessage(lobbyId, message);
 		}
 
-		public List<Message> GetMessages(int lobbyId)
+		public List<Message> GetMessages(Guid lobbyId)
 		{
 			return lobbyStorage.GetMessages(lobbyId);
 		}
 
-		public string GetOtherPlayer(int lobbyId, string player)
+		public string GetOtherPlayer(Guid lobbyId, string player)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			return player == lobby.Host ? lobby.Guest : lobby.Host;
 		}
 
-		public void CancelInviteFromLobby(int lobbyId, string player)
+		public void CancelInviteFromLobby(Guid lobbyId, string player)
 		{
 			//TODO: Check the inviting player's identity
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			lobby.InvitedPlayers.Remove(player);
 		}
 
-		public void RemoveLobby(int id)
+		public void RemoveLobby(Guid id)
 		{
 			lobbyStorage.RemoveLobby(id);
 		}

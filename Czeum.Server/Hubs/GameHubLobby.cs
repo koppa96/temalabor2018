@@ -20,7 +20,7 @@ namespace Czeum.Server.Hubs
             try
             {
                 var lobby = _lobbyService.CreateAndAddLobby(lobbyType, Context.UserIdentifier, access, name);
-                _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
+                _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.Id}");
             
                 await Clients.Caller.LobbyCreated(lobby);
                 await Clients.Others.LobbyAdded(lobby);
@@ -34,7 +34,7 @@ namespace Czeum.Server.Hubs
 
         public async Task UpdateLobby(LobbyData lobbyData)
         {
-            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyData.LobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyData.Id))
             {
                 return;
             }

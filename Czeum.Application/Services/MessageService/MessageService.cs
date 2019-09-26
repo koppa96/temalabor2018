@@ -22,7 +22,7 @@ namespace Czeum.Application.Services.MessageService
             this.lobbyStorage = lobbyStorage;
         }
 
-        public Message SendToLobby(int lobbyId, string message, string sender)
+        public Message SendToLobby(Guid lobbyId, string message, string sender)
         {
             var lobby = lobbyStorage.GetLobby(lobbyId);
             if (lobby == null || lobby.Host != sender && lobby.Guest != sender)
@@ -62,7 +62,7 @@ namespace Czeum.Application.Services.MessageService
             return storedMessage.ToMessage();
         }
 
-        public List<Message> GetMessagesOfLobby(int lobbyId)
+        public List<Message> GetMessagesOfLobby(Guid lobbyId)
         {
             return lobbyStorage.GetMessages(lobbyId);
         }

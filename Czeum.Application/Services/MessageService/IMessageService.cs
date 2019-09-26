@@ -17,7 +17,7 @@ namespace Czeum.Application.Services.MessageService
         /// <param name="message">The content of the message</param>
         /// <param name="sender">The name of the sender</param>
         /// <returns>The sent message as a DTO if the sending was successful</returns>
-        Message SendToLobby(int lobbyId, string message, string sender);
+        Message SendToLobby(Guid lobbyId, string message, string sender);
 
         /// <summary>
         /// Sends a message to a match.
@@ -33,7 +33,7 @@ namespace Czeum.Application.Services.MessageService
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The list of messages</returns>
-        List<Message> GetMessagesOfLobby(int lobbyId);
+        List<Message> GetMessagesOfLobby(Guid lobbyId);
 
         /// <summary>
         /// Gets all the messages that were sent to a specific match.

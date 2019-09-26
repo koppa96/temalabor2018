@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
@@ -12,7 +13,7 @@ namespace Czeum.ClientCallback
     /// </summary>
     public interface ILobbyClient
     {
-        Task LobbyDeleted(int lobbyId);
+        Task LobbyDeleted(Guid lobbyId);
         Task LobbyCreated(LobbyDataWrapper lobbyData);
         Task LobbyAdded(LobbyDataWrapper lobbyData);
         Task LobbyChanged(LobbyDataWrapper lobbyData);

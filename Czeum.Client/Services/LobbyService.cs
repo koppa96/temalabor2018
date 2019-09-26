@@ -47,12 +47,12 @@ namespace Czeum.Client.Services {
 
         public async Task LeaveLobby()
         {
-            await hubService.Connection.InvokeAsync("DisconnectFromlobby", CurrentLobby.LobbyId);
+            await hubService.Connection.InvokeAsync("DisconnectFromlobby", CurrentLobby.Id);
         }
 
         public async Task InvitePlayer(string player)
         {
-            hubService.Connection.InvokeAsync("InvitePlayer", CurrentLobby.LobbyId, player);
+            hubService.Connection.InvokeAsync("InvitePlayer", CurrentLobby.Id, player);
         }
 
         public async Task CreateLobby(Type type)
@@ -99,13 +99,13 @@ namespace Czeum.Client.Services {
 
         public async Task CreateMatch()
         {
-            await hubService.Connection.InvokeAsync("CreateMatch", CurrentLobby.LobbyId);
+            await hubService.Connection.InvokeAsync("CreateMatch", CurrentLobby.Id);
 
         }
 
         public async Task KickGuest()
         {
-            await hubService.Connection.InvokeAsync("KickGuest", CurrentLobby.LobbyId);
+            await hubService.Connection.InvokeAsync("KickGuest", CurrentLobby.Id);
         }
     }
 }
