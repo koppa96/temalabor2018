@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
@@ -16,7 +17,7 @@ namespace Czeum.Application.Services.EmailSender
             gmailPassword = config.GetValue<string>("Gmail:Password");
         }
 
-        public async Task SendConfirmationEmailAsync(string to, string uid, string token, string callbackUrl)
+        public async Task SendConfirmationEmailAsync(string to, Guid uid, string token, string callbackUrl)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));

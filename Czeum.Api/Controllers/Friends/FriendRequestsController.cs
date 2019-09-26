@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
@@ -25,7 +26,8 @@ namespace Czeum.Api.Controllers.Friends
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetFriendRequestsAsync()
         {
-            return Ok(await friendService.get);
+            throw new NotImplementedException();
+            //return Ok(await friendService.get);
         }
     }
 }

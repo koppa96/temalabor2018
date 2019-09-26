@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -98,7 +99,7 @@ namespace Czeum.Application.Services.GameHandler
             };
         }
 
-        public async Task<Match> GetMatchByIdAsync(int id)
+        public async Task<Match> GetMatchByIdAsync(Guid id)
         {
             return await context.Matches.Include(m => m.Player1)
                 .Include(m => m.Player2)
@@ -125,7 +126,7 @@ namespace Czeum.Application.Services.GameHandler
             return statuses;
         }
 
-        public async Task<MoveResultWrapper> GetBoardByMatchIdAsync(int matchId)
+        public async Task<MoveResultWrapper> GetBoardByMatchIdAsync(Guid matchId)
         {
             var board = await context.Boards.SingleAsync(b => b.Match.Id == matchId);
             var service = serviceContainer.FindBySerializedBoard(board);

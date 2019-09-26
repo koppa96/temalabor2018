@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
@@ -41,7 +42,7 @@ namespace Czeum.Application.Services.GameHandler
         /// </summary>
         /// <param name="id">The identifier of the match</param>
         /// <returns>The match</returns>
-        Task<Match> GetMatchByIdAsync(int id);
+        Task<Match> GetMatchByIdAsync(Guid id);
 
         /// <summary>
         /// Gets a list of matches in which the player with the given name participates.
@@ -55,6 +56,6 @@ namespace Czeum.Application.Services.GameHandler
         /// </summary>
         /// <param name="matchId">The identifier of the match</param>
         /// <returns>The board as a MoveResult</returns>
-        Task<MoveResultWrapper> GetBoardByMatchIdAsync(int matchId);
+        Task<MoveResultWrapper> GetBoardByMatchIdAsync(Guid matchId);
     }
 }

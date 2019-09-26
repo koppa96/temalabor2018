@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Czeum.Application.Services.EmailSender
 {
@@ -15,7 +16,7 @@ namespace Czeum.Application.Services.EmailSender
         /// <param name="token">The activation token</param>
         /// <param name="callbackUrl">The url of the e-mail address activation page</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task SendConfirmationEmailAsync(string to, string uid, string token, string callbackUrl);
+        Task SendConfirmationEmailAsync(string to, Guid uid, string token, string callbackUrl);
 
         /// <summary>
         /// Sends a password reset e-mail.

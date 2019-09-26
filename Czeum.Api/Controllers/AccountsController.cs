@@ -65,7 +65,7 @@ namespace Czeum.Api.Controllers
 		        _logger.LogInformation($"New user created: {user.UserName}");
 		        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
 		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
-		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id));
+		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var url = Url.Page(

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,14 +43,15 @@ namespace Czeum.Api.Controllers.Friends
         [HttpDelete("{friendName}")]
         public async Task<ActionResult> RemoveFriendAsync(string friendName)
         {
-            await friendService.RemoveFriendAsync(User.Identity.Name, friendName);
+            //await friendService.RemoveFriendAsync(User.Identity.Name, friendName);
             return NoContent();
         }
 
         [HttpPost("{friendName}")]
         public async Task<ActionResult<FriendDto>> AcceptRequestAsync(string friendName)
         {
-            await friendService.AcceptRequestAsync(friendName, User.Identity.Name);
+            throw new NotImplementedException();
+            /*await friendService.AcceptRequestAsync(friendName, User.Identity.Name);
 
             await hubContext.Clients.User(friendName).FriendAdded(new FriendDto
             {
@@ -61,7 +63,7 @@ namespace Czeum.Api.Controllers.Friends
             {
                 IsOnline = onlineUserTracker.IsOnline(friendName),
                 Username = friendName
-            });
+            });*/
         }
     }
 }
