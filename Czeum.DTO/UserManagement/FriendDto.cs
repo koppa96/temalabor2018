@@ -1,3 +1,5 @@
+using System;
+
 namespace Czeum.DTO.UserManagement
 {
     /// <summary>
@@ -5,7 +7,7 @@ namespace Czeum.DTO.UserManagement
     /// </summary>
     public class FriendDto
     {
-        public int FriendshipId { get; set; }
+        public Guid FriendshipId { get; set; }
         public bool IsOnline { get; set; }
         public string Username { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using Czeum.Abstractions;
+using System;
 
 namespace Czeum.DAL.Entities
 {
@@ -7,6 +8,6 @@ namespace Czeum.DAL.Entities
         public string BoardData { get; set; }
 
         public Match Match { get; set; }
-        public int MatchId { get; set; }
+        public Guid MatchId { get; set; }
     }
 }

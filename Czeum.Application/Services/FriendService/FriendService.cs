@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
 using Czeum.DAL.Entities;
 using Czeum.DTO.UserManagement;
@@ -14,12 +15,18 @@ namespace Czeum.Application.Services.FriendService
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IIdentityService identityService;
+        private readonly IOnlineUserTracker onlineUserTracker;
 
         public FriendService(ApplicationDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            IIdentityService identityService,
+            IOnlineUserTracker onlineUserTracker)
         {
             this.context = context;
             this.mapper = mapper;
+            this.identityService = identityService;
+            this.onlineUserTracker = onlineUserTracker;
         }
 
         public async Task<List<string>> GetFriendsOfUserAsync(string user)
@@ -30,11 +37,17 @@ namespace Czeum.Application.Services.FriendService
                 .ToListAsync();
         }
 
-        public async Task AcceptRequestAsync(Guid requestId)
+        public async Task<(FriendDto Sender, FriendDto Receiver)> AcceptRequestAsync(Guid requestId)
         {
+            var currentUser = identityService.GetCurrentUser();
             var request = await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)
                 .SingleAsync(r => r.Id == requestId);
+
+            if (request.Receiver.UserName != currentUser)
+            {
+                throw new UnauthorizedAccessException("You can not accept someone else's friend request.");
+            }
 
             var friendship = new Friendship
             {
@@ -45,19 +58,43 @@ namespace Czeum.Application.Services.FriendService
             context.Friendships.Add(friendship);
             context.Requests.Remove(request);
             await context.SaveChangesAsync();
+
+            return (
+                Sender: new FriendDto
+                {
+                    FriendshipId = friendship.Id,
+                    IsOnline = true,
+                    Username = friendship.User2.UserName
+                }, 
+                Receiver: new FriendDto
+                {
+                    FriendshipId = friendship.Id,
+                    IsOnline = onlineUserTracker.IsOnline(friendship.User1.UserName),
+                    Username = friendship.User1.UserName
+                }
+            );
         }
 
         public async Task RemoveFriendAsync(Guid friendshipId)
         {
-            var friendship = await context.Friendships.FindAsync(friendshipId);
+            var currentUser = identityService.GetCurrentUser();
+            var friendship = await context.Friendships.Include(f => f.User1)
+                .Include(f => f.User2)
+                .SingleAsync(f => f.Id == friendshipId);
+
+            if (currentUser != friendship.User1.UserName && currentUser != friendship.User2.UserName)
+            {
+                throw new UnauthorizedAccessException("You can not delete a friendship that you are not part of.");
+            }
 
             context.Friendships.Remove(friendship);
             await context.SaveChangesAsync();
         }
 
-        public async Task<FriendRequestDto> AddRequestAsync(string sender, string receiver)
+        public async Task<FriendRequestDto> AddRequestAsync(string receiver)
         {
-            var alreadyRequestedOrFriends = await context.Users.Where(u => u.UserName == sender)
+            var currentUser = identityService.GetCurrentUser();
+            var alreadyRequestedOrFriends = await context.Users.Where(u => u.UserName == currentUser)
                 .AnyAsync(u => u.SentRequests.Any(r => r.Receiver.UserName == receiver) ||
                                u.ReceivedRequests.Any(r => r.Sender.UserName == receiver) ||
                                u.User1Friendships.Any(f => f.User2.UserName == receiver) ||
@@ -70,7 +107,7 @@ namespace Czeum.Application.Services.FriendService
             
             var request = new FriendRequest
             {
-                Sender = await context.Users.SingleAsync(u => u.UserName == sender),
+                Sender = await context.Users.SingleAsync(u => u.UserName == currentUser),
                 Receiver = await context.Users.SingleAsync(u => u.UserName == receiver)
             };
 

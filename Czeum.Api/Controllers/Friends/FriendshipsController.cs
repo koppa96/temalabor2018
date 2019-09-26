@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Controllers.Friends
 {
-    [Route(ApiResources.Friends.FriendRequests.BasePath)]
+    [Route(ApiResources.Friends.Friendships.BasePath)]
     [ApiController]
     public class FriendshipsController : ControllerBase
     {
@@ -40,10 +40,10 @@ namespace Czeum.Api.Controllers.Friends
                 }));
         }
 
-        [HttpDelete("{friendName}")]
-        public async Task<ActionResult> RemoveFriendAsync(string friendName)
+        [HttpDelete("{friendshipId}")]
+        public async Task<ActionResult> RemoveFriendAsync(Guid friendshipId)
         {
-            //await friendService.RemoveFriendAsync(User.Identity.Name, friendName);
+            await friendService.RemoveFriendAsync(friendshipId);
             return NoContent();
         }
 

@@ -9,7 +9,9 @@ using AutoMapper;
 using Czeum.Api.AutofacModules;
 using Czeum.Api.IdentityServer;
 using Czeum.Api.Middlewares;
+using Czeum.Api.Services;
 using Czeum.Api.SignalR;
+using Czeum.Application.Services;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
@@ -55,7 +57,7 @@ namespace Czeum.Api
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
@@ -122,6 +124,7 @@ namespace Czeum.Api
 
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
+            services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddAutoMapper(Assembly.Load("Czeum.Application"));
         }
