@@ -16,6 +16,7 @@ using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Services;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -58,6 +59,7 @@ namespace Czeum.Api
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()

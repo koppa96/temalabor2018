@@ -5,62 +5,53 @@ using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Abstractions.GameServices;
-using Czeum.DAL.Entities;
+using Czeum.Abstractions.GameServices.BoardConverter;
+using Czeum.Abstractions.GameServices.BoardCreator;
+using Czeum.Abstractions.GameServices.MoveHandler;
+using Czeum.ChessLogic.Services;
+using Czeum.DAL.Exceptions;
+using Czeum.Domain.Entities;
 
 namespace Czeum.Application.Services.ServiceContainer
 {
     public class ServiceContainer : IServiceContainer
     {
-        private readonly IEnumerable<IGameService> services;
+        private readonly IEnumerable<IMoveHandler> moveHandlers;
+        private readonly IEnumerable<IBoardCreator> boardCreators;
+        private readonly IEnumerable<IBoardConverter> boardConverters;
+        private readonly Random random;
 
-        public ServiceContainer(IEnumerable<IGameService> services)
+        public ServiceContainer(IEnumerable<IMoveHandler> moveHandlers,
+            IEnumerable<IBoardCreator> boardCreators,
+            IEnumerable<IBoardConverter> boardConverters)
         {
-            this.services = services;
+            this.moveHandlers = moveHandlers;
+            this.boardCreators = boardCreators;
+            this.boardConverters = boardConverters;
+            random = new Random();
         }
 
-        public IGameService FindByMoveData(MoveData moveData)
+        public IBoardConverter FindBoardConverter(SerializedBoard serializedBoard)
         {
-            var service = services.FirstOrDefault(s => Attribute.GetCustomAttributes(s.GetType())
-                .Any(a => a is GameServiceAttribute attr && attr.MoveType == moveData.GetType()));
-
-            if (service == null)
-            {
-                throw new GameNotSupportedException("There is no game service that can execute that move.");
-            }
-
-            return service;
+            return boardConverters.FirstOrDefault(x => x.GetType().BaseType?.GetGenericArguments().First() == serializedBoard.GetType())
+                ?? throw new GameNotSupportedException("Could not find board converter for this game type.");
         }
 
-        public IGameService FindByLobbyData(LobbyData lobbyData)
+        public IBoardCreator FindBoardCreator(LobbyData lobbyData)
         {
-            var service = services.FirstOrDefault(s => Attribute.GetCustomAttributes(s.GetType())
-                .Any(a => a is GameServiceAttribute attr && attr.LobbyType == lobbyData.GetType()));
-
-            if (service == null)
-            {
-                throw new GameNotSupportedException("There is no game service that could make a board for that lobby.");
-            }
-
-            return service;
+            return boardCreators.FirstOrDefault(x => x.GetType().BaseType?.GetGenericArguments().First() == lobbyData.GetType())
+                ?? throw new GameNotSupportedException("Could not find board creator for this game type.");
         }
 
-        public IGameService FindBySerializedBoard(SerializedBoard serializedBoard)
+        public IMoveHandler FindMoveHandler(MoveData moveData)
         {
-            var service = services.FirstOrDefault(s => Attribute.GetCustomAttributes(s.GetType())
-                .Any(a => a is GameServiceAttribute attr && attr.BoardType == serializedBoard.GetType()));
-
-            if (service == null)
-            {
-                throw new GameNotSupportedException("There is no game service that could process that board.");
-            }
-
-            return service;
+            return moveHandlers.FirstOrDefault(x => x.GetType().BaseType?.GetGenericArguments().First() == moveData.GetType()) 
+                ?? throw new GameNotSupportedException("Could not find move handler for this game type.");
         }
 
-        public IGameService GetRandomService()
+        public IBoardCreator GetRandomBoardCreator()
         {
-            var serviceList = services.ToList();
-            return serviceList[new Random().Next(serviceList.Count)];
+            return boardCreators.ToList()[random.Next(boardCreators.Count())];
         }
     }
 }

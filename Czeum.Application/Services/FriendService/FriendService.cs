@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
-using Czeum.DAL.Entities;
 using Czeum.DAL.Extensions;
+using Czeum.Domain.Entities;
+using Czeum.Domain.Services;
 using Czeum.DTO.UserManagement;
 using Microsoft.EntityFrameworkCore;
 

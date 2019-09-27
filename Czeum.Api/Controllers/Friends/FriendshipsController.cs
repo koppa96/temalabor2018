@@ -47,23 +47,13 @@ namespace Czeum.Api.Controllers.Friends
             return NoContent();
         }
 
-        [HttpPost("{friendName}")]
-        public async Task<ActionResult<FriendDto>> AcceptRequestAsync(string friendName)
+        [HttpPost("{requestId}")]
+        public async Task<ActionResult<FriendDto>> AcceptRequestAsync(Guid requestId)
         {
-            throw new NotImplementedException();
-            /*await friendService.AcceptRequestAsync(friendName, User.Identity.Name);
+            var result = await friendService.AcceptRequestAsync(requestId);
 
-            await hubContext.Clients.User(friendName).FriendAdded(new FriendDto
-            {
-                IsOnline = true,
-                Username = User.Identity.Name
-            });
-            
-            return StatusCode(201, new FriendDto
-            {
-                IsOnline = onlineUserTracker.IsOnline(friendName),
-                Username = friendName
-            });*/
+            await hubContext.Clients.User(result.Receiver.Username).FriendAdded(result.Sender);
+            return StatusCode(201, result.Receiver);
         }
     }
 }

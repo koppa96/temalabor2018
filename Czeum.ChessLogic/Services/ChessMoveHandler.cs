@@ -1,29 +1,39 @@
-﻿using System;
-using Czeum.Abstractions;
-using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.DTO.Lobbies;
+﻿using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.GameServices;
+using Czeum.Abstractions.GameServices.MoveHandler;
 using Czeum.DAL;
-using Czeum.DAL.Entities;
+using Czeum.DAL.Extensions;
+using Czeum.Domain.Entities;
 using Czeum.DTO.Chess;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Czeum.ChessLogic
+namespace Czeum.ChessLogic.Services
 {
-    [GameService(typeof(ChessMoveData), typeof(ChessLobbyData), typeof(SerializedChessBoard))]
-    public class ChessService : IGameService
+    public class ChessMoveHandler : MoveHandler<ChessMoveData>
     {
-        public InnerMoveResult ExecuteMove(MoveData moveData, int playerId, ISerializedBoard serializedBoard)
+        private readonly IBoardLoader<SerializedChessBoard> boardLoader;
+
+        public ChessMoveHandler(IBoardLoader<SerializedChessBoard> boardLoader)
         {
-            var move = (ChessMoveData) moveData;
-            var color = playerId == 1 ? Color.White : Color.Black;
-            var enemyColor = playerId == 1 ? Color.Black : Color.White;
-            var serializedChessBoard = (SerializedChessBoard) serializedBoard;
+            this.boardLoader = boardLoader;
+        }
+
+        protected override async Task<InnerMoveResult> HandleAsync(ChessMoveData moveData, int playerId)
+        {
+            var serializedChessBoard = await boardLoader.LoadByMatchIdAsync(moveData.MatchId);
 
             var board = new ChessBoard(false);
             board.DeserializeContent(serializedChessBoard);
 
-            if (!board.ValidateMove(move, color) || 
-                !board.MovePiece(board[move.FromRow, move.FromColumn], board[move.ToRow, move.ToColumn]))
+            var color = playerId == 1 ? Color.White : Color.Black;
+            var enemyColor = playerId == 1 ? Color.Black : Color.White;
+
+            if (!board.ValidateMove(moveData, color) ||
+                !board.MovePiece(board[moveData.FromRow, moveData.FromColumn], board[moveData.ToRow, moveData.ToColumn]))
             {
                 throw new InvalidOperationException("Invalid move.");
             }
@@ -33,13 +43,12 @@ namespace Czeum.ChessLogic
                 throw new InvalidOperationException("This move would put the king in check.");
             }
 
-            var newBoardData = board.SerializeContent().BoardData;
+            serializedChessBoard.BoardData = board.SerializeContent().BoardData;
             var enemyMoves = board.GetPossibleMovesFor(enemyColor);
             if (board.Stalemate(enemyColor, enemyMoves))
             {
                 return new InnerMoveResult
                 {
-                    UpdatedBoardData = newBoardData,
                     Status = Status.Draw,
                     MoveResult = new ChessMoveResult
                     {
@@ -54,7 +63,6 @@ namespace Czeum.ChessLogic
             {
                 return new InnerMoveResult
                 {
-                    UpdatedBoardData = newBoardData,
                     Status = Status.Win,
                     MoveResult = new ChessMoveResult
                     {
@@ -67,7 +75,6 @@ namespace Czeum.ChessLogic
 
             return new InnerMoveResult
             {
-                UpdatedBoardData = newBoardData,
                 Status = Status.Success,
                 MoveResult = new ChessMoveResult
                 {
@@ -75,29 +82,6 @@ namespace Czeum.ChessLogic
                     WhiteKingInCheck = !board.IsKingSafe(Color.White),
                     BlackKingInCheck = !board.IsKingSafe(Color.Black)
                 }
-            };
-        }
-
-        public ISerializedBoard CreateNewBoard(LobbyData lobbyData)
-        {
-            return new ChessBoard(true).SerializeContent();
-        }
-
-        public ISerializedBoard CreateDefaultBoard()
-        {
-            return CreateNewBoard(null);
-        }
-
-        public IMoveResult ConvertToMoveResult(ISerializedBoard serializedBoard)
-        {
-            var board = new ChessBoard(false);
-            board.DeserializeContent((SerializedChessBoard) serializedBoard);
-
-            return new ChessMoveResult
-            {
-                BlackKingInCheck = !board.IsKingSafe(Color.Black),
-                WhiteKingInCheck = board.IsKingSafe(Color.White),
-                PieceInfos = board.GetPieceInfos()
             };
         }
     }

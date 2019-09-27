@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.FriendService;
+using Czeum.DTO.UserManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -23,11 +24,40 @@ namespace Czeum.Api.Controllers.Friends
             this.hubContext = hubContext;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<string>>> GetFriendRequestsAsync()
+        [HttpGet("received")]
+        public async Task<ActionResult<IEnumerable<FriendRequestDto>>> GetFriendRequestsReceivedAsync()
         {
-            throw new NotImplementedException();
-            //return Ok(await friendService.get);
+            return Ok(await friendService.GetRequestsReceivedByUserAsync(User.Identity.Name));
+        }
+
+        [HttpGet("sent")]
+        public async Task<ActionResult<IEnumerable<FriendRequestDto>>> GetFriendRequestsSentAsync()
+        {
+            return Ok(await friendService.GetRequestsSentByUserAsync(User.Identity.Name));
+        }
+
+        [HttpPost("{username}")]
+        public async Task<ActionResult<FriendRequestDto>> SendFriendRequestAsync(string username)
+        {
+            return Ok(await friendService.AddRequestAsync(username));
+        }
+
+        [HttpDelete("{requestId}/cancel")]
+        public async Task<ActionResult> CancelFriendRequest(Guid requestId)
+        {
+            await friendService.RemoveRequestAsync(requestId);
+
+            // TODO: Notify other user
+            return NoContent();
+        }
+
+        [HttpDelete("{requestId}/reject")]
+        public async Task<ActionResult> RejectFriendRequest(Guid requestId)
+        {
+            await friendService.RemoveRequestAsync(requestId);
+
+            // TODO: Notify other user
+            return NoContent();
         }
     }
 }

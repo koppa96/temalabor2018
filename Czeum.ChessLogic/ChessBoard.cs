@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Czeum.Abstractions;
 using Czeum.ChessLogic.Pieces;
-using Czeum.DAL.Entities;
+using Czeum.Domain.Entities;
 using Czeum.DTO.Chess;
 
 namespace Czeum.ChessLogic

@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Czeum.DAL.Entities;
 using Czeum.DTO.Connect4;
+using Czeum.Domain.Entities;
 
 namespace Czeum.Connect4Logic
 {

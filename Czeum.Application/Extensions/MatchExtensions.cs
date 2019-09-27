@@ -1,8 +1,11 @@
 using System;
+using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Domain.Entities;
+using Czeum.DTO;
+using Czeum.DTO.Wrappers;
 
-namespace Czeum.DAL.Extensions
+namespace Czeum.Application.Extensions
 {
     public static class MatchExtensions
     {
@@ -59,42 +62,6 @@ namespace Czeum.DAL.Extensions
                     return playerId == 1 ? GameState.EnemyWon : GameState.YouWon;
                 default:
                     throw new NotSupportedException("There is an unhandled MatchState that can't be converted to GameState.");
-            }
-        }
-
-        public static bool HasEnded(this Match match)
-        {
-            return match.State == MatchState.Player1Won || match.State == MatchState.Player2Won ||
-                   match.State == MatchState.Draw;
-        }
-
-        public static void NextTurn(this Match match)
-        {
-            switch (match.State)
-            {
-                case MatchState.Player1Moves:
-                    match.State = MatchState.Player2Moves;
-                    return;
-                case MatchState.Player2Moves:
-                    match.State = MatchState.Player1Moves;
-                    return;
-                default:
-                    throw new InvalidOperationException("The match already ended.");
-            }
-        }
-
-        public static void CurrentPlayerWon(this Match match)
-        {
-            switch (match.State)
-            {
-                case MatchState.Player1Moves:
-                    match.State = MatchState.Player1Won;
-                    return;
-                case MatchState.Player2Moves:
-                    match.State = MatchState.Player2Won;
-                    return;
-                default:
-                    throw new InvalidOperationException("The match already ended.");
             }
         }
     }

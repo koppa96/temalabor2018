@@ -1,4 +1,4 @@
-namespace Czeum.Application.Services
+namespace Czeum.Domain.Services
 {
     public interface IIdentityService
     {

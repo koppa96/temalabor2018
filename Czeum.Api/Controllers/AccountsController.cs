@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Application.Services.EmailSender;
-using Czeum.DAL.Entities;
+using Czeum.Domain.Entities;
 using Czeum.DTO;
 using Czeum.DTO.UserManagement;
 using IdentityModel;

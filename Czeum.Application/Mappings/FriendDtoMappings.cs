@@ -1,5 +1,5 @@
 using AutoMapper;
-using Czeum.DAL.Entities;
+using Czeum.Domain.Entities;
 using Czeum.DTO.UserManagement;
 
 namespace Czeum.Application.Mappings

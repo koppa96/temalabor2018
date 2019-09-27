@@ -37,8 +37,8 @@ namespace Czeum.Api.Controllers
             {
                 var statuses = await gameHandler.CreateRandomMatchAsync(players[0], players[1]);
 
-                await hubContext.Clients.User(players[0]).MatchCreated(statuses[players[0]]);
-                await hubContext.Clients.User(players[1]).MatchCreated(statuses[players[1]]);
+                await hubContext.Clients.User(statuses.OtherPlayer.OtherPlayer).MatchCreated(statuses.CurrentPlayer);
+                await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer).MatchCreated(statuses.OtherPlayer);
             }
             
             return Ok();

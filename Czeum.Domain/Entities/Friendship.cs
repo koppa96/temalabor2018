@@ -1,4 +1,6 @@
-﻿namespace Czeum.Domain.Entities
+﻿using Czeum.Abstractions.Domain;
+
+namespace Czeum.Domain.Entities
 {
     public class Friendship : EntityBase
     {

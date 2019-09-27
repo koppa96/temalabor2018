@@ -40,19 +40,17 @@ namespace Czeum.Api.Controllers
             var statuses = await gameHandler.CreateMatchAsync(lobbyDataWrapper.Content);
 
             await hubContext.Clients.User(lobbyDataWrapper.Content.Guest)
-                .MatchCreated(statuses[lobbyDataWrapper.Content.Guest]);
-            return Ok(statuses[lobbyDataWrapper.Content.Host]);
+                .MatchCreated(statuses.OtherPlayer);
+            return Ok(statuses.CurrentPlayer);
         }
 
         [HttpPut("moves")]
         public async Task<ActionResult<MatchStatus>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
         {
-            var statuses = await gameHandler.HandleMoveAsync(moveDataWrapper.Content, User.Identity.Name);
+            var statuses = await gameHandler.HandleMoveAsync(moveDataWrapper.Content);
 
-            await Task.WhenAll(statuses.Where(x => x.Key != User.Identity.Name)
-                .Select(x => hubContext.Clients.User(x.Key).ReceiveResult(x.Value)));
-
-            return statuses[User.Identity.Name];
+            await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer).ReceiveResult(statuses.OtherPlayer);
+            return statuses.CurrentPlayer;
         }
     }
 }

@@ -37,11 +37,7 @@ namespace Czeum.Application.Services.Lobby
         public void AddLobby(LobbyData lobbyData)
         {
             lobbyData.Id = Guid.NewGuid();
-            content[lobbyData.Id] = new LobbyStorageElement
-            {
-                LobbyData = lobbyData,
-                Messages = new List<Message>()
-            };
+            content[lobbyData.Id] = new LobbyStorageElement(lobbyData);
         }
 
         public void RemoveLobby(Guid lobbyId)

@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Czeum.Application.Extensions;
 using Czeum.Application.Services.Lobby;
 using Czeum.DAL;
-using Czeum.DAL.Entities;
 using Czeum.DAL.Extensions;
+using Czeum.Domain.Entities;
+using Czeum.Domain.Services;
 using Czeum.DTO;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,19 +18,28 @@ namespace Czeum.Application.Services.MessageService
     {
         private readonly ApplicationDbContext context;
         private readonly ILobbyStorage lobbyStorage;
+        private readonly IMapper mapper;
+        private readonly IIdentityService identityService;
 
-        public MessageService(ApplicationDbContext context, ILobbyStorage lobbyStorage)
+        public MessageService(
+            ApplicationDbContext context, 
+            ILobbyStorage lobbyStorage, 
+            IMapper mapper,
+            IIdentityService identityService)
         {
             this.context = context;
             this.lobbyStorage = lobbyStorage;
+            this.mapper = mapper;
+            this.identityService = identityService;
         }
 
-        public Message SendToLobby(Guid lobbyId, string message, string sender)
+        public Message SendToLobby(Guid lobbyId, string message)
         {
+            var sender = identityService.GetCurrentUser();
             var lobby = lobbyStorage.GetLobby(lobbyId);
-            if (lobby == null || lobby.Host != sender && lobby.Guest != sender)
+            if (lobby.Host != sender && lobby.Guest != sender)
             {
-                return null;
+                throw new UnauthorizedAccessException("Not authorized to send message to this lobby.");
             }
 
             var msg = new Message
@@ -40,12 +52,13 @@ namespace Czeum.Application.Services.MessageService
             return msg;
         }
 
-        public async Task<Message> SendToMatchAsync(Guid matchId, string message, string sender)
+        public async Task<Message> SendToMatchAsync(Guid matchId, string message)
         {
-            var match = await context.Matches.FindAsync(matchId);
-            if (match == null || !match.HasPlayer(sender))
+            var sender = identityService.GetCurrentUser();
+            var match = await context.Matches.CustomFindAsync(matchId);
+            if (!match.HasPlayer(sender))
             {
-                return null;
+                throw new UnauthorizedAccessException("Not authorized to send message to this match.");
             }
 
             var senderUser = await context.Users.SingleAsync(u => u.UserName == sender);
@@ -59,19 +72,25 @@ namespace Czeum.Application.Services.MessageService
             context.Messages.Add(storedMessage);
             await context.SaveChangesAsync();
             
-            return storedMessage.ToMessage();
+            return mapper.Map<Message>(storedMessage);
         }
 
-        public List<Message> GetMessagesOfLobby(Guid lobbyId)
+        public IEnumerable<Message> GetMessagesOfLobby(Guid lobbyId)
         {
+            var lobby = lobbyStorage.GetLobby(lobbyId);
+            if (!lobby.Contains(identityService.GetCurrentUser()))
+            {
+                throw new UnauthorizedAccessException("Not authorized to read the messages of this lobby.");
+            }
+
             return lobbyStorage.GetMessages(lobbyId);
         }
 
-        public async Task<List<Message>> GetMessagesOfMatchAsync(Guid matchId)
+        public async Task<IEnumerable<Message>> GetMessagesOfMatchAsync(Guid matchId)
         {
-            return await context.Messages.Where(m => m.Match.Id == matchId)
-                .Select(m => m.ToMessage())
-                .ToListAsync();
+            return (await context.Messages.Where(m => m.Match.Id == matchId)
+                .ToListAsync())
+                .Select(mapper.Map<Message>);
         }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace Czeum.Domain.Entities
+namespace Czeum.Abstractions.Domain
 {
     public class EntityBase
     {

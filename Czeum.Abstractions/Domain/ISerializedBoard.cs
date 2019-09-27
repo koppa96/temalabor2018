@@ -1,6 +1,6 @@
 using Czeum.Abstractions.DTO;
 
-namespace Czeum.Abstractions
+namespace Czeum.Abstractions.Domain
 {
     /// <summary>
     /// Represents a board stored in the database.

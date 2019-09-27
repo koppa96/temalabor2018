@@ -8,5 +8,11 @@ namespace Czeum.Application.Models
     {
         public LobbyData LobbyData { get; set; }
         public List<Message> Messages { get; set; }
+
+        public LobbyStorageElement(LobbyData lobbyData)
+        {
+            LobbyData = lobbyData;
+            Messages = new List<Message>();
+        }
     }
 }

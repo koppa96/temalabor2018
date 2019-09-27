@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.Application.Extensions;
+using Czeum.Application.Models;
 using Czeum.Application.Services.ServiceContainer;
 using Czeum.DAL;
-using Czeum.DAL.Entities;
 using Czeum.DAL.Extensions;
+using Czeum.Domain.Entities;
+using Czeum.Domain.Services;
 using Czeum.DTO;
 using Czeum.DTO.Wrappers;
 using Microsoft.EntityFrameworkCore;
@@ -20,60 +23,63 @@ namespace Czeum.Application.Services.GameHandler
         private readonly IServiceContainer serviceContainer;
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IIdentityService identityService;
 
         public GameHandler(IServiceContainer serviceContainer, ApplicationDbContext context,
-            IMapper mapper)
+            IMapper mapper, IIdentityService identityService)
         {
             this.serviceContainer = serviceContainer;
             this.context = context;
             this.mapper = mapper;
+            this.identityService = identityService;
         }
 
-        public async Task<Dictionary<string, MatchStatus>> CreateMatchAsync(LobbyData lobbyData)
+        public Task<MatchStatusResult> CreateMatchAsync(LobbyData lobbyData)
         {
-            var service = serviceContainer.FindByLobbyData(lobbyData);
-            var board = (SerializedBoard) service.CreateNewBoard(lobbyData);
+            var service = serviceContainer.FindBoardCreator(lobbyData);
+            var board = (SerializedBoard)service.CreateBoard(lobbyData);
 
-            return await CreateMatchWithBoardAsync(lobbyData.Host, lobbyData.Guest, board);
+            return CreateMatchWithBoardAsync(lobbyData.Host, lobbyData.Guest, board);
         }
         
-        public async Task<Dictionary<string, MatchStatus>> CreateRandomMatchAsync(string player1, string player2)
+        public Task<MatchStatusResult> CreateRandomMatchAsync(string player1, string player2)
         {
-            var service = serviceContainer.GetRandomService();
-            var board = (SerializedBoard) service.CreateDefaultBoard();
+            var service = serviceContainer.GetRandomBoardCreator();
+            var board = (SerializedBoard)service.CreateDefaultBoard();
 
-            return await CreateMatchWithBoardAsync(player1, player2, board);
+            return CreateMatchWithBoardAsync(player1, player2, board);
         }
 
-        private async Task<Dictionary<string, MatchStatus>> CreateMatchWithBoardAsync(string player1, string player2, SerializedBoard board)
+        private async Task<MatchStatusResult> CreateMatchWithBoardAsync(string player1, string player2, SerializedBoard board)
         {
             var match = new Match
             {
                 Board = board,
                 Player1 = await context.Users.SingleAsync(u => u.UserName == player1),
-                Player2 = await context.Users.SingleAsync(u => u.UserName == player2),
-                State = MatchState.Player1Moves
+                Player2 = await context.Users.SingleAsync(u => u.UserName == player2)
             };
 
             context.Matches.Add(match);
             context.Boards.Add(board);
             await context.SaveChangesAsync();
-            
-            return new Dictionary<string, MatchStatus>
-            {
-                { player1, match.ToMatchStatus(player1) },
-                { player2, match.ToMatchStatus(player2) }
-            };
+
+            var converter = serviceContainer.FindBoardConverter(board);
+            return new MatchStatusResult(
+                ConvertToMatchStatus(match, player1, converter.Convert(board)),
+                ConvertToMatchStatus(match, player2, converter.Convert(board)));
         }
 
-        public async Task<Dictionary<string, MatchStatus>> HandleMoveAsync(MoveData moveData, string username)
+        public async Task<MatchStatusResult> HandleMoveAsync(MoveData moveData)
         {
-            var match = await context.Matches.FindAsync(moveData.MatchId);
-            var service = serviceContainer.FindByMoveData(moveData);
-            var board = await context.Boards.SingleAsync(b => b.Match.Id == moveData.MatchId);
-            var result = service.ExecuteMove(moveData, match.GetPlayerId(username), board);
-            
-            board.BoardData = result.UpdatedBoardData;
+            var currentUser = identityService.GetCurrentUser();
+
+            var match = await context.Matches.Include(m => m.Player1)
+                    .Include(m => m.Player2)
+                    .CustomSingleAsync(m => m.Id == moveData.MatchId, "No match with the given id was found.");
+
+            var service = serviceContainer.FindMoveHandler(moveData);
+            var result = await service.HandleAsync(moveData, match.GetPlayerId(currentUser));
+
             switch (result.Status)
             {
                 case Status.Success:
@@ -83,20 +89,23 @@ namespace Czeum.Application.Services.GameHandler
                     match.CurrentPlayerWon();
                     break;
                 case Status.Draw:
-                    match.State = MatchState.Draw;
+                    match.Draw();
                     break;
             }
 
             await context.SaveChangesAsync();
 
-            var status1 = match.ToMatchStatus(match.Player1.UserName, mapper.Map<MoveResultWrapper>(result.MoveResult));
-            var status2 = match.ToMatchStatus(match.Player2.UserName, mapper.Map<MoveResultWrapper>(result.MoveResult));
+            var status1 = ConvertToMatchStatus(match, match.Player1.UserName, result.MoveResult);
+            var status2 = ConvertToMatchStatus(match, match.Player2.UserName, result.MoveResult);
 
-            return new Dictionary<string, MatchStatus>
+            if (currentUser == match.Player1.UserName)
             {
-                { match.Player1.UserName, status1 },
-                { match.Player2.UserName, status2 }
-            };
+                return new MatchStatusResult(status1, status2);
+            } 
+            else
+            {
+                return new MatchStatusResult(status2, status1);
+            }
         }
 
         public async Task<Match> GetMatchByIdAsync(Guid id)
@@ -118,9 +127,9 @@ namespace Czeum.Application.Services.GameHandler
             var statuses = new List<MatchStatus>();
             foreach (var match in matches)
             {
-                var service = serviceContainer.FindBySerializedBoard(match.Board);
-                var board = service.ConvertToMoveResult(match.Board);
-                statuses.Add(match.ToMatchStatus(player, mapper.Map<MoveResultWrapper>(board)));
+                var service = serviceContainer.FindBoardConverter(match.Board);
+                var board = service.Convert(match.Board);
+                statuses.Add(ConvertToMatchStatus(match, player, board));
             }
 
             return statuses;
@@ -129,8 +138,22 @@ namespace Czeum.Application.Services.GameHandler
         public async Task<MoveResultWrapper> GetBoardByMatchIdAsync(Guid matchId)
         {
             var board = await context.Boards.SingleAsync(b => b.Match.Id == matchId);
-            var service = serviceContainer.FindBySerializedBoard(board);
-            return mapper.Map<MoveResultWrapper>(service.ConvertToMoveResult(board));
+            var service = serviceContainer.FindBoardConverter(board);
+            return mapper.Map<MoveResultWrapper>(service.Convert(board));
+        }
+
+        private MatchStatus ConvertToMatchStatus(Match match,
+            string player,
+            IMoveResult currentBoard)
+        {
+            return new MatchStatus
+            {
+                Id = match.Id,
+                State = match.GetGameStateForPlayer(player),
+                OtherPlayer = match.GetOtherPlayerName(player),
+                CurrentBoard = mapper.Map<MoveResultWrapper>(currentBoard),
+                PlayerId = match.GetPlayerId(player)
+            };
         }
     }
 }
