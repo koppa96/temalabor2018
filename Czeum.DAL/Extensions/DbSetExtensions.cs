@@ -15,7 +15,7 @@ namespace Czeum.DAL.Extensions
             string message = null)
             where TSource : class
         {
-            return await dbSet.FindAsync(key) ?? throw new EntityNotFoundException(message);
+            return await dbSet.FindAsync(key) ?? throw new NotFoundException(message);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The lobby</returns>
-        LobbyData GetLobbyOfUser(string user);
+        LobbyData? GetLobbyOfUser(string user);
 
         /// <summary>
         /// Gets a list of the current lobbies stored in the LobbyStorage.

@@ -17,7 +17,7 @@ namespace Czeum.DAL.Extensions
             string message = null)
             where TSource : class
         {
-            return await source.SingleOrDefaultAsync(predicate) ?? throw new EntityNotFoundException(message);
+            return await source.SingleOrDefaultAsync(predicate) ?? throw new NotFoundException(message);
         }
     }
 }

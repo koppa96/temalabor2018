@@ -35,7 +35,7 @@ namespace Czeum.Api.Middlewares
         {
             context.Response.ContentType = "application/json";
 
-            if (e is EntityNotFoundException)
+            if (e is NotFoundException)
             {
                 context.Response.StatusCode = 404;
                 return context.Response.WriteJsonAsync(new ProblemDetails

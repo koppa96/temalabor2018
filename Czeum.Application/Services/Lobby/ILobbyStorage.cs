@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.DAL.Exceptions;
 using Czeum.DTO;
 
 namespace Czeum.Application.Services.Lobby
@@ -21,6 +22,7 @@ namespace Czeum.Application.Services.Lobby
         /// Gets a specific lobby with the given identifier.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
+        /// <exception cref="NotFoundException">Thrown when there is no lobby with the given id.</exception>
         /// <returns>The lobby</returns>
         LobbyData GetLobby(Guid lobbyId);
 
@@ -47,7 +49,7 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The lobby of the user</returns>
-        LobbyData GetLobbyOfUser(string user);
+        LobbyData? GetLobbyOfUser(string user);
 
         /// <summary>
         /// Adds a message to a lobby.

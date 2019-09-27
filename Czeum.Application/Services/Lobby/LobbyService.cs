@@ -6,6 +6,7 @@ using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DAL;
+using Czeum.DAL.Exceptions;
 using Czeum.DTO;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Lobbies;
@@ -31,10 +32,6 @@ namespace Czeum.Application.Services.Lobby {
 		public async Task JoinPlayerToLobbyAsync(string player, Guid lobbyId)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
-			if (lobby == null)
-			{
-				throw new ArgumentOutOfRangeException(nameof(lobbyId), "Invalid lobby id.");
-			}
 
 			var friends = await context.Friendships
 				.Where(f => f.User1.UserName == player || f.User2.UserName == player)
@@ -86,7 +83,7 @@ namespace Czeum.Application.Services.Lobby {
 			return guestName;
 		}
 
-		public LobbyData GetLobbyOfUser(string user) {
+		public LobbyData? GetLobbyOfUser(string user) {
 			return lobbyStorage.GetLobbyOfUser(user);
 		}
 

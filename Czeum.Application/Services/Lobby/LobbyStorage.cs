@@ -5,6 +5,7 @@ using System.Linq;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Application.Models;
+using Czeum.DAL.Exceptions;
 using Czeum.DTO;
 
 namespace Czeum.Application.Services.Lobby
@@ -30,7 +31,7 @@ namespace Czeum.Application.Services.Lobby
                 return content[lobbyId].LobbyData;
             }
 
-            return null;
+            throw new NotFoundException("The lobby with the given id was not found.");
         }
 
         public void AddLobby(LobbyData lobbyData)
@@ -56,7 +57,7 @@ namespace Czeum.Application.Services.Lobby
             }
         }
 
-        public LobbyData GetLobbyOfUser(string user)
+        public LobbyData? GetLobbyOfUser(string user)
         {
             return content.Values
                 .SingleOrDefault(x => x.LobbyData.Host == user || x.LobbyData.Guest == user)
