@@ -14,7 +14,7 @@ namespace Czeum.DAL.Extensions
         public static async Task<TSource> CustomSingleAsync<TSource>(
             this IQueryable<TSource> source, 
             Expression<Func<TSource, bool>> predicate, 
-            string message = null)
+            string? message = null)
             where TSource : class
         {
             return await source.SingleOrDefaultAsync(predicate) ?? throw new NotFoundException(message);

@@ -15,7 +15,7 @@ using Czeum.Application.Services;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.OnlineUsers;
 using Czeum.DAL;
-using Czeum.DAL.Entities;
+using Czeum.Domain.Entities;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

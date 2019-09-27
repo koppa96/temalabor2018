@@ -1,7 +1,7 @@
 ﻿using Czeum.Abstractions;
 using System;
 
-namespace Czeum.DAL.Entities
+namespace Czeum.Domain.Entities
 {
     public abstract class SerializedBoard : EntityBase, ISerializedBoard
     {

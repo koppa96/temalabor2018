@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Czeum.DAL.Entities
+namespace Czeum.Domain.Entities
 {
     public class Match : EntityBase
     {

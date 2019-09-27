@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace Czeum.DAL.Entities
+namespace Czeum.Domain.Entities
 {
     public class ApplicationUser : IdentityUser<Guid>
     {

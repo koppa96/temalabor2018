@@ -1,8 +1,6 @@
 using System;
 using Czeum.Abstractions.DTO;
-using Czeum.DAL.Entities;
-using Czeum.DTO;
-using Czeum.DTO.Wrappers;
+using Czeum.Domain.Entities;
 
 namespace Czeum.DAL.Extensions
 {
@@ -62,18 +60,6 @@ namespace Czeum.DAL.Extensions
                 default:
                     throw new NotSupportedException("There is an unhandled MatchState that can't be converted to GameState.");
             }
-        }
-        
-        public static MatchStatus ToMatchStatus(this Match match, string player, MoveResultWrapper board = null)
-        {
-            return new MatchStatus
-            {
-                Id = match.Id,
-                PlayerId = match.GetPlayerId(player),
-                OtherPlayer = match.Player1.UserName == player ? match.Player2.UserName : match.Player1.UserName,
-                CurrentBoard = board,
-                State = match.GetGameStateForPlayer(player)
-            };
         }
 
         public static bool HasEnded(this Match match)

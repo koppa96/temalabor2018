@@ -1,5 +1,5 @@
 ﻿using System;
-using Czeum.DAL.Entities;
+using Czeum.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,11 @@ namespace Czeum.DAL
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
+            Matches = Set<Match>();
+            Boards = Set<SerializedBoard>();
+            Friendships = Set<Friendship>();
+            Requests = Set<FriendRequest>();
+            Messages = Set<StoredMessage>();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

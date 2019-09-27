@@ -1,4 +1,4 @@
-﻿namespace Czeum.DAL.Entities
+﻿namespace Czeum.Domain.Entities
 {
     public enum MatchState
     {

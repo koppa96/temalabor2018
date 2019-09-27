@@ -1,6 +1,6 @@
 using System;
 
-namespace Czeum.DAL.Entities
+namespace Czeum.Domain.Entities
 {
     public class EntityBase
     {

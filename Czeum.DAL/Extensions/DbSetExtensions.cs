@@ -12,7 +12,7 @@ namespace Czeum.DAL.Extensions
         public static async Task<TSource> CustomFindAsync<TSource>(
             this DbSet<TSource> dbSet, 
             object key,
-            string message = null)
+            string? message = null)
             where TSource : class
         {
             return await dbSet.FindAsync(key) ?? throw new NotFoundException(message);

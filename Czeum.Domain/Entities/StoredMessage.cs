@@ -1,7 +1,6 @@
 using System;
-using Czeum.DTO;
 
-namespace Czeum.DAL.Entities
+namespace Czeum.Domain.Entities
 {
     public class StoredMessage : EntityBase
     {
