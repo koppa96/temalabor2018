@@ -50,13 +50,13 @@ namespace Czeum.Application.Services.FriendService
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The list of usernames</returns>
-        Task<IEnumerable<FriendRequestDto>> GetRequestsSentByUserAsync(string user);
+        Task<IEnumerable<FriendRequestDto>> GetRequestsSentAsync();
 
         /// <summary>
         /// Gets the names of the users from whom the given user has received friend request.
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The list of usernames</returns>
-        Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedByUserAsync(string user);
+        Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedAsync();
     }
 }

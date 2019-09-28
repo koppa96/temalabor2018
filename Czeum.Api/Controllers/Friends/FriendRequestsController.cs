@@ -29,13 +29,13 @@ namespace Czeum.Api.Controllers.Friends
         [HttpGet("received")]
         public async Task<ActionResult<IEnumerable<FriendRequestDto>>> GetFriendRequestsReceivedAsync()
         {
-            return Ok(await friendService.GetRequestsReceivedByUserAsync(User.Identity.Name));
+            return Ok(await friendService.GetRequestsReceivedAsync());
         }
 
         [HttpGet("sent")]
         public async Task<ActionResult<IEnumerable<FriendRequestDto>>> GetFriendRequestsSentAsync()
         {
-            return Ok(await friendService.GetRequestsSentByUserAsync(User.Identity.Name));
+            return Ok(await friendService.GetRequestsSentAsync());
         }
 
         [HttpPost("{username}")]

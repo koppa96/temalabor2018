@@ -8,11 +8,6 @@ namespace Czeum.Api.Common
         {
             public const string BasePath = ApiResources.BasePath + "/accounts";
         }
-        
-        public static class Boards
-        {
-            public const string BasePath = ApiResources.BasePath + "/boards";
-        }
 
         public static class Friends
         {

@@ -22,6 +22,7 @@ namespace Czeum.Application.Services.Lobby
             
             lobby.InvitedPlayers.Remove(player);
             lobby.Guest = player;
+            lobby.LastModified = DateTime.UtcNow;
         }
 
         public static void DisconnectPlayer(this LobbyData lobby, string player)
@@ -29,11 +30,13 @@ namespace Czeum.Application.Services.Lobby
             if (lobby.Guest == player)
             {
                 lobby.Guest = null;
+                lobby.LastModified = DateTime.UtcNow;
             }
             else if (lobby.Host == player)
             {
                 lobby.Host = lobby.Guest;
                 lobby.Guest = null;
+                lobby.LastModified = DateTime.UtcNow;
             }
         }
     }

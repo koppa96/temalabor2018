@@ -17,25 +17,27 @@ namespace Czeum.Application.Services.Lobby
         /// <summary>
         /// Joins a player to the specified lobby.
         /// </summary>
-        /// <param name="player">The name of the player</param>
         /// <param name="lobbyId">The target lobby's identifier</param>
         /// <returns>Whether the joining was successful</returns>
-        Task JoinPlayerToLobbyAsync(string player, Guid lobbyId);
+        Task JoinToLobbyAsync(Guid lobbyId);
 
         /// <summary>
-        /// Disconnects a player from the specified lobby.
+        /// Disconnects the current user from their current lobby.
         /// </summary>
-        /// <param name="player">The name of the player</param>
-        /// <param name="lobbyId">The identifier of the lobby</param>
-        void DisconnectPlayerFromLobby(string player, Guid lobbyId);
+        void DisconnectFromCurrentLobby();
+
+        /// <summary>
+        /// Disconnects the player from their current lobby.
+        /// </summary>
+        /// <param name="username">The name of the player</param>
+        void DisconnectPlayerFromLobby(string username);
 
         /// <summary>
         /// Adds a player to the invited players of the given lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
-        /// <param name="invitingPlayer">The name of the inviting player</param>
         /// <param name="player">The player to be invited</param>
-        void InvitePlayerToLobby(Guid lobbyId, string invitingPlayer, string player);
+        void InvitePlayerToLobby(Guid lobbyId, string player);
 
         /// <summary>
         /// Removes a player from the invited players of the given lobby.
@@ -48,9 +50,8 @@ namespace Czeum.Application.Services.Lobby
         /// Kicks the current guest of the lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
-        /// <param name="kickingPlayer"></param>
         /// <returns>The kicked guest's name</returns>
-        string KickGuest(Guid lobbyId, string kickingPlayer);
+        string KickGuest(Guid lobbyId);
 
         /// <summary>
         /// Finds the lobby to which the given user is currently joined.
@@ -69,8 +70,7 @@ namespace Czeum.Application.Services.Lobby
         /// Updates the settings of a lobby.
         /// </summary>
         /// <param name="lobbyData">The lobby with the updated settings</param>
-        /// <param name="updatingUser"></param>
-        void UpdateLobbySettings(LobbyDataWrapper lobbyData, string updatingUser);
+        void UpdateLobbySettings(LobbyDataWrapper lobbyData);
 
         /// <summary>
         /// Gets a lobby with the given identifier.

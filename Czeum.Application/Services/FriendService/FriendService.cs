@@ -129,20 +129,24 @@ namespace Czeum.Application.Services.FriendService
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<FriendRequestDto>> GetRequestsSentByUserAsync(string user)
+        public async Task<IEnumerable<FriendRequestDto>> GetRequestsSentAsync()
         {
+            var currentUser = identityService.GetCurrentUser();
+
             return (await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)
-                .Where(r => r.Sender.UserName == user)
+                .Where(r => r.Sender.UserName == currentUser)
                 .ToListAsync())
                 .Select(r => mapper.Map<FriendRequestDto>(r));
         }
 
-        public async Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedByUserAsync(string user)
+        public async Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedAsync()
         {
+            var currentUser = identityService.GetCurrentUser();
+
             return (await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)
-                .Where(r => r.Receiver.UserName == user)
+                .Where(r => r.Receiver.UserName == currentUser)
                 .ToListAsync())
                 .Select(r => mapper.Map<FriendRequestDto>(r));
         }

@@ -44,7 +44,7 @@ namespace Czeum.Api.SignalR
 
             if (lobby != null)
             {
-                lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobby.Id);
+                lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier);
                 if (lobbyService.LobbyExists(lobby.Id))
                 {
                     await Clients.All.LobbyChanged(lobbyService.GetLobby(lobby.Id));

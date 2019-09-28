@@ -1,6 +1,7 @@
 using Czeum.Application.Services;
 using Czeum.Domain.Services;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Czeum.Api.Services
 {
@@ -15,7 +16,7 @@ namespace Czeum.Api.Services
         
         public string GetCurrentUser()
         {
-            return httpContext.User.Identity.Name;
+            return httpContext.User.Identity.Name ?? throw new InvalidOperationException("Could not identify current user.");
         }
     }
 }

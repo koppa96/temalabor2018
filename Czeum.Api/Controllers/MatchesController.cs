@@ -33,7 +33,7 @@ namespace Czeum.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MatchStatus>>> GetMatchesAsync()
         {
-            return Ok(await gameHandler.GetMatchesOfPlayerAsync(User.Identity.Name));
+            return Ok(await gameHandler.GetMatchesOfPlayerAsync(User.Identity.Name!));
         }
 
         [HttpPost]

@@ -88,9 +88,19 @@ namespace Czeum.Application.Services.MessageService
 
         public async Task<IEnumerable<Message>> GetMessagesOfMatchAsync(Guid matchId)
         {
-            return (await context.Messages.Where(m => m.Match.Id == matchId)
-                .ToListAsync())
-                .Select(mapper.Map<Message>);
+            var currentUser = identityService.GetCurrentUser();
+
+            var match = await context.Matches.Include(m => m.Player1)
+                .Include(m => m.Player2)
+                .Include(m => m.Messages)
+                .CustomSingleAsync(m => m.Id == matchId, "No match with the given id was found.");
+
+            if (match.Player1.UserName != currentUser && match.Player2.UserName != currentUser)
+            {
+                throw new UnauthorizedAccessException("Not authorized to read the messages of this lobby.");
+            }
+
+            return match.Messages.Select(mapper.Map<Message>);
         }
     }
 }

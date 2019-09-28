@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.Application.Models;
 using Czeum.DAL.Exceptions;
 using Czeum.DTO;
 

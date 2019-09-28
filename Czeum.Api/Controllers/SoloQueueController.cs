@@ -30,7 +30,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("join")]
         public async Task<ActionResult> JoinQueue()
         {
-            soloQueueService.JoinSoloQueue(User.Identity.Name);
+            soloQueueService.JoinSoloQueue(User.Identity.Name!);
 
             var players = soloQueueService.PopFirstTwoPlayers();
             if (players != null)
@@ -47,7 +47,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("leave")]
         public ActionResult LeaveQueue()
         {
-            soloQueueService.LeaveSoloQueue(User.Identity.Name);
+            soloQueueService.LeaveSoloQueue(User.Identity.Name!);
             return Ok();
         }
     }
