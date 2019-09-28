@@ -9,6 +9,7 @@ using Czeum.Application.Services.Lobby;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Lobbies;
 using Czeum.DTO.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
@@ -17,6 +18,7 @@ namespace Czeum.Api.Controllers
 {
     [Route(ApiResources.Lobbies.BasePath)]
     [ApiController]
+    [Authorize]
     public class LobbiesController : ControllerBase
     {
         private readonly ILobbyService lobbyService;

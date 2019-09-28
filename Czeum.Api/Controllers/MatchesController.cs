@@ -9,6 +9,7 @@ using Czeum.Application.Services.GameHandler;
 using Czeum.DTO;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -16,6 +17,7 @@ namespace Czeum.Api.Controllers
 {
     [Route(ApiResources.Matches.BasePath)]
     [ApiController]
+    [Authorize]
     public class MatchesController : ControllerBase
     {
         private readonly IGameHandler gameHandler;

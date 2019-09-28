@@ -5,6 +5,7 @@ using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.FriendService;
 using Czeum.DTO.UserManagement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -12,6 +13,7 @@ namespace Czeum.Api.Controllers.Friends
 {
     [Route(ApiResources.Friends.FriendRequests.BasePath)]
     [ApiController]
+    [Authorize]
     public class FriendRequestsController : ControllerBase
     {
         private readonly IFriendService friendService;

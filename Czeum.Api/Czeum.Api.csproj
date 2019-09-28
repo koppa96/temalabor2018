@@ -18,12 +18,13 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
-      <PackageReference Include="NSwag.AspNetCore" Version="13.0.6" />
+      <PackageReference Include="NSwag.AspNetCore" Version="13.1.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Czeum.Application\Czeum.Application.csproj" />
       <ProjectReference Include="..\Czeum.ClientCallback\Czeum.ClientCallback.csproj" />
+      <ProjectReference Include="..\Czeum.Connect4Logic\Czeum.Connect4Logic.csproj" />
       <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
     </ItemGroup>
 

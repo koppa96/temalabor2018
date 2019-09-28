@@ -1,4 +1,5 @@
 ﻿using Czeum.Abstractions;
+using Czeum.Abstractions.Domain;
 using Czeum.Abstractions.GameServices;
 using Czeum.Abstractions.GameServices.BoardCreator;
 using Czeum.Domain.Entities;

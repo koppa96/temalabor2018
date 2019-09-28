@@ -87,7 +87,7 @@ namespace Czeum.Api.Controllers
         [Route("change-password")]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[Authorize]
 		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
         {
 			if (model.Password != model.ConfirmPassword) {

@@ -7,6 +7,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Czeum.Api.AutofacModules;
+using Czeum.Api.Extensions;
 using Czeum.Api.IdentityServer;
 using Czeum.Api.Middlewares;
 using Czeum.Api.Services;
@@ -14,6 +15,8 @@ using Czeum.Api.SignalR;
 using Czeum.Application.Services;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.OnlineUsers;
+using Czeum.ChessLogic.Services;
+using Czeum.Connect4Logic.Services;
 using Czeum.DAL;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
@@ -32,6 +35,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NSwag;
+using NSwag.AspNetCore;
 
 namespace Czeum.Api
 {
@@ -81,8 +85,8 @@ namespace Czeum.Api
                         .AllowCredentials();
                 });
             });
-            
-            services.AddControllers().AddNewtonsoftJson();
+
+            services.AddControllers();
 
             services.AddAuthentication()
                 .AddJwtBearer(options =>
@@ -98,13 +102,13 @@ namespace Czeum.Api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("DefaultPolicy", policy => policy.RequireAuthenticatedUser()
+                options.AddPolicy("MyPolicy", options => options.RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
 
-                options.DefaultPolicy = options.GetPolicy("DefaultPolicy");
+                options.DefaultPolicy = options.GetPolicy("MyPolicy");
                 options.InvokeHandlersAfterFailure = false;
             });
-            
+
             services.AddSwaggerDocument(options =>
             {
                 options.DocumentName = "Czeum";
@@ -112,12 +116,13 @@ namespace Czeum.Api
                 options.Version = "1.0";
                 options.Description = "Web api for a server created to play board games.";
 
-                options.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
+                options.AddSecurity("oauth2", new OpenApiSecurityScheme
                 {
-                    Type = OpenApiSecuritySchemeType.ApiKey,
-                    Name = "Authorization",
-                    In = OpenApiSecurityApiKeyLocation.Header,
-                    Description = "Enter your token like this: Bearer {your JWT token}."
+                    Type = OpenApiSecuritySchemeType.OAuth2,
+                    Flow = OpenApiOAuth2Flow.Password,
+                    AuthorizationUrl = "https://localhost:5001/connect/authorize",
+                    TokenUrl = "https://localhost:5001/connect/token",
+                    Scopes = new Dictionary<string, string> { { "czeum_api", "Czeum API" } }
                 });
             });
 
@@ -134,6 +139,9 @@ namespace Czeum.Api
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule<ServiceModule>();
+
+            builder.RegisterGame<Connect4BoardCreator, Connect4BoardConverter, Connect4MoveHandler>()
+                .RegisterGame<ChessBoardCreator, ChessBoardConverter, ChessMoveHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -151,13 +159,23 @@ namespace Czeum.Api
             app.UseHttpsRedirection();
 
             app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwaggerUi3(options =>
+            {
+                options.WithCredentials = true;
+
+                options.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "SwaggerClient",
+                    ClientSecret = "SwaggerClientSecret"
+                };
+            });
 
             app.UseIdentityServer();
-            app.UseAuthentication();
-            app.UseAuthorization();
             
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(routes =>
             {
