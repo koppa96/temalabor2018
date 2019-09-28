@@ -88,6 +88,8 @@ namespace Czeum.Api
 
             services.AddControllers();
 
+            services.AddRazorPages();
+
             services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
@@ -116,13 +118,12 @@ namespace Czeum.Api
                 options.Version = "1.0";
                 options.Description = "Web api for a server created to play board games.";
 
-                options.AddSecurity("oauth2", new OpenApiSecurityScheme
+                options.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
                 {
-                    Type = OpenApiSecuritySchemeType.OAuth2,
-                    Flow = OpenApiOAuth2Flow.Password,
-                    AuthorizationUrl = "https://localhost:5001/connect/authorize",
-                    TokenUrl = "https://localhost:5001/connect/token",
-                    Scopes = new Dictionary<string, string> { { "czeum_api", "Czeum API" } }
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "Type into the textbox: Bearer {your JWT token}."
                 });
             });
 
@@ -157,18 +158,10 @@ namespace Czeum.Api
             app.UseCors();
             
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseOpenApi();
-            app.UseSwaggerUi3(options =>
-            {
-                options.WithCredentials = true;
-
-                options.OAuth2Client = new OAuth2ClientSettings
-                {
-                    ClientId = "SwaggerClient",
-                    ClientSecret = "SwaggerClientSecret"
-                };
-            });
+            app.UseSwaggerUi3();
 
             app.UseIdentityServer();
             
@@ -179,6 +172,7 @@ namespace Czeum.Api
 
             app.UseEndpoints(routes =>
             {
+                routes.MapRazorPages();
                 routes.MapControllers();
                 routes.MapHub<NotificationHub>("/notifications");
             });

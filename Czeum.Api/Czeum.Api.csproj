@@ -18,6 +18,12 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
+      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
       <PackageReference Include="NSwag.AspNetCore" Version="13.1.2" />
     </ItemGroup>
 
@@ -26,6 +32,10 @@
       <ProjectReference Include="..\Czeum.ClientCallback\Czeum.ClientCallback.csproj" />
       <ProjectReference Include="..\Czeum.Connect4Logic\Czeum.Connect4Logic.csproj" />
       <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\scripts\" />
     </ItemGroup>
 
 </Project>
