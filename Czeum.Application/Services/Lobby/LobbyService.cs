@@ -157,8 +157,14 @@ namespace Czeum.Application.Services.Lobby {
 			return lobbyStorage.GetLobby(lobbyId) != null;
 		}
 
-		public LobbyDataWrapper CreateAndAddLobby(GameType type, string host, LobbyAccess access, string name)
+		public LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name)
 		{
+            var currentUser = identityService.GetCurrentUser();
+            if (lobbyStorage.GetLobbyOfUser(currentUser) != null)
+            {
+                throw new InvalidOperationException("To create a new lobby, leave your current lobby first.");
+            }
+
 			var lobbyType = type.GetLobbyType();
 			if (!lobbyType.IsSubclassOf(typeof(LobbyData)))
 			{
@@ -166,9 +172,9 @@ namespace Czeum.Application.Services.Lobby {
 			}
 			
 			var lobby = (LobbyData) Activator.CreateInstance(lobbyType)!;
-			lobby.Host = host;
+			lobby.Host = currentUser;
 			lobby.Access = access;
-			lobby.Name = string.IsNullOrEmpty(name) ? host + "'s lobby" : name;
+			lobby.Name = string.IsNullOrEmpty(name) ? $"{currentUser}'s {type.ToString()} lobby" : name;
 			lobbyStorage.AddLobby(lobby);
 			
 			return mapper.Map<LobbyDataWrapper>(lobby);

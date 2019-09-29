@@ -86,7 +86,8 @@ namespace Czeum.Api
                 });
             });
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
 
             services.AddRazorPages();
 

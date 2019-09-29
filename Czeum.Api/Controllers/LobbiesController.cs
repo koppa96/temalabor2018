@@ -12,6 +12,7 @@ using Czeum.DTO.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Czeum.Api.Controllers
@@ -40,8 +41,7 @@ namespace Czeum.Api.Controllers
         public async Task<ActionResult<LobbyDataWrapper>> CreateLobbyAsync([FromBody] CreateLobbyDto dto)
         {
             var lobby = lobbyService.CreateAndAddLobby(
-                dto.GameType, 
-                User.Identity.Name!, 
+                dto.GameType,  
                 dto.LobbyAccess, 
                 dto.Name);
 
@@ -52,26 +52,26 @@ namespace Czeum.Api.Controllers
         [HttpPut("{lobbyId}")]
         public async Task<ActionResult<LobbyDataWrapper>> UpdateLobbyAsync(Guid lobbyId, [FromBody] LobbyDataWrapper wrapper)
         {
-            lobbyService.UpdateLobbySettings(wrapper, User.Identity.Name!);
+            lobbyService.UpdateLobbySettings(wrapper);
             var lobby = lobbyService.GetLobby(lobbyId);
 
             await hubContext.Clients.AllExcept(User.Identity.Name).LobbyChanged(lobby);
             return Ok(lobby);
         }
 
-        [HttpPost("{lobbyId}/leave")]
-        public async Task<ActionResult> LeaveLobbyAsync(Guid lobbyId)
+        [HttpPost("current/leave")]
+        public async Task<ActionResult> LeaveLobbyAsync()
         {
-            lobbyService.DisconnectPlayerFromLobby(User.Identity.Name!, lobbyId);
-            var lobby = lobbyService.GetLobby(lobbyId);
+            var currentLobby = lobbyService.GetLobbyOfUser(User.Identity.Name!);
+            lobbyService.DisconnectFromCurrentLobby();
 
-            if (lobby == null)
+            if (!lobbyService.LobbyExists(currentLobby!.Id))
             {
-                await hubContext.Clients.All.LobbyDeleted(lobbyId);
+                await hubContext.Clients.All.LobbyDeleted(currentLobby.Id);
             }
             else
             {
-                await hubContext.Clients.All.LobbyChanged(lobby);
+                await hubContext.Clients.All.LobbyChanged(lobbyService.GetLobby(currentLobby.Id));
             }
             
             return Ok();
@@ -80,7 +80,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("{lobbyId}/invite")]
         public async Task<ActionResult<LobbyDataWrapper>> InvitePlayerAsync(Guid lobbyId, [FromQuery] string playerName)
         {
-            lobbyService.InvitePlayerToLobby(lobbyId, User.Identity.Name!, playerName);
+            lobbyService.InvitePlayerToLobby(lobbyId, playerName);
             var lobby = lobbyService.GetLobby(lobbyId);
 
             await hubContext.Clients.User(playerName).ReceiveLobbyInvite(lobby);
@@ -101,7 +101,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("{lobbyId}/join")]
         public async Task<ActionResult<LobbyDataWrapper>> JoinLobbyAsync(Guid lobbyId)
         {
-            await lobbyService.JoinToLobbyAsync(User.Identity.Name!, lobbyId);
+            await lobbyService.JoinToLobbyAsync(lobbyId);
             var lobby = lobbyService.GetLobby(lobbyId);
 
             await hubContext.Clients.All.LobbyChanged(lobby);
@@ -111,7 +111,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("{lobbyId}/kick")]
         public async Task<ActionResult<LobbyDataWrapper>> KickGuestAsync(Guid lobbyId)
         {
-            lobbyService.KickGuest(lobbyId, User.Identity.Name!);
+            lobbyService.KickGuest(lobbyId);
             var lobby = lobbyService.GetLobby(lobbyId);
 
             await hubContext.Clients.AllExcept(User.Identity.Name).LobbyChanged(lobby);

@@ -94,7 +94,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="access">The access type of the lobby</param>
         /// <param name="name">The name of the lobby</param>
         /// <returns>The created lobby</returns>
-        LobbyDataWrapper CreateAndAddLobby(GameType type, string host, LobbyAccess access, string name);
+        LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name);
 
         /// <summary>
         /// Returns the other user of the lobby.
