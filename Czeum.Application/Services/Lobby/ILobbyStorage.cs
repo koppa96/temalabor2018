@@ -65,5 +65,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The list of messages</returns>
         List<Message> GetMessages(Guid lobbyId);
+
+        bool LobbyExitsts(Guid lobbyId);
     }
 }

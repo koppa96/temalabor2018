@@ -70,5 +70,10 @@ namespace Czeum.Application.Services.Lobby
         {
             return content[lobbyId].Messages;
         }
+
+        public bool LobbyExitsts(Guid lobbyId)
+        {
+            return content.ContainsKey(lobbyId);
+        }
     }
 }

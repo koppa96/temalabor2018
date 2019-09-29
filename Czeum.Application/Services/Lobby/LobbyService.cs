@@ -154,7 +154,7 @@ namespace Czeum.Application.Services.Lobby {
 
 		public bool LobbyExists(Guid lobbyId)
 		{
-			return lobbyStorage.GetLobby(lobbyId) != null;
+            return lobbyStorage.LobbyExitsts(lobbyId);
 		}
 
 		public LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name)
