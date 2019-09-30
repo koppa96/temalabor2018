@@ -15,7 +15,7 @@ namespace Czeum.Application.Services.Lobby
             }
 
             if (lobby.Access == LobbyAccess.Private && !lobby.InvitedPlayers.Contains(player) ||
-                lobby.Access == LobbyAccess.FriendsOnly && !friends.Contains(player))
+                lobby.Access == LobbyAccess.FriendsOnly && !friends.Contains(player) && !lobby.InvitedPlayers.Contains(player))
             {
                 throw new UnauthorizedAccessException("The user is not authorized to join the lobby.");
             }

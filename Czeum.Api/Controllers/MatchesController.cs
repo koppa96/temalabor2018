@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.GameHandler;
+using Czeum.Application.Services.Lobby;
 using Czeum.DTO;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Wrappers;
@@ -22,12 +23,14 @@ namespace Czeum.Api.Controllers
     {
         private readonly IGameHandler gameHandler;
         private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
+        private readonly ILobbyService lobbyService;
 
         public MatchesController(IGameHandler gameHandler,
-            IHubContext<NotificationHub, ICzeumClient> hubContext)
+            IHubContext<NotificationHub, ICzeumClient> hubContext, ILobbyService lobbyService)
         {
             this.gameHandler = gameHandler;
             this.hubContext = hubContext;
+            this.lobbyService = lobbyService;
         }
         
         [HttpGet]
@@ -37,11 +40,12 @@ namespace Czeum.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MatchStatus>> CreateMatchAsync([FromBody] LobbyDataWrapper lobbyDataWrapper)
+        public async Task<ActionResult<MatchStatus>> CreateMatchAsync([FromQuery] Guid lobbyId)
         {
-            var statuses = await gameHandler.CreateMatchAsync(lobbyDataWrapper.Content);
+            var lobby = lobbyService.GetLobby(lobbyId);
+            var statuses = await gameHandler.CreateMatchAsync(lobby.Content);
 
-            await hubContext.Clients.User(lobbyDataWrapper.Content.Guest)
+            await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer)
                 .MatchCreated(statuses.OtherPlayer);
             return Ok(statuses.CurrentPlayer);
         }
