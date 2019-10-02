@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Czeum.Application\Czeum.Application.csproj" />
     <ProjectReference Include="..\Czeum.ChessLogic\Czeum.ChessLogic.csproj" />
     <ProjectReference Include="..\Czeum.Connect4Logic\Czeum.Connect4Logic.csproj" />
-    <ProjectReference Include="..\Czeum.Server\Czeum.Server.csproj" />
   </ItemGroup>
 
 </Project>

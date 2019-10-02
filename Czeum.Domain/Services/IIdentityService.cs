@@ -1,7 +1,10 @@
+using System;
+
 namespace Czeum.Domain.Services
 {
     public interface IIdentityService
     {
-        string GetCurrentUser();
+        string GetCurrentUserName();
+        Guid GetCurrentUserId();
     }
 }

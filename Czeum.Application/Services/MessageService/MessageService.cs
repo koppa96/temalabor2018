@@ -35,7 +35,7 @@ namespace Czeum.Application.Services.MessageService
 
         public Message SendToLobby(Guid lobbyId, string message)
         {
-            var sender = identityService.GetCurrentUser();
+            var sender = identityService.GetCurrentUserName();
             var lobby = lobbyStorage.GetLobby(lobbyId);
             if (lobby.Host != sender && lobby.Guest != sender)
             {
@@ -54,7 +54,7 @@ namespace Czeum.Application.Services.MessageService
 
         public async Task<Message> SendToMatchAsync(Guid matchId, string message)
         {
-            var sender = identityService.GetCurrentUser();
+            var sender = identityService.GetCurrentUserName();
             var match = await context.Matches.CustomFindAsync(matchId);
             if (!match.HasPlayer(sender))
             {
@@ -78,7 +78,7 @@ namespace Czeum.Application.Services.MessageService
         public IEnumerable<Message> GetMessagesOfLobby(Guid lobbyId)
         {
             var lobby = lobbyStorage.GetLobby(lobbyId);
-            if (!lobby.Contains(identityService.GetCurrentUser()))
+            if (!lobby.Contains(identityService.GetCurrentUserName()))
             {
                 throw new UnauthorizedAccessException("Not authorized to read the messages of this lobby.");
             }
@@ -88,7 +88,7 @@ namespace Czeum.Application.Services.MessageService
 
         public async Task<IEnumerable<Message>> GetMessagesOfMatchAsync(Guid matchId)
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
 
             var match = await context.Matches.Include(m => m.Player1)
                 .Include(m => m.Player2)

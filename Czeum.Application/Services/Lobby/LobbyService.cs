@@ -39,7 +39,7 @@ namespace Czeum.Application.Services.Lobby {
 
 		public async Task JoinToLobbyAsync(Guid lobbyId)
 		{
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
             var userLobby = lobbyStorage.GetLobbyOfUser(currentUser);
             if (userLobby != null || soloQueueService.IsQueuing(currentUser))
             {
@@ -58,7 +58,7 @@ namespace Czeum.Application.Services.Lobby {
 
 		public void DisconnectFromCurrentLobby()
 		{
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
             DisconnectPlayerFromLobby(currentUser);
 		}
 
@@ -82,7 +82,7 @@ namespace Czeum.Application.Services.Lobby {
         public void InvitePlayerToLobby(Guid lobbyId, string player)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
-			if (lobby.Host != identityService.GetCurrentUser())
+			if (lobby.Host != identityService.GetCurrentUserName())
 			{
 				throw new UnauthorizedAccessException("Not authorized to invite to this lobby.");
 			}
@@ -101,7 +101,7 @@ namespace Czeum.Application.Services.Lobby {
 		public string KickGuest(Guid lobbyId)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
-			if (lobby.Host != identityService.GetCurrentUser())
+			if (lobby.Host != identityService.GetCurrentUserName())
 			{
 				throw new UnauthorizedAccessException("Not authorized to kick a player from this lobby.");
 			}
@@ -132,7 +132,7 @@ namespace Czeum.Application.Services.Lobby {
 				throw new ArgumentOutOfRangeException(nameof(lobbyData.Content.Id), "Lobby does not exist.");
 			}
 
-			if (identityService.GetCurrentUser() != oldLobby.Host)
+			if (identityService.GetCurrentUserName() != oldLobby.Host)
 			{
 				throw new UnauthorizedAccessException("Not authorized to update this lobby's settings.");
 			}
@@ -159,7 +159,7 @@ namespace Czeum.Application.Services.Lobby {
 
 		public LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name)
 		{
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
             if (lobbyStorage.GetLobbyOfUser(currentUser) != null)
             {
                 throw new InvalidOperationException("To create a new lobby, leave your current lobby first.");
@@ -200,7 +200,7 @@ namespace Czeum.Application.Services.Lobby {
 		public void CancelInviteFromLobby(Guid lobbyId, string player)
         { 
 			var lobby = lobbyStorage.GetLobby(lobbyId);
-            if (identityService.GetCurrentUser() != lobby.Host)
+            if (identityService.GetCurrentUserName() != lobby.Host)
             {
                 throw new UnauthorizedAccessException("Only the host can modify the lobby.");
             }

@@ -71,7 +71,7 @@ namespace Czeum.Application.Services.GameHandler
 
         public async Task<MatchStatusResult> HandleMoveAsync(MoveData moveData)
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
 
             var match = await context.Matches.Include(m => m.Player1)
                     .Include(m => m.Player2)

@@ -41,7 +41,7 @@ namespace Czeum.Application.Services.FriendService
 
         public async Task<(FriendDto Sender, FriendDto Receiver)> AcceptRequestAsync(Guid requestId)
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
             var request = await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)
                 .CustomSingleAsync(r => r.Id == requestId, "No friend request found with the given id.");
@@ -79,7 +79,7 @@ namespace Czeum.Application.Services.FriendService
 
         public async Task RemoveFriendAsync(Guid friendshipId)
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
             var friendship = await context.Friendships.Include(f => f.User1)
                 .Include(f => f.User2)
                 .CustomSingleAsync(f => f.Id == friendshipId, "No friendship found with the given id.");
@@ -95,7 +95,7 @@ namespace Czeum.Application.Services.FriendService
 
         public async Task<FriendRequestDto> AddRequestAsync(string receiver)
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
             var alreadyRequestedOrFriends = await context.Users.Where(u => u.UserName == currentUser)
                 .AnyAsync(u => u.SentRequests.Any(r => r.Receiver.UserName == receiver) ||
                                u.ReceivedRequests.Any(r => r.Sender.UserName == receiver) ||
@@ -131,7 +131,7 @@ namespace Czeum.Application.Services.FriendService
 
         public async Task<IEnumerable<FriendRequestDto>> GetRequestsSentAsync()
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
 
             return (await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)
@@ -142,7 +142,7 @@ namespace Czeum.Application.Services.FriendService
 
         public async Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedAsync()
         {
-            var currentUser = identityService.GetCurrentUser();
+            var currentUser = identityService.GetCurrentUserName();
 
             return (await context.Requests.Include(r => r.Sender)
                 .Include(r => r.Receiver)

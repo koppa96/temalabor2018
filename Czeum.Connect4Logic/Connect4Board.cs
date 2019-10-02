@@ -11,14 +11,15 @@ namespace Czeum.Connect4Logic
     {
         private const int DefaultWidth = 7, DefaultHeight = 6;
 
-        private int height, width;
+        public int Height { get; private set; }
+        public int Width { get; private set; }
         public Item[,] Board { get; private set; }
 
         public bool Full 
         {
             get
             {
-                for (int i = 0; i < width; i++)
+                for (int i = 0; i < Width; i++)
                 {
                     if (Board[0, i] == Item.None)
                     {
@@ -32,8 +33,8 @@ namespace Czeum.Connect4Logic
 
         public Connect4Board(int width = DefaultWidth, int height = DefaultHeight)
         {
-            this.width = width;
-            this.height = height;
+            this.Width = width;
+            this.Height = height;
             Board = new Item[height, width];
 
             for (int i = 0; i < height; i++)
@@ -47,12 +48,12 @@ namespace Czeum.Connect4Logic
 
         public void PlaceItem(Item item, int column)
         {
-            if (column > width - 1)
+            if (column > Width - 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(column), "This board does not have a column with that index.");
             }
 
-            for (int i = height - 1; i >= 0; i--)
+            for (int i = Height - 1; i >= 0; i--)
             {
                 if (Board[i, column] == Item.None)
                 {
@@ -66,15 +67,15 @@ namespace Czeum.Connect4Logic
 
         public void DeserializeContent(SerializedConnect4Board serializedBoard)
         {
-            width = serializedBoard.Width;
-            height = serializedBoard.Height;
-            Board = new Item[height, width];
+            Width = serializedBoard.Width;
+            Height = serializedBoard.Height;
+            Board = new Item[Height, Width];
 
-            for (int i = 0; i < height; i++)
+            for (int i = 0; i < Height; i++)
             {
-                for (int j = 0; j < width; j++)
+                for (int j = 0; j < Width; j++)
                 {
-                    switch (serializedBoard.BoardData[i * width + j])
+                    switch (serializedBoard.BoardData[i * Width + j])
                     {
                         case 'R':
                             Board[i, j] = Item.Red;
@@ -94,10 +95,10 @@ namespace Czeum.Connect4Logic
 
         private bool HorizontalMatch(Item item)
         {
-            for (int i = 0; i < height; i++)
+            for (int i = 0; i < Height; i++)
             {
                 int count = 0;
-                for (int j = 0; j < width; j++)
+                for (int j = 0; j < Width; j++)
                 {
                     if (Board[i, j] == item)
                     {
@@ -120,10 +121,10 @@ namespace Czeum.Connect4Logic
 
         private bool VerticalMatch(Item item)
         {
-            for (int j = 0; j < width; j++)
+            for (int j = 0; j < Width; j++)
             {
                 int count = 0;
-                for (int i = 0; i < height; i++)
+                for (int i = 0; i < Height; i++)
                 {
                     if (Board[i, j] == item)
                     {
@@ -146,12 +147,12 @@ namespace Czeum.Connect4Logic
 
         private bool LeftDiagonalMatch(Item item)
         {
-            int startRow = height - 4, startCol = 0;
+            int startRow = Height - 4, startCol = 0;
 
-            while (startCol <= width - 4)
+            while (startCol <= Width - 4)
             {
                 int count = 0;
-                for (int i = startRow, j = startCol; i < height && j < width; i++, j++)
+                for (int i = startRow, j = startCol; i < Height && j < Width; i++, j++)
                 {
                     if (Board[i, j] == item)
                     {
@@ -185,10 +186,10 @@ namespace Czeum.Connect4Logic
         {
             int startRow = 0, startCol = 3;
 
-            while (startRow <= height - 4)
+            while (startRow <= Height - 4)
             {
                 int count = 0;
-                for (int i = startRow, j = startCol; i < height && j >= 0; i++, j--)
+                for (int i = startRow, j = startCol; i < Height && j >= 0; i++, j--)
                 {
                     if (Board[i, j] == item)
                     {
@@ -205,7 +206,7 @@ namespace Czeum.Connect4Logic
                     }
                 }
 
-                if (startCol != height - 1)
+                if (startCol != Height - 1)
                 {
                     startCol++;
                 }
@@ -235,14 +236,14 @@ namespace Czeum.Connect4Logic
         {
             SerializedConnect4Board serialized = new SerializedConnect4Board
             {
-                Width = width,
-                Height = height
+                Width = Width,
+                Height = Height
             };
 
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < height; i++)
+            for (int i = 0; i < Height; i++)
             {
-                for (int j = 0; j < width; j++)
+                for (int j = 0; j < Width; j++)
                 {
                     switch (Board[i, j])
                     {
