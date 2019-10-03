@@ -18,18 +18,22 @@ namespace Czeum.Tests.Connect4Logic
         }
 
         [TestMethod]
+        public void TestElementPlacement()
+        {
+            board.PlaceItem(Item.Red, 0);
+            Assert.IsTrue(board.Board[board.Height - 1, 0] == Item.Red);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void ColumnFullCheckTest()
         {
-            bool result;
-
             for (int i = 0; i < Height; i++)
             {
-                result = board.PlaceItem(Item.Red, 0);
-                Assert.IsTrue(result);
+                board.PlaceItem(Item.Red, 0);
             }
 
-            result = board.PlaceItem(Item.Red, 0);
-            Assert.IsFalse(result);
+            board.PlaceItem(Item.Red, 0);
         }
 
         [TestMethod]

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 using Czeum.DTO.UserManagement;
 using Czeum.Server.Services.FriendService;
@@ -82,10 +83,10 @@ namespace Czeum.Server.Controllers
 
         [HttpGet]
         [Route("friends")]
-        public async Task<ActionResult<List<Friend>>> GetFriends()
+        public async Task<ActionResult<List<FriendDto>>> GetFriends()
         {
             return (await _friendService.GetFriendsOfUserAsync(User.Identity.Name))
-                .Select(f => new Friend { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
+                .Select(f => new FriendDto { IsOnline = _onlineUserTracker.IsOnline(f), Username = f })
                 .ToList();
         }
 

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Prism.Windows.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
+using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.Clients {
 
@@ -42,7 +43,7 @@ namespace Czeum.Client.Clients {
 
         public async Task LobbyDeleted(int lobbyId)
         {
-            if(lobbyService.CurrentLobby?.LobbyId == lobbyId)
+            if(lobbyService.CurrentLobby?.Id == lobbyId)
             {
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                     navigationService.Navigate(PageTokens.Lobby.ToString(), null);

@@ -9,7 +9,7 @@ namespace Czeum.DTO.Chess
     /// <summary>
     /// The MoveResult representation of a chess board.
     /// </summary>
-    public class ChessMoveResult : MoveResult
+    public class ChessMoveResult : IMoveResult
     {
         public bool WhiteKingInCheck { get; set; }
         public bool BlackKingInCheck { get; set; }

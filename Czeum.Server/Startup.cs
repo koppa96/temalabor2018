@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,7 @@ using Microsoft.Extensions.Hosting;
 using Czeum.Server.Configurations;
 using Czeum.Server.Services.EmailSender;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using NSwag;
 
 namespace Czeum.Server
 {
@@ -106,10 +108,24 @@ namespace Czeum.Server
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSignalR()
-                .AddNewtonsoftJsonProtocol(protocol =>
+                .AddJsonProtocol();
+            
+            services.AddSwaggerDocument(options =>
+            {
+                options.DocumentName = "Chitchat";
+                options.Title = "Chitchat API";
+                options.Version = "1.0";
+                options.Description = "Web API for the world's simplest chat client.";
+
+                options.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
                 {
-                    protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "Type into the textbox: Bearer {your JWT token}."
                 });
+
+            });
 
             //Singleton in memory storing services
 			services.AddSingleton<ISoloQueueService, SoloQueueService>();
@@ -152,6 +168,9 @@ namespace Czeum.Server
 
             app.UseIdentityServer();
             app.UseAuthentication();
+            
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseSignalR(route => route.MapHub<GameHub>("/gamehub"));
 

@@ -12,7 +12,7 @@ namespace Czeum.ClientCallback
         Task RequestRejected(string receiver);
         Task SuccessfulRejection(string sender);
         Task SuccessfulRequest(string receiver);
-        Task FriendAdded(Friend friend);
+        Task FriendAdded(FriendDto friendDto);
         Task FriendRemoved(string friend);
         Task FriendConnected(string friend);
         Task FriendDisconnected(string friend);

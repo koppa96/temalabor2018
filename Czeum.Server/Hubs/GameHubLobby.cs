@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +20,7 @@ namespace Czeum.Server.Hubs
             try
             {
                 var lobby = _lobbyService.CreateAndAddLobby(lobbyType, Context.UserIdentifier, access, name);
-                _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.LobbyId}");
+                _logger.LogInformation($"Lobby created by {Context.UserIdentifier}, Id: {lobby.Id}");
             
                 await Clients.Caller.LobbyCreated(lobby);
                 await Clients.Others.LobbyAdded(lobby);
@@ -33,7 +34,7 @@ namespace Czeum.Server.Hubs
 
         public async Task UpdateLobby(LobbyData lobbyData)
         {
-            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyData.LobbyId))
+            if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyData.Id))
             {
                 return;
             }
@@ -51,6 +52,7 @@ namespace Czeum.Server.Hubs
 
         public async Task InvitePlayer(int lobbyId, string player)
         {
+            //TODO: Validate the inviting player's identity
             if (!await this.LobbyValidationCallbacks(_lobbyService, lobbyId))
             {
                 return;

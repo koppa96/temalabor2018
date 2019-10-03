@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 using Czeum.DTO.Chess;
 
@@ -51,11 +52,11 @@ namespace Czeum.Client.Services {
                 return;
             }
             LobbyList.Clear();
-            LobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, LobbyId = 0, Guest = "guest1", Name = "My Little Lobbyyy"});
-            LobbyList.Add(new ChessLobbyData() { Host = "host2", Access = LobbyAccess.Public, LobbyId = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
-            LobbyList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, LobbyId = 2 , Name = "Noone's invited"});
-            LobbyList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, LobbyId = 3, Guest = "guest4" });
-            LobbyList.Add(new ChessLobbyData() { Host = "host5", Access = LobbyAccess.Public, LobbyId = 4, Guest = "guest5", Name = "F off"});
+            LobbyList.Add(new Connect4LobbyData() { Host = "host1", Access = LobbyAccess.Public, Id = 0, Guest = "guest1", Name = "My Little Lobbyyy"});
+            LobbyList.Add(new ChessLobbyData() { Host = "host2", Access = LobbyAccess.Public, Id = 1, InvitedPlayers = {"M", "asd", "asdasd", "faf"}});
+            LobbyList.Add(new Connect4LobbyData() { Host = "host3", Access = LobbyAccess.Public, Id = 2 , Name = "Noone's invited"});
+            LobbyList.Add(new Connect4LobbyData() { Host = "host4", Access = LobbyAccess.Public, Id = 3, Guest = "guest4" });
+            LobbyList.Add(new ChessLobbyData() { Host = "host5", Access = LobbyAccess.Public, Id = 4, Guest = "guest5", Name = "F off"});
         }
 
         public Task UpdateLobby(LobbyData lobbyData)

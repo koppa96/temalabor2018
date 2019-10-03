@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DAL;
 using Czeum.DTO;
 using IdentityServer4.Extensions;
@@ -78,7 +79,7 @@ namespace Czeum.Server.Services.Lobby {
 
 		public void UpdateLobbySettings(LobbyData lobbyData)
 		{
-			var oldLobby = _lobbyStorage.GetLobby(lobbyData.LobbyId);
+			var oldLobby = _lobbyStorage.GetLobby(lobbyData.Id);
 			if (oldLobby == null)
 			{
 				throw new ArgumentException("Lobby does not exist.");

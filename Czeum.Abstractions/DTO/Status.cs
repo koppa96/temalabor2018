@@ -5,6 +5,6 @@
     /// </summary>
     public enum Status
     {
-        Success, Fail, Win, Draw, Requested
+        Success, Win, Draw
     }
 }

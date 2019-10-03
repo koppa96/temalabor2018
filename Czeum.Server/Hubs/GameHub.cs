@@ -61,14 +61,14 @@ namespace Czeum.Server.Hubs
 
             if (lobby != null)
             {
-                _lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobby.LobbyId);
-                if (_lobbyService.LobbyExists(lobby.LobbyId))
+                _lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier, lobby.Id);
+                if (_lobbyService.LobbyExists(lobby.Id))
                 {
-                    await Clients.All.LobbyChanged(_lobbyService.GetLobby(lobby.LobbyId));
+                    await Clients.All.LobbyChanged(_lobbyService.GetLobby(lobby.Id));
                 }
                 else
                 {
-                    await Clients.All.LobbyDeleted(lobby.LobbyId);
+                    await Clients.All.LobbyDeleted(lobby.Id);
                 }
             }
 

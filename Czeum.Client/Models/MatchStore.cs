@@ -44,20 +44,20 @@ namespace Czeum.Client.Models
 
         public async Task RemoveMatch(int matchId)
         {
-            var matchToRemove = MatchList.FirstOrDefault(x => x.MatchId == matchId);
+            var matchToRemove = MatchList.FirstOrDefault(x => x.Id == matchId);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { MatchList.Remove(matchToRemove); });
         }
 
         public async Task UpdateMatch(MatchStatus match)
         {
-            var matchToUpdate = MatchList.FirstOrDefault(x => x.MatchId== match.MatchId);
+            var matchToUpdate = MatchList.FirstOrDefault(x => x.Id== match.Id);
             int index = MatchList.IndexOf(matchToUpdate);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 //dirty hack to refresh item in the list
                 MatchList.RemoveAt(index);
                 MatchList.Insert(index, match);
 
-                if ((selectedMatch != null) && (selectedMatch.MatchId == match.MatchId))
+                if ((selectedMatch != null) && (selectedMatch.Id == match.Id))
                 {
                     SelectedMatch = match;
                 }
@@ -66,7 +66,7 @@ namespace Czeum.Client.Models
 
         public void SelectMatch(MatchStatus match)
         {
-            var matchToSelect = MatchList.Where(x => x.MatchId == match.MatchId).FirstOrDefault();
+            var matchToSelect = MatchList.Where(x => x.Id == match.Id).FirstOrDefault();
             SelectedMatch = matchToSelect;
         }
     }

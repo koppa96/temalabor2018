@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Czeum.Abstractions.DTO;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO;
 
 namespace Czeum.Server.Services.Lobby

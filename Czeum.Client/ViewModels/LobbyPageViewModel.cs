@@ -18,6 +18,7 @@ using Prism.Logging;
 using Prism.Windows.Navigation;
 using Czeum.ClientCallback;
 using Windows.ApplicationModel.Core;
+using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO.Chess;
 
 namespace Czeum.Client.ViewModels {

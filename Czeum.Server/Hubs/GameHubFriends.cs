@@ -38,13 +38,13 @@ namespace Czeum.Server.Hubs
             {
                 await _friendService.AcceptRequestAsync(sender, Context.UserIdentifier);
                 
-                await Clients.User(sender).FriendAdded(new Friend
+                await Clients.User(sender).FriendAdded(new FriendDto
                 {
                     IsOnline = true, 
                     Username = Context.UserIdentifier
                 });
                 
-                await Clients.Caller.FriendAdded(new Friend {
+                await Clients.Caller.FriendAdded(new FriendDto {
                     IsOnline = _onlineUserTracker.IsOnline(sender),
                     Username = sender
                 });
