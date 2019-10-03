@@ -1,4 +1,4 @@
-﻿namespace Czeum.Domain.Entities
+﻿namespace Czeum.Domain.Entities.Boards
 {
     public class SerializedConnect4Board : SerializedBoard
     {

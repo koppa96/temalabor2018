@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Czeum.DTO.Connect4;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Connect4Logic
 {

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Czeum.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser<Guid>
+    public class User : IdentityUser<Guid>
     {
-        public List<Match> Player1Matches { get; set; }
-        public List<Match> Player2Matches { get; set; }
+        public List<UserMatch> Matches { get; set; }
+        public List<Match> WonMatches { get; set; }
 
         public List<Friendship> User1Friendships { get; set; }
         public List<Friendship> User2Friendships { get; set; }

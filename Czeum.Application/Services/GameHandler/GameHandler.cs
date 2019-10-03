@@ -11,6 +11,7 @@ using Czeum.Application.Services.ServiceContainer;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Entities.Boards;
 using Czeum.Domain.Services;
 using Czeum.DTO;
 using Czeum.DTO.Wrappers;
@@ -21,11 +22,11 @@ namespace Czeum.Application.Services.GameHandler
     public class GameHandler : IGameHandler
     {
         private readonly IServiceContainer serviceContainer;
-        private readonly ApplicationDbContext context;
+        private readonly CzeumContext context;
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
 
-        public GameHandler(IServiceContainer serviceContainer, ApplicationDbContext context,
+        public GameHandler(IServiceContainer serviceContainer, CzeumContext context,
             IMapper mapper, IIdentityService identityService)
         {
             this.serviceContainer = serviceContainer;

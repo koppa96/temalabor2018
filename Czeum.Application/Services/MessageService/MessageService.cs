@@ -16,13 +16,13 @@ namespace Czeum.Application.Services.MessageService
 {
     public class MessageService : IMessageService
     {
-        private readonly ApplicationDbContext context;
+        private readonly CzeumContext context;
         private readonly ILobbyStorage lobbyStorage;
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
 
         public MessageService(
-            ApplicationDbContext context, 
+            CzeumContext context, 
             ILobbyStorage lobbyStorage, 
             IMapper mapper,
             IIdentityService identityService)

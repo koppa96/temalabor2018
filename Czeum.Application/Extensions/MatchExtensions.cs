@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Enums;
 using Czeum.DTO;
 using Czeum.DTO.Wrappers;
 

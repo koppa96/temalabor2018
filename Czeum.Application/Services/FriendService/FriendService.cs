@@ -15,12 +15,12 @@ namespace Czeum.Application.Services.FriendService
 {
     public class FriendService : IFriendService
     {
-        private readonly ApplicationDbContext context;
+        private readonly CzeumContext context;
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
         private readonly IOnlineUserTracker onlineUserTracker;
 
-        public FriendService(ApplicationDbContext context,
+        public FriendService(CzeumContext context,
             IMapper mapper,
             IIdentityService identityService,
             IOnlineUserTracker onlineUserTracker)

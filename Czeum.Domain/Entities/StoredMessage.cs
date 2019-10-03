@@ -8,7 +8,9 @@ namespace Czeum.Domain.Entities
         public string Text { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public ApplicationUser Sender { get; set; }
+        public User Sender { get; set; }
+        public Guid SenderId { get; set; }
         public Match Match { get; set; }
+        public Guid MatchId { get; set; }
     }
 }

@@ -19,13 +19,13 @@ namespace Czeum.Application.Services.Lobby {
 	public class LobbyService : ILobbyService
 	{
 		private readonly ILobbyStorage lobbyStorage;
-		private readonly ApplicationDbContext context;
+		private readonly CzeumContext context;
 		private readonly IMapper mapper;
         private readonly IIdentityService identityService;
         private readonly ISoloQueueService soloQueueService;
 
         public LobbyService(ILobbyStorage lobbyStorage, 
-			ApplicationDbContext context,
+			CzeumContext context,
 			IMapper mapper,
             IIdentityService identityService,
             ISoloQueueService soloQueueService)

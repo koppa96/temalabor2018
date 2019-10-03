@@ -2,57 +2,58 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Czeum.Domain.Entities.Boards;
+using Czeum.Domain.Enums;
 
 namespace Czeum.Domain.Entities
 {
     public class Match : EntityBase
     {
-        public ApplicationUser Player1 { get; set; }
-        public ApplicationUser Player2 { get; set; }
-
         public MatchState State { get; private set; }
         public SerializedBoard Board { get; set; }
 
         public List<StoredMessage> Messages { get; set; }
+        public List<UserMatch> Users { get; set; }
+        public int CurrentPlayerIndex { get; set; }
+        
+        public User Winner { get; set; }
+        public Guid WinnerId { get; set; }
 
         public Match()
         {
-            State = MatchState.Player1Moves;
+            State = MatchState.InProgress;
         }
 
         public void NextTurn()
         {
-            switch (State)
+            if (State == MatchState.InProgress)
             {
-                case MatchState.Player1Moves:
-                    State = MatchState.Player2Moves;
-                    return;
-                case MatchState.Player2Moves:
-                    State = MatchState.Player1Moves;
-                    return;
-                default:
-                    throw new InvalidOperationException("The match already ended.");
+                CurrentPlayerIndex++;
+                if (CurrentPlayerIndex >= Users.Count)
+                {
+                    CurrentPlayerIndex = 0;
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("This match has already ended.");
             }
         }
 
         public void CurrentPlayerWon()
         {
-            switch (State)
+            if (State == MatchState.Finished)
             {
-                case MatchState.Player1Moves:
-                    State = MatchState.Player1Won;
-                    return;
-                case MatchState.Player2Moves:
-                    State = MatchState.Player2Won;
-                    return;
-                default:
-                    throw new InvalidOperationException("The match already ended.");
+                throw new InvalidOperationException("This match has already ended.");
             }
+
+            Winner = Users[CurrentPlayerIndex].User;
+            State = MatchState.Finished;
         }
 
         public void Draw()
         {
-            State = MatchState.Draw;
+            State = MatchState.Finished;
         }
     }
 }

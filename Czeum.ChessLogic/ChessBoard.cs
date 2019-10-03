@@ -5,6 +5,7 @@ using System.Text;
 using Czeum.Abstractions;
 using Czeum.ChessLogic.Pieces;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Entities.Boards;
 using Czeum.DTO.Chess;
 
 namespace Czeum.ChessLogic
