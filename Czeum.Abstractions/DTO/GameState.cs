@@ -3,6 +3,6 @@
     /// Represents the current state of the game.
     /// </summary>
 	public enum GameState {
-		InProgress, Finished
+		YourTurn, EnemyTurn, Won, Lost, Draw
 	}
 }

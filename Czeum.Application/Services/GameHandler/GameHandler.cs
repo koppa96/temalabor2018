@@ -7,6 +7,7 @@ using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Application.Extensions;
 using Czeum.Application.Models;
+using Czeum.Application.Services.MatchConverter;
 using Czeum.Application.Services.ServiceContainer;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
@@ -26,14 +27,16 @@ namespace Czeum.Application.Services.GameHandler
         private readonly CzeumContext context;
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
+        private readonly IMatchConverter matchConverter;
 
         public GameHandler(IServiceContainer serviceContainer, CzeumContext context,
-            IMapper mapper, IIdentityService identityService)
+            IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter)
         {
             this.serviceContainer = serviceContainer;
             this.context = context;
             this.mapper = mapper;
             this.identityService = identityService;
+            this.matchConverter = matchConverter;
         }
 
         public Task<IEnumerable<MatchStatus>> CreateMatchAsync(LobbyData lobbyData)
@@ -71,32 +74,30 @@ namespace Czeum.Application.Services.GameHandler
             context.Boards.Add(board);
             await context.SaveChangesAsync();
 
-            var converter = serviceContainer.FindBoardConverter(board);
-
-            var playerList = match.Users.Select(um => new Player
-                {Username = um.User.UserName, PlayerIndex = um.PlayerIndex});
-            
-            return match.Users.Select(um => new MatchStatus
-            {
-                Id = um.Match.Id,
-                CurrentPlayerId = um.Match.CurrentPlayerIndex,
-                Players = playerList,
-                State = um.Match.State == MatchState.InProgress ? GameState.InProgress : GameState.Finished,
-                Winner = null,
-                CurrentBoard = converter.Convert()
-            })
+            return match.Users.Select(um => matchConverter.ConvertFor(match, um.User.UserName));
         }
 
         public async Task<IEnumerable<MatchStatus>> HandleMoveAsync(MoveData moveData)
         {
-            var currentUser = identityService.GetCurrentUserName();
+            var userId = identityService.GetCurrentUserId();
 
-            var match = await context.Matches.Include(m => m.Player1)
-                    .Include(m => m.Player2)
-                    .CustomSingleAsync(m => m.Id == moveData.MatchId, "No match with the given id was found.");
+            var match = await context.Matches.Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                .CustomSingleAsync(m => m.Id == moveData.MatchId, "No match with the given id was found.");
+
+            var playerIndex = match.Users.SingleOrDefault(um => um.UserId == userId)?.PlayerIndex;
+            if (playerIndex == null)
+            {
+                throw new UnauthorizedAccessException("You are not a player in this match.");
+            }
+            
+            if (playerIndex != match.CurrentPlayerIndex)
+            {
+                throw new InvalidOperationException("Not your turn.");
+            }
 
             var service = serviceContainer.FindMoveHandler(moveData);
-            var result = await service.HandleAsync(moveData, match.GetPlayerId(currentUser));
+            var result = await service.HandleAsync(moveData, playerIndex.Value);
 
             switch (result.Status)
             {
@@ -112,39 +113,19 @@ namespace Czeum.Application.Services.GameHandler
             }
 
             await context.SaveChangesAsync();
-
-            var status1 = ConvertToMatchStatus(match, match.Player1.UserName, result.MoveResult);
-            var status2 = ConvertToMatchStatus(match, match.Player2.UserName, result.MoveResult);
-
-            if (currentUser == match.Player1.UserName)
-            {
-                return new MatchStatusResult(status1, status2);
-            } 
-            else
-            {
-                return new MatchStatusResult(status2, status1);
-            }
+            return match.Users.Select(um => matchConverter.ConvertFor(match, um.User.UserName));
         }
 
         public async Task<IEnumerable<MatchStatus>> GetMatchesAsync()
         {
-            var currentUserId = identityService.GetCurrentUserId();
-            
-            var matches = await context.Matches.Include(m => m.Users)
-                .ThenInclude(um => um.User)
-                .Include(m => m.Board)
-                .Where(m => m.Users.Any(um => um.UserId == currentUserId))
-                .ToListAsync();
-            
-            var statuses = new List<MatchStatus>();
-            foreach (var match in matches)
-            {
-                var service = serviceContainer.FindBoardConverter(match.Board);
-                var board = service.Convert(match.Board);
-                statuses.Add(ConvertToMatchStatus(match, player, board));
-            }
+            var currentUserName = identityService.GetCurrentUserName();
 
-            return statuses;
+            return (await context.Matches.Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                .Include(m => m.Board)
+                .Where(m => m.Users.Any(um => um.User.UserName == currentUserName))
+                .ToListAsync())
+                .Select(m => matchConverter.ConvertFor(m, currentUserName));
         }
 
         public async Task<MoveResultWrapper> GetBoardByMatchIdAsync(Guid matchId)
@@ -152,20 +133,6 @@ namespace Czeum.Application.Services.GameHandler
             var board = await context.Boards.SingleAsync(b => b.Match.Id == matchId);
             var service = serviceContainer.FindBoardConverter(board);
             return mapper.Map<MoveResultWrapper>(service.Convert(board));
-        }
-
-        private MatchStatus ConvertToMatchStatus(Match match,
-            string player,
-            IMoveResult currentBoard)
-        {
-            return new MatchStatus
-            {
-                Id = match.Id,
-                State = match.GetGameStateForPlayer(player),
-                OtherPlayer = match.GetOtherPlayerName(player),
-                CurrentBoard = mapper.Map<MoveResultWrapper>(currentBoard),
-                PlayerId = match.GetPlayerId(player)
-            };
         }
     }
 }

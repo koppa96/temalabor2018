@@ -13,10 +13,10 @@ namespace Czeum.DTO
     public class MatchStatus
     {
         public Guid Id { get; set; }
-        public int CurrentPlayerId { get; set; }
+        public int CurrentPlayerIndex { get; set; }
         public IEnumerable<Player> Players { get; set; }
         public MoveResultWrapper CurrentBoard { get; set; }
         public GameState State { get; set; }
-        public Player Winner { get; set; }
+        public string Winner { get; set; }
     }
 }
