@@ -31,6 +31,7 @@ namespace Czeum.Application.Services.MatchConverter
             {
                 Id = match.Id,
                 CurrentPlayerIndex = match.CurrentPlayerIndex,
+                PlayerIndex = match.Users.Single(u => u.User.UserName == user).PlayerIndex,
                 CurrentBoard = mapper.Map<MoveResultWrapper>(converter.Convert(match.Board)),
                 Players = match.Users.Select(um => new Player { Username = um.User.UserName, PlayerIndex = um.PlayerIndex }),
                 State = ConvertState(match, user),

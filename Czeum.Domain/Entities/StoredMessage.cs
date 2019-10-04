@@ -9,8 +9,8 @@ namespace Czeum.Domain.Entities
         public DateTime Timestamp { get; set; }
 
         public User Sender { get; set; }
-        public Guid SenderId { get; set; }
+        public Guid? SenderId { get; set; }
         public Match Match { get; set; }
-        public Guid MatchId { get; set; }
+        public Guid? MatchId { get; set; }
     }
 }

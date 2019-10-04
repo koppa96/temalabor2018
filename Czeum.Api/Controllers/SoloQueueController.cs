@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
@@ -35,10 +36,11 @@ namespace Czeum.Api.Controllers
             var players = soloQueueService.PopFirstTwoPlayers();
             if (players != null)
             {
-                var statuses = await gameHandler.CreateRandomMatchAsync(players[0], players[1]);
+                var statuses = await gameHandler.CreateRandomMatchAsync(players);
 
-                await hubContext.Clients.User(statuses.OtherPlayer.OtherPlayer).MatchCreated(statuses.CurrentPlayer);
-                await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer).MatchCreated(statuses.OtherPlayer);
+                await Task.WhenAll(statuses.Select(s =>
+                    hubContext.Clients.User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username)
+                        .MatchCreated(s)));
             }
             
             return Ok();

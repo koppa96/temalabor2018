@@ -182,25 +182,19 @@ namespace Czeum.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Player1Id = table.Column<Guid>(nullable: true),
-                    Player2Id = table.Column<Guid>(nullable: true),
-                    State = table.Column<int>(nullable: false)
+                    State = table.Column<int>(nullable: false),
+                    CurrentPlayerIndex = table.Column<int>(nullable: false),
+                    WinnerId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Matches", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Matches_AspNetUsers_Player1Id",
-                        column: x => x.Player1Id,
+                        name: "FK_Matches_AspNetUsers_WinnerId",
+                        column: x => x.WinnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Matches_AspNetUsers_Player2Id",
-                        column: x => x.Player2Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -277,6 +271,32 @@ namespace Czeum.DAL.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserMatch",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: true),
+                    MatchId = table.Column<Guid>(nullable: true),
+                    PlayerIndex = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMatch", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserMatch_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserMatch_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -333,14 +353,9 @@ namespace Czeum.DAL.Migrations
                 column: "User2Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Matches_Player1Id",
+                name: "IX_Matches_WinnerId",
                 table: "Matches",
-                column: "Player1Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Matches_Player2Id",
-                table: "Matches",
-                column: "Player2Id");
+                column: "WinnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_MatchId",
@@ -361,6 +376,16 @@ namespace Czeum.DAL.Migrations
                 name: "IX_Requests_SenderId",
                 table: "Requests",
                 column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMatch_MatchId",
+                table: "UserMatch",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMatch_UserId",
+                table: "UserMatch",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -391,6 +416,9 @@ namespace Czeum.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Requests");
+
+            migrationBuilder.DropTable(
+                name: "UserMatch");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

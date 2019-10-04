@@ -14,6 +14,7 @@ namespace Czeum.DTO
     {
         public Guid Id { get; set; }
         public int CurrentPlayerIndex { get; set; }
+        public int PlayerIndex { get; set; }
         public IEnumerable<Player> Players { get; set; }
         public MoveResultWrapper CurrentBoard { get; set; }
         public GameState State { get; set; }

@@ -43,19 +43,30 @@ namespace Czeum.Api.Controllers
         public async Task<ActionResult<MatchStatus>> CreateMatchAsync([FromQuery] Guid lobbyId)
         {
             var lobby = lobbyService.GetLobby(lobbyId);
-            var statuses = await gameHandler.CreateMatchAsync(lobby.Content);
+            var statuses = (await gameHandler.CreateMatchAsync(lobby.Content)).ToList();
 
-            // TODO: Notify
-            return Ok(statuses.CurrentPlayer);
+            await Task.WhenAll(statuses.Skip(1)
+                .Select(s => hubContext.Clients.User(s.Players
+                        .Single(p => p.PlayerIndex == s.PlayerIndex).Username)
+                    .MatchCreated(s)));
+            
+            return Ok(statuses.First());
         }
 
         [HttpPut("moves")]
         public async Task<ActionResult<MatchStatus>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
         {
-            var statuses = await gameHandler.HandleMoveAsync(moveDataWrapper.Content);
+            var statuses = (await gameHandler.HandleMoveAsync(moveDataWrapper.Content)).ToList();
 
-            await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer).ReceiveResult(statuses.OtherPlayer);
-            return statuses.CurrentPlayer;
+            await Task.WhenAll(statuses
+                .Where(s => s.PlayerIndex != s.Players.Single(p => p.Username == User.Identity.Name).PlayerIndex)
+                .Select(s =>
+                    hubContext.Clients
+                        .User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username).MatchCreated(s)));
+            
+            return Ok(statuses
+                .Single(s => s.PlayerIndex == s.Players
+                                 .Single(p => p.Username == User.Identity.Name!).PlayerIndex));
         }
     }
 }
