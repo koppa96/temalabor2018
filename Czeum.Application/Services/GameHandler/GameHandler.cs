@@ -12,6 +12,7 @@ using Czeum.DAL;
 using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Entities.Boards;
+using Czeum.Domain.Enums;
 using Czeum.Domain.Services;
 using Czeum.DTO;
 using Czeum.DTO.Wrappers;
@@ -35,42 +36,58 @@ namespace Czeum.Application.Services.GameHandler
             this.identityService = identityService;
         }
 
-        public Task<MatchStatusResult> CreateMatchAsync(LobbyData lobbyData)
+        public Task<IEnumerable<MatchStatus>> CreateMatchAsync(LobbyData lobbyData)
         {
             var service = serviceContainer.FindBoardCreator(lobbyData);
             var board = (SerializedBoard)service.CreateBoard(lobbyData);
 
-            return CreateMatchWithBoardAsync(lobbyData.Host, lobbyData.Guest, board);
+            return CreateMatchWithBoardAsync(lobbyData.Guests.Append(lobbyData.Host), board);
         }
         
-        public Task<MatchStatusResult> CreateRandomMatchAsync(string player1, string player2)
+        public Task<IEnumerable<MatchStatus>> CreateRandomMatchAsync(IEnumerable<string> players)
         {
             var service = serviceContainer.GetRandomBoardCreator();
             var board = (SerializedBoard)service.CreateDefaultBoard();
 
-            return CreateMatchWithBoardAsync(player1, player2, board);
+            return CreateMatchWithBoardAsync(players, board);
         }
 
-        private async Task<MatchStatusResult> CreateMatchWithBoardAsync(string player1, string player2, SerializedBoard board)
+        private async Task<IEnumerable<MatchStatus>> CreateMatchWithBoardAsync(IEnumerable<string> players, SerializedBoard board)
         {
+            var users = await context.Users.Where(u => players.Any(p => p == u.UserName))
+                .ToListAsync();
+            
             var match = new Match
             {
                 Board = board,
-                Player1 = await context.Users.SingleAsync(u => u.UserName == player1),
-                Player2 = await context.Users.SingleAsync(u => u.UserName == player2)
+                CurrentPlayerIndex = 0
             };
+
+            match.Users = Enumerable.Range(0, users.Count)
+                .Select(x => new UserMatch { User = users[x], Match = match, PlayerIndex = x })
+                .ToList();
 
             context.Matches.Add(match);
             context.Boards.Add(board);
             await context.SaveChangesAsync();
 
             var converter = serviceContainer.FindBoardConverter(board);
-            return new MatchStatusResult(
-                ConvertToMatchStatus(match, player1, converter.Convert(board)),
-                ConvertToMatchStatus(match, player2, converter.Convert(board)));
+
+            var playerList = match.Users.Select(um => new Player
+                {Username = um.User.UserName, PlayerIndex = um.PlayerIndex});
+            
+            return match.Users.Select(um => new MatchStatus
+            {
+                Id = um.Match.Id,
+                CurrentPlayerId = um.Match.CurrentPlayerIndex,
+                Players = playerList,
+                State = um.Match.State == MatchState.InProgress ? GameState.InProgress : GameState.Finished,
+                Winner = null,
+                CurrentBoard = converter.Convert()
+            })
         }
 
-        public async Task<MatchStatusResult> HandleMoveAsync(MoveData moveData)
+        public async Task<IEnumerable<MatchStatus>> HandleMoveAsync(MoveData moveData)
         {
             var currentUser = identityService.GetCurrentUserName();
 
@@ -109,20 +126,14 @@ namespace Czeum.Application.Services.GameHandler
             }
         }
 
-        public async Task<Match> GetMatchByIdAsync(Guid id)
+        public async Task<IEnumerable<MatchStatus>> GetMatchesAsync()
         {
-            return await context.Matches.Include(m => m.Player1)
-                .Include(m => m.Player2)
-                .SingleAsync(m => m.Id == id);
-        }
-
-        public async Task<IEnumerable<MatchStatus>> GetMatchesOfPlayerAsync(string player)
-        {
-            var matches = await context.Matches
+            var currentUserId = identityService.GetCurrentUserId();
+            
+            var matches = await context.Matches.Include(m => m.Users)
+                .ThenInclude(um => um.User)
                 .Include(m => m.Board)
-                .Include(m => m.Player1)
-                .Include(m => m.Player2)
-                .Where(m => m.Player1.UserName == player || m.Player2.UserName == player)
+                .Where(m => m.Users.Any(um => um.UserId == currentUserId))
                 .ToListAsync();
             
             var statuses = new List<MatchStatus>();

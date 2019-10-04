@@ -35,6 +35,6 @@ namespace Czeum.Abstractions.DTO.Lobbies {
 	        return playerCount >= MinimumPlayerCount && playerCount <= MaximumPlayerCount && ValidateSettings();
         }
 
-        protected abstract bool ValidateSettings();
+        public abstract bool ValidateSettings();
     }
 }

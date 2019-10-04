@@ -111,7 +111,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("{lobbyId}/kick")]
         public async Task<ActionResult<LobbyDataWrapper>> KickGuestAsync(Guid lobbyId)
         {
-            lobbyService.KickGuest(lobbyId);
+            lobbyService.KickGuest(lobbyId, TODO);
             var lobby = lobbyService.GetLobby(lobbyId);
 
             await hubContext.Clients.AllExcept(User.Identity.Name).LobbyChanged(lobby);

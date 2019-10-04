@@ -22,7 +22,7 @@ namespace Czeum.DTO.Connect4
         public override int MinimumPlayerCount => 2;
         public override int MaximumPlayerCount => 2;
 
-        protected override bool ValidateSettings()
+        public override bool ValidateSettings()
         {
             // The height should be between 4 - 10, the width between 4-15
             return BoardWidth > 3 && BoardWidth < 16 && BoardHeight > 3 && BoardWidth < 11;

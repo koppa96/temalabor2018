@@ -98,20 +98,15 @@ namespace Czeum.Application.Services.Lobby {
             }
 		}
 
-		public string KickGuest(Guid lobbyId)
+		public string KickGuest(Guid lobbyId, string guestName)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby.Host != identityService.GetCurrentUserName())
 			{
 				throw new UnauthorizedAccessException("Not authorized to kick a player from this lobby.");
 			}
-
-			var guestName = lobby.Guest;
-			if (lobby.Guest != null) 
-			{
-				lobby.DisconnectPlayer(guestName);
-			}
-
+			
+			lobby.DisconnectPlayer(guestName);
 			return guestName;
 		}
 
@@ -137,8 +132,13 @@ namespace Czeum.Application.Services.Lobby {
 				throw new UnauthorizedAccessException("Not authorized to update this lobby's settings.");
 			}
 
+			if (!lobbyData.Content.ValidateSettings())
+			{
+				throw new InvalidOperationException("Invalid settings for this lobby.");
+			}
+
 			lobbyData.Content.Host = oldLobby.Host;
-			lobbyData.Content.Guest = oldLobby.Guest;
+			lobbyData.Content.Guests = oldLobby.Guests;
 			lobbyData.Content.InvitedPlayers = oldLobby.InvitedPlayers;
             lobbyData.Content.Created = oldLobby.Created;
             lobbyData.Content.LastModified = DateTime.UtcNow;
@@ -189,12 +189,6 @@ namespace Czeum.Application.Services.Lobby {
 		public List<Message> GetMessages(Guid lobbyId)
 		{
 			return lobbyStorage.GetMessages(lobbyId);
-		}
-
-		public string GetOtherPlayer(Guid lobbyId, string player)
-		{
-			var lobby = lobbyStorage.GetLobby(lobbyId);
-			return player == lobby.Host ? lobby.Guest : lobby.Host;
 		}
 
 		public void CancelInviteFromLobby(Guid lobbyId, string player)

@@ -17,5 +17,6 @@ namespace Czeum.DTO
         public IEnumerable<Player> Players { get; set; }
         public MoveResultWrapper CurrentBoard { get; set; }
         public GameState State { get; set; }
+        public Player Winner { get; set; }
     }
 }

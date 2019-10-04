@@ -50,8 +50,9 @@ namespace Czeum.Application.Services.Lobby
         /// Kicks the current guest of the lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
+        /// <param name="guestName"></param>
         /// <returns>The kicked guest's name</returns>
-        string KickGuest(Guid lobbyId);
+        string KickGuest(Guid lobbyId, string guestName);
 
         /// <summary>
         /// Finds the lobby to which the given user is currently joined.
@@ -95,14 +96,6 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="name">The name of the lobby</param>
         /// <returns>The created lobby</returns>
         LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name);
-
-        /// <summary>
-        /// Returns the other user of the lobby.
-        /// </summary>
-        /// <param name="lobbyId">The identifier of the lobby</param>
-        /// <param name="player">The name of the player</param>
-        /// <returns>The other user's name</returns>
-        string GetOtherPlayer(Guid lobbyId, string player);
 
         /// <summary>
         /// Removes a lobby from the storage.

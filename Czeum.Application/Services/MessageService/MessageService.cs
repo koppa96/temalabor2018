@@ -37,7 +37,7 @@ namespace Czeum.Application.Services.MessageService
         {
             var sender = identityService.GetCurrentUserName();
             var lobby = lobbyStorage.GetLobby(lobbyId);
-            if (lobby.Host != sender && lobby.Guest != sender)
+            if (lobby.Host != sender && !lobby.Guests.Contains(sender))
             {
                 throw new UnauthorizedAccessException("Not authorized to send message to this lobby.");
             }
@@ -54,14 +54,16 @@ namespace Czeum.Application.Services.MessageService
 
         public async Task<Message> SendToMatchAsync(Guid matchId, string message)
         {
-            var sender = identityService.GetCurrentUserName();
-            var match = await context.Matches.CustomFindAsync(matchId);
-            if (!match.HasPlayer(sender))
+            var senderId = identityService.GetCurrentUserId();
+            var match = await context.Matches.Include(m => m.Users)
+                .CustomSingleAsync(m => m.Id == matchId);
+            
+            if (match.Users.All(um => um.UserId != senderId))
             {
                 throw new UnauthorizedAccessException("Not authorized to send message to this match.");
             }
 
-            var senderUser = await context.Users.SingleAsync(u => u.UserName == sender);
+            var senderUser = await context.Users.FindAsync(senderId);
             var storedMessage = new StoredMessage
             {
                 Sender = senderUser,

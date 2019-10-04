@@ -12,7 +12,7 @@ namespace Czeum.DTO.Chess
     {
         public override int MinimumPlayerCount => 2;
         public override int MaximumPlayerCount => 2;
-        protected override bool ValidateSettings()
+        public override bool ValidateSettings()
         {
             return true;
         }
