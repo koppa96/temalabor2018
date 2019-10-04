@@ -14,9 +14,9 @@ namespace Czeum.Abstractions.GameServices.BoardCreator
 
         public ISerializedBoard CreateBoard(LobbyData lobbyData)
         {
-            if (lobbyData.Host == null || lobbyData.Guest == null)
+            if (!lobbyData.Validate())
             {
-                throw new InvalidOperationException("A match can only be created from a full lobby.");
+                throw new InvalidOperationException("The lobby validation was unsuccessful.");
             }
 
             return CreateBoard((TLobbyData)lobbyData);

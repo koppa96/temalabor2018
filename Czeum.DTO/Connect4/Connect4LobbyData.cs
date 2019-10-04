@@ -19,14 +19,13 @@ namespace Czeum.DTO.Connect4
             BoardHeight = 6;
         }
 
-        public override string ValidateSettings()
-        {
-            if (BoardWidth < 4 || BoardWidth > 15 || BoardHeight < 4 || BoardHeight > 10)
-            {
-                return ErrorCodes.InvalidBoardSize;
-            }
+        public override int MinimumPlayerCount => 2;
+        public override int MaximumPlayerCount => 2;
 
-            return null;
+        protected override bool ValidateSettings()
+        {
+            // The height should be between 4 - 10, the width between 4-15
+            return BoardWidth > 3 && BoardWidth < 16 && BoardHeight > 3 && BoardWidth < 11;
         }
     }
 }

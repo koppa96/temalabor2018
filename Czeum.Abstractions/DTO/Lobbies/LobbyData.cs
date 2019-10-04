@@ -10,10 +10,12 @@ namespace Czeum.Abstractions.DTO.Lobbies {
 		public Guid Id { get; set; }
 		public string Name { get; set; }
 		public string Host { get; set; }
-		public string Guest { get; set; }
+		public List<string> Guests { get; set; }
 		public LobbyAccess Access { get; set; }
 		public List<string> InvitedPlayers { get; set; }
 		public bool Empty => Host == null;
+		public abstract int MinimumPlayerCount { get; }
+		public abstract int MaximumPlayerCount { get; }
 
         public DateTime Created { get; set; }
 
@@ -26,7 +28,13 @@ namespace Czeum.Abstractions.DTO.Lobbies {
             Created = DateTime.UtcNow;
             LastModified = Created;
 		}
-		
-		public abstract string ValidateSettings();
-	}
+        
+        public bool Validate()
+        {
+	        var playerCount = Guests.Count + 1;
+	        return playerCount >= MinimumPlayerCount && playerCount <= MaximumPlayerCount && ValidateSettings();
+        }
+
+        protected abstract bool ValidateSettings();
+    }
 }

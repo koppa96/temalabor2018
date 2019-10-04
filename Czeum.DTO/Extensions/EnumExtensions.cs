@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Czeum.Abstractions;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO.Lobbies;
