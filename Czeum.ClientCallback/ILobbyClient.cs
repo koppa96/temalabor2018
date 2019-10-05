@@ -14,12 +14,9 @@ namespace Czeum.ClientCallback
     public interface ILobbyClient
     {
         Task LobbyDeleted(Guid lobbyId);
-        Task LobbyCreated(LobbyDataWrapper lobbyData);
         Task LobbyAdded(LobbyDataWrapper lobbyData);
         Task LobbyChanged(LobbyDataWrapper lobbyData);
-        Task JoinedToLobby(LobbyDataWrapper lobbyData, List<Message> messages);
         Task KickedFromLobby();
-        Task LobbyMessageSent(Message message);
         Task ReceiveLobbyMessage(Message message);
         Task ReceiveLobbyInvite(LobbyDataWrapper lobbyData);
     }

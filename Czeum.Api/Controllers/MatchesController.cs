@@ -7,6 +7,7 @@ using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.MatchService;
+using Czeum.ClientCallback;
 using Czeum.DTO;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Wrappers;
@@ -62,7 +63,7 @@ namespace Czeum.Api.Controllers
                 .Where(s => s.PlayerIndex != s.Players.Single(p => p.Username == User.Identity.Name).PlayerIndex)
                 .Select(s =>
                     hubContext.Clients
-                        .User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username).MatchCreated(s)));
+                        .User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username).ReceiveResult(s)));
             
             return Ok(statuses
                 .Single(s => s.PlayerIndex == s.Players

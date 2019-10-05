@@ -6,6 +6,7 @@ using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.FriendService;
 using Czeum.Application.Services.OnlineUsers;
+using Czeum.ClientCallback;
 using Czeum.DTO.UserManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,27 +20,19 @@ namespace Czeum.Api.Controllers.Friends
     public class FriendshipsController : ControllerBase
     {
         private readonly IFriendService friendService;
-        private readonly IOnlineUserTracker onlineUserTracker;
         private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
 
         public FriendshipsController(IFriendService friendService,
-            IOnlineUserTracker onlineUserTracker,
             IHubContext<NotificationHub, ICzeumClient> hubContext)
         {
             this.friendService = friendService;
-            this.onlineUserTracker = onlineUserTracker;
             this.hubContext = hubContext;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FriendDto>>> GetFriendsAsync()
         {
-            return Ok((await friendService.GetFriendsOfUserAsync(User.Identity.Name))
-                .Select(f => new FriendDto
-                {
-                    IsOnline = onlineUserTracker.IsOnline(f),
-                    Username = f
-                }));
+            return Ok(await friendService.GetFriendsOfUserAsync(User.Identity.Name));
         }
 
         [HttpDelete("{friendshipId}")]

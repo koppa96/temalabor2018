@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Application.Services.FriendService;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.OnlineUsers;
 using Czeum.Application.Services.SoloQueue;
+using Czeum.ClientCallback;
+using Czeum.DTO.UserManagement;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.SignalR
@@ -31,11 +35,9 @@ namespace Czeum.Api.SignalR
             await base.OnConnectedAsync();
             onlineUserTracker.PutUser(Context.UserIdentifier);
 
-            var friends = await friendService.GetFriendsOfUserAsync(Context.UserIdentifier);
-            foreach (var friend in friends)
-            {
-                await Clients.User(friend).FriendConnected(Context.UserIdentifier);
-            }
+            await Task.WhenAll((await friendService.GetFriendsOfUserAsync(Context.UserIdentifier))
+                .Select(f => Clients.User(f.Username).FriendConnected(f.FriendshipId)));
+            
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -57,12 +59,9 @@ namespace Czeum.Api.SignalR
 
             soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
-            var friends = await friendService.GetFriendsOfUserAsync(Context.UserIdentifier);
-            foreach (var friend in friends)
-            {
-                await Clients.User(friend).FriendDisconnected(Context.UserIdentifier);
-            }
-            
+            await Task.WhenAll((await friendService.GetFriendsOfUserAsync(Context.UserIdentifier))
+                .Select(f => Clients.User(f.Username).FriendDisconnected(f.FriendshipId)));
+
             onlineUserTracker.RemoveUser(Context.UserIdentifier);
             await base.OnDisconnectedAsync(exception);
         }

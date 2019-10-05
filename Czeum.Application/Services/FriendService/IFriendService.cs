@@ -15,7 +15,7 @@ namespace Czeum.Application.Services.FriendService
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The names of the friends</returns>
-        Task<List<string>> GetFriendsOfUserAsync(string user);
+        Task<IEnumerable<FriendDto>> GetFriendsOfUserAsync(string user);
 
         /// <summary>
         /// Accepts the request sent by the sender and received by the receiver.

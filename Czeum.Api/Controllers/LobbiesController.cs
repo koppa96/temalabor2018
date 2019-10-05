@@ -6,6 +6,7 @@ using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.Lobby;
+using Czeum.ClientCallback;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Lobbies;
 using Czeum.DTO.Wrappers;
@@ -114,6 +115,7 @@ namespace Czeum.Api.Controllers
             lobbyService.KickGuest(lobbyId, guestName);
             var lobby = lobbyService.GetLobby(lobbyId);
 
+            await hubContext.Clients.User(guestName).KickedFromLobby();
             await hubContext.Clients.AllExcept(User.Identity.Name).LobbyChanged(lobby);
             return Ok(lobby);
         }

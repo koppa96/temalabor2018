@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Czeum.DTO.UserManagement;
 
@@ -8,13 +9,11 @@ namespace Czeum.ClientCallback
     /// </summary>
     public interface IFriendClient
     {
-        Task ReceiveRequest(string sender);
-        Task RequestRejected(string receiver);
-        Task SuccessfulRejection(string sender);
-        Task SuccessfulRequest(string receiver);
+        Task ReceiveRequest(FriendRequestDto sender);
+        Task RequestRejected(Guid requestId);
         Task FriendAdded(FriendDto friendDto);
-        Task FriendRemoved(string friend);
-        Task FriendConnected(string friend);
-        Task FriendDisconnected(string friend);
+        Task FriendRemoved(FriendDto friend);
+        Task FriendConnected(Guid friendshipId);
+        Task FriendDisconnected(Guid friendshipId);
     }
 }

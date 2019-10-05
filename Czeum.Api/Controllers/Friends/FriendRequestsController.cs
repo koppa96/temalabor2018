@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.FriendService;
+using Czeum.ClientCallback;
 using Czeum.DTO.UserManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,10 @@ namespace Czeum.Api.Controllers.Friends
         [HttpPost("{username}")]
         public async Task<ActionResult<FriendRequestDto>> SendFriendRequestAsync(string username)
         {
-            return Ok(await friendService.AddRequestAsync(username));
+            var request = await friendService.AddRequestAsync(username);
+
+            await hubContext.Clients.User(username).ReceiveRequest(request);
+            return Ok(request);
         }
 
         [HttpDelete("{requestId}/cancel")]
@@ -49,7 +53,7 @@ namespace Czeum.Api.Controllers.Friends
         {
             await friendService.RemoveRequestAsync(requestId);
 
-            // TODO: Notify other user
+            
             return NoContent();
         }
 

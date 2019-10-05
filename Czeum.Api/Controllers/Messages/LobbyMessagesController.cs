@@ -6,6 +6,7 @@ using Czeum.Api.Common;
 using Czeum.Api.SignalR;
 using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.MessageService;
+using Czeum.ClientCallback;
 using Czeum.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;

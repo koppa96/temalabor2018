@@ -31,12 +31,22 @@ namespace Czeum.Application.Services.FriendService
             this.onlineUserTracker = onlineUserTracker;
         }
 
-        public async Task<List<string>> GetFriendsOfUserAsync(string user)
+        public async Task<IEnumerable<FriendDto>> GetFriendsOfUserAsync(string user)
         {
-            return await context.Friendships
+            return (await context.Friendships.Include(f => f.User1)
+                .Include(f => f.User2)
                 .Where(f => f.User1.UserName == user || f.User2.UserName == user)
-                .Select(f => f.User1.UserName == user ? f.User2.UserName : f.User1.UserName)
-                .ToListAsync();
+                .ToListAsync())
+                .Select(f =>
+                {
+                    var friendName = f.User1.UserName == user ? f.User2.UserName : f.User1.UserName;
+                    return new FriendDto
+                    {
+                        FriendshipId = f.Id,
+                        IsOnline = onlineUserTracker.IsOnline(friendName),
+                        Username = friendName
+                    };
+                });
         }
 
         public async Task<(FriendDto Sender, FriendDto Receiver)> AcceptRequestAsync(Guid requestId)
