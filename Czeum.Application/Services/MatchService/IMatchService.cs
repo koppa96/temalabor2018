@@ -3,45 +3,47 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.Application.Models;
 using Czeum.DTO;
-using Czeum.DTO.Wrappers;
 
-namespace Czeum.Application.Services.GameHandler
+namespace Czeum.Application.Services.MatchService
 {
     /// <summary>
     /// Interface for services that interact with matches.
     /// </summary>
-    public interface IGameHandler
+    public interface IMatchService
     {
         /// <summary>
         /// Creates a match with a board from a LobbyData and persists them in the database.
         /// </summary>
         /// <param name="lobbyData">The lobby</param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<MatchStatusResult> CreateMatchAsync(LobbyData lobbyData);
+        Task<IEnumerable<MatchStatus>> CreateMatchAsync(LobbyData lobbyData);
 
         /// <summary>
         /// Creates a match with a random board and persists them in the database.
         /// </summary>
-        /// <param name="player1">The name of the first player</param>
-        /// <param name="player2">The name of the second player</param>
+        /// <param name="players">A sequence containing the names of players that are participating</param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<MatchStatusResult> CreateRandomMatchAsync(string player1, string player2);
+        Task<IEnumerable<MatchStatus>> CreateRandomMatchAsync(IEnumerable<string> players);
 
         /// <summary>
         /// Dispatches the moves to the appropriate services that can execute them, and handles the execution results.
         /// </summary>
         /// <param name="moveData">The move</param>
-        /// <param name="username">The name of the player</param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<MatchStatusResult> HandleMoveAsync(MoveData moveData);
+        Task<IEnumerable<MatchStatus>> HandleMoveAsync(MoveData moveData);
 
         /// <summary>
         /// Gets a list of matches in which the player with the given name participates.
         /// </summary>
-        /// <param name="player">The name of the player</param>
         /// <returns>The list of matches</returns>
-        Task<IEnumerable<MatchStatus>> GetMatchesOfPlayerAsync(string player);
+        Task<IEnumerable<MatchStatus>> GetMatchesAsync();
+
+        /// <summary>
+        /// Returns a list with the names of the other players that are playing in the match.
+        /// </summary>
+        /// <param name="matchId">The id of the match</param>
+        /// <returns>A list of player names</returns>
+        Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId);
     }
 }

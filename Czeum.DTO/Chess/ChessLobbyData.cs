@@ -10,9 +10,11 @@ namespace Czeum.DTO.Chess
     /// </summary>
     public class ChessLobbyData : LobbyData
     {
-        public override string ValidateSettings()
+        public override int MinimumPlayerCount => 2;
+        public override int MaximumPlayerCount => 2;
+        public override bool ValidateSettings()
         {
-            return null;
+            return true;
         }
     }
 }

@@ -6,6 +6,7 @@ using Czeum.Abstractions.GameServices.BoardConverter;
 using Czeum.Abstractions.GameServices.BoardCreator;
 using Czeum.Abstractions.GameServices.MoveHandler;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Application.Services.ServiceContainer
 {

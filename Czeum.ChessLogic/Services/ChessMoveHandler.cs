@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.ChessLogic.Services
 {

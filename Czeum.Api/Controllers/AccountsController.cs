@@ -20,11 +20,11 @@ namespace Czeum.Api.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger _logger;
         private readonly IEmailService _emailService;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, ILogger<AccountsController> logger,
+        public AccountsController(UserManager<User> userManager, ILogger<AccountsController> logger,
             IEmailService emailService)
         {
             _userManager = userManager;
@@ -53,7 +53,7 @@ namespace Czeum.Api.Controllers
 		        return BadRequest(ErrorCodes.PasswordsNotMatching);
 	        }
 
-	        var user = new ApplicationUser
+	        var user = new User
 	        {
 				UserName = model.Username,
 				Email = model.Email
@@ -95,7 +95,7 @@ namespace Czeum.Api.Controllers
 			}
 
 			if (ModelState.IsValid) {
-				ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
+				User user = await _userManager.FindByNameAsync(User.Identity.Name);
 				var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
 
 				if (result.Succeeded) {

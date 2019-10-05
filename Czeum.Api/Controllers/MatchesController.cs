@@ -5,8 +5,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
-using Czeum.Application.Services.GameHandler;
 using Czeum.Application.Services.Lobby;
+using Czeum.Application.Services.MatchService;
 using Czeum.DTO;
 using Czeum.DTO.Extensions;
 using Czeum.DTO.Wrappers;
@@ -21,14 +21,14 @@ namespace Czeum.Api.Controllers
     [Authorize]
     public class MatchesController : ControllerBase
     {
-        private readonly IGameHandler gameHandler;
+        private readonly IMatchService matchService;
         private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
         private readonly ILobbyService lobbyService;
 
-        public MatchesController(IGameHandler gameHandler,
+        public MatchesController(IMatchService matchService,
             IHubContext<NotificationHub, ICzeumClient> hubContext, ILobbyService lobbyService)
         {
-            this.gameHandler = gameHandler;
+            this.matchService = matchService;
             this.hubContext = hubContext;
             this.lobbyService = lobbyService;
         }
@@ -36,27 +36,37 @@ namespace Czeum.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MatchStatus>>> GetMatchesAsync()
         {
-            return Ok(await gameHandler.GetMatchesOfPlayerAsync(User.Identity.Name!));
+            return Ok(await matchService.GetMatchesAsync());
         }
 
         [HttpPost]
         public async Task<ActionResult<MatchStatus>> CreateMatchAsync([FromQuery] Guid lobbyId)
         {
             var lobby = lobbyService.GetLobby(lobbyId);
-            var statuses = await gameHandler.CreateMatchAsync(lobby.Content);
+            var statuses = (await matchService.CreateMatchAsync(lobby.Content)).ToList();
 
-            await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer)
-                .MatchCreated(statuses.OtherPlayer);
-            return Ok(statuses.CurrentPlayer);
+            await Task.WhenAll(statuses.Skip(1)
+                .Select(s => hubContext.Clients.User(s.Players
+                        .Single(p => p.PlayerIndex == s.PlayerIndex).Username)
+                    .MatchCreated(s)));
+            
+            return Ok(statuses.First());
         }
 
         [HttpPut("moves")]
         public async Task<ActionResult<MatchStatus>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
         {
-            var statuses = await gameHandler.HandleMoveAsync(moveDataWrapper.Content);
+            var statuses = (await matchService.HandleMoveAsync(moveDataWrapper.Content)).ToList();
 
-            await hubContext.Clients.User(statuses.CurrentPlayer.OtherPlayer).ReceiveResult(statuses.OtherPlayer);
-            return statuses.CurrentPlayer;
+            await Task.WhenAll(statuses
+                .Where(s => s.PlayerIndex != s.Players.Single(p => p.Username == User.Identity.Name).PlayerIndex)
+                .Select(s =>
+                    hubContext.Clients
+                        .User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username).MatchCreated(s)));
+            
+            return Ok(statuses
+                .Single(s => s.PlayerIndex == s.Players
+                                 .Single(p => p.Username == User.Identity.Name!).PlayerIndex));
         }
     }
 }

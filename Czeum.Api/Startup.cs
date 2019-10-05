@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,12 +60,12 @@ namespace Czeum.Api
                 //options.SignIn.RequireConfirmedEmail = true;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<CzeumContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+            services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<CzeumContext>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
@@ -73,7 +74,7 @@ namespace Czeum.Api
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients())
                 .AddCorsPolicyService<CorsPolicyService>()
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<User>();
 
             services.AddCors(options =>
             {
@@ -134,6 +135,7 @@ namespace Czeum.Api
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IUserIdProvider, UserIdProvider>();
 
             services.AddAutoMapper(Assembly.Load("Czeum.Application"));
         }
@@ -147,7 +149,7 @@ namespace Czeum.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CzeumContext context)
         {
             if (env.IsDevelopment())
             {

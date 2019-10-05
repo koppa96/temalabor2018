@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 
@@ -9,7 +10,7 @@ namespace Czeum.Application.Services.Lobby
     {
         public static void JoinGuest(this LobbyData lobby, string player, List<string> friends)
         {
-            if (lobby.Guest != null)
+            if (lobby.Guests.Count == lobby.MaximumPlayerCount - 1)
             {
                 throw new InvalidOperationException("The lobby is full.");
             }
@@ -21,22 +22,23 @@ namespace Czeum.Application.Services.Lobby
             }
             
             lobby.InvitedPlayers.Remove(player);
-            lobby.Guest = player;
+            lobby.Guests.Add(player);
             lobby.LastModified = DateTime.UtcNow;
         }
 
         public static void DisconnectPlayer(this LobbyData lobby, string player)
         {
-            if (lobby.Guest == player)
+            if (lobby.Host == player)
             {
-                lobby.Guest = null;
-                lobby.LastModified = DateTime.UtcNow;
+                lobby.Host = null;
+                if (lobby.Guests.Count > 0)
+                {
+                    lobby.Host = lobby.Guests.First();
+                }
             }
-            else if (lobby.Host == player)
+            else
             {
-                lobby.Host = lobby.Guest;
-                lobby.Guest = null;
-                lobby.LastModified = DateTime.UtcNow;
+                lobby.Guests.Remove(player);
             }
         }
     }

@@ -1,6 +1,6 @@
 using System;
 
-namespace Czeum.Abstractions.DTO.Lobbies
+namespace Czeum.Abstractions
 {
     public class GameTypeAttribute : Attribute
     {

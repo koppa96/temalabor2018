@@ -6,6 +6,7 @@ using Czeum.DTO.Connect4;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Connect4Logic.Services
 {

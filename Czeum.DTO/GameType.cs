@@ -1,3 +1,4 @@
+using Czeum.Abstractions;
 using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.DTO.Chess;
 using Czeum.DTO.Connect4;

@@ -6,15 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Application.Services
 {
     public class BoardLoader<TBoard> : IBoardLoader<TBoard>
         where TBoard : SerializedBoard
     {
-        private readonly ApplicationDbContext context;
+        private readonly CzeumContext context;
 
-        public BoardLoader(ApplicationDbContext context)
+        public BoardLoader(CzeumContext context)
         {
             this.context = context;
         }

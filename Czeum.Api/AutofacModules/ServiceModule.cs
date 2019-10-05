@@ -2,7 +2,8 @@ using System.Reflection;
 using Autofac;
 using Czeum.Abstractions.GameServices;
 using Czeum.Application.Services;
-using Czeum.Application.Services.GameHandler;
+using Czeum.Application.Services.MatchConverter;
+using Czeum.Application.Services.MatchService;
 using Czeum.Application.Services.ServiceContainer;
 using Module = Autofac.Module;
 
@@ -23,13 +24,13 @@ namespace Czeum.Api.AutofacModules
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<GameHandler>()
-                .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
-
             builder.RegisterType<ServiceContainer>()
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
+
+            builder.RegisterType<MatchConverter>()
+                .AsImplementedInterfaces()
+                .InstancePerDependency();
         }
     }
 }

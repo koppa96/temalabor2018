@@ -1,10 +1,13 @@
-﻿using Czeum.Abstractions.Domain;
+﻿using System;
+using Czeum.Abstractions.Domain;
 
 namespace Czeum.Domain.Entities
 {
     public class Friendship : EntityBase
     {
-        public ApplicationUser User1 { get; set; }
-        public ApplicationUser User2 { get; set; }
+        public User User1 { get; set; }
+        public Guid? User1Id { get; set; }
+        public User User2 { get; set; }
+        public Guid? User2Id { get; set; }
     }
 }

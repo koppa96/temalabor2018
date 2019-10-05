@@ -57,7 +57,7 @@ namespace Czeum.Application.Services.Lobby
         public LobbyData? GetLobbyOfUser(string user)
         {
             return content.Values
-                .SingleOrDefault(x => x.LobbyData.Host == user || x.LobbyData.Guest == user)
+                .SingleOrDefault(x => x.LobbyData.Host == user || x.LobbyData.Guests.Contains(user))
                 ?.LobbyData;
         }
 
