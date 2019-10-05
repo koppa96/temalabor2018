@@ -23,6 +23,7 @@ namespace Czeum.Abstractions.DTO.Lobbies {
 
         protected LobbyData()
 		{
+			Guests = new List<string>();
 			InvitedPlayers = new List<string>();
 			Access = LobbyAccess.FriendsOnly;
             Created = DateTime.UtcNow;

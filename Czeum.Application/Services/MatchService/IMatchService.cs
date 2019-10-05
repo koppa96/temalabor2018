@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.Application.Models;
 using Czeum.DTO;
-using Czeum.DTO.Wrappers;
 
-namespace Czeum.Application.Services.GameHandler
+namespace Czeum.Application.Services.MatchService
 {
     /// <summary>
     /// Interface for services that interact with matches.
     /// </summary>
-    public interface IGameHandler
+    public interface IMatchService
     {
         /// <summary>
         /// Creates a match with a board from a LobbyData and persists them in the database.
@@ -40,5 +38,12 @@ namespace Czeum.Application.Services.GameHandler
         /// </summary>
         /// <returns>The list of matches</returns>
         Task<IEnumerable<MatchStatus>> GetMatchesAsync();
+
+        /// <summary>
+        /// Returns a list with the names of the other players that are playing in the match.
+        /// </summary>
+        /// <param name="matchId">The id of the match</param>
+        /// <returns>A list of player names</returns>
+        Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId);
     }
 }

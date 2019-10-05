@@ -5,23 +5,20 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.Application.Extensions;
-using Czeum.Application.Models;
 using Czeum.Application.Services.MatchConverter;
 using Czeum.Application.Services.ServiceContainer;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Entities.Boards;
-using Czeum.Domain.Enums;
 using Czeum.Domain.Services;
 using Czeum.DTO;
 using Czeum.DTO.Wrappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Czeum.Application.Services.GameHandler
+namespace Czeum.Application.Services.MatchService
 {
-    public class GameHandler : IGameHandler
+    public class MatchService : IMatchService
     {
         private readonly IServiceContainer serviceContainer;
         private readonly CzeumContext context;
@@ -29,7 +26,7 @@ namespace Czeum.Application.Services.GameHandler
         private readonly IIdentityService identityService;
         private readonly IMatchConverter matchConverter;
 
-        public GameHandler(IServiceContainer serviceContainer, CzeumContext context,
+        public MatchService(IServiceContainer serviceContainer, CzeumContext context,
             IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter)
         {
             this.serviceContainer = serviceContainer;
@@ -126,6 +123,14 @@ namespace Czeum.Application.Services.GameHandler
                 .Where(m => m.Users.Any(um => um.User.UserName == currentUserName))
                 .ToListAsync())
                 .Select(m => matchConverter.ConvertFor(m, currentUserName));
+        }
+
+        public async Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId)
+        {
+            var currentUserId = identityService.GetCurrentUserId();
+            return await context.UserMatches.Where(um => um.MatchId == matchId && um.UserId != currentUserId)
+                .Select(um => um.User.UserName)
+                .ToListAsync();
         }
 
         public async Task<MoveResultWrapper> GetBoardByMatchIdAsync(Guid matchId)

@@ -15,6 +15,7 @@ namespace Czeum.DAL
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<FriendRequest> Requests { get; set; }
         public DbSet<StoredMessage> Messages { get; set; }
+        public DbSet<UserMatch> UserMatches { get; set; }
 
         public CzeumContext(DbContextOptions<CzeumContext> options)
             : base(options)
@@ -24,6 +25,7 @@ namespace Czeum.DAL
             Friendships = Set<Friendship>();
             Requests = Set<FriendRequest>();
             Messages = Set<StoredMessage>();
+            UserMatches = Set<UserMatch>();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

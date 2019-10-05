@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Czeum.DTO;
 
@@ -10,7 +11,6 @@ namespace Czeum.ClientCallback
     {
         Task ReceiveResult(MatchStatus status);
         Task MatchCreated(MatchStatus status);
-        Task MatchMessageSent(int matchId, Message message);
-        Task ReceiveMatchMessage(int matchId, Message message);
+        Task ReceiveMatchMessage(Guid matchId, Message message);
     }
 }

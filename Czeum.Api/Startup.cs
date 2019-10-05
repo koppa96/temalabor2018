@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -134,6 +135,7 @@ namespace Czeum.Api
             services.AddSingleton<ILobbyStorage, LobbyStorage>();
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IUserIdProvider, UserIdProvider>();
 
             services.AddAutoMapper(Assembly.Load("Czeum.Application"));
         }

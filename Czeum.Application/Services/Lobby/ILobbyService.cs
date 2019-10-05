@@ -91,7 +91,6 @@ namespace Czeum.Application.Services.Lobby
         /// Creates a lobby of the desired type and adds it to the lobby storage.
         /// </summary>
         /// <param name="type">The type of the new lobby (must be a LobbyData subclass)</param>
-        /// <param name="host">The name of the player that hosts the lobby</param>
         /// <param name="access">The access type of the lobby</param>
         /// <param name="name">The name of the lobby</param>
         /// <returns>The created lobby</returns>
@@ -102,5 +101,12 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="id">The identifier of the lobby</param>
         void RemoveLobby(Guid id);
+
+        /// <summary>
+        /// Returns a list of players that are in the lobby without the current player.
+        /// </summary>
+        /// <param name="lobbyId">The id of the lobby</param>
+        /// <returns>The list of players</returns>
+        IEnumerable<string> GetOthersInLobby(Guid lobbyId);
     }
 }

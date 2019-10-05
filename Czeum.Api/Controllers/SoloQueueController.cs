@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
-using Czeum.Application.Services.GameHandler;
+using Czeum.Application.Services.MatchService;
 using Czeum.Application.Services.SoloQueue;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +16,15 @@ namespace Czeum.Api.Controllers
     public class SoloQueueController : ControllerBase
     {
         private readonly ISoloQueueService soloQueueService;
-        private readonly IGameHandler gameHandler;
+        private readonly IMatchService matchService;
         private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
 
         public SoloQueueController(ISoloQueueService soloQueueService,
-            IGameHandler gameHandler,
+            IMatchService matchService,
             IHubContext<NotificationHub, ICzeumClient> hubContext)
         {
             this.soloQueueService = soloQueueService;
-            this.gameHandler = gameHandler;
+            this.matchService = matchService;
             this.hubContext = hubContext;
         }
         
@@ -36,7 +36,7 @@ namespace Czeum.Api.Controllers
             var players = soloQueueService.PopFirstTwoPlayers();
             if (players != null)
             {
-                var statuses = await gameHandler.CreateRandomMatchAsync(players);
+                var statuses = await matchService.CreateRandomMatchAsync(players);
 
                 await Task.WhenAll(statuses.Select(s =>
                     hubContext.Clients.User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username)

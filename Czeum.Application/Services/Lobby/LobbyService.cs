@@ -206,5 +206,14 @@ namespace Czeum.Application.Services.Lobby {
 		{
 			lobbyStorage.RemoveLobby(id);
 		}
+
+		public IEnumerable<string> GetOthersInLobby(Guid lobbyId)
+		{
+			var lobby = lobbyStorage.GetLobby(lobbyId);
+			var currentUser = identityService.GetCurrentUserName();
+
+			return lobby.Guests.Append(lobby.Host)
+				.Where(u => u != currentUser);
+		}
     }
 }
