@@ -19,16 +19,19 @@ namespace Czeum.Application.Services.FriendService
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
         private readonly IOnlineUserTracker onlineUserTracker;
+        private readonly INotificationService notificationService;
 
         public FriendService(CzeumContext context,
             IMapper mapper,
             IIdentityService identityService,
-            IOnlineUserTracker onlineUserTracker)
+            IOnlineUserTracker onlineUserTracker,
+            INotificationService notificationService)
         {
             this.context = context;
             this.mapper = mapper;
             this.identityService = identityService;
             this.onlineUserTracker = onlineUserTracker;
+            this.notificationService = notificationService;
         }
 
         public async Task<IEnumerable<FriendDto>> GetFriendsOfUserAsync(string user)
@@ -49,7 +52,7 @@ namespace Czeum.Application.Services.FriendService
                 });
         }
 
-        public async Task<(FriendDto Sender, FriendDto Receiver)> AcceptRequestAsync(Guid requestId)
+        public async Task<FriendDto> AcceptRequestAsync(Guid requestId)
         {
             var currentUser = identityService.GetCurrentUserName();
             var request = await context.Requests.Include(r => r.Sender)
@@ -71,20 +74,20 @@ namespace Czeum.Application.Services.FriendService
             context.Requests.Remove(request);
             await context.SaveChangesAsync();
 
-            return (
-                Sender: new FriendDto
+            await notificationService.NotifyAsync(friendship.User1.UserName,
+                client => client.FriendAdded(new FriendDto
                 {
                     FriendshipId = friendship.Id,
-                    IsOnline = true,
+                    IsOnline = onlineUserTracker.IsOnline(friendship.User2.UserName),
                     Username = friendship.User2.UserName
-                }, 
-                Receiver: new FriendDto
-                {
-                    FriendshipId = friendship.Id,
-                    IsOnline = onlineUserTracker.IsOnline(friendship.User1.UserName),
-                    Username = friendship.User1.UserName
-                }
-            );
+                }));
+            
+            return new FriendDto
+            {
+                FriendshipId = friendship.Id,
+                IsOnline = onlineUserTracker.IsOnline(friendship.User1.UserName),
+                Username = friendship.User1.UserName
+            };
         }
 
         public async Task RemoveFriendAsync(Guid friendshipId)
@@ -101,6 +104,9 @@ namespace Czeum.Application.Services.FriendService
 
             context.Friendships.Remove(friendship);
             await context.SaveChangesAsync();
+            await notificationService.NotifyAsync(
+                friendship.User1.UserName == currentUser ? friendship.User2.UserName : friendship.User1.UserName,
+                client => client.FriendRemoved(friendshipId));
         }
 
         public async Task<FriendRequestDto> AddRequestAsync(string receiver)
@@ -126,17 +132,46 @@ namespace Czeum.Application.Services.FriendService
 
             context.Requests.Add(request);
             await context.SaveChangesAsync();
+            var requestDto = mapper.Map<FriendRequestDto>(request);
 
-            return mapper.Map<FriendRequestDto>(request);
+            await notificationService.NotifyAsync(
+                request.Receiver.UserName, client => client.ReceiveRequest(requestDto));
+
+            return requestDto;
         }
 
-        public async Task RemoveRequestAsync(Guid requestId)
+        public async Task RejectRequestAsync(Guid requestId)
         {
-            var request = await context.Requests.CustomFindAsync(requestId, 
-                "No friend request found with the given id.");
+            var currentUserId = identityService.GetCurrentUserId();
+            var request = await context.Requests.Include(r => r.Sender)
+                .CustomSingleAsync(r => r.Id == requestId, "No request with the given id was found.");
+
+            if (request.ReceiverId != currentUserId)
+            {
+                throw new UnauthorizedAccessException("A request can only be rejected by its receiver.");
+            }
 
             context.Requests.Remove(request);
             await context.SaveChangesAsync();
+            await notificationService.NotifyAsync(request.Sender.UserName,
+                client => client.RequestRejected(requestId));
+        }
+
+        public async Task RevokeRequestAsync(Guid requestId)
+        {
+            var currentUserId = identityService.GetCurrentUserId();
+            var request = await context.Requests.Include(r => r.Receiver)
+                .CustomSingleAsync(r => r.Id == requestId, "No request with the given id was found.");
+
+            if (request.SenderId != currentUserId)
+            {
+                throw new UnauthorizedAccessException("A request can only be revoked by its sender.");
+            }
+
+            context.Requests.Remove(request);
+            await context.SaveChangesAsync();
+            await notificationService.NotifyAsync(request.Receiver.UserName,
+                client => client.RequestRevoked(requestId));
         }
 
         public async Task<IEnumerable<FriendRequestDto>> GetRequestsSentAsync()

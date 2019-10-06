@@ -24,21 +24,24 @@ namespace Czeum.Application.Services.Lobby {
 		private readonly IMapper mapper;
         private readonly IIdentityService identityService;
         private readonly ISoloQueueService soloQueueService;
+        private readonly INotificationService notificationService;
 
         public LobbyService(ILobbyStorage lobbyStorage, 
 			CzeumContext context,
 			IMapper mapper,
             IIdentityService identityService,
-            ISoloQueueService soloQueueService)
+            ISoloQueueService soloQueueService,
+			INotificationService notificationService)
 		{
 			this.lobbyStorage = lobbyStorage;
 			this.context = context;
 			this.mapper = mapper;
             this.identityService = identityService;
             this.soloQueueService = soloQueueService;
-        }
+            this.notificationService = notificationService;
+		}
 
-		public async Task JoinToLobbyAsync(Guid lobbyId)
+		public async Task<LobbyDataWrapper> JoinToLobbyAsync(Guid lobbyId)
 		{
             var currentUser = identityService.GetCurrentUserName();
             var userLobby = lobbyStorage.GetLobbyOfUser(currentUser);
@@ -53,17 +56,23 @@ namespace Czeum.Application.Services.Lobby {
 				.Where(f => f.User1.UserName == currentUser || f.User2.UserName == currentUser)
 				.Select(f => f.User1.UserName == currentUser ? f.User2.UserName : f.User1.UserName)
 				.ToListAsync();
+
+			var wrapper = mapper.Map<LobbyDataWrapper>(lobby);
 			
 			lobby.JoinGuest(currentUser, friends);
+			await notificationService.NotifyAllExceptAsync(currentUser,
+				client => client.LobbyChanged(wrapper));
+
+			return wrapper;
 		}
 
-		public void DisconnectFromCurrentLobby()
+		public Task DisconnectFromCurrentLobbyAsync()
 		{
             var currentUser = identityService.GetCurrentUserName();
-            DisconnectPlayerFromLobby(currentUser);
+            return DisconnectPlayerFromLobby(currentUser);
 		}
 
-        public void DisconnectPlayerFromLobby(string username)
+        public async Task DisconnectPlayerFromLobby(string username)
         {
             var currentLobby = lobbyStorage.GetLobbyOfUser(username);
             if (currentLobby != null)
@@ -72,6 +81,12 @@ namespace Czeum.Application.Services.Lobby {
                 if (currentLobby.Empty)
                 {
                     lobbyStorage.RemoveLobby(currentLobby.Id);
+                    await notificationService.NotifyAllAsync(client => client.LobbyDeleted(currentLobby.Id));
+                }
+                else
+                {
+	                await notificationService.NotifyAllAsync(client =>
+		                client.LobbyChanged(mapper.Map<LobbyDataWrapper>(currentLobby)));
                 }
             }
             else
@@ -99,16 +114,19 @@ namespace Czeum.Application.Services.Lobby {
             }
 		}
 
-		public string KickGuest(Guid lobbyId, string guestName)
+		public async Task<LobbyDataWrapper> KickGuestAsync(Guid lobbyId, string guestName)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby.Host != identityService.GetCurrentUserName())
 			{
 				throw new UnauthorizedAccessException("Not authorized to kick a player from this lobby.");
 			}
-			
-			lobby.DisconnectPlayer(guestName);
-			return guestName;
+
+			await DisconnectPlayerFromLobby(guestName);
+			await notificationService.NotifyAsync(guestName,
+				client => client.KickedFromLobby());
+
+			return mapper.Map<LobbyDataWrapper>(lobby);
 		}
 
 		public LobbyData? GetLobbyOfUser(string user) {
@@ -120,15 +138,16 @@ namespace Czeum.Application.Services.Lobby {
 			return lobbyStorage.GetLobbies().Select(mapper.Map<LobbyDataWrapper>).ToList();
 		}
 
-		public void UpdateLobbySettings(LobbyDataWrapper lobbyData)
+		public async Task<LobbyDataWrapper> UpdateLobbySettingsAsync(LobbyDataWrapper lobbyData)
 		{
+			var currentUserName = identityService.GetCurrentUserName();
 			var oldLobby = lobbyStorage.GetLobby(lobbyData.Content.Id);
 			if (oldLobby == null)
 			{
 				throw new ArgumentOutOfRangeException(nameof(lobbyData.Content.Id), "Lobby does not exist.");
 			}
 
-			if (identityService.GetCurrentUserName() != oldLobby.Host)
+			if (currentUserName != oldLobby.Host)
 			{
 				throw new UnauthorizedAccessException("Not authorized to update this lobby's settings.");
 			}
@@ -145,6 +164,12 @@ namespace Czeum.Application.Services.Lobby {
             lobbyData.Content.LastModified = DateTime.UtcNow;
 			
 			lobbyStorage.UpdateLobby(lobbyData.Content);
+			var updatedLobby = mapper.Map<LobbyDataWrapper>(lobbyStorage.GetLobby(lobbyData.Content.Id));
+
+			await notificationService.NotifyAllExceptAsync(currentUserName,
+				client => client.LobbyChanged(updatedLobby));
+
+			return updatedLobby;
 		}
 
 		public LobbyDataWrapper GetLobby(Guid lobbyId)
@@ -158,7 +183,7 @@ namespace Czeum.Application.Services.Lobby {
             return lobbyStorage.LobbyExitsts(lobbyId);
 		}
 
-		public LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name)
+		public async Task<LobbyDataWrapper> CreateAndAddLobbyAsync(GameType type, LobbyAccess access, string name)
 		{
             var currentUser = identityService.GetCurrentUserName();
             if (lobbyStorage.GetLobbyOfUser(currentUser) != null)
@@ -177,14 +202,12 @@ namespace Czeum.Application.Services.Lobby {
 			lobby.Access = access;
 			lobby.Name = string.IsNullOrEmpty(name) ? $"{currentUser}'s {type.ToString()} lobby" : name;
 			lobbyStorage.AddLobby(lobby);
-			
-			return mapper.Map<LobbyDataWrapper>(lobby);
-		}
+			var wrapper = mapper.Map<LobbyDataWrapper>(lobby);
 
-		public void AddMessageNow(Guid lobbyId, Message message)
-		{
-			message.Timestamp = DateTime.UtcNow;
-			lobbyStorage.AddMessage(lobbyId, message);
+			await notificationService.NotifyAllExceptAsync(currentUser,
+				client => client.LobbyAdded(wrapper));
+
+			return wrapper;
 		}
 
 		public List<Message> GetMessages(Guid lobbyId)

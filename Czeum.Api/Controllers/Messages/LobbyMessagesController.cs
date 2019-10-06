@@ -18,13 +18,9 @@ namespace Czeum.Api.Controllers.Messages
     public class LobbyMessagesController : ControllerBase
     {
         private readonly IMessageService messageService;
-        private readonly ILobbyService lobbyService;
-
-        public LobbyMessagesController(IMessageService messageService,
-            ILobbyService lobbyService)
+        public LobbyMessagesController(IMessageService messageService)
         {
             this.messageService = messageService;
-            this.lobbyService = lobbyService;
         }
 
         [HttpGet("{lobbyId}")]

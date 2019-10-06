@@ -41,40 +41,22 @@ namespace Czeum.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<LobbyDataWrapper>> CreateLobbyAsync([FromBody] CreateLobbyDto dto)
         {
-            var lobby = lobbyService.CreateAndAddLobby(
+            return StatusCode(201, await lobbyService.CreateAndAddLobbyAsync(
                 dto.GameType,  
                 dto.LobbyAccess, 
-                dto.Name);
-
-            await hubContext.Clients.AllExcept(User.Identity.Name).LobbyAdded(lobby);
-            return StatusCode(201, lobby);
+                dto.Name));
         }
 
         [HttpPut("{lobbyId}")]
-        public async Task<ActionResult<LobbyDataWrapper>> UpdateLobbyAsync(Guid lobbyId, [FromBody] LobbyDataWrapper wrapper)
+        public async Task<ActionResult<LobbyDataWrapper>> UpdateLobbyAsync([FromBody] LobbyDataWrapper wrapper)
         {
-            lobbyService.UpdateLobbySettings(wrapper);
-            var lobby = lobbyService.GetLobby(lobbyId);
-
-            await hubContext.Clients.AllExcept(User.Identity.Name).LobbyChanged(lobby);
-            return Ok(lobby);
+            return Ok(await lobbyService.UpdateLobbySettingsAsync(wrapper));
         }
 
         [HttpPost("current/leave")]
         public async Task<ActionResult> LeaveLobbyAsync()
         {
-            var currentLobby = lobbyService.GetLobbyOfUser(User.Identity.Name!);
-            lobbyService.DisconnectFromCurrentLobby();
-
-            if (!lobbyService.LobbyExists(currentLobby!.Id))
-            {
-                await hubContext.Clients.All.LobbyDeleted(currentLobby.Id);
-            }
-            else
-            {
-                await hubContext.Clients.All.LobbyChanged(lobbyService.GetLobby(currentLobby.Id));
-            }
-            
+            await lobbyService.DisconnectFromCurrentLobbyAsync();
             return Ok();
         }
 
@@ -112,12 +94,7 @@ namespace Czeum.Api.Controllers
         [HttpPost("{lobbyId}/kick/{guestName}")]
         public async Task<ActionResult<LobbyDataWrapper>> KickGuestAsync(Guid lobbyId, string guestName)
         {
-            lobbyService.KickGuest(lobbyId, guestName);
-            var lobby = lobbyService.GetLobby(lobbyId);
-
-            await hubContext.Clients.User(guestName).KickedFromLobby();
-            await hubContext.Clients.AllExcept(User.Identity.Name).LobbyChanged(lobby);
-            return Ok(lobby);
+            return Ok(await lobbyService.KickGuestAsync(lobbyId, guestName));
         }
     }
 }

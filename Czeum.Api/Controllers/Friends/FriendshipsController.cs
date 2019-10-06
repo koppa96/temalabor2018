@@ -46,9 +46,7 @@ namespace Czeum.Api.Controllers.Friends
         public async Task<ActionResult<FriendDto>> AcceptRequestAsync(Guid requestId)
         {
             var result = await friendService.AcceptRequestAsync(requestId);
-
-            await hubContext.Clients.User(result.Receiver.Username).FriendAdded(result.Sender);
-            return StatusCode(201, result.Receiver);
+            return StatusCode(201, result);
         }
     }
 }

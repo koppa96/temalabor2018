@@ -11,8 +11,9 @@ namespace Czeum.ClientCallback
     {
         Task ReceiveRequest(FriendRequestDto sender);
         Task RequestRejected(Guid requestId);
+        Task RequestRevoked(Guid requestId);
         Task FriendAdded(FriendDto friendDto);
-        Task FriendRemoved(FriendDto friend);
+        Task FriendRemoved(Guid friendshipId);
         Task FriendConnected(Guid friendshipId);
         Task FriendDisconnected(Guid friendshipId);
     }

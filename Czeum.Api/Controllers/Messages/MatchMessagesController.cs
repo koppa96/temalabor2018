@@ -18,13 +18,10 @@ namespace Czeum.Api.Controllers.Messages
     public class MatchMessagesController : ControllerBase
     {
         private readonly IMessageService messageService;
-        private readonly IMatchService matchService;
 
-        public MatchMessagesController(IMessageService messageService,
-            IMatchService matchService)
+        public MatchMessagesController(IMessageService messageService)
         {
             this.messageService = messageService;
-            this.matchService = matchService;
         }
 
         [HttpGet("{matchId}")]

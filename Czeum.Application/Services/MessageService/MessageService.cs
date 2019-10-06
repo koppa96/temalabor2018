@@ -52,7 +52,8 @@ namespace Czeum.Application.Services.MessageService
                 Timestamp = DateTime.UtcNow
             };
             lobbyStorage.AddMessage(lobbyId, msg);
-            await notificationService.NotifyAsync(lobby.Others(sender), client => client.ReceiveLobbyMessage(msg));
+            await notificationService.NotifyAsync(lobby.Others(sender), 
+                client => client.ReceiveLobbyMessage(lobbyId, msg));
             return msg;
         }
 

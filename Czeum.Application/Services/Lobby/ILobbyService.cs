@@ -19,18 +19,18 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="lobbyId">The target lobby's identifier</param>
         /// <returns>Whether the joining was successful</returns>
-        Task JoinToLobbyAsync(Guid lobbyId);
+        Task<LobbyDataWrapper> JoinToLobbyAsync(Guid lobbyId);
 
         /// <summary>
         /// Disconnects the current user from their current lobby.
         /// </summary>
-        void DisconnectFromCurrentLobby();
+        Task DisconnectFromCurrentLobbyAsync();
 
         /// <summary>
         /// Disconnects the player from their current lobby.
         /// </summary>
         /// <param name="username">The name of the player</param>
-        void DisconnectPlayerFromLobby(string username);
+        Task DisconnectPlayerFromLobby(string username);
 
         /// <summary>
         /// Adds a player to the invited players of the given lobby.
@@ -52,7 +52,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <param name="guestName"></param>
         /// <returns>The kicked guest's name</returns>
-        string KickGuest(Guid lobbyId, string guestName);
+        Task<LobbyDataWrapper> KickGuestAsync(Guid lobbyId, string guestName);
 
         /// <summary>
         /// Finds the lobby to which the given user is currently joined.
@@ -71,7 +71,7 @@ namespace Czeum.Application.Services.Lobby
         /// Updates the settings of a lobby.
         /// </summary>
         /// <param name="lobbyData">The lobby with the updated settings</param>
-        void UpdateLobbySettings(LobbyDataWrapper lobbyData);
+        Task<LobbyDataWrapper> UpdateLobbySettingsAsync(LobbyDataWrapper lobbyData);
 
         /// <summary>
         /// Gets a lobby with the given identifier.
@@ -94,7 +94,7 @@ namespace Czeum.Application.Services.Lobby
         /// <param name="access">The access type of the lobby</param>
         /// <param name="name">The name of the lobby</param>
         /// <returns>The created lobby</returns>
-        LobbyDataWrapper CreateAndAddLobby(GameType type, LobbyAccess access, string name);
+        Task<LobbyDataWrapper> CreateAndAddLobbyAsync(GameType type, LobbyAccess access, string name);
 
         /// <summary>
         /// Removes a lobby from the storage.

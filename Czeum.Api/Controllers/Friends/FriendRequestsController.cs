@@ -51,18 +51,14 @@ namespace Czeum.Api.Controllers.Friends
         [HttpDelete("{requestId}/cancel")]
         public async Task<ActionResult> CancelFriendRequest(Guid requestId)
         {
-            await friendService.RemoveRequestAsync(requestId);
-
-            
+            await friendService.RevokeRequestAsync(requestId);
             return NoContent();
         }
 
         [HttpDelete("{requestId}/reject")]
         public async Task<ActionResult> RejectFriendRequest(Guid requestId)
         {
-            await friendService.RemoveRequestAsync(requestId);
-
-            // TODO: Notify other user
+            await friendService.RejectRequestAsync(requestId);
             return NoContent();
         }
     }

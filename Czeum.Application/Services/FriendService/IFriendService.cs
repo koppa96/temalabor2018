@@ -22,7 +22,7 @@ namespace Czeum.Application.Services.FriendService
         /// </summary>
         /// <param name="requestId">The identifier of the friend request</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task<(FriendDto Sender, FriendDto Receiver)> AcceptRequestAsync(Guid requestId);
+        Task<FriendDto> AcceptRequestAsync(Guid requestId);
 
         /// <summary>
         /// Removes a friend from the friends of the user.
@@ -39,11 +39,18 @@ namespace Czeum.Application.Services.FriendService
         Task<FriendRequestDto> AddRequestAsync(string receiver);
 
         /// <summary>
-        /// Removes a friend request sent by the sender and received by the receiver.
+        /// Rejects the friend request
         /// </summary>
         /// <param name="requestId">The identifier of the request</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task RemoveRequestAsync(Guid requestId);
+        Task RejectRequestAsync(Guid requestId);
+
+        /// <summary>
+        /// Revokes the friend request
+        /// </summary>
+        /// <param name="requestId">The identifier of the request</param>
+        /// <returns></returns>
+        Task RevokeRequestAsync(Guid requestId);
 
         /// <summary>
         /// Gets the names of the users to whom the given user has sent friend request.

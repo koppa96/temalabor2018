@@ -17,7 +17,7 @@ namespace Czeum.ClientCallback
         Task LobbyAdded(LobbyDataWrapper lobbyData);
         Task LobbyChanged(LobbyDataWrapper lobbyData);
         Task KickedFromLobby();
-        Task ReceiveLobbyMessage(Message message);
+        Task ReceiveLobbyMessage(Guid lobbyId, Message message);
         Task ReceiveLobbyInvite(LobbyDataWrapper lobbyData);
     }
 }
