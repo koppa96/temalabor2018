@@ -136,6 +136,7 @@ namespace Czeum.Api
             services.AddSingleton<IOnlineUserTracker, OnlineUserTracker>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IUserIdProvider, UserIdProvider>();
+            services.AddTransient<INotificationService, NotificationService>();
 
             services.AddAutoMapper(Assembly.Load("Czeum.Application"));
         }

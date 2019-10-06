@@ -16,7 +16,7 @@ namespace Czeum.Application.Services.MessageService
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <param name="message">The content of the message</param>
         /// <returns>The sent message as a DTO if the sending was successful</returns>
-        Message SendToLobby(Guid lobbyId, string message);
+        Task<Message> SendToLobbyAsync(Guid lobbyId, string message);
 
         /// <summary>
         /// Sends a message to a match.

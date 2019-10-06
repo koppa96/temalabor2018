@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
 
-namespace Czeum.Application.Services.Lobby
+namespace Czeum.Application.Extensions
 {
     public static class LobbyExtensions
     {
@@ -40,6 +39,16 @@ namespace Czeum.Application.Services.Lobby
             {
                 lobby.Guests.Remove(player);
             }
+        }
+
+        public static IEnumerable<string> Others(this LobbyData lobby, string player)
+        {
+            return lobby.Guests.Append(lobby.Host).Where(p => p != player);
+        }
+        
+        public static bool Contains(this LobbyData lobbyData, string username)
+        {
+            return lobbyData.Host == username || lobbyData.Guests.Contains(username);
         }
     }
 }

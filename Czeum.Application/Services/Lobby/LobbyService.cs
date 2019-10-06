@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.Application.Extensions;
 using Czeum.Application.Services.SoloQueue;
 using Czeum.DAL;
 using Czeum.DAL.Exceptions;

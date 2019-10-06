@@ -20,20 +20,23 @@ namespace Czeum.Application.Services.MessageService
         private readonly ILobbyStorage lobbyStorage;
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
+        private readonly INotificationService notificationService;
 
         public MessageService(
             CzeumContext context, 
             ILobbyStorage lobbyStorage, 
             IMapper mapper,
-            IIdentityService identityService)
+            IIdentityService identityService,
+            INotificationService notificationService)
         {
             this.context = context;
             this.lobbyStorage = lobbyStorage;
             this.mapper = mapper;
             this.identityService = identityService;
+            this.notificationService = notificationService;
         }
 
-        public Message SendToLobby(Guid lobbyId, string message)
+        public async Task<Message> SendToLobbyAsync(Guid lobbyId, string message)
         {
             var sender = identityService.GetCurrentUserName();
             var lobby = lobbyStorage.GetLobby(lobbyId);
@@ -49,6 +52,7 @@ namespace Czeum.Application.Services.MessageService
                 Timestamp = DateTime.UtcNow
             };
             lobbyStorage.AddMessage(lobbyId, msg);
+            await notificationService.NotifyAsync(lobby.Others(sender), client => client.ReceiveLobbyMessage(msg));
             return msg;
         }
 
@@ -56,6 +60,7 @@ namespace Czeum.Application.Services.MessageService
         {
             var senderId = identityService.GetCurrentUserId();
             var match = await context.Matches.Include(m => m.Users)
+                    .ThenInclude(um => um.User)
                 .CustomSingleAsync(m => m.Id == matchId);
             
             if (match.Users.All(um => um.UserId != senderId))
@@ -74,7 +79,11 @@ namespace Czeum.Application.Services.MessageService
             context.Messages.Add(storedMessage);
             await context.SaveChangesAsync();
             
-            return mapper.Map<Message>(storedMessage);
+            var sentMessage = mapper.Map<Message>(storedMessage);
+            await notificationService.NotifyAsync(match.Others(identityService.GetCurrentUserName()),
+                client => client.ReceiveMatchMessage(match.Id, sentMessage));
+
+            return sentMessage;
         }
 
         public IEnumerable<Message> GetMessagesOfLobby(Guid lobbyId)
