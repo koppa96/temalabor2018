@@ -18,15 +18,12 @@ namespace Czeum.Api.Controllers
     {
         private readonly ISoloQueueService soloQueueService;
         private readonly IMatchService matchService;
-        private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
 
         public SoloQueueController(ISoloQueueService soloQueueService,
-            IMatchService matchService,
-            IHubContext<NotificationHub, ICzeumClient> hubContext)
+            IMatchService matchService)
         {
             this.soloQueueService = soloQueueService;
             this.matchService = matchService;
-            this.hubContext = hubContext;
         }
         
         [HttpPost("join")]
@@ -34,14 +31,11 @@ namespace Czeum.Api.Controllers
         {
             soloQueueService.JoinSoloQueue(User.Identity.Name!);
 
+            // TODO: Solo queuing only handles 2 player matches!
             var players = soloQueueService.PopFirstTwoPlayers();
             if (players != null)
             {
-                var statuses = await matchService.CreateRandomMatchAsync(players);
-
-                await Task.WhenAll(statuses.Select(s =>
-                    hubContext.Clients.User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username)
-                        .MatchCreated(s)));
+                await matchService.CreateRandomMatchAsync(players);
             }
             
             return Ok();

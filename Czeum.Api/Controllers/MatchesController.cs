@@ -23,15 +23,10 @@ namespace Czeum.Api.Controllers
     public class MatchesController : ControllerBase
     {
         private readonly IMatchService matchService;
-        private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
-        private readonly ILobbyService lobbyService;
 
-        public MatchesController(IMatchService matchService,
-            IHubContext<NotificationHub, ICzeumClient> hubContext, ILobbyService lobbyService)
+        public MatchesController(IMatchService matchService)
         {
             this.matchService = matchService;
-            this.hubContext = hubContext;
-            this.lobbyService = lobbyService;
         }
         
         [HttpGet]
@@ -43,31 +38,13 @@ namespace Czeum.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<MatchStatus>> CreateMatchAsync([FromQuery] Guid lobbyId)
         {
-            var lobby = lobbyService.GetLobby(lobbyId);
-            var statuses = (await matchService.CreateMatchAsync(lobby.Content)).ToList();
-
-            await Task.WhenAll(statuses.Skip(1)
-                .Select(s => hubContext.Clients.User(s.Players
-                        .Single(p => p.PlayerIndex == s.PlayerIndex).Username)
-                    .MatchCreated(s)));
-            
-            return Ok(statuses.First());
+            return Ok(await matchService.CreateMatchAsync(lobbyId));
         }
 
         [HttpPut("moves")]
         public async Task<ActionResult<MatchStatus>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
         {
-            var statuses = (await matchService.HandleMoveAsync(moveDataWrapper.Content)).ToList();
-
-            await Task.WhenAll(statuses
-                .Where(s => s.PlayerIndex != s.Players.Single(p => p.Username == User.Identity.Name).PlayerIndex)
-                .Select(s =>
-                    hubContext.Clients
-                        .User(s.Players.Single(p => p.PlayerIndex == s.PlayerIndex).Username).ReceiveResult(s)));
-            
-            return Ok(statuses
-                .Single(s => s.PlayerIndex == s.Players
-                                 .Single(p => p.Username == User.Identity.Name!).PlayerIndex));
+            return Ok(await matchService.HandleMoveAsync(moveDataWrapper.Content));
         }
     }
 }

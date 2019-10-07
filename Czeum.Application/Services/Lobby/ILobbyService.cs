@@ -37,14 +37,14 @@ namespace Czeum.Application.Services.Lobby
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <param name="player">The player to be invited</param>
-        void InvitePlayerToLobby(Guid lobbyId, string player);
+        Task<LobbyDataWrapper> InvitePlayerToLobby(Guid lobbyId, string player);
 
         /// <summary>
         /// Removes a player from the invited players of the given lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <param name="player">The player to be removed</param>
-        void CancelInviteFromLobby(Guid lobbyId, string player);
+        Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player);
 
         /// <summary>
         /// Kicks the current guest of the lobby.

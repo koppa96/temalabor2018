@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Abstractions.DTO;
 using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.Application.Services.Lobby;
 using Czeum.Application.Services.MatchConverter;
 using Czeum.Application.Services.ServiceContainer;
+using Czeum.ClientCallback;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
@@ -25,34 +27,53 @@ namespace Czeum.Application.Services.MatchService
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
         private readonly IMatchConverter matchConverter;
+        private readonly INotificationService notificationService;
+        private readonly ILobbyStorage lobbyStorage;
 
         public MatchService(IServiceContainer serviceContainer, CzeumContext context,
-            IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter)
+            IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter,
+            INotificationService notificationService, ILobbyStorage lobbyStorage)
         {
             this.serviceContainer = serviceContainer;
             this.context = context;
             this.mapper = mapper;
             this.identityService = identityService;
             this.matchConverter = matchConverter;
+            this.notificationService = notificationService;
+            this.lobbyStorage = lobbyStorage;
         }
 
-        public Task<IEnumerable<MatchStatus>> CreateMatchAsync(LobbyData lobbyData)
+        public async Task<MatchStatus> CreateMatchAsync(Guid lobbyId)
         {
-            var service = serviceContainer.FindBoardCreator(lobbyData);
-            var board = (SerializedBoard)service.CreateBoard(lobbyData);
+            var lobby = lobbyStorage.GetLobby(lobbyId);
+            if (!lobby.Validate())
+            {
+                throw new InvalidOperationException("The lobby is not in a valid state to start a match.");
+            }
 
-            return CreateMatchWithBoardAsync(lobbyData.Guests.Append(lobbyData.Host), board);
+            var currentUser = identityService.GetCurrentUserName();
+            var service = serviceContainer.FindBoardCreator(lobby);
+            var board = (SerializedBoard)service.CreateBoard(lobby);
+
+            var statuses = await CreateMatchWithBoardAsync(lobby.Guests.Append(lobby.Host), board);
+            await notificationService.NotifyEachAsync(statuses
+                .Where(s => s.Key != currentUser)
+                .Select(x => new KeyValuePair<string, Func<ICzeumClient, Task>>(x.Key, client => client.MatchCreated(x.Value))));
+
+            return statuses.Single(s => s.Key == currentUser).Value;
         }
         
-        public Task<IEnumerable<MatchStatus>> CreateRandomMatchAsync(IEnumerable<string> players)
+        public async Task CreateRandomMatchAsync(IEnumerable<string> players)
         {
             var service = serviceContainer.GetRandomBoardCreator();
             var board = (SerializedBoard)service.CreateDefaultBoard();
 
-            return CreateMatchWithBoardAsync(players, board);
+            var statues = await CreateMatchWithBoardAsync(players, board);
+            await notificationService.NotifyEachAsync(statues
+                .Select(x => new KeyValuePair<string,Func<ICzeumClient, Task>>(x.Key, client => client.MatchCreated(x.Value))));
         }
 
-        private async Task<IEnumerable<MatchStatus>> CreateMatchWithBoardAsync(IEnumerable<string> players, SerializedBoard board)
+        private async Task<Dictionary<string, MatchStatus>> CreateMatchWithBoardAsync(IEnumerable<string> players, SerializedBoard board)
         {
             var users = await context.Users.Where(u => players.Any(p => p == u.UserName))
                 .ToListAsync();
@@ -71,18 +92,18 @@ namespace Czeum.Application.Services.MatchService
             context.Boards.Add(board);
             await context.SaveChangesAsync();
 
-            return match.Users.Select(um => matchConverter.ConvertFor(match, um.User.UserName));
+            return match.Users.Select(um => new { Player = um.User.UserName, Status = matchConverter.ConvertFor(match, um.User.UserName) })
+                .ToDictionary(x => x.Player, x => x.Status);
         }
 
-        public async Task<IEnumerable<MatchStatus>> HandleMoveAsync(MoveData moveData)
+        public async Task<MatchStatus> HandleMoveAsync(MoveData moveData)
         {
-            var userId = identityService.GetCurrentUserId();
-
+            var currentUserId = identityService.GetCurrentUserId();
             var match = await context.Matches.Include(m => m.Users)
                     .ThenInclude(um => um.User)
                 .CustomSingleAsync(m => m.Id == moveData.MatchId, "No match with the given id was found.");
 
-            var playerIndex = match.Users.SingleOrDefault(um => um.UserId == userId)?.PlayerIndex;
+            var playerIndex = match.Users.SingleOrDefault(um => um.UserId == currentUserId)?.PlayerIndex;
             if (playerIndex == null)
             {
                 throw new UnauthorizedAccessException("You are not a player in this match.");
@@ -110,7 +131,13 @@ namespace Czeum.Application.Services.MatchService
             }
 
             await context.SaveChangesAsync();
-            return match.Users.Select(um => matchConverter.ConvertFor(match, um.User.UserName));
+            await notificationService.NotifyEachAsync(match.Users
+                .Where(um => um.UserId != currentUserId)
+                .Select(um => new KeyValuePair<string, Func<ICzeumClient, Task>>(um.User.UserName, 
+                    client => client.ReceiveResult(matchConverter.ConvertFor(match, um.User.UserName)))));
+
+            return matchConverter.ConvertFor(match, 
+                match.Users.Single(um => um.UserId == currentUserId).User.UserName);
         }
 
         public async Task<IEnumerable<MatchStatus>> GetMatchesAsync()

@@ -15,23 +15,23 @@ namespace Czeum.Application.Services.MatchService
         /// <summary>
         /// Creates a match with a board from a LobbyData and persists them in the database.
         /// </summary>
-        /// <param name="lobbyData">The lobby</param>
+        /// <param name="lobbyId"></param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<IEnumerable<MatchStatus>> CreateMatchAsync(LobbyData lobbyData);
+        Task<MatchStatus> CreateMatchAsync(Guid lobbyId);
 
         /// <summary>
         /// Creates a match with a random board and persists them in the database.
         /// </summary>
         /// <param name="players">A sequence containing the names of players that are participating</param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<IEnumerable<MatchStatus>> CreateRandomMatchAsync(IEnumerable<string> players);
+        Task CreateRandomMatchAsync(IEnumerable<string> players);
 
         /// <summary>
         /// Dispatches the moves to the appropriate services that can execute them, and handles the execution results.
         /// </summary>
         /// <param name="moveData">The move</param>
         /// <returns>A dictionary containing the match representations for each player</returns>
-        Task<IEnumerable<MatchStatus>> HandleMoveAsync(MoveData moveData);
+        Task<MatchStatus> HandleMoveAsync(MoveData moveData);
 
         /// <summary>
         /// Gets a list of matches in which the player with the given name participates.

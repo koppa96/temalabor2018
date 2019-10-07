@@ -95,7 +95,7 @@ namespace Czeum.Application.Services.Lobby {
             }
         }
 
-        public void InvitePlayerToLobby(Guid lobbyId, string player)
+        public async Task<LobbyDataWrapper> InvitePlayerToLobby(Guid lobbyId, string player)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			if (lobby.Host != identityService.GetCurrentUserName())
@@ -103,15 +103,22 @@ namespace Czeum.Application.Services.Lobby {
 				throw new UnauthorizedAccessException("Not authorized to invite to this lobby.");
 			}
 
-			if (!lobby.InvitedPlayers.Contains(player))
+			if (lobby.InvitedPlayers.Contains(player))
 			{
-				lobby.InvitedPlayers.Add(player);
-                lobby.LastModified = DateTime.UtcNow;
+				throw new InvalidOperationException("This player has already been invited.");
 			}
-            else
-            {
-                throw new InvalidOperationException("This player has already been invited.");
-            }
+
+			lobby.InvitedPlayers.Add(player);
+			lobby.LastModified = DateTime.UtcNow;
+
+			var wrapper = mapper.Map<LobbyDataWrapper>(lobby);
+			await notificationService.NotifyAsync(player,
+				client => client.ReceiveLobbyInvite(wrapper));
+
+			await notificationService.NotifyAllExceptAsync(identityService.GetCurrentUserName(),
+				client => client.LobbyChanged(wrapper));
+
+			return wrapper;
 		}
 
 		public async Task<LobbyDataWrapper> KickGuestAsync(Guid lobbyId, string guestName)
@@ -215,7 +222,7 @@ namespace Czeum.Application.Services.Lobby {
 			return lobbyStorage.GetMessages(lobbyId);
 		}
 
-		public void CancelInviteFromLobby(Guid lobbyId, string player)
+		public async Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player)
         { 
 			var lobby = lobbyStorage.GetLobby(lobbyId);
             if (identityService.GetCurrentUserName() != lobby.Host)
@@ -224,7 +231,13 @@ namespace Czeum.Application.Services.Lobby {
             }
 
 			lobby.InvitedPlayers.Remove(player);
-		}
+
+			var wrapper = mapper.Map<LobbyDataWrapper>(lobby);
+			await notificationService.NotifyAllExceptAsync(identityService.GetCurrentUserName(),
+				client => client.LobbyChanged(wrapper));
+
+			return wrapper;
+        }
 
 		public void RemoveLobby(Guid id)
 		{

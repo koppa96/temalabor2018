@@ -33,7 +33,7 @@ namespace Czeum.Api.Services
             return action(hubContext.Clients.All);
         }
 
-        public Task NotifyEachAsync(Dictionary<string, Func<ICzeumClient, Task>> actions)
+        public Task NotifyEachAsync(IEnumerable<KeyValuePair<string, Func<ICzeumClient, Task>>> actions)
         {
             return Task.WhenAll(actions.Select(a => a.Value(hubContext.Clients.User(a.Key))));
         }

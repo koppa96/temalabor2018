@@ -13,7 +13,7 @@ namespace Czeum.Application.Services
 
         Task NotifyAllAsync(Func<ICzeumClient, Task> action);
 
-        Task NotifyEachAsync(Dictionary<string, Func<ICzeumClient, Task>> actions);
+        Task NotifyEachAsync(IEnumerable<KeyValuePair<string, Func<ICzeumClient, Task>>> actions);
 
         Task NotifyAllExceptAsync(string client, Func<ICzeumClient, Task> action);
     }

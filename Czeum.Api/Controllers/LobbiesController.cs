@@ -24,12 +24,10 @@ namespace Czeum.Api.Controllers
     public class LobbiesController : ControllerBase
     {
         private readonly ILobbyService lobbyService;
-        private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
 
-        public LobbiesController(ILobbyService lobbyService, IHubContext<NotificationHub, ICzeumClient> hubContext)
+        public LobbiesController(ILobbyService lobbyService)
         {
             this.lobbyService = lobbyService;
-            this.hubContext = hubContext;
         }
 
         [HttpGet]
@@ -63,32 +61,19 @@ namespace Czeum.Api.Controllers
         [HttpPost("{lobbyId}/invite")]
         public async Task<ActionResult<LobbyDataWrapper>> InvitePlayerAsync(Guid lobbyId, [FromQuery] string playerName)
         {
-            lobbyService.InvitePlayerToLobby(lobbyId, playerName);
-            var lobby = lobbyService.GetLobby(lobbyId);
-
-            await hubContext.Clients.User(playerName).ReceiveLobbyInvite(lobby);
-            await hubContext.Clients.All.LobbyChanged(lobby);
-            return lobbyService.GetLobby(lobbyId);
+            return Ok(await lobbyService.InvitePlayerToLobby(lobbyId, playerName));
         }
 
         [HttpDelete("{lobbyId}/invite")]
         public async Task<ActionResult<LobbyDataWrapper>> CancelInvitationAsync(Guid lobbyId, [FromQuery] string playerName)
         {
-            lobbyService.CancelInviteFromLobby(lobbyId, playerName);
-            var lobby = lobbyService.GetLobby(lobbyId);
-
-            await hubContext.Clients.All.LobbyChanged(lobby);
-            return lobbyService.GetLobby(lobbyId);
+            return Ok(await lobbyService.CancelInviteFromLobby(lobbyId, playerName));
         }
 
         [HttpPost("{lobbyId}/join")]
         public async Task<ActionResult<LobbyDataWrapper>> JoinLobbyAsync(Guid lobbyId)
         {
-            await lobbyService.JoinToLobbyAsync(lobbyId);
-            var lobby = lobbyService.GetLobby(lobbyId);
-
-            await hubContext.Clients.All.LobbyChanged(lobby);
-            return lobby;
+            return Ok(await lobbyService.JoinToLobbyAsync(lobbyId));
         }
 
         [HttpPost("{lobbyId}/kick/{guestName}")]
