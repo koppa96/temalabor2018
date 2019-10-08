@@ -17,7 +17,7 @@ namespace Czeum.Domain.Entities
         public int CurrentPlayerIndex { get; set; }
         
         public User Winner { get; set; }
-        public Guid WinnerId { get; set; }
+        public Guid? WinnerId { get; set; }
 
         public Match()
         {
