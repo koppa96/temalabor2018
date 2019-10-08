@@ -1,13 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Application.Models;
-using Czeum.DAL.Exceptions;
-using Czeum.DTO;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Abstractions.Lobbies;
+using Czeum.Core.Exceptions;
 
 namespace Czeum.Application.Services.Lobby
 {

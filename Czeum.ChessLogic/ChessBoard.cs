@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Czeum.Abstractions;
 using Czeum.ChessLogic.Pieces;
-using Czeum.Domain.Entities;
+using Czeum.Core.DTOs.Chess;
+using Czeum.Core.GameServices;
 using Czeum.Domain.Entities.Boards;
-using Czeum.DTO.Chess;
 
 namespace Czeum.ChessLogic
 {

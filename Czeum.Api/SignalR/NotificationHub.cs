@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Czeum.Application.Services.FriendService;
-using Czeum.Application.Services.Lobby;
-using Czeum.Application.Services.OnlineUsers;
-using Czeum.Application.Services.SoloQueue;
-using Czeum.ClientCallback;
-using Czeum.DTO.UserManagement;
+using Czeum.Core.ClientCallbacks;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.SignalR
@@ -46,7 +41,7 @@ namespace Czeum.Api.SignalR
 
             if (lobby != null)
             {
-                lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier);
+                await lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier);
                 if (lobbyService.LobbyExists(lobby.Id))
                 {
                     await Clients.All.LobbyChanged(lobbyService.GetLobby(lobby.Id));

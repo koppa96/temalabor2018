@@ -1,19 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
-using Czeum.Api.SignalR;
-using Czeum.Application.Services.Lobby;
-using Czeum.Application.Services.MatchService;
-using Czeum.ClientCallback;
-using Czeum.DTO;
-using Czeum.DTO.Extensions;
-using Czeum.DTO.Wrappers;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Wrappers;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Controllers
 {

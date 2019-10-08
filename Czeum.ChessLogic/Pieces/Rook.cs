@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Czeum.DTO.Chess;
+﻿using Czeum.Core.DTOs.Chess;
 
 namespace Czeum.ChessLogic.Pieces
 {

@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Api.SignalR;
-using Czeum.Application.Services.FriendService;
-using Czeum.Application.Services.OnlineUsers;
-using Czeum.ClientCallback;
-using Czeum.DTO.UserManagement;
+using Czeum.Core.ClientCallbacks;
+using Czeum.Core.DTOs.UserManagement;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;

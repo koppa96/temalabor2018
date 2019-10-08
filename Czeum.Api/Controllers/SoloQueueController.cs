@@ -1,13 +1,8 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
-using Czeum.Api.SignalR;
-using Czeum.Application.Services.MatchService;
-using Czeum.Application.Services.SoloQueue;
-using Czeum.ClientCallback;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Controllers
 {

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Czeum.DAL.Exceptions;
+﻿using System.Threading.Tasks;
+using Czeum.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.DAL.Extensions

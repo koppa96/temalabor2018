@@ -1,3 +1,4 @@
+using Czeum.Core.Domain;
 using Czeum.Domain.Entities.Boards;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

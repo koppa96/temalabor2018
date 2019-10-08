@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
+using Czeum.Core.DTOs;
 using Czeum.Domain.Entities;
-using Czeum.DTO;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Czeum.Application.Mappings
 {

@@ -1,22 +1,17 @@
-﻿using Czeum.Abstractions;
-using Czeum.Abstractions.Domain;
-using Czeum.Abstractions.GameServices;
-using Czeum.Abstractions.GameServices.BoardCreator;
-using Czeum.DTO.Chess;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Czeum.Core.Domain;
+using Czeum.Core.DTOs.Chess;
+using Czeum.Core.GameServices.BoardCreator;
 
 namespace Czeum.ChessLogic.Services
 {
     public class ChessBoardCreator : BoardCreator<ChessLobbyData>
     {
-        public override ISerializedBoard CreateBoard(ChessLobbyData lobbyData)
+        public override SerializedBoard CreateBoard(ChessLobbyData lobbyData)
         {
             return CreateDefaultBoard();
         }
 
-        public override ISerializedBoard CreateDefaultBoard()
+        public override SerializedBoard CreateDefaultBoard()
         {
             return new ChessBoard(true).SerializeContent();
         }

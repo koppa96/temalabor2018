@@ -1,7 +1,7 @@
 using System;
 using Czeum.ChessLogic;
 using Czeum.ChessLogic.Pieces;
-using Czeum.DTO.Chess;
+using Czeum.Core.DTOs.Chess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Czeum.Tests.ChessLogic.PieceTest

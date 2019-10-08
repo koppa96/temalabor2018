@@ -1,5 +1,5 @@
 ﻿using System;
-using Czeum.Abstractions.Domain;
+using Czeum.Core.Domain;
 
 namespace Czeum.Domain.Entities
 {

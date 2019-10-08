@@ -1,6 +1,6 @@
 using AutoMapper;
+using Czeum.Core.DTOs.UserManagement;
 using Czeum.Domain.Entities;
-using Czeum.DTO.UserManagement;
 
 namespace Czeum.Application.Mappings
 {

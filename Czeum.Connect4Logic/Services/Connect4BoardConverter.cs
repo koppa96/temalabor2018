@@ -1,11 +1,6 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.GameServices;
-using Czeum.Abstractions.GameServices.BoardConverter;
-using Czeum.Domain.Entities;
-using Czeum.DTO.Connect4;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Connect4;
+using Czeum.Core.GameServices.BoardConverter;
 using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Connect4Logic.Services

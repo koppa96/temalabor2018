@@ -1,6 +1,6 @@
 using System;
 using Czeum.Connect4Logic;
-using Czeum.DTO.Connect4;
+using Czeum.Core.DTOs.Connect4;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Czeum.Tests.Connect4Logic

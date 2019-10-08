@@ -1,8 +1,6 @@
-﻿using Czeum.Abstractions.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using Czeum.Domain.Entities.Boards;
+using Czeum.Core.Domain;
 using Czeum.Domain.Enums;
 
 namespace Czeum.Domain.Entities

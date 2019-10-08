@@ -1,20 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.DTO.Lobbies;
 using Czeum.Api.Common;
-using Czeum.Api.SignalR;
 using Czeum.Application.Services.Lobby;
-using Czeum.ClientCallback;
-using Czeum.DTO.Extensions;
-using Czeum.DTO.Lobbies;
-using Czeum.DTO.Wrappers;
+using Czeum.Core.DTOs.Lobbies;
+using Czeum.Core.DTOs.Wrappers;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Czeum.Api.Controllers
 {

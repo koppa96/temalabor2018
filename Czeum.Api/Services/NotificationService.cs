@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Api.SignalR;
-using Czeum.Application.Services;
-using Czeum.ClientCallback;
+using Czeum.Core.ClientCallbacks;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Services

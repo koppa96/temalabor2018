@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Czeum.Abstractions.DTO.Lobbies;
+using Czeum.Core.DTOs.Abstractions.Lobbies;
+using Czeum.Core.Enums;
 
 namespace Czeum.Application.Extensions
 {

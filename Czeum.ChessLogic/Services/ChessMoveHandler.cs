@@ -1,15 +1,9 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.GameServices;
-using Czeum.Abstractions.GameServices.MoveHandler;
-using Czeum.DAL;
-using Czeum.DAL.Extensions;
-using Czeum.Domain.Entities;
-using Czeum.DTO.Chess;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Chess;
+using Czeum.Core.GameServices;
+using Czeum.Core.GameServices.MoveHandler;
 using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.ChessLogic.Services

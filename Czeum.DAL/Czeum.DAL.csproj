@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj" />
     <ProjectReference Include="..\Czeum.Domain\Czeum.Domain.csproj" />
   </ItemGroup>
 
