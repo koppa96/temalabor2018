@@ -56,6 +56,8 @@ namespace Czeum.Application.Services.MatchService
             var board = (SerializedBoard)service.CreateBoard(lobby);
 
             var statuses = await CreateMatchWithBoardAsync(lobby.Guests.Append(lobby.Host), board);
+            lobbyStorage.RemoveLobby(lobbyId);
+            
             await notificationService.NotifyEachAsync(statuses
                 .Where(s => s.Key != currentUser)
                 .Select(x => new KeyValuePair<string, Func<ICzeumClient, Task>>(x.Key, client => client.MatchCreated(x.Value))));
