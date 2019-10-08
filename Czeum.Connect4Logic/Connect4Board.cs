@@ -1,9 +1,7 @@
-﻿using Czeum.Abstractions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Text;
-using Czeum.DTO.Connect4;
-using Czeum.Domain.Entities;
+using Czeum.Core.DTOs.Connect4;
+using Czeum.Core.GameServices;
 using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Connect4Logic

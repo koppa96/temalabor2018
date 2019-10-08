@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
-using Czeum.Api.SignalR;
-using Czeum.Application.Services.Lobby;
-using Czeum.Application.Services.MessageService;
-using Czeum.DTO;
+using Czeum.Core.DTOs;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Controllers.Messages
 {
@@ -17,16 +13,9 @@ namespace Czeum.Api.Controllers.Messages
     public class LobbyMessagesController : ControllerBase
     {
         private readonly IMessageService messageService;
-        private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
-        private readonly ILobbyService lobbyService;
-
-        public LobbyMessagesController(IMessageService messageService,
-            IHubContext<NotificationHub, ICzeumClient> hubContext,
-            ILobbyService lobbyService)
+        public LobbyMessagesController(IMessageService messageService)
         {
             this.messageService = messageService;
-            this.hubContext = hubContext;
-            this.lobbyService = lobbyService;
         }
 
         [HttpGet("{lobbyId}")]
@@ -38,12 +27,7 @@ namespace Czeum.Api.Controllers.Messages
         [HttpPost("{lobbyId}")]
         public async Task<ActionResult<Message>> SendMessage(Guid lobbyId, [FromBody] string message)
         {
-            var sentMessage = messageService.SendToLobby(lobbyId, message);
-
-            await hubContext.Clients.Users(lobbyService.GetOthersInLobby(lobbyId).ToList())
-                .ReceiveLobbyMessage(sentMessage);
-            
-            return Ok(sentMessage);
+            return Ok(await messageService.SendToLobbyAsync(lobbyId, message));
         }
     }
 }

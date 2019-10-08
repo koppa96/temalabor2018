@@ -29,7 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Czeum.Application\Czeum.Application.csproj" />
-      <ProjectReference Include="..\Czeum.ClientCallback\Czeum.ClientCallback.csproj" />
+      <ProjectReference Include="..\Czeum.ChessLogic\Czeum.ChessLogic.csproj" />
       <ProjectReference Include="..\Czeum.Connect4Logic\Czeum.Connect4Logic.csproj" />
       <ProjectReference Include="..\Czeum.DAL\Czeum.DAL.csproj" />
     </ItemGroup>

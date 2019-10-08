@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.DTO;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Abstractions.Lobbies;
 
 namespace Czeum.Application.Models
 {

@@ -1,12 +1,9 @@
-﻿using Czeum.Abstractions.GameServices;
-using Czeum.DAL;
+﻿using Czeum.DAL;
 using Czeum.DAL.Extensions;
-using Czeum.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Czeum.Domain.Entities.Boards;
+using Czeum.Core.Domain;
+using Czeum.Core.GameServices;
 
 namespace Czeum.Application.Services
 {

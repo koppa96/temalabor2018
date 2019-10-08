@@ -1,11 +1,7 @@
 ﻿using Autofac;
-using Czeum.Abstractions.GameServices.BoardConverter;
-using Czeum.Abstractions.GameServices.BoardCreator;
-using Czeum.Abstractions.GameServices.MoveHandler;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Czeum.Core.GameServices.BoardConverter;
+using Czeum.Core.GameServices.BoardCreator;
+using Czeum.Core.GameServices.MoveHandler;
 
 namespace Czeum.Api.Extensions
 {

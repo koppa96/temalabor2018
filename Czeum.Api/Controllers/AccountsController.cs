@@ -2,12 +2,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Czeum.Api.Common;
-using Czeum.Application.Services.EmailSender;
+using Czeum.Core.DTOs.UserManagement;
+using Czeum.Core.Services;
 using Czeum.Domain.Entities;
-using Czeum.DTO;
-using Czeum.DTO.UserManagement;
 using IdentityModel;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -20,16 +18,16 @@ namespace Czeum.Api.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly ILogger _logger;
-        private readonly IEmailService _emailService;
+        private readonly UserManager<User> userManager;
+        private readonly ILogger logger;
+        private readonly IEmailService emailService;
 
         public AccountsController(UserManager<User> userManager, ILogger<AccountsController> logger,
             IEmailService emailService)
         {
-            _userManager = userManager;
-            _logger = logger;
-            _emailService = emailService;
+            this.userManager = userManager;
+            this.logger = logger;
+            this.emailService = emailService;
         }
 
         [HttpPost]
@@ -43,38 +41,33 @@ namespace Czeum.Api.Controllers
 		        return StatusCode(StatusCodes.Status500InternalServerError);
 	        }
 
-	        if (await _userManager.FindByNameAsync(model.Username) != null)
+	        if (await userManager.FindByNameAsync(model.Username) != null)
 	        {
-		        return BadRequest(ErrorCodes.UsernameAlreadyTaken);
+		        return BadRequest("Username already taken.");
 	        }
 
-	        if (model.Password != model.ConfirmPassword)
-	        {
-		        return BadRequest(ErrorCodes.PasswordsNotMatching);
-	        }
-
-	        var user = new User
+            var user = new User
 	        {
 				UserName = model.Username,
 				Email = model.Email
 	        };
 
-	        var result = await _userManager.CreateAsync(user, model.Password);
+	        var result = await userManager.CreateAsync(user, model.Password);
 	        if (result.Succeeded)
 	        {
-		        _logger.LogInformation($"New user created: {user.UserName}");
-		        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
-		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
-		        await _userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
+		        logger.LogInformation($"New user created: {user.UserName}");
+		        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
+		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 var url = Url.Page(
                     "/Account/ConfirmEmail",
                     pageHandler: null,
                     values: new { area = "Identity", id = user.Id, code = token },
                     protocol: Request.Scheme);
 
-                await _emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
+                await emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
 		        return Ok();
 	        }
@@ -90,20 +83,16 @@ namespace Czeum.Api.Controllers
 		[Authorize]
 		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
         {
-			if (model.Password != model.ConfirmPassword) {
-				return BadRequest(ErrorCodes.PasswordsNotMatching);
-			}
-
 			if (ModelState.IsValid) {
-				User user = await _userManager.FindByNameAsync(User.Identity.Name);
-				var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
+				User user = await userManager.FindByNameAsync(User.Identity.Name);
+				var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
 
 				if (result.Succeeded) {
-					_logger.LogInformation($"{User.Identity.Name} changed their password.");
+					logger.LogInformation($"{User.Identity.Name} changed their password.");
 					return Ok();
 				}
 
-				return BadRequest(ErrorCodes.BadOldPassword);
+				return BadRequest("Invalid password.");
 			}
 
 			return StatusCode(StatusCodes.Status500InternalServerError);
@@ -118,16 +107,16 @@ namespace Czeum.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(username);
+                var user = await userManager.FindByNameAsync(username);
                 if (user == null)
                 {
-                    return NotFound(ErrorCodes.NoSuchUser);
+                    return NotFound("No such user found.");
                 }
 
-                var result = await _userManager.ConfirmEmailAsync(user, token);
+                var result = await userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation($"{username} has confirmed their email.");
+                    logger.LogInformation($"{username} has confirmed their email.");
                     return Ok();
                 }
 
@@ -143,25 +132,25 @@ namespace Czeum.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    return NotFound(ErrorCodes.NoSuchUser);
+                    return NotFound("No such user found.");
                 }
                 if (user.UserName != username)
                 {
-                    return BadRequest(ErrorCodes.NoSuchUser);
+                    return BadRequest("No such user found.");
                 }
 
-                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
                 var url = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,
                     values: new { area = "Identity", resetToken },
                     protocol: Request.Scheme);
 
-                await _emailService.SendPasswordResetEmailAsync(email, resetToken, url);
-                _logger.LogInformation($"Password reset email for {username} was sent to {email}.");
+                await emailService.SendPasswordResetEmailAsync(email, resetToken, url);
+                logger.LogInformation($"Password reset email for {username} was sent to {email}.");
 
                 return Ok();
             }
@@ -173,23 +162,18 @@ namespace Czeum.Api.Controllers
         [Route("reset-password")]
         public async Task<ActionResult> ResetPasswordAsync([FromBody]PasswordResetModel model)
         {
-            if (model.Password != model.ConfirmPassword)
-            {
-                return BadRequest(ErrorCodes.PasswordsNotMatching);
-            }
-
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.Username);
+                var user = await userManager.FindByNameAsync(model.Username);
                 if (user == null)
                 {
                     return NotFound();
                 }
 
-                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                var result = await userManager.ResetPasswordAsync(user, model.Token, model.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation($"{user.UserName} has successfully reset their password.");
+                    logger.LogInformation($"{user.UserName} has successfully reset their password.");
                     return Ok();
                 }
 
@@ -206,25 +190,25 @@ namespace Czeum.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    return NotFound(ErrorCodes.NoSuchUser);
+                    return NotFound("No such user found.");
                 }
                 if (user.EmailConfirmed)
                 {
                     return BadRequest();
                 }
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 var url = Url.Page(
                     "/Account/ConfirmEmail",
                     pageHandler: null,
                     values: new { area = "Identity", id = user.Id, code = token },
                     protocol: Request.Scheme);
 
-                await _emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
-                _logger.LogInformation($"Confirmation email resent to {email}.");
+                await emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
+                logger.LogInformation($"Confirmation email resent to {email}.");
 
                 return Ok();
             }

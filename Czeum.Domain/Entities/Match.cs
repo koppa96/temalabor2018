@@ -1,8 +1,6 @@
-﻿using Czeum.Abstractions.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using Czeum.Domain.Entities.Boards;
+using Czeum.Core.Domain;
 using Czeum.Domain.Enums;
 
 namespace Czeum.Domain.Entities
@@ -17,7 +15,7 @@ namespace Czeum.Domain.Entities
         public int CurrentPlayerIndex { get; set; }
         
         public User Winner { get; set; }
-        public Guid WinnerId { get; set; }
+        public Guid? WinnerId { get; set; }
 
         public Match()
         {

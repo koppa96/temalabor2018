@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Czeum.DAL.Exceptions;
+using Czeum.Core.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

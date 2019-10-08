@@ -1,3 +1,4 @@
+using Czeum.Core.Domain;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Entities.Boards;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ namespace Czeum.DAL.EntityConfigurations
         public void Configure(EntityTypeBuilder<Match> builder)
         {
             builder.HasOne(m => m.Board)
-                .WithOne(b => b.Match)
+                .WithOne()
                 .HasForeignKey<SerializedBoard>(b => b.MatchId);
 
             builder.HasMany(m => m.Messages)

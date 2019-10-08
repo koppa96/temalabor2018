@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Czeum.Core.Domain;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Entities.Boards;
 using Microsoft.AspNetCore.Identity;

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj" />
+    <ProjectReference Include="..\Czeum.Core\Czeum.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

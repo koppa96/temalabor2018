@@ -1,23 +1,17 @@
-﻿using Czeum.Abstractions;
-using Czeum.Abstractions.Domain;
-using Czeum.Abstractions.GameServices;
-using Czeum.Abstractions.GameServices.BoardCreator;
-using Czeum.Domain.Entities;
-using Czeum.DTO.Connect4;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Czeum.Core.Domain;
+using Czeum.Core.DTOs.Connect4;
+using Czeum.Core.GameServices.BoardCreator;
 
 namespace Czeum.Connect4Logic.Services
 {
     public class Connect4BoardCreator : BoardCreator<Connect4LobbyData>
     {
-        public override ISerializedBoard CreateBoard(Connect4LobbyData lobbyData)
+        public override SerializedBoard CreateBoard(Connect4LobbyData lobbyData)
         {
             return new Connect4Board(lobbyData.BoardWidth, lobbyData.BoardHeight).SerializeContent();
         }
 
-        public override ISerializedBoard CreateDefaultBoard()
+        public override SerializedBoard CreateDefaultBoard()
         {
             var lobby = new Connect4LobbyData();
             return CreateBoard(lobby);

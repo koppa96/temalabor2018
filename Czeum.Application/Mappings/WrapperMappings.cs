@@ -1,9 +1,8 @@
-using System.Security.Cryptography;
 using AutoMapper;
-using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.DTO.Extensions;
-using Czeum.DTO.Wrappers;
+using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Abstractions.Lobbies;
+using Czeum.Core.DTOs.Extensions;
+using Czeum.Core.DTOs.Wrappers;
 
 namespace Czeum.Application.Mappings
 {

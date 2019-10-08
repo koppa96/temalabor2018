@@ -1,13 +1,6 @@
-﻿using Czeum.Abstractions;
-using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.GameServices;
-using Czeum.Abstractions.GameServices.BoardConverter;
-using Czeum.Domain.Entities;
-using Czeum.DTO.Chess;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Chess;
+using Czeum.Core.GameServices.BoardConverter;
 using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.ChessLogic.Services
