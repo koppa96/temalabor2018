@@ -57,13 +57,13 @@ namespace Czeum.Core.Services
         /// </summary>
         /// <param name="user">The name of the user</param>
         /// <returns>The lobby</returns>
-        LobbyData GetLobbyOfUser(string user);
+        Task<LobbyData> GetLobbyOfUser(string user);
 
         /// <summary>
         /// Gets a list of the current lobbies stored in the LobbyStorage.
         /// </summary>
         /// <returns>The list of lobbies</returns>
-        List<LobbyDataWrapper> GetLobbies();
+        Task<List<LobbyDataWrapper>> GetLobbies();
 
         /// <summary>
         /// Updates the settings of a lobby.
@@ -76,14 +76,14 @@ namespace Czeum.Core.Services
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The lobby</returns>
-        LobbyDataWrapper GetLobby(Guid lobbyId);
+        Task<LobbyDataWrapper> GetLobby(Guid lobbyId);
         
         /// <summary>
         /// Determines whether there is a lobby with the given identifier.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>Whether the lobby exists</returns>
-        bool LobbyExists(Guid lobbyId);
+        Task<bool> LobbyExists(Guid lobbyId);
 
         /// <summary>
         /// Creates a lobby of the desired type and adds it to the lobby storage.
@@ -105,6 +105,6 @@ namespace Czeum.Core.Services
         /// </summary>
         /// <param name="lobbyId">The id of the lobby</param>
         /// <returns>The list of players</returns>
-        IEnumerable<string> GetOthersInLobby(Guid lobbyId);
+        Task<IEnumerable<string>> GetOthersInLobby(Guid lobbyId);
     }
 }

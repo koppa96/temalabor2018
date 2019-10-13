@@ -24,9 +24,9 @@ namespace Czeum.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<LobbyDataWrapper>> GetLobbies()
+        public async Task<ActionResult<IEnumerable<LobbyDataWrapper>>> GetLobbies()
         {
-            return lobbyService.GetLobbies();
+            return await lobbyService.GetLobbies();
         }
 
         [HttpPost]
