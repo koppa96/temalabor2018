@@ -10,9 +10,12 @@ using Czeum.Core.DTOs.Abstractions.Lobbies;
 using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Enums;
+using Czeum.Core.Exceptions;
 using Czeum.Core.Services;
 using Czeum.DAL;
+using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Application.Services {
@@ -105,6 +108,11 @@ namespace Czeum.Application.Services {
 			if (lobby.InvitedPlayers.Contains(player))
 			{
 				throw new InvalidOperationException("This player has already been invited.");
+			}
+
+			if (!await context.Users.AnyAsync(u => u.UserName == player))
+			{
+				throw new NotFoundException("Player not found.");
 			}
 
 			lobby.InvitedPlayers.Add(player);
