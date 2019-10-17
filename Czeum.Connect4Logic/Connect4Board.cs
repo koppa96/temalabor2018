@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using Czeum.Core.DTOs.Connect4;
 using Czeum.Core.GameServices;
@@ -220,7 +221,7 @@ namespace Czeum.Connect4Logic
 
         public Item CheckWinner()
         {
-            foreach (Item item in Enum.GetValues(typeof(Item)))
+            foreach (var item in Enum.GetValues(typeof(Item)).Cast<Item>())
             {
                 if (item != Item.None && (HorizontalMatch(item) || VerticalMatch(item) || LeftDiagonalMatch(item) || RightDiagonalMatch(item)))
                 {

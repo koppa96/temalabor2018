@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Czeum.Core.DTOs.Chess;
 
 namespace Czeum.ChessLogic.Pieces
@@ -7,7 +8,7 @@ namespace Czeum.ChessLogic.Pieces
     {
         protected ChessBoard Board { get; }
         public Color Color { get; }
-        public Field Field { get; set; }
+        public Field? Field { get; set; }
         public abstract PieceInfo PieceInfo { get; }
 
         protected Piece(ChessBoard board, Color color)
@@ -38,7 +39,7 @@ namespace Czeum.ChessLogic.Pieces
 
         public virtual bool CanMoveTo(Field targetField)
         {
-            if (!targetField.Empty && targetField.Piece.Color == Color)
+            if (!targetField.Empty && targetField.Piece!.Color == Color || Field == null)
             {
                 return false;
             }
@@ -58,7 +59,7 @@ namespace Czeum.ChessLogic.Pieces
                 return false;
             }
 
-            Field.RemovePiece(this);
+            Field?.RemovePiece(this);
             Field = null;
             Board.RemovePiece(this);
             return true;
@@ -80,7 +81,7 @@ namespace Czeum.ChessLogic.Pieces
             var oldField = Field;
             if (AddToField(to))
             {
-                oldField.RemovePiece(this);
+                oldField?.RemovePiece(this);
                 return true;
             }
 
@@ -89,7 +90,7 @@ namespace Czeum.ChessLogic.Pieces
 
         public override string ToString()
         {
-            return Color.ToString()[0].ToString() + GetType().Name[0] + "_" + Field.ToString();
+            return Color.ToString()[0].ToString() + GetType().Name[0] + "_" + Field;
         }
 
         public static Piece CreateFromString(ChessBoard board, string str)
@@ -112,7 +113,7 @@ namespace Czeum.ChessLogic.Pieces
                     return new Pawn(board, color, str.Last() == 't');
             }
 
-            return null;
+            throw new ArgumentException($"Could not parse piece string: {str}");
         }
     }
 }

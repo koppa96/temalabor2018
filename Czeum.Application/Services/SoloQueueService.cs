@@ -29,7 +29,7 @@ namespace Czeum.Application.Services {
 			}
 		}
 
-		public string[] PopFirstTwoPlayers()
+		public string[]? PopFirstTwoPlayers()
 		{
 			string[] players = new string[2];
 			lock (syncObj)

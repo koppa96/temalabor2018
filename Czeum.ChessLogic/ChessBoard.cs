@@ -14,7 +14,7 @@ namespace Czeum.ChessLogic
         public const int ChessboardSize = 8;
         private readonly List<Piece> pieces;
         private Field[,] board;
-        private Piece hitPiece;
+        private Piece? hitPiece;
 
         public Field this[int row, int col] => board[row, col];
 
@@ -85,17 +85,17 @@ namespace Czeum.ChessLogic
 
         public bool MovePiece(Field from, Field to)
         {
-            return from.Piece.Move(to);
+            return from.Piece?.Move(to) ?? false;
         }
 
         public bool TestMovePiece(Field from, Field to)
         {
-            return from.Piece.TestMove(to);
+            return from.Piece?.TestMove(to) ?? false;
         }
 
         private void UndoMove(Field from, Field to)
         {
-            to.Piece.UndoMove(from);
+            to.Piece?.UndoMove(from);
             if (hitPiece != null)
             {
                 pieces.Add(hitPiece);
@@ -191,7 +191,7 @@ namespace Czeum.ChessLogic
                    move.ToRow >= 0 && move.ToRow < ChessboardSize && move.ToColumn >= 0 &&
                    move.ToColumn < ChessboardSize &&
                    !board[move.FromRow, move.FromColumn].Empty &&
-                   board[move.FromRow, move.FromColumn].Piece.Color == color;
+                   board[move.FromRow, move.FromColumn].Piece!.Color == color;
         }
 
         public List<ChessMoveData> GetPossibleMovesFor(Color color)
@@ -206,8 +206,8 @@ namespace Czeum.ChessLogic
                     {
                         possibleMoves.Add(new ChessMoveData
                         {
-                            FromRow = piece.Field.Row,
-                            FromColumn = piece.Field.Column,
+                            FromRow = piece.Field!.Row,
+                            FromColumn = piece.Field!.Column,
                             ToRow = field.Row,
                             ToColumn = field.Column
                         });

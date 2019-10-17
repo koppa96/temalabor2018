@@ -8,65 +8,32 @@ namespace Czeum.ChessLogic
         public int ColumnDirection { get; private set; }
         public Func<int, int, Field, bool> Predicate { get; private set; }
 
-        private Direction()
+        private Direction(int rowDirection, int columnDirection, Func<int, int, Field, bool> predicate)
         {
+            RowDirection = rowDirection;
+            ColumnDirection = columnDirection;
+            Predicate = predicate;
         }
 
-        public static Direction Left => new Direction
-        {
-            RowDirection = 0,
-            ColumnDirection = -1,
-            Predicate = (i, j, f) => j > f.Column
-        };
+        public static Direction Left => new Direction(0, -1, (i, j, f) => j > f.Column);
 
-        public static Direction Right => new Direction
-        {
-            RowDirection = 0,
-            ColumnDirection = 1,
-            Predicate = (i, j, f) => j < f.Column
-        };
+        public static Direction Right => new Direction(0, 1, (i, j, f) => j < f.Column);
 
-        public static Direction Above => new Direction
-        {
-            RowDirection = -1,
-            ColumnDirection = 0,
-            Predicate = (i, j, f) => i > f.Row
-        };
+        public static Direction Above => new Direction(-1, 0, (i, j, f) => i > f.Row);
 
-        public static Direction Below => new Direction
-        {
-            RowDirection = 1,
-            ColumnDirection = 0,
-            Predicate = (i, j, f) => i < f.Row
-        };
+        public static Direction Below => new Direction(1, 0, (i, j, f) => i < f.Row);
 
-        public static Direction AboveLeft => new Direction
-        {
-            RowDirection = -1,
-            ColumnDirection = -1,
-            Predicate = (i, j, f) => Above.Predicate(i, j, f) && Left.Predicate(i, j, f)
-        };
+        public static Direction AboveLeft =>
+            new Direction(-1, -1, (i, j, f) => Above.Predicate(i, j, f) && Left.Predicate(i, j, f));
 
-        public static Direction AboveRight => new Direction
-        {
-            RowDirection = -1,
-            ColumnDirection = 1,
-            Predicate = (i, j, f) => Above.Predicate(i, j, f) && Right.Predicate(i, j, f)
-        };
+        public static Direction AboveRight =>
+            new Direction(-1, 1, (i, j, f) => Above.Predicate(i, j, f) && Right.Predicate(i, j, f));
 
-        public static Direction BelowRight => new Direction
-        {
-            RowDirection = 1,
-            ColumnDirection = 1,
-            Predicate = (i, j, f) => Below.Predicate(i, j, f) && Right.Predicate(i, j, f)
-        };
+        public static Direction BelowRight =>
+            new Direction(1, 1, (i, j, f) => Below.Predicate(i, j, f) && Right.Predicate(i, j, f));
 
-        public static Direction BelowLeft => new Direction
-        {
-            RowDirection = 1,
-            ColumnDirection = -1,
-            Predicate = (i, j, f) => Below.Predicate(i, j, f) && Left.Predicate(i, j, f)
-        };
+        public static Direction BelowLeft =>
+            new Direction(1, -1, (i, j, f) => Below.Predicate(i, j, f) && Left.Predicate(i, j, f));
 
         public static Direction GuessDirection(Field from, Field to)
         {
@@ -82,36 +49,20 @@ namespace Czeum.ChessLogic
                     return BelowRight;
                 }
 
-                if (to.Column < from.Column)
-                {
-                    return BelowLeft;
-                }
-
-                return Below;
+                return to.Column < from.Column ? BelowLeft : Below;
             }
-            else if (to.Row < from.Row)
+
+            if (to.Row < from.Row)
             {
                 if (to.Column > from.Column)
                 {
                     return AboveRight;
                 }
 
-                if (to.Column < from.Column)
-                {
-                    return AboveLeft;
-                }
-
-                return Above;
+                return to.Column < from.Column ? AboveLeft : Above;
             }
-            else
-            {
-                if (to.Column > from.Column)
-                {
-                    return Right;
-                }
 
-                return Left;
-            }
+            return to.Column > from.Column ? Right : Left;
         }
     }
 }

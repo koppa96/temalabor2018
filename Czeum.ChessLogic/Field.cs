@@ -5,7 +5,7 @@ namespace Czeum.ChessLogic
     public class Field
     {
         public bool Empty => Piece == null;
-        public Piece Piece { get; private set; }
+        public Piece? Piece { get; private set; }
         public int Row { get; }
         public int Column { get; }
 
