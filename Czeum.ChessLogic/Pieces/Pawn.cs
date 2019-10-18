@@ -11,8 +11,8 @@ namespace Czeum.ChessLogic.Pieces
         {
             Type = PieceType.Pawn,
             Color = Color,
-            Row = Field.Row,
-            Column = Field.Column
+            Row = Field?.Row ?? -1,
+            Column = Field?.Column ?? -1
         };
 
         public Pawn(ChessBoard board, Color color, bool hasMoved = false) : base(board, color)
@@ -29,17 +29,22 @@ namespace Czeum.ChessLogic.Pieces
 
             var direction = Color == Color.White ? Direction.Above : Direction.Below;
 
-            return targetField.Row - direction.RowDirection == Field.Row && targetField.Column == Field.Column && targetField.Empty 
+            return targetField.Row - direction.RowDirection == Field!.Row && targetField.Column == Field!.Column && targetField.Empty 
                    || CanAttack(targetField) && !targetField.Empty
-                   || targetField.Row - 2 * direction.RowDirection == Field.Row && targetField.Column == Field.Column && !hasMoved && Board.RouteClear(Field, targetField);
+                   || targetField.Row - 2 * direction.RowDirection == Field!.Row && targetField.Column == Field!.Column && !hasMoved && Board.RouteClear(Field!, targetField);
         }
 
         public override bool CanAttack(Field targetField)
         {
+            if (!base.CanAttack(targetField))
+            {
+                return false;
+            }
+            
             switch (Color)
             {
-                case Color.White when targetField.Row + 1 == Field.Row && Math.Abs(targetField.Column - Field.Column) == 1:
-                case Color.Black when targetField.Row - 1 == Field.Row && Math.Abs(targetField.Column - Field.Column) == 1:
+                case Color.White when targetField.Row + 1 == Field!.Row && Math.Abs(targetField.Column - Field!.Column) == 1:
+                case Color.Black when targetField.Row - 1 == Field!.Row && Math.Abs(targetField.Column - Field!.Column) == 1:
                     return true;
                 default:
                     return false;

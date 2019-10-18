@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.Services
@@ -6,7 +7,7 @@ namespace Czeum.Api.Services
     {
         public string GetUserId(HubConnectionContext connection)
         {
-            return connection.User.Identity.Name;
+            return connection.User.Identity.Name ?? throw new InvalidOperationException("Could not determine user.");
         }
     }
 }

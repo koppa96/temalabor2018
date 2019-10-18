@@ -19,12 +19,16 @@ namespace Czeum.Api.Controllers.Messages
         }
 
         [HttpGet("{lobbyId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public ActionResult<IEnumerable<Message>> GetMessages(Guid lobbyId)
         {
             return Ok(messageService.GetMessagesOfLobby(lobbyId));
         }
 
         [HttpPost("{lobbyId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<Message>> SendMessage(Guid lobbyId, [FromBody] string message)
         {
             return Ok(await messageService.SendToLobbyAsync(lobbyId, message));

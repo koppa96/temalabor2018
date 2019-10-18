@@ -28,27 +28,34 @@ namespace Czeum.Api.Controllers.Friends
         }
 
         [HttpGet("received")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<IEnumerable<FriendRequestDto>>> GetFriendRequestsReceivedAsync()
         {
             return Ok(await friendService.GetRequestsReceivedAsync());
         }
 
         [HttpGet("sent")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<IEnumerable<FriendRequestDto>>> GetFriendRequestsSentAsync()
         {
             return Ok(await friendService.GetRequestsSentAsync());
         }
 
         [HttpPost("{username}")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<FriendRequestDto>> SendFriendRequestAsync(string username)
         {
             var request = await friendService.AddRequestAsync(username);
-
-            await hubContext.Clients.User(username).ReceiveRequest(request);
-            return Ok(request);
+            return StatusCode(201, request);
         }
 
         [HttpDelete("{requestId}/cancel")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> CancelFriendRequest(Guid requestId)
         {
             await friendService.RevokeRequestAsync(requestId);
@@ -56,6 +63,9 @@ namespace Czeum.Api.Controllers.Friends
         }
 
         [HttpDelete("{requestId}/reject")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> RejectFriendRequest(Guid requestId)
         {
             await friendService.RejectRequestAsync(requestId);

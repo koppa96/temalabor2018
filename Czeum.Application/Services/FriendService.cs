@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Core.DTOs.UserManagement;
+using Czeum.Core.Exceptions;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
@@ -121,6 +122,11 @@ namespace Czeum.Application.Services
             if (alreadyRequestedOrFriends)
             {
                 throw new InvalidOperationException("There is already a request or friendship between there users.");
+            }
+
+            if (!await context.Users.AnyAsync(u => u.UserName == receiver))
+            {
+                throw new NotFoundException("No user with the given name was found.");
             }
             
             var request = new FriendRequest

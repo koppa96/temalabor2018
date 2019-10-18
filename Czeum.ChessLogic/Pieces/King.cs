@@ -5,14 +5,14 @@ namespace Czeum.ChessLogic.Pieces
 {
     public class King : Piece
     {
-        public bool InCheck => Board.IsFieldSafe(Color, Field);
+        public bool InCheck => Board.IsFieldSafe(Color, Field!);
 
         public override PieceInfo PieceInfo => new PieceInfo()
         {
             Type = PieceType.King,
             Color = Color,
-            Row = Field.Row,
-            Column = Field.Column
+            Row = Field?.Row ?? -1,
+            Column = Field?.Column ?? -1
         };
 
         public King(ChessBoard board, Color color) : base(board, color)
@@ -26,10 +26,10 @@ namespace Czeum.ChessLogic.Pieces
                 return false;
             }
 
-            Field.RemovePiece(this);
+            Field!.RemovePiece(this);
 
-            var canMove = Math.Abs(targetField.Row - Field.Row) < 2 && Math.Abs(targetField.Column - Field.Column) < 2 
-                   && Board.IsFieldSafe(Color, targetField) && (targetField.Empty || targetField.Piece.Color != Color);
+            var canMove = Math.Abs(targetField.Row - Field!.Row) < 2 && Math.Abs(targetField.Column - Field!.Column) < 2 
+                   && Board.IsFieldSafe(Color, targetField) && (targetField.Empty || targetField.Piece!.Color != Color);
 
             Field.AddPiece(this);
 
