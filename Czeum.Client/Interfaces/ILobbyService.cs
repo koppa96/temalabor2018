@@ -4,9 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Czeum.Abstractions.DTO;
-using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.ClientCallback;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Abstractions.Lobbies;
 
 namespace Czeum.Client.Interfaces {
     public interface ILobbyService {  

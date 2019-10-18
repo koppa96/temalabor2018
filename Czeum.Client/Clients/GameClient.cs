@@ -1,6 +1,4 @@
 ﻿using Czeum.Client.Interfaces;
-using Czeum.ClientCallback;
-using Czeum.DTO;
 using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
@@ -8,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Czeum.Core.ClientCallbacks;
+using Czeum.Core.DTOs;
 
 namespace Czeum.Client.Clients
 {
@@ -48,6 +48,11 @@ namespace Czeum.Client.Clients
         }
 
         public async Task ReceiveMatchMessage(int matchId, Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ReceiveMatchMessage(Guid matchId, Message message)
         {
             throw new NotImplementedException();
         }

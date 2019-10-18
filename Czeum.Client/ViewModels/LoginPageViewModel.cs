@@ -1,20 +1,10 @@
 ﻿using Czeum.Client.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Prism.Windows.Mvvm;
-using System.ComponentModel;
 using System.Windows.Input;
 using Prism.Commands;
-using Microsoft.Practices.Unity;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Prism.Windows.Navigation;
-using Czeum.ClientCallback;
-using Czeum.Abstractions.DTO;
 
 namespace Czeum.Client.ViewModels
 {
@@ -44,12 +34,8 @@ namespace Czeum.Client.ViewModels
             get => email;
             set => SetProperty(ref email, value);
         }
-        private string confirmationToken;
 
-        public string ConfirmationToken {
-            get { return confirmationToken; }
-            set { confirmationToken = value; }
-        }
+        public string ConfirmationToken { get; set; }
 
 
         public ICommand LoginCommand { get; private set; }
@@ -59,7 +45,7 @@ namespace Czeum.Client.ViewModels
         private async void LoginAsync()
         {
             dialogService.ShowLoadingDialog();
-            bool result = await userManagerService.LoginAsync(new DTO.UserManagement.LoginModel { Username = Name, Password = Password });
+            bool result = await userManagerService.LoginAsync(new Core.DTOs.UserManagement.LoginModel { Username = Name, Password = Password });
             if (result) {
                 navigationService.Navigate("Lobby", null);
             }
@@ -72,7 +58,11 @@ namespace Czeum.Client.ViewModels
 
         private async void RegisterAsync() {
             dialogService.ShowLoadingDialog();
-            bool result = await userManagerService.RegisterAsync(new DTO.UserManagement.RegisterModel { Username = Name, Password = Password, Email = Email, ConfirmPassword = ConfirmPassword });
+            if(ConfirmPassword != Password)
+            {
+                return;
+            }
+            bool result = await userManagerService.RegisterAsync(new Core.DTOs.UserManagement.RegisterModel { Username = Name, Password = Password, Email = Email});
             if (result) {
                 await dialogService.ShowSuccess("Registration completed successfully. Please confirm your account with the token sent to your email address.");
             }

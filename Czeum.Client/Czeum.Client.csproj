@@ -315,6 +315,9 @@
     <PackageReference Include="Flurl">
       <Version>3.0.0-pre1</Version>
     </PackageReference>
+    <PackageReference Include="Flurl.Http">
+      <Version>2.4.2</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
       <Version>3.0.0</Version>
     </PackageReference>
@@ -347,17 +350,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Czeum.Abstractions\Czeum.Abstractions.csproj">
-      <Project>{f9da0e65-03b2-4531-8bea-a4aa438caf88}</Project>
-      <Name>Czeum.Abstractions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Czeum.ClientCallback\Czeum.ClientCallback.csproj">
-      <Project>{03F8C5A5-D26A-48F8-9759-27BEC4E586A7}</Project>
-      <Name>Czeum.ClientCallback</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Czeum.DTO\Czeum.DTO.csproj">
-      <Project>{e7c9a283-5bf0-44fd-b645-99de3925cc89}</Project>
-      <Name>Czeum.DTO</Name>
+    <ProjectReference Include="..\Czeum.Core\Czeum.Core.csproj">
+      <Project>{e14b720f-2bbe-42f8-9752-943603c08c36}</Project>
+      <Name>Czeum.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

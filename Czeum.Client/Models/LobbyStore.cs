@@ -5,12 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Czeum.Abstractions.DTO;
 using Czeum.Client.Interfaces;
+using Czeum.Core.DTOs.Abstractions.Lobbies;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.Models {
 
@@ -41,7 +40,7 @@ namespace Czeum.Client.Models {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { LobbyList.Add(lobby); });
         }
 
-        public async Task RemoveLobby(int lobbyId)
+        public async Task RemoveLobby(Guid lobbyId)
         {
             var lobbyToRemove = LobbyList.FirstOrDefault(x => x.Id == lobbyId);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {

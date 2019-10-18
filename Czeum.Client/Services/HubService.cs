@@ -15,8 +15,8 @@ namespace Czeum.Client.Services {
         private INavigationService navigationService;
         private IDialogService dialogService;
 
-        //private string BASE_URL = "https://localhost:44301";
-        private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
+        private string BASE_URL = "https://localhost:5001";
+        //private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
         private IUserManagerService userManagerService;
 
         public HubConnection Connection { get; private set; }
@@ -31,12 +31,12 @@ namespace Czeum.Client.Services {
         public void CreateHubConnection()
         {
             Connection = new HubConnectionBuilder()
-                .WithUrl(Flurl.Url.Combine(BASE_URL, "/gamehub"), options => {
+                .WithUrl(Flurl.Url.Combine(BASE_URL, "/notifications "), options => {
                     options.AccessTokenProvider = () =>
                         Task.FromResult(userManagerService.AccessToken);
-                }).AddNewtonsoftJsonProtocol(protocol => {
+                })/*.AddNewtonsoftJsonProtocol(protocol => {
                     protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
-                })
+                })*/
                 .Build();
         }
 

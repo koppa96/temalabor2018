@@ -1,17 +1,13 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Client.Interfaces;
-using Czeum.DTO.Connect4;
+﻿using Czeum.Client.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Czeum.Abstractions.DTO.Lobbies;
-using Czeum.DTO;
-using Czeum.DTO.Chess;
 
 namespace Czeum.Client.Services {
+    /*
     class DummyLobbyService : ILobbyService
     {
         private ILobbyStore lobbyStore;
@@ -73,5 +69,5 @@ namespace Czeum.Client.Services {
         {
             throw new NotImplementedException();
         }
-    }
+    }*/
 }

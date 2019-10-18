@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Czeum.DTO.UserManagement;
+using Czeum.Core.DTOs.UserManagement;
 
 namespace Czeum.Client.Interfaces
 {

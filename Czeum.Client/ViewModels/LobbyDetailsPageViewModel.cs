@@ -1,6 +1,6 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Client.Interfaces;
+﻿using Czeum.Client.Interfaces;
 using Czeum.Client.Views;
+using Czeum.Core.Enums;
 using Prism.Commands;
 using Prism.Logging;
 using Prism.Windows.Mvvm;
@@ -8,7 +8,6 @@ using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.ViewModels
 {
@@ -34,7 +33,7 @@ namespace Czeum.Client.ViewModels
         public ICommand KickGuestCommand { get; private set; }
         public ICommand InvitePlayerCommand { get; private set; }
 
-        public bool IsUserGuest => lobbyService.CurrentLobby.Guest == userManagerService.Username;
+        public bool IsUserGuest => lobbyService.CurrentLobby.Guests.Contains(userManagerService.Username);
 
         public LobbyDetailsPageViewModel(INavigationService navigationService, ILoggerFacade loggerService,
             ILobbyService lobbyService, IUserManagerService userManagerService, ILobbyStore lobbyStore

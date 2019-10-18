@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Czeum.Core.DTOs.Chess;
+using Czeum.Core.DTOs.Connect4;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Czeum.Abstractions.DTO;
-using Czeum.DTO.Chess;
-using Czeum.DTO.Connect4;
 
 namespace Czeum.Client.TemplateSelectors {
     class LobbyListDataTemplateSelector : DataTemplateSelector{

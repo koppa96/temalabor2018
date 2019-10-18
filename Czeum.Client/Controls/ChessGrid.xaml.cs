@@ -1,6 +1,6 @@
 ﻿using Czeum.Client.ViewModels;
-using Czeum.DTO;
-using Czeum.DTO.Chess;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Chess;
 using Microsoft.Xaml.Interactions.Core;
 using Microsoft.Xaml.Interactivity;
 using System;
@@ -51,7 +51,7 @@ namespace Czeum.Client.Controls
 
         private void RenderBoard()
         {
-            var boardData = Match.CurrentBoard as ChessMoveResult;
+            var boardData = Match.CurrentBoard.Content as ChessMoveResult;
 
             if (boardData == null)
             {
@@ -59,7 +59,7 @@ namespace Czeum.Client.Controls
             }
 
             BoardContainer.Children.Clear();
-            if(Match.PlayerId == 1)
+            if(Match.PlayerIndex == 1)
             {
                 DrawBoard();
                 PlacePieces(boardData);
@@ -79,7 +79,7 @@ namespace Czeum.Client.Controls
                 i.Stretch = Stretch.Uniform;
                 i.HorizontalAlignment = HorizontalAlignment.Center;
                 i.VerticalAlignment = VerticalAlignment.Center;
-                string colorChar = piece.Color == DTO.Chess.Color.White ? "w" : "b";
+                string colorChar = piece.Color == Core.DTOs.Chess.Color.White ? "w" : "b";
                 string typeChar = GetPieceTypeString(piece);
                 string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
                 i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));
@@ -104,7 +104,7 @@ namespace Czeum.Client.Controls
                 i.Stretch = Stretch.Uniform;
                 i.HorizontalAlignment = HorizontalAlignment.Center;
                 i.VerticalAlignment = VerticalAlignment.Center;
-                string colorChar = piece.Color == DTO.Chess.Color.White ? "w" : "b";
+                string colorChar = piece.Color == Core.DTOs.Chess.Color.White ? "w" : "b";
                 string typeChar = GetPieceTypeString(piece);
                 string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
                 i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 using System.Diagnostics;
 using Windows.UI.Xaml;
-using Czeum.DTO;
 
 namespace Czeum.Client.Converters {
     public class LobbyStatusConverter : IValueConverter {

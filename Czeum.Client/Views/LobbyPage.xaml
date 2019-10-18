@@ -8,11 +8,10 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dto="using:Czeum.Abstractions.DTO"
-    xmlns:chess="using:Czeum.DTO.Chess"
-    xmlns:connect4="using:Czeum.DTO.Connect4"
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     xmlns:converters="using:Czeum.Client.Converters"
+    xmlns:chess="using:Czeum.Core.DTOs.Chess"
+    xmlns:connect4="using:Czeum.Core.DTOs.Connect4"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>

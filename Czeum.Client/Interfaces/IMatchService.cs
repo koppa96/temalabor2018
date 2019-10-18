@@ -1,5 +1,5 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.DTO;
+﻿using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
