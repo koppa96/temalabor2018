@@ -31,12 +31,10 @@ namespace Czeum.Client.Services {
         public void CreateHubConnection()
         {
             Connection = new HubConnectionBuilder()
-                .WithUrl(Flurl.Url.Combine(BASE_URL, "/notifications "), options => {
+                .WithUrl(Flurl.Url.Combine(BASE_URL, "notifications"), options => {
                     options.AccessTokenProvider = () =>
                         Task.FromResult(userManagerService.AccessToken);
-                })/*.AddNewtonsoftJsonProtocol(protocol => {
-                    protocol.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.All;
-                })*/
+                }).AddNewtonsoftJsonProtocol()
                 .Build();
         }
 
