@@ -3,10 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.SignalR
 {
+    [Authorize]
     public class NotificationHub : Hub<ICzeumClient>
     {
         private readonly IOnlineUserTracker onlineUserTracker;
