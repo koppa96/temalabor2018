@@ -13,7 +13,7 @@ namespace Czeum.Client.ViewModels
 {
     public class LobbyDetailsPageViewModel : ViewModelBase
     {
-        private ILobbyService lobbyService;
+        private Core.Services.ILobbyService lobbyService;
         private ILoggerFacade loggerService;
         private INavigationService navigationService;
         private IUserManagerService userManagerService;
@@ -36,7 +36,7 @@ namespace Czeum.Client.ViewModels
         public bool IsUserGuest => lobbyService.CurrentLobby.Guests.Contains(userManagerService.Username);
 
         public LobbyDetailsPageViewModel(INavigationService navigationService, ILoggerFacade loggerService,
-            ILobbyService lobbyService, IUserManagerService userManagerService, ILobbyStore lobbyStore
+            Core.Services.ILobbyService lobbyService, IUserManagerService userManagerService, ILobbyStore lobbyStore
             )
         {
             this.lobbyService = lobbyService;
@@ -60,12 +60,12 @@ namespace Czeum.Client.ViewModels
 
         private void KickGuest()
         {
-            lobbyService.KickGuest();
+            //lobbyService.KickGuestAsync();
         }
 
         private void InvitePlayer()
         {
-            lobbyService.InvitePlayer(inviteeName);
+            //lobbyService.InvitePlayer(inviteeName);
             InviteeName = "";
         }
 
@@ -77,17 +77,17 @@ namespace Czeum.Client.ViewModels
 
         private void CreateMatch()
         {
-            lobbyService.CreateMatch();
+            //lobbyService.CreateMatch();
         }
 
         private void SaveLobbySettings()
         {
-            lobbyService.UpdateLobby(lobbyStore.SelectedLobby);
+            //lobbyService.UpdateLobby(lobbyStore.SelectedLobby);
         }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs e, Dictionary<string, object> viewModelState, bool suspending)
         {
-            lobbyService.LeaveLobby();
+            //lobbyService.LeaveLobby();
             base.OnNavigatingFrom(e, viewModelState, suspending);
         }
     }

@@ -21,6 +21,7 @@ using Czeum.Core.DTOs.Chess;
 using Czeum.Core.DTOs.Connect4;
 using Czeum.Core.Services;
 using Czeum.Client.Interfaces;
+using Czeum.Core.Enums;
 
 namespace Czeum.Client.ViewModels {
     public class LobbyPageViewModel : ViewModelBase
@@ -67,17 +68,23 @@ namespace Czeum.Client.ViewModels {
 
         private async void CreateLobby(string lobbyTypeString)
         {
+            var access = LobbyAccess.Public;
+            string name = null;
+            GameType? type = null;
             switch (lobbyTypeString)
             {
                 case "Chess":
-                    //await lobbyService.CreateLobby(typeof(ChessLobbyData));
+                    type = GameType.Chess;
                     break;
                 case "Connect4":
-                    //await lobbyService.CreateLobby(typeof(Connect4LobbyData));
+                    type = GameType.Connect4;
                     break;
                 default:
-                    break;
+                    return;
             }
+            var result = await lobbyService.CreateAndAddLobbyAsync(type.Value, access, name);
+            await lobbyStore.AddLobby(result.Content);
+            navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
         }
 
         public bool IsUserInvited()

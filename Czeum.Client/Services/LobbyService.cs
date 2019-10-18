@@ -131,18 +131,18 @@ namespace Czeum.Client.Services
                 LobbyAccess = access,
                 Name = name
             };
-            return BASE_URL.AppendPathSegment("lobbies").PostJsonAsync(createDTO).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment("api/lobbies").PostJsonAsync(createDTO).ReceiveJson<LobbyDataWrapper>();
         }
 
         public Task DisconnectFromCurrentLobbyAsync()
         {
-            return BASE_URL.AppendPathSegment("lobbies/current/leave").PostAsync(null);
+            return BASE_URL.AppendPathSegment("api/lobbies/current/leave").PostAsync(null);
         }
 
 
         public Task<List<LobbyDataWrapper>> GetLobbies()
         {
-            return BASE_URL.AppendPathSegment("lobbies").GetJsonAsync<List<LobbyDataWrapper>>();
+            return BASE_URL.AppendPathSegment("api/lobbies").GetJsonAsync<List<LobbyDataWrapper>>();
         }
 
         public Task<LobbyDataWrapper> GetLobby(Guid lobbyId)
@@ -163,17 +163,17 @@ namespace Czeum.Client.Services
 
         public Task<LobbyDataWrapper> InvitePlayerToLobby(Guid lobbyId, string player)
         {
-            return BASE_URL.AppendPathSegment($"{lobbyId}/invite").SetQueryParam("playerName", player).PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.AppendPathSegment($"api/{lobbyId}/invite").SetQueryParam("playerName", player).PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
         }
 
         public Task<LobbyDataWrapper> JoinToLobbyAsync(Guid lobbyId)
         {
-            return BASE_URL.AppendPathSegment($"{lobbyId}/join").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.AppendPathSegment($"api/{lobbyId}/join").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
         }
 
         public Task<LobbyDataWrapper> KickGuestAsync(Guid lobbyId, string guestName)
         {
-            return BASE_URL.AppendPathSegment($"lobbies/{lobbyId}/kick/{guestName}").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.AppendPathSegment($"api/lobbies/{lobbyId}/kick/{guestName}").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
         }
 
         public Task<bool> LobbyExists(Guid lobbyId)
@@ -188,7 +188,7 @@ namespace Czeum.Client.Services
 
         public Task<LobbyDataWrapper> UpdateLobbySettingsAsync(LobbyDataWrapper lobbyData)
         {
-            return BASE_URL.AppendPathSegment($"lobbies/{lobbyData.Content.Id}").PutJsonAsync(lobbyData).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.AppendPathSegment($"api/lobbies/{lobbyData.Content.Id}").PutJsonAsync(lobbyData).ReceiveJson<LobbyDataWrapper>();
         }
     }
 }
