@@ -12,10 +12,13 @@ namespace Czeum.Api.Services
     public class NotificationService : INotificationService
     {
         private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
+        private readonly IOnlineUserTracker onlineUserTracker;
 
-        public NotificationService(IHubContext<NotificationHub, ICzeumClient> hubContext)
+        public NotificationService(IHubContext<NotificationHub, ICzeumClient> hubContext,
+            IOnlineUserTracker onlineUserTracker)
         {
             this.hubContext = hubContext;
+            this.onlineUserTracker = onlineUserTracker;
         }
 
         public Task NotifyAsync(string client, Func<ICzeumClient, Task> action)
@@ -40,7 +43,7 @@ namespace Czeum.Api.Services
 
         public Task NotifyAllExceptAsync(string client, Func<ICzeumClient, Task> action)
         {
-            return action(hubContext.Clients.AllExcept(client));
+            return action(hubContext.Clients.AllExcept(onlineUserTracker.GetConnectionId(client)));
         }
     }
 }
