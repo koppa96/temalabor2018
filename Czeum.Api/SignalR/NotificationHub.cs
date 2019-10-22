@@ -30,7 +30,7 @@ namespace Czeum.Api.SignalR
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
-            onlineUserTracker.PutUser(Context.UserIdentifier);
+            onlineUserTracker.PutUser(Context.UserIdentifier, Context.ConnectionId);
 
             await Task.WhenAll((await friendService.GetFriendsOfUserAsync(Context.UserIdentifier))
                 .Select(f => Clients.User(f.Username).FriendConnected(f.FriendshipId)));
