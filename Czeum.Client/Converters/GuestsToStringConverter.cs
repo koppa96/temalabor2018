@@ -16,7 +16,7 @@ namespace Czeum.Client.Converters
             {
                 return "No guests";
             }
-            return $"{guests.Count} guest(s)";
+            return string.Join(", ", guests);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

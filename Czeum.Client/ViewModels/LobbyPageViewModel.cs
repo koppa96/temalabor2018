@@ -23,6 +23,7 @@ using Czeum.Core.Services;
 using Czeum.Client.Interfaces;
 using Czeum.Core.Enums;
 using Czeum.Core.DTOs.Wrappers;
+using Flurl.Http;
 
 namespace Czeum.Client.ViewModels {
     public class LobbyPageViewModel : ViewModelBase
@@ -50,20 +51,30 @@ namespace Czeum.Client.ViewModels {
             this.hubService = hubService;
             this.lobbyStore = lobbyStore;
 
-            JoinLobbyCommand = new DelegateCommand<int?>(JoinLobby);
+            JoinLobbyCommand = new DelegateCommand<Guid?>(JoinLobby);
             CreateLobbyCommand = new DelegateCommand<string>(CreateLobby);
         }
 
         public ICommand JoinLobbyCommand { get; }
         public ICommand CreateLobbyCommand { get; }
 
-        private void JoinLobby(int? index)
+        private async void JoinLobby(Guid? id)
         {
-            if (!index.HasValue)
+            if (!id.HasValue)
             {
                 return;
             }
-            //lobbyService.JoinLobby(index.Value);
+            try
+            {
+                var lobby = await lobbyService.JoinToLobbyAsync(id.Value);
+                lobbyStore.SelectedLobby = lobby.Content;
+                navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
+            } 
+            catch(FlurlHttpException e)
+            {
+                await dialogService.ShowError($"Could not connect to lobby, reason: {e.Message}");
+            }
+
         }
 
         private async void CreateLobby(string lobbyTypeString)

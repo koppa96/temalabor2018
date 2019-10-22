@@ -92,12 +92,12 @@ namespace Czeum.Client.Services
 
         public Task<LobbyDataWrapper> InvitePlayerToLobby(Guid lobbyId, string player)
         {
-            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/{lobbyId}/invite").SetQueryParam("playerName", player).PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyId}/invite").SetQueryParam("playerName", player).PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
         }
 
         public Task<LobbyDataWrapper> JoinToLobbyAsync(Guid lobbyId)
         {
-            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/{lobbyId}/join").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
+            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyId}/join").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
         }
 
         public Task<LobbyDataWrapper> KickGuestAsync(Guid lobbyId, string guestName)

@@ -37,9 +37,9 @@
                     </TextBlock>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left" Margin="5, 5"/>
                 </StackPanel>
-                <!--<Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
+                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
-                </Button>-->
+                </Button>
             </Grid>
         </DataTemplate>
 
@@ -65,9 +65,9 @@
                     </TextBlock>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left" Margin="5, 5"/>
                 </StackPanel>
-                <!--<Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
+                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
-                </Button>-->
+                </Button>
             </Grid>
         </DataTemplate>
 
