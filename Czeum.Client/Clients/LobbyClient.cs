@@ -34,30 +34,19 @@ namespace Czeum.Client.Clients {
 
             hubService.CreateHubConnection();
             hubService.Connection.On<Guid>(nameof(LobbyDeleted), LobbyDeleted);
-            hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyAdded), LobbyAdded);
-            hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyCreated), LobbyCreated);
             hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyChanged), LobbyChanged);
-            hubService.Connection.On<LobbyDataWrapper, List<Message>>(nameof(JoinedToLobby), JoinedToLobby);
             hubService.Connection.On(nameof(KickedFromLobby), KickedFromLobby);
+            hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyAdded), LobbyAdded);
         }
 
         public async Task LobbyDeleted(Guid lobbyId)
         {
             if(lobbyStore.SelectedLobby?.Id == lobbyId)
             {
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                    navigationService.Navigate(PageTokens.Lobby.ToString(), null);
-                    navigationService.ClearHistory();
-                });
+                navigationService.Navigate(PageTokens.Lobby.ToString(), null);
+                navigationService.ClearHistory();
             }
             await lobbyStore.RemoveLobby(lobbyId);
-        }
-
-        public async Task LobbyCreated(LobbyDataWrapper lobbyData)
-        {
-            lobbyStore.SelectedLobby = lobbyData.Content;
-            await lobbyStore.AddLobby(lobbyData.Content);
-            await JoinedToLobby(lobbyData, new List<Message>());
         }
 
         public async Task LobbyChanged(LobbyDataWrapper lobbyData)
@@ -65,21 +54,11 @@ namespace Czeum.Client.Clients {
             await lobbyStore.UpdateLobby(lobbyData.Content);
         }
 
-        public async Task JoinedToLobby(LobbyDataWrapper lobbyData, List<Message> messages)
-        {
-            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                lobbyStore.SelectedLobby = lobbyData.Content;
-                navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
-            });
-        }
-
         public async Task KickedFromLobby()
         {
-            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                navigationService.Navigate(PageTokens.Lobby.ToString(), null);
-                navigationService.ClearHistory();
-                lobbyStore.SelectedLobby = null;
-            });
+            navigationService.Navigate(PageTokens.Lobby.ToString(), null);
+            navigationService.ClearHistory();
+            lobbyStore.SelectedLobby = null;
         }
 
         public async Task LobbyAdded(LobbyDataWrapper lobbyData)

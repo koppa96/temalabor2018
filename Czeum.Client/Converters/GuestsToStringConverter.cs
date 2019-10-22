@@ -1,5 +1,4 @@
-﻿using Czeum.Core.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,18 +7,16 @@ using Windows.UI.Xaml.Data;
 
 namespace Czeum.Client.Converters
 {
-    class AccessToStringConverter : IValueConverter
+    class GuestsToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            LobbyAccess? access = value as LobbyAccess?;
-            switch (access)
+            var guests = value as List<String>;
+            if(guests == null)
             {
-                case LobbyAccess.Public: return "\ue785";
-                case LobbyAccess.FriendsOnly: return "\ue779";
-                case LobbyAccess.Private: return "\ue72e";
+                return "No guests";
             }
-            return "ERROR";
+            return $"{guests.Count} guest(s)";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

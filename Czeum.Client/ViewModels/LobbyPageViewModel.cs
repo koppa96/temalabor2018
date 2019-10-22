@@ -22,6 +22,7 @@ using Czeum.Core.DTOs.Connect4;
 using Czeum.Core.Services;
 using Czeum.Client.Interfaces;
 using Czeum.Core.Enums;
+using Czeum.Core.DTOs.Wrappers;
 
 namespace Czeum.Client.ViewModels {
     public class LobbyPageViewModel : ViewModelBase
@@ -49,7 +50,6 @@ namespace Czeum.Client.ViewModels {
             this.hubService = hubService;
             this.lobbyStore = lobbyStore;
 
-            //lobbyService.QueryLobbyList();
             JoinLobbyCommand = new DelegateCommand<int?>(JoinLobby);
             CreateLobbyCommand = new DelegateCommand<string>(CreateLobby);
         }
@@ -70,7 +70,7 @@ namespace Czeum.Client.ViewModels {
         {
             var access = LobbyAccess.Public;
             string name = null;
-            GameType? type = null;
+            GameType? type;
             switch (lobbyTypeString)
             {
                 case "Chess":
@@ -84,6 +84,7 @@ namespace Czeum.Client.ViewModels {
             }
             var result = await lobbyService.CreateAndAddLobbyAsync(type.Value, access, name);
             await lobbyStore.AddLobby(result.Content);
+            lobbyStore.SelectedLobby = result.Content;
             navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
         }
 
@@ -95,6 +96,11 @@ namespace Czeum.Client.ViewModels {
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
         {
             base.OnNavigatedTo(e, viewModelState);
+
+            List<LobbyDataWrapper> lobbies = await lobbyService.GetLobbies();
+            await lobbyStore.ClearLobbies();
+            await lobbyStore.AddLobbies(lobbies.Select(x => x.Content));
+
             await hubService.ConnectToHubAsync();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Czeum.Core.DTOs.Abstractions.Lobbies;
+using Czeum.Core.DTOs.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +14,7 @@ namespace Czeum.Client.Interfaces {
         Task RemoveLobby(Guid lobbyId);
         Task UpdateLobby(LobbyData lobby);
         Task ClearLobbies();
+        Task AddLobbies(IEnumerable<LobbyData> lobbies);
 
         ObservableCollection<LobbyData> LobbyList { get; }
         LobbyData SelectedLobby { get; set; }

@@ -9,12 +9,11 @@ using Windows.UI.Xaml.Data;
 namespace Czeum.Client.Converters {
     class InvitedPlayerNotificationConverter : IValueConverter{
         public object Convert(object value, Type targetType, object parameter, string language) {
-            /*var invitedPlayers = value as List<String>;
-            if (invitedPlayers.Contains(ConnectionManager.Instance.UserName)) {
-                return Visibility.Visible;
-            }
-            return Visibility.Collapsed;*/
-            return null;
+            var invitedPlayers = value as List<String>;
+            //if (invitedPlayers.Contains(ConnectionManager.Instance.UserName)) {
+            //    return Visibility.Visible;
+            //}
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

@@ -61,7 +61,6 @@
 
                 <TextBlock Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
                     <Run Text="Current lobby:"/>
-                    <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
                     <Run Text="{Binding lobbyStore.SelectedLobby.Name}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
@@ -70,7 +69,8 @@
                 </TextBlock>
                 <TextBlock Grid.Row="2" Grid.ColumnSpan="3">
                     <Run Text="The current guest of the lobby is: "/>
-                    <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
+                    <Run Text="NOT IMPLEMENTED"/>
+                    <!--<Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>-->
                 </TextBlock>
                 <Button Grid.Row="3" Grid.Column="0" Command="{Binding LeaveLobbyCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
                     <StackPanel Orientation="Horizontal">

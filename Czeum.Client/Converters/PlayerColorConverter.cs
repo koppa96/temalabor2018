@@ -15,9 +15,8 @@ namespace Czeum.Client.Converters {
             }
             if(playerItem.Value == Connect4Dtos.Item.Red) {
                 return new SolidColorBrush(Windows.UI.Colors.Red);
-            }
-            return new SolidColorBrush(Windows.UI.Colors.Yellow);*/
-            return null;
+            }*/
+            return new SolidColorBrush(Windows.UI.Colors.Yellow);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

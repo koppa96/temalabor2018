@@ -11,9 +11,8 @@ namespace Czeum.Client.Converters {
             /*var status = value as LobbyStatus?;
             if((status == null) || (status.Value == LobbyStatus.Public)) {
                 return false;
-            }
-            return true;*/
-            return null;
+            }*/
+            return true;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {
