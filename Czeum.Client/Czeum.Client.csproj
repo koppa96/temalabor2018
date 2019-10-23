@@ -134,10 +134,8 @@
     <Compile Include="DTOs\NotifyingLobbyData.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
-    <Compile Include="Interfaces\ILobbyService.cs" />
     <Compile Include="Interfaces\ILobbyStore.cs" />
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
-    <Compile Include="Interfaces\IMatchService.cs" />
     <Compile Include="Interfaces\IMatchStore.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
     <Compile Include="Models\LobbyStore.cs" />
