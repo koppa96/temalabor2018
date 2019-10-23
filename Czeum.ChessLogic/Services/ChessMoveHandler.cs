@@ -24,8 +24,8 @@ namespace Czeum.ChessLogic.Services
             var board = new ChessBoard(false);
             board.DeserializeContent(serializedChessBoard);
 
-            var color = playerId == 1 ? Color.White : Color.Black;
-            var enemyColor = playerId == 1 ? Color.Black : Color.White;
+            var color = playerId == 0 ? Color.White : Color.Black;
+            var enemyColor = playerId == 0 ? Color.Black : Color.White;
 
             if (!board.ValidateMove(moveData, color) ||
                 !board.MovePiece(board[moveData.FromRow, moveData.FromColumn], board[moveData.ToRow, moveData.ToColumn]))
