@@ -13,9 +13,8 @@ namespace Czeum.Client.Converters {
             /*LobbyStatus? v = value as LobbyStatus?;
             if(v.Value == LobbyStatus.Public) {
                 return Visibility.Collapsed;
-            }
-            return Visibility.Visible;*/
-            return null;
+            }*/
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

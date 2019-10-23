@@ -26,6 +26,7 @@ namespace Czeum.Client.Services
         private IMatchStore matchStore;
         private IHubService hubService;
         private INavigationService navigationService;
+        private Core.Services.IMatchService matchService;
 
         public MatchService(IMatchStore matchStore, IHubService hubService, IUserManagerService userManagerService, INavigationService navigationService)
         {

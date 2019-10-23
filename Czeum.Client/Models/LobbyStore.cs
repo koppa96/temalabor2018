@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Czeum.Client.Interfaces;
 using Czeum.Core.DTOs.Abstractions.Lobbies;
+using Czeum.Core.DTOs.Wrappers;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -25,7 +26,9 @@ namespace Czeum.Client.Models {
             get => selectedLobby;
             set {
                 selectedLobby = value;
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedLobby")); });
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedLobby")); 
+                });
             }
         }
 
@@ -37,13 +40,26 @@ namespace Czeum.Client.Models {
 
         public async Task AddLobby(LobbyData lobby)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { LobbyList.Add(lobby); });
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                LobbyList.Add(lobby); 
+            });
+        }
+
+        public async Task AddLobbies(IEnumerable<LobbyData> lobbies)
+        {
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                foreach(var lobby in lobbies)
+                {
+                    // In lieu of InsertRange/AddRange/whatever
+                    LobbyList.Add(lobby);
+                }
+            });
         }
 
         public async Task RemoveLobby(Guid lobbyId)
         {
             var lobbyToRemove = LobbyList.FirstOrDefault(x => x.Id == lobbyId);
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 LobbyList.Remove(lobbyToRemove);
                 if(selectedLobby?.Id == lobbyId)
                 {
@@ -56,11 +72,11 @@ namespace Czeum.Client.Models {
         {
             var lobbyToUpdate = LobbyList.FirstOrDefault(x => x.Id == lobby.Id);
             int index = LobbyList.IndexOf(lobbyToUpdate);
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 //dirty hack to refresh item in the list
                 LobbyList.RemoveAt(index);
                 LobbyList.Insert(index, lobby);
-
+                
                 if((selectedLobby != null) && (selectedLobby?.Id == lobby.Id))
                 {
                     SelectedLobby = lobby;
@@ -70,7 +86,9 @@ namespace Czeum.Client.Models {
 
         public async Task ClearLobbies()
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { LobbyList.Clear(); });
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                LobbyList.Clear(); 
+            });
         }
     }
 }

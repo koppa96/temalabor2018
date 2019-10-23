@@ -120,6 +120,7 @@
     <Compile Include="Converters\AccessToStringConverter.cs" />
     <Compile Include="Converters\ChessIdToStringConverter.cs" />
     <Compile Include="Converters\Connect4IdToStringConverter.cs" />
+    <Compile Include="Converters\GuestsToStringConverter.cs" />
     <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
     <Compile Include="Converters\GameStateToStringConverter.cs" />
     <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
@@ -133,10 +134,8 @@
     <Compile Include="DTOs\NotifyingLobbyData.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
-    <Compile Include="Interfaces\ILobbyService.cs" />
     <Compile Include="Interfaces\ILobbyStore.cs" />
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
-    <Compile Include="Interfaces\IMatchService.cs" />
     <Compile Include="Interfaces\IMatchStore.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
     <Compile Include="Models\LobbyStore.cs" />

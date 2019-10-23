@@ -1,5 +1,6 @@
 ﻿using Czeum.Core.DTOs.Chess;
 using Czeum.Core.DTOs.Connect4;
+using Czeum.Core.DTOs.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,6 @@ namespace Czeum.Client.TemplateSelectors {
             {
                 throw new ArgumentException("Tried selecting template for null lobby");
             }
-
             if (item is ChessLobbyData)
             {
                 return ChessDataTemplate;
