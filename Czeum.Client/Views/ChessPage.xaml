@@ -27,11 +27,11 @@
         <StackPanel Grid.Column="1">
             <TextBlock TextWrapping="WrapWholeWords">
                 <Run Text="You are playing against "/>
-                <Run Text="{Binding matchStore.SelectedMatch.OtherPlayer}" FontWeight="Bold"/>
+                <Run Text="{Binding OpponentName}" FontWeight="Bold"/>
             </TextBlock>
             <TextBlock TextWrapping="WrapWholeWords">
                 <Run Text="You are playing as "/>
-                <Run Text="{Binding matchStore.SelectedMatch.PlayerId, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+                <Run Text="{Binding matchStore.SelectedMatch.PlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
             </TextBlock>
             <TextBlock TextWrapping="WrapWholeWords">
                 <Run Text="{Binding matchStore.SelectedMatch.State, Converter={StaticResource GameStateToStringConverter}}"/>

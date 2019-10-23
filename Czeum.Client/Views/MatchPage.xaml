@@ -31,7 +31,7 @@
                     </TextBlock>
                     <TextBlock>
                         <Run Text="You are playing as color "/>
-                        <Run Text="{Binding PlayerId, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+                        <Run Text="{Binding PlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
                     </TextBlock>
                     <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Margin="30, 1, 1, 1"/>
                 </StackPanel>

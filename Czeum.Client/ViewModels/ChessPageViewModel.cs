@@ -24,6 +24,7 @@ namespace Czeum.Client.ViewModels
         private Tuple<int, int> selectedField;
 
         public MatchStatus Match { get => matchStore.SelectedMatch; }
+        public string OpponentName { get => Match.Players.Where(x => x.PlayerIndex != Match.PlayerIndex).First().Username; }
         public ICommand FieldSelectedCommand { get; internal set; }
         public ICommand PieceSelectedCommand { get; internal set; }
 
