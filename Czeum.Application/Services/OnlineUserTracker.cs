@@ -36,7 +36,12 @@ namespace Czeum.Application.Services
 
         public string GetConnectionId(string user)
         {
-            return users[user];
+            if (users.ContainsKey(user))
+            {
+                return users[user];
+            }
+
+            return null;
         }
     }
 }
