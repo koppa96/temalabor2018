@@ -13,15 +13,17 @@ namespace Czeum.Client.ViewModels
     {
         public IMatchStore matchStore { get; }
         private IMatchService matchService;
+        private IDialogService dialogService;
 
         public MatchStatus Match { get => matchStore.SelectedMatch; }
 
         public ICommand ObjectPlacedCommand { get; set; }
 
-        public Connect4PageViewModel(IMatchStore matchStore, IMatchService matchService)
+        public Connect4PageViewModel(IMatchStore matchStore, IMatchService matchService, IDialogService dialogService)
         {
             this.matchStore = matchStore;
             this.matchService = matchService;
+            this.dialogService = dialogService;
 
             ObjectPlacedCommand = new DelegateCommand<Tuple<int, int>>(ObjectPlaced);
         }
@@ -32,7 +34,17 @@ namespace Czeum.Client.ViewModels
                 MatchId = matchStore.SelectedMatch.Id,
                 Column = position.Item2 
             };
-            var result = await matchService.HandleMoveAsync(moveData);
+            
+            MatchStatus result = null;
+            try
+            {
+                result = await matchService.HandleMoveAsync(moveData);
+            }
+            catch (Flurl.Http.FlurlHttpException e)
+            {
+                var details = await e.GetResponseJsonAsync<ApiProblemDetails>();
+                dialogService.ShowError(details.Detail);
+            }
             if (result != null)
             {
                 await matchStore.UpdateMatch(result);

@@ -51,15 +51,7 @@ namespace Czeum.Client.Services
                 Content = moveData,
                 GameType = moveData.GetGameType()
             };
-            try
-            {
-                return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/matches/moves").PutJsonAsync(wrapper).ReceiveJson<MatchStatus>();
-            } 
-            catch(FlurlHttpException e)
-            {
-                // TODO
-            }
-            return Task.FromResult<MatchStatus>(null);
+            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/matches/moves").PutJsonAsync(wrapper).ReceiveJson<MatchStatus>();
 
         }
 

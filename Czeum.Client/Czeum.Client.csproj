@@ -151,6 +151,7 @@
     <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\MatchListDataTemplateSelector.cs" />
+    <Compile Include="ViewModels\ApiProblemDetails.cs" />
     <Compile Include="ViewModels\ChessPageViewModel.cs" />
     <Compile Include="ViewModels\Connect4PageViewModel.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
