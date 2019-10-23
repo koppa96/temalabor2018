@@ -23,7 +23,7 @@ namespace Czeum.Connect4Logic.Services
             var board = new Connect4Board();
             board.DeserializeContent(serializedBoard);
 
-            var item = playerId == 1 ? Item.Red : Item.Yellow;
+            var item = playerId == 0 ? Item.Red : Item.Yellow;
 
             board.PlaceItem(item, moveData.Column);
             serializedBoard.BoardData = board.SerializeContent().BoardData;
