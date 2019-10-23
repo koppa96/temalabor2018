@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {AuthService} from '../../services/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoginData} from '../../models/auth-models';
+import { FieldValidator } from '../../utility/field-validator';
 
 @Component({
   selector: 'app-login',
@@ -10,10 +11,11 @@ import {LoginData} from '../../models/auth-models';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  private loginForm: FormGroup;
-  private redirectUrl: string | null;
-  private loginUnsuccessful = false;
-  private isLoading = false;
+  loginForm: FormGroup;
+  redirectUrl: string | null;
+  loginUnsuccessful = false;
+  isLoading = false;
+  validator: FieldValidator;
 
   constructor(
     formBuilder: FormBuilder,
@@ -37,9 +39,11 @@ export class LoginComponent implements OnInit {
       ).finally(
         () => this.isLoading = false
       );
+
+    this.validator = new FieldValidator(this.loginForm);
   }
 
-  private onSuccessfulLogin() {
+  onSuccessfulLogin() {
     if (this.redirectUrl) {
       return this.router.navigate([this.redirectUrl]);
     } else {
@@ -66,11 +70,5 @@ export class LoginComponent implements OnInit {
           () => this.isLoading = false
         );
     }
-  }
-
-  fieldHasError(fieldName: string, error?: string): boolean {
-    return error ?
-      this.loginForm.controls[fieldName].touched && this.loginForm.controls[fieldName].hasError(error) :
-      this.loginForm.controls[fieldName].touched && this.loginForm.controls[fieldName].invalid;
   }
 }

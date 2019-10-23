@@ -1,1 +1,46 @@
-<p>register works!</p>
+<div class="container h-100">
+  <div class="row justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">Regisztráció</h2>
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+            <div class="form-group">
+              <label for="username">Felhasználónév</label>
+              <input id="username" name="username" type="text" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('username')}" formControlName="username" required>
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('username', 'required')">Kötelező</div>
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input id="email" name="email" type="email" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('email')}" formControlName="email" required email>
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('email', 'required')">Kötelező</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('email', 'email')">Nem megfelelő formátum</div>
+            </div>
+            <div class="form-group">
+              <label for="password">Jelszó</label>
+              <input id="password" name="password" type="password" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('password')}" formControlName="password" required minlength="6" appPasswordValidator appReverseMatchValue [comparedFieldNames]="['confirmPassword']">
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('password', 'required')">Kötelező</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('password', 'minlength')">Legalább 6 karakter szükséges</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('password', 'password')">Kisbetű, nagybetű és szám megadása kötelező</div>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Jelszó megerősítése</label>
+              <input id="confirmPassword" name="confirmPassword" type="password" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('confirmPassword')}" formControlName="confirmPassword" required appMatchValue comparedField="password">
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('confirmPassword', 'required')">Kötelező</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('confirmPassword', 'matchValue')">A jelszavak nem egyeznek</div>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-link" [routerLink]="['/login']">Vissza a bejelentkezéshez</button>
+              <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span class="spinner-border spinner-border-sm" *ngIf="isLoading"></span>
+                Regisztráció
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

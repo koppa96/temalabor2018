@@ -13,6 +13,9 @@ import { LoginComponent } from './components/login/login.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { AuthGuard } from './auth-guard/auth-guard';
 import { RegisterComponent } from './components/register/register.component';
+import { PasswordValidatorDirective } from './directives/password-validator.directive';
+import { MatchValueDirective } from './directives/match-value.directive';
+import { ReverseMatchValueDirective } from './directives/reverse-match-value.directive';
 
 @NgModule({
   declarations: [
@@ -22,6 +25,9 @@ import { RegisterComponent } from './components/register/register.component';
     LoginComponent,
     ChangePasswordComponent,
     RegisterComponent,
+    PasswordValidatorDirective,
+    MatchValueDirective,
+    ReverseMatchValueDirective,
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -31,6 +37,7 @@ import { RegisterComponent } from './components/register/register.component';
       {path: '', redirectTo: 'home', pathMatch: 'full'},
       {path: 'home', component: HomeComponent},
       {path: 'login', component: LoginComponent},
+      {path: 'register', component: RegisterComponent},
       {path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard]}
     ]),
     ReactiveFormsModule
