@@ -36,7 +36,7 @@ namespace Czeum.ChessLogic.Pieces
 
         public override bool CanAttack(Field targetField)
         {
-            if (!base.CanAttack(targetField))
+            if (!base.CanMoveTo(targetField))
             {
                 return false;
             }
