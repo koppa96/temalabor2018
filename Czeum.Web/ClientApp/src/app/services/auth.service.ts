@@ -62,8 +62,8 @@ export class AuthService {
     }
 
     const form = new URLSearchParams();
-    form.append('client_id', 'ChitchatUWPClient');
-    form.append('client_secret', 'UWPClientSecret');
+    form.append('client_id', 'CzeumAngularClient');
+    form.append('client_secret', 'CzeumAngularClientSecret');
     form.append('grant_type', 'refresh_token');
     form.append('refresh_token', refreshToken);
     form.append('scope', 'offline_access chitchat_api');

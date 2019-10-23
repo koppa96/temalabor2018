@@ -8,18 +8,23 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="['/home']">Home</a>
+          <a class="nav-link" [routerLink]="['/home']">Kezdőlap</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link">Change password</a>
+          <a class="nav-link" [routerLink]="['/change-password']">Jelszóváltoztatás</a>
         </li>
       </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link">Sign in</a>
+      <ul class="navbar-nav" *ngIf="!authService.isLoggedIn()">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/login']">Bejelentkezés</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link">Register</a>
+          <a class="nav-link">Regisztráció</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav" *ngIf="authService.isLoggedIn()">
+        <li class="nav-item">
+          <a class="nav-link" (click)="onLogout()">Kijelentkezés</a>
         </li>
       </ul>
     </div>

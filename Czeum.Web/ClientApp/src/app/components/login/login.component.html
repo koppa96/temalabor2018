@@ -1,0 +1,28 @@
+<div class="container h-100">
+  <div class="row justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+        <div class="form-group">
+          <label for="username">Felhasználónév</label>
+          <input id="username" name="username" type="text" class="form-control" [ngClass]="{'is-invalid': fieldHasError('username')}" formControlName="username" required>
+          <div class="invalid-feedback" *ngIf="fieldHasError('username', 'required')">Kötelező</div>
+        </div>
+        <div class="form-group">
+          <label for="password">Jelszó</label>
+          <input id="password"  name="password" type="password" class="form-control" [ngClass]="{'is-invalid': fieldHasError('password')}" formControlName="password" required>
+          <div class="invalid-feedback" *ngIf="fieldHasError('password', 'required')">Kötelező</div>
+        </div>
+        <div class="alert alert-danger" *ngIf="loginUnsuccessful">
+          A megadott felhasználónév vagy jelszó hibás!
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-link" [routerLink]="['/register']">Fiók létrehozása</button>
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <span class="spinner-border spinner-border-sm" *ngIf="isLoading"></span>
+            Bejelentkezés
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
