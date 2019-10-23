@@ -10,16 +10,18 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Czeum.Core.DTOs.Extensions;
+using Czeum.Core.Services;
 
 namespace Czeum.Client.ViewModels
 {
     public class LobbyDetailsPageViewModel : ViewModelBase
     {
-        private Core.Services.ILobbyService lobbyService;
+        private ILobbyService lobbyService;
         private ILoggerFacade loggerService;
         private INavigationService navigationService;
         private IUserManagerService userManagerService;
-        private Core.Services.IMatchService matchService;
+        private IMatchService matchService;
+        private IMatchStore matchStore;
 
         private string inviteeName;
 
@@ -39,7 +41,7 @@ namespace Czeum.Client.ViewModels
         public bool IsUserGuest => lobbyStore.SelectedLobby.Guests.Contains(userManagerService.Username);
 
         public LobbyDetailsPageViewModel(INavigationService navigationService, ILoggerFacade loggerService,
-            Core.Services.ILobbyService lobbyService, IUserManagerService userManagerService, ILobbyStore lobbyStore, Core.Services.IMatchService matchService)
+            ILobbyService lobbyService, IUserManagerService userManagerService, ILobbyStore lobbyStore, IMatchService matchService, IMatchStore matchStore)
         {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
@@ -47,6 +49,7 @@ namespace Czeum.Client.ViewModels
             this.userManagerService = userManagerService;
             this.lobbyStore = lobbyStore;
             this.matchService = matchService;
+            this.matchStore = matchStore;
 
             SaveSettingsCommand = new DelegateCommand(SaveLobbySettings);
             CreateMatchCommand = new DelegateCommand(CreateMatch);
@@ -86,7 +89,8 @@ namespace Czeum.Client.ViewModels
 
         private async void CreateMatch()
         {
-            await matchService.CreateMatchAsync(lobbyStore.SelectedLobby.Id);
+            var match = await matchService.CreateMatchAsync(lobbyStore.SelectedLobby.Id);
+            await matchStore.AddMatch(match);
         }
 
         private async void SaveLobbySettings()

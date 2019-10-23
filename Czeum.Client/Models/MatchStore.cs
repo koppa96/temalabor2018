@@ -10,8 +10,12 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
-namespace Czeum.Client.Models
-{
+namespace Czeum.Client.Models { 
+
+    /// <summary>
+    /// Stores a local cache of all the matches.
+    /// Also keeps track of the currently selected match.
+    /// </summary>
     class MatchStore : IMatchStore, INotifyPropertyChanged
     {
         public ObservableCollection<MatchStatus> MatchList { get; private set; }
@@ -21,7 +25,9 @@ namespace Czeum.Client.Models
             get => selectedMatch;
             set {
                 selectedMatch = value;
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedMatch")); });
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedMatch")); 
+                });
             }
         }
 
@@ -34,20 +40,28 @@ namespace Czeum.Client.Models
 
         public async Task AddMatch(MatchStatus match)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { MatchList.Add(match); });
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                MatchList.Add(match); 
+            });
         }
 
-        public async Task ClearMatches()
+        public async Task AddMatches(IEnumerable<MatchStatus> matches)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { MatchList.Clear(); });
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                foreach(var match in matches)
+                {
+                    MatchList.Add(match);
+                }
+            });
         }
 
         public async Task RemoveMatch(Guid matchId)
         {
             var matchToRemove = MatchList.FirstOrDefault(x => x.Id == matchId);
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { MatchList.Remove(matchToRemove); });
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                MatchList.Remove(matchToRemove); 
+            });
         }
-
         public async Task UpdateMatch(MatchStatus match)
         {
             var matchToUpdate = MatchList.FirstOrDefault(x => x.Id== match.Id);
@@ -61,6 +75,14 @@ namespace Czeum.Client.Models
                 {
                     SelectedMatch = match;
                 }
+            });
+        }
+
+
+        public async Task ClearMatches()
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
+                MatchList.Clear(); 
             });
         }
 

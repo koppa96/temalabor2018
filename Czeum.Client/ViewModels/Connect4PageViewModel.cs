@@ -1,6 +1,7 @@
 ﻿using Czeum.Client.Interfaces;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Connect4;
+using Czeum.Core.Services;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using System;
@@ -25,10 +26,17 @@ namespace Czeum.Client.ViewModels
             ObjectPlacedCommand = new DelegateCommand<Tuple<int, int>>(ObjectPlaced);
         }
 
-        private void ObjectPlaced(Tuple<int, int> position)
+        private async void ObjectPlaced(Tuple<int, int> position)
         {
-            var moveData = new Connect4MoveData() { MatchId = matchService.CurrentMatch.Id, Column = position.Item2 };
-            matchService.DoMove(moveData);
+            var moveData = new Connect4MoveData() { 
+                MatchId = matchStore.SelectedMatch.Id,
+                Column = position.Item2 
+            };
+            var result = await matchService.HandleMoveAsync(moveData);
+            if (result != null)
+            {
+                await matchStore.UpdateMatch(result);
+            }
         }
 
     }

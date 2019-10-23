@@ -1,10 +1,14 @@
 ﻿using Czeum.Client.Interfaces;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Chess;
+using Czeum.Core.DTOs.Extensions;
+using Czeum.Core.DTOs.Wrappers;
+using Czeum.Core.Services;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Czeum.Client.ViewModels
@@ -26,11 +30,11 @@ namespace Czeum.Client.ViewModels
             this.matchStore = matchStore;
             this.matchService = matchService;
 
-            FieldSelectedCommand = new DelegateCommand<Tuple<int,int>>(FieldSelected);
+            FieldSelectedCommand = new DelegateCommand<Tuple<int,int>>((x) => FieldSelected(x));
             PieceSelectedCommand = new DelegateCommand<Tuple<int,int>>(PieceSelected);
         }
 
-        private void FieldSelected(Tuple<int, int> selectedFieldCoords)
+        private async Task FieldSelected(Tuple<int, int> selectedFieldCoords)
         {
             if(selectedPiece == null)
             {
@@ -38,22 +42,33 @@ namespace Czeum.Client.ViewModels
             }
             selectedField = selectedFieldCoords;
 
-            var moveData = new ChessMoveData() { MatchId = matchService.CurrentMatch.Id, FromColumn = selectedPiece.Item1, FromRow = selectedPiece.Item2, ToColumn = selectedField.Item1, ToRow = selectedField.Item2};
-            matchService.DoMove(moveData);
+            var moveData = new ChessMoveData() { 
+                MatchId = matchStore.SelectedMatch.Id, 
+                FromColumn = selectedPiece.Item1, 
+                FromRow = selectedPiece.Item2, 
+                ToColumn = selectedField.Item1, 
+                ToRow = selectedField.Item2
+            };
+
+            var result = await matchService.HandleMoveAsync(moveData);
+            if(result != null)
+            {
+                await matchStore.UpdateMatch(result);
+            }
 
             selectedField = null;
             selectedPiece = null;
         }
 
-        private void PieceSelected(Tuple<int, int> selectedPieceCoords)
+        private async void PieceSelected(Tuple<int, int> selectedPieceCoords)
         {
-            ChessMoveResult moveResult = (ChessMoveResult) matchService.CurrentMatch.CurrentBoard.Content;
+            ChessMoveResult moveResult = (ChessMoveResult) matchStore.SelectedMatch.CurrentBoard.Content;
             var clickedPiece = moveResult.PieceInfos.FirstOrDefault(p => p.Column == selectedPieceCoords.Item1 && p.Row == selectedPieceCoords.Item2);
             //If we clicked on the opponent's piece
-            if((matchService.CurrentMatch.CurrentPlayerIndex == 1 && clickedPiece.Color == Color.Black)
-                || (matchService.CurrentMatch.CurrentPlayerIndex == 2 && clickedPiece.Color == Color.White))
+            if((matchStore.SelectedMatch.CurrentPlayerIndex == 1 && clickedPiece.Color == Color.Black)
+                || (matchStore.SelectedMatch.CurrentPlayerIndex == 2 && clickedPiece.Color == Color.White))
             {
-                FieldSelected(selectedPieceCoords);
+                await FieldSelected(selectedPieceCoords);
                 return;
             }
             selectedPiece = selectedPieceCoords;

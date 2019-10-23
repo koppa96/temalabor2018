@@ -132,6 +132,7 @@
     <Compile Include="Converters\SelectedLobbyVisibilityConverter.cs" />
     <Compile Include="Converters\StatusToRadioConverter.cs" />
     <Compile Include="DTOs\NotifyingLobbyData.cs" />
+    <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
     <Compile Include="Interfaces\ILobbyStore.cs" />

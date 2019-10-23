@@ -19,5 +19,6 @@ namespace Czeum.Client.Interfaces
         MatchStatus SelectedMatch{ get; set; }
 
         void SelectMatch(MatchStatus match);
+        Task AddMatches(IEnumerable<MatchStatus> matches);
     }
 }

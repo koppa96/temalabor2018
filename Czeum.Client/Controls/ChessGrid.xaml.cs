@@ -59,7 +59,7 @@ namespace Czeum.Client.Controls
             }
 
             BoardContainer.Children.Clear();
-            if(Match.PlayerIndex == 1)
+            if(Match.PlayerIndex == 0)
             {
                 DrawBoard();
                 PlacePieces(boardData);

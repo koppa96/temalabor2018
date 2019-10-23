@@ -31,27 +31,12 @@ namespace Czeum.Client.Services
     {
         private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
         private IUserManagerService userManagerService;
-        private INavigationService navigationService;
-        private ILobbyStore lobbyStore;
-        private IHubService hubService;
 
-        public LobbyService(INavigationService navigationService, ILobbyStore lobbyStore, IHubService hubService, IUserManagerService userManagerService)
+        public LobbyService(IUserManagerService userManagerService)
         {
             this.userManagerService = userManagerService;
-            this.navigationService = navigationService;
-            this.lobbyStore = lobbyStore;
-            this.hubService = hubService;
         }
-       
-        public Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player)
-        {
-            throw new NotImplementedException();
-        }
-        public Task DisconnectPlayerFromLobby(string username)
-        {
-            throw new NotImplementedException();
-        }
-
+               
         public Task<LobbyDataWrapper> CreateAndAddLobbyAsync(GameType type, LobbyAccess access, string name)
         {
             var createDTO = new CreateLobbyDto()
@@ -74,22 +59,6 @@ namespace Czeum.Client.Services
             return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment("api/lobbies").GetJsonAsync<List<LobbyDataWrapper>>();
         }
 
-        public Task<LobbyDataWrapper> GetLobby(Guid lobbyId)
-        {
-            //return BASE_URL.AppendPathSegment("lobbies").
-            throw new NotImplementedException();
-        }
-
-        public Task<LobbyData> GetLobbyOfUser(string user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<string>> GetOthersInLobby(Guid lobbyId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<LobbyDataWrapper> InvitePlayerToLobby(Guid lobbyId, string player)
         {
             return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyId}/invite").SetQueryParam("playerName", player).PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
@@ -105,19 +74,50 @@ namespace Czeum.Client.Services
             return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyId}/kick/{guestName}").PostJsonAsync(null).ReceiveJson<LobbyDataWrapper>();
         }
 
+        public Task<LobbyDataWrapper> UpdateLobbySettingsAsync(LobbyDataWrapper lobbyData)
+        {
+            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyData.Content.Id}").PutJsonAsync(lobbyData).ReceiveJson<LobbyDataWrapper>();
+        }
+
+        // Not needed on the client
         public Task<bool> LobbyExists(Guid lobbyId)
         {
             throw new NotImplementedException();
         }
 
+        // Not needed on the client
         public void RemoveLobby(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<LobbyDataWrapper> UpdateLobbySettingsAsync(LobbyDataWrapper lobbyData)
+        // Not needed on the client
+        public Task DisconnectPlayerFromLobby(string username)
         {
-            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyData.Content.Id}").PutJsonAsync(lobbyData).ReceiveJson<LobbyDataWrapper>();
+            throw new NotImplementedException();
+        }
+
+        // Not needed on the client
+        public Task<LobbyDataWrapper> GetLobby(Guid lobbyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // Not needed on the client
+        public Task<LobbyData> GetLobbyOfUser(string user)
+        {
+            throw new NotImplementedException();
+        }
+
+        // Not needed on the client
+        public Task<IEnumerable<string>> GetOthersInLobby(Guid lobbyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player)
+        {
+            throw new NotImplementedException();
         }
     }
 }

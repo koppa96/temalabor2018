@@ -1,6 +1,8 @@
-﻿using Czeum.Client.Interfaces;
+﻿using Czeum.Client.Extensions;
+using Czeum.Client.Interfaces;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.DTOs;
+using Czeum.Core.Services;
 using Prism.Commands;
 using Prism.Logging;
 using Prism.Windows.Mvvm;
@@ -26,7 +28,7 @@ namespace Czeum.Client.ViewModels
         private IHubService hubService;
         public IMatchStore MatchStore { get; private set; }
 
-        public ObservableCollection<MatchStatus> LobbyList { get => matchService.MatchList; }
+        public ObservableCollection<MatchStatus> LobbyList { get => MatchStore.MatchList; }
 
         public ICommand OpenGameCommand { get; set; }
 
@@ -42,19 +44,25 @@ namespace Czeum.Client.ViewModels
             this.hubService = hubService;
             this.MatchStore = matchStore;
 
-            matchService.QueryMatchList();
-
             OpenGameCommand = new DelegateCommand<MatchStatus>(OpenGame);
         }
 
         private void OpenGame(MatchStatus match)
         {
-            matchService.OpenMatch(match);
+            MatchStore.SelectMatch(match);
+            PageTokens targetPage = match.CurrentBoard.GetPageToken();
+            navigationService.Navigate(targetPage.ToString(), null);
         }
+
 
         public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
         {
             base.OnNavigatedTo(e, viewModelState);
+
+            IEnumerable<MatchStatus> matches = await matchService.GetMatchesAsync();
+            await MatchStore.ClearMatches();
+            await MatchStore.AddMatches(matches);
+
             await hubService.ConnectToHubAsync();
         }
     }

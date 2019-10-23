@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.DTOs;
+using Czeum.Core.Services;
 
 namespace Czeum.Client.Clients
 {
