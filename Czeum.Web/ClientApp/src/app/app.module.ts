@@ -16,6 +16,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { PasswordValidatorDirective } from './directives/password-validator.directive';
 import { MatchValueDirective } from './directives/match-value.directive';
 import { ReverseMatchValueDirective } from './directives/reverse-match-value.directive';
+import { BackendValidatorDirectiveDirective } from './directives/backend-validator-directive.directive';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ReverseMatchValueDirective } from './directives/reverse-match-value.dir
     PasswordValidatorDirective,
     MatchValueDirective,
     ReverseMatchValueDirective,
+    BackendValidatorDirectiveDirective,
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

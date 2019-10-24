@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {RegisterData} from '../../models/auth-models';
 import { FieldValidator } from '../../utility/field-validator';
+import { BackendValidatorContext } from '../../models/backend-validator-context';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +15,20 @@ export class RegisterComponent implements OnInit {
   isLoading = false;
   validator: FieldValidator;
 
-  constructor(formBuilder: FormBuilder) {
+  usernameValidationContext = new BackendValidatorContext(
+    this.authService,
+    (self, value) => self.usernameAvailable(value)
+  );
+
+  emailValidationContext = new BackendValidatorContext(
+    this.authService,
+    (self, value) => self.emailAvailable(value)
+  );
+
+  constructor(
+    formBuilder: FormBuilder,
+    private authService: AuthService
+  ) {
     this.registerForm = formBuilder.group({
       username: '',
       email: '',
