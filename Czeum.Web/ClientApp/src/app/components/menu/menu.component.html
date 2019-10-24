@@ -14,19 +14,29 @@
           <a class="nav-link" [routerLink]="['/change-password']">Jelszóváltoztatás</a>
         </li>
       </ul>
-      <ul class="navbar-nav" *ngIf="!authService.isLoggedIn()">
-        <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" [routerLink]="['/login']">Bejelentkezés</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/register']">Regisztráció</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav" *ngIf="authService.isLoggedIn()">
-        <li class="nav-item">
-          <a class="nav-link" (click)="onLogout()">Kijelentkezés</a>
-        </li>
-      </ul>
+      <div *ngIf="isLoading">
+        <div class="spinner-border text-secondary"></div>
+      </div>
+      <div *ngIf="!isLoading">
+        <ul class="navbar-nav" *ngIf="!userInfo">
+          <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" [routerLink]="['/login']">Bejelentkezés</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/register']">Regisztráció</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav" *ngIf="userInfo">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{ userInfo.username }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" (click)="logout()">Kijelentkezés</a>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>

@@ -7,14 +7,16 @@
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
             <div class="form-group">
               <label for="username">Felhasználónév</label>
-              <input id="username" name="username" type="text" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('username')}" formControlName="username" required>
+              <input id="username" name="username" type="text" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('username')}" formControlName="username" required appBackendValidator [context]="usernameValidationContext">
               <div class="invalid-feedback" *ngIf="validator.fieldHasError('username', 'required')">Kötelező</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('username', 'backend')">A felhasználónév már foglalt</div>
             </div>
             <div class="form-group">
               <label for="email">E-mail</label>
-              <input id="email" name="email" type="email" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('email')}" formControlName="email" required email>
+              <input id="email" name="email" type="email" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('email')}" formControlName="email" required email appBackendValidator [context]="emailValidationContext">
               <div class="invalid-feedback" *ngIf="validator.fieldHasError('email', 'required')">Kötelező</div>
               <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('email', 'email')">Nem megfelelő formátum</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('email', 'backend')">Az e-mail cím már foglalt</div>
             </div>
             <div class="form-group">
               <label for="password">Jelszó</label>

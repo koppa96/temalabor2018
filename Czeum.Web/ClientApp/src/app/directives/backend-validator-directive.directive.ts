@@ -5,7 +5,7 @@ import { Observable, timer } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 @Directive({
-  selector: '[appDuplicationValidator]',
+  selector: '[appBackendValidator]',
   providers: [
     { provide: NG_ASYNC_VALIDATORS, useExisting: BackendValidatorDirectiveDirective, multi: true }
   ]
@@ -24,7 +24,7 @@ export class BackendValidatorDirectiveDirective {
         }
 
         return this.context.invoke(value).pipe(
-          map(result => result ? null : { duplicate: true })
+          map(result => result ? null : { backend: true })
         );
       })
     );

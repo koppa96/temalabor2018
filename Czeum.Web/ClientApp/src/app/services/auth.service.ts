@@ -2,11 +2,14 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {LoginData, RegisterData, TokenResponse, UserInfo} from '../models/auth-models';
+import { AuthEventListener } from '../interfaces/AuthEventListener';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private authEventListeners: AuthEventListener[] = [];
+
   constructor(private http: HttpClient, @Inject('API_URL') private apiUrl) { }
 
   private postTokenRequest(formContent: URLSearchParams): Promise<any> {
@@ -16,15 +19,25 @@ export class AuthService {
       })
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.http.post<TokenResponse>(this.apiUrl + '/connect/token', formContent.toString(), options)
         .subscribe(
           resp => {
             localStorage.setItem('access_token', resp.access_token);
             localStorage.setItem('refresh_token', resp.refresh_token);
-            resolve();
+            this.getUserInfo().subscribe(
+              userInfo => {
+                for (const listener of this.authEventListeners) {
+                  if (listener.onLoggedIn) {
+                    listener.onLoggedIn(userInfo);
+                  }
+                }
+                resolve();
+              }
+            );
           },
           () => {
+            this.logout();
             reject();
           }
         );
@@ -83,6 +96,12 @@ export class AuthService {
   logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+
+    for (const listener of this.authEventListeners) {
+      if (listener.onLoggedOut) {
+        listener.onLoggedOut();
+      }
+    }
   }
 
   usernameAvailable(username: string): Observable<boolean> {
@@ -91,13 +110,21 @@ export class AuthService {
     const query = new URLSearchParams();
     query.append('username', username);
 
-    return this.http.get<boolean>(this.apiUrl + '/api/accounts/is-username-free?' + query.toString());
+    return this.http.get<boolean>(this.apiUrl + '/api/accounts/username-available?' + query.toString());
   }
 
   emailAvailable(email: string): Observable<boolean> {
     const query = new URLSearchParams();
     query.append('email', email);
 
-    return this.http.get<boolean>(this.apiUrl + '/api/accounts/is-email-free?' + query.toString());
+    return this.http.get<boolean>(this.apiUrl + '/api/accounts/email-available?' + query.toString());
+  }
+
+  addAuthEventListener(listener: AuthEventListener) {
+    this.authEventListeners.push(listener);
+  }
+
+  removeAuthEventListener(listener: AuthEventListener) {
+    this.authEventListeners.splice(this.authEventListeners.findIndex(x => x === listener), 1);
   }
 }
