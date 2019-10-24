@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Czeum.Api.Controllers
@@ -214,6 +215,35 @@ namespace Czeum.Api.Controllers
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpGet("me")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [Authorize]
+        public async Task<UserInfo> GetPersonalDataAsync()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            return new UserInfo
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.UserName
+            };
+        }
+
+        [HttpGet("username-available")]
+        [ProducesResponseType(200)]
+        public Task<bool> UserNameAvailable([FromQuery] string username)
+        {
+            return userManager.Users.AllAsync(u => u.UserName != username);
+        }
+
+        [HttpGet("email-available")]
+        [ProducesResponseType(200)]
+        public Task<bool> EmailAvailable([FromQuery] string email)
+        {
+            return userManager.Users.AllAsync(u => u.Email != email);
         }
     }
 }
