@@ -17,6 +17,7 @@ import { PasswordValidatorDirective } from './directives/password-validator.dire
 import { MatchValueDirective } from './directives/match-value.directive';
 import { ReverseMatchValueDirective } from './directives/reverse-match-value.directive';
 import { BackendValidatorDirectiveDirective } from './directives/backend-validator-directive.directive';
+import { DetailsComponent } from './components/details/details.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { BackendValidatorDirectiveDirective } from './directives/backend-validat
     MatchValueDirective,
     ReverseMatchValueDirective,
     BackendValidatorDirectiveDirective,
+    DetailsComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -40,7 +42,8 @@ import { BackendValidatorDirectiveDirective } from './directives/backend-validat
       {path: 'home', component: HomeComponent},
       {path: 'login', component: LoginComponent},
       {path: 'register', component: RegisterComponent},
-      {path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard]}
+      {path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard]},
+      {path: 'details', component: DetailsComponent}
     ]),
     ReactiveFormsModule
   ],
