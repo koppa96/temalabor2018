@@ -79,7 +79,7 @@ namespace Czeum.Client.ViewModels
                 await dialogService.ShowError("Email must not be empty.");
                 return;
             }
-            else if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(ConfirmPassword)
+            else if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(ConfirmPassword))
             {
                 await dialogService.ShowError("Passwords must not be empty.");
                 return;
