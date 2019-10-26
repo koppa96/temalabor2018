@@ -20,12 +20,14 @@ namespace Czeum.Client.Models {
     /// </summary>
     class LobbyStore : ILobbyStore, INotifyPropertyChanged
     {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         public ObservableCollection<LobbyData> LobbyList { get; private set; }
         private LobbyData selectedLobby;
         public LobbyData SelectedLobby {
             get => selectedLobby;
             set {
                 selectedLobby = value;
+
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { 
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedLobby")); 
                 });
@@ -91,4 +93,6 @@ namespace Czeum.Client.Models {
             });
         }
     }
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
 }
