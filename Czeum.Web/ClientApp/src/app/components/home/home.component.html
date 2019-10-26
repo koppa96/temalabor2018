@@ -4,7 +4,7 @@
   <hr class="my-4">
   <p>A Czeum egy bővíthető keretrendszer szerver-, és kliensalkalmazással társasjátékok valós idejű játékához. Jelenleg két népszerű táblajáték támogatott, a sakk és a Connect4. Ez a portál a felhasználói fiókod kezelésében nyújt segítséget.</p>
   <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Tudj meg többet</a>
+    <a class="btn btn-primary btn-lg" [routerLink]="['/details']" role="button">Tudj meg többet</a>
   </p>
 </div>
 <div class="row">
@@ -14,7 +14,7 @@
       <div class="card-body">
         <h5 class="card-title">Sakk</h5>
         <p>A sakkot szinte mindenki ismeri valamilyen szinten, a nagymúltú táblajáték egyike a játszható játékainknak. A játék célja az ellenfél királyának olyan helyezetbe hozása, hogy ne tudja elkerülni a leütést.</p>
-        <a href="#" class="btn btn-primary">Szabályok</a>
+        <a [routerLink]="['/details']" [queryParams]="{ scrollTo: 'Chess' }" class="btn btn-primary">Szabályok</a>
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
       <div class="card-body">
         <h5 class="card-title">Connect4</h5>
         <p>A Connect4 egy viszonylag ismert, gyerekeknek szánt társasjáték. A cél az, hogy a játékos 4 egyforma színű korongot helyezzen el egymás mellett vízszintesen, függőlegesen vagy átlósan.</p>
-        <a href="#" class="btn btn-primary">Szabályok</a>
+        <a [routerLink]="['/details']" [queryParams]="{ scrollTo: 'Connect4' }" class="btn btn-primary">Szabályok</a>
       </div>
     </div>
   </div>
