@@ -34,7 +34,7 @@ namespace Czeum.Client.ViewModels
             this.matchService = matchService;
             this.dialogService = dialogService;
 
-            FieldSelectedCommand = new DelegateCommand<Tuple<int, int>>((x) => FieldSelected(x));
+            FieldSelectedCommand = new DelegateCommand<Tuple<int, int>>(async (x) => await FieldSelected(x));
             PieceSelectedCommand = new DelegateCommand<Tuple<int, int>>(PieceSelected);
         }
 
@@ -63,7 +63,7 @@ namespace Czeum.Client.ViewModels
             catch (Flurl.Http.FlurlHttpException e)
             {
                 var details = await e.GetResponseJsonAsync<ApiProblemDetails>();
-                dialogService.ShowError(details.Detail);
+                await dialogService.ShowError(details.Detail);
             }
             if (result != null)
             {
@@ -76,11 +76,11 @@ namespace Czeum.Client.ViewModels
 
         private async void PieceSelected(Tuple<int, int> selectedPieceCoords)
         {
-            ChessMoveResult moveResult = (ChessMoveResult)matchStore.SelectedMatch.CurrentBoard.Content;
-            var clickedPiece = moveResult.PieceInfos.FirstOrDefault(p => p.Column == selectedPieceCoords.Item1 && p.Row == selectedPieceCoords.Item2);
+            ChessMoveResult board = (ChessMoveResult)matchStore.SelectedMatch.CurrentBoard.Content;
+            var clickedPiece = board.PieceInfos.FirstOrDefault(p => p.Column == selectedPieceCoords.Item1 && p.Row == selectedPieceCoords.Item2);
             //If we clicked on the opponent's piece
-            if ((matchStore.SelectedMatch.CurrentPlayerIndex == 1 && clickedPiece.Color == Color.Black)
-                || (matchStore.SelectedMatch.CurrentPlayerIndex == 2 && clickedPiece.Color == Color.White))
+            var playerIndex = matchStore.SelectedMatch.CurrentPlayerIndex;
+            if ((playerIndex == 0 && clickedPiece.Color == Color.Black) || (playerIndex == 1 && clickedPiece.Color == Color.White))
             {
                 await FieldSelected(selectedPieceCoords);
                 return;
