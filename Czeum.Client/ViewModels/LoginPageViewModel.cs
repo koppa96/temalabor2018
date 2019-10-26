@@ -56,12 +56,19 @@ namespace Czeum.Client.ViewModels
         private async void LoginAsync()
         {
             dialogService.ShowLoadingDialog();
+            if (string.IsNullOrEmpty(Name))
+            {
+                await dialogService.ShowError("Name must not be empty");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Password))
+            {
+                await dialogService.ShowError("Passwords must not be empty.");
+                return;
+            }
             bool result = await userManagerService.LoginAsync(new Core.DTOs.UserManagement.LoginModel { Username = Name, Password = Password });
             if (result) {
                 navigationService.Navigate("Lobby", null);
-            }
-            else {
-                // await dialogService.ShowError("Login failed. Please try again.");
             }
             ResetFields();
             dialogService.HideLoadingDialog();
@@ -93,9 +100,6 @@ namespace Czeum.Client.ViewModels
             if (result) {
                 await dialogService.ShowSuccess("Registration completed successfully. Please confirm your account with the token sent to your email address.");
             }
-            else {
-                //await dialogService.ShowError("Registration failed. Please try again.");
-            }
             ResetFields();
             dialogService.HideLoadingDialog();
         }
@@ -104,14 +108,20 @@ namespace Czeum.Client.ViewModels
         private async void ConfirmAsync()
         {
             dialogService.ShowLoadingDialog();
+            if (string.IsNullOrEmpty(Email))
+            {
+                await dialogService.ShowError("Email must not be empty.");
+                return;
+            }
+            else if(string.IsNullOrEmpty(ConfirmationToken))
+            {
+                await dialogService.ShowError("Confirmation Token must not be empty.");
+                return;
+            }
             bool result = await userManagerService.ConfirmAsync(Name, ConfirmationToken);
             if (result)
             {
                 await dialogService.ShowSuccess("You have successfully confirmed your registration. You can now log in to your account.");
-            }
-            else
-            {
-                await dialogService.ShowError("Process failed. Please try again.");
             }
             ResetFields();
             dialogService.HideLoadingDialog();
