@@ -34,13 +34,24 @@ namespace Czeum.Client.ViewModels
             get => email;
             set => SetProperty(ref email, value);
         }
-
+        
         public string ConfirmationToken { get; set; }
 
 
         public ICommand LoginCommand { get; private set; }
         public ICommand RegisterCommand { get; private set; }
         public ICommand ConfirmCommand { get; private set; }
+
+        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService, IDialogService dialogService)
+        {
+            this.navigationService = navigationService;
+            this.userManagerService = userManagerService;
+            this.dialogService = dialogService;
+
+            LoginCommand = new DelegateCommand(LoginAsync);
+            RegisterCommand = new DelegateCommand(RegisterAsync);
+            ConfirmCommand = new DelegateCommand(ConfirmAsync);
+        }
 
         private async void LoginAsync()
         {
@@ -50,7 +61,7 @@ namespace Czeum.Client.ViewModels
                 navigationService.Navigate("Lobby", null);
             }
             else {
-                await dialogService.ShowError("Login failed. Please try again.");
+                // await dialogService.ShowError("Login failed. Please try again.");
             }
             ResetFields();
             dialogService.HideLoadingDialog();
@@ -58,8 +69,24 @@ namespace Czeum.Client.ViewModels
 
         private async void RegisterAsync() {
             dialogService.ShowLoadingDialog();
-            if(ConfirmPassword != Password)
+            if (string.IsNullOrEmpty(Name))
             {
+                await dialogService.ShowError("Name must not be empty");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Email))
+            {
+                await dialogService.ShowError("Email must not be empty.");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(ConfirmPassword)
+            {
+                await dialogService.ShowError("Passwords must not be empty.");
+                return;
+            }
+            else if(ConfirmPassword != Password)
+            {
+                await dialogService.ShowError("Passwords do not match.");
                 return;
             }
             bool result = await userManagerService.RegisterAsync(new Core.DTOs.UserManagement.RegisterModel { Username = Name, Password = Password, Email = Email});
@@ -67,7 +94,7 @@ namespace Czeum.Client.ViewModels
                 await dialogService.ShowSuccess("Registration completed successfully. Please confirm your account with the token sent to your email address.");
             }
             else {
-                await dialogService.ShowError("Registration failed. Please try again.");
+                //await dialogService.ShowError("Registration failed. Please try again.");
             }
             ResetFields();
             dialogService.HideLoadingDialog();
@@ -90,20 +117,11 @@ namespace Czeum.Client.ViewModels
             dialogService.HideLoadingDialog();
         }
 
-        public LoginPageViewModel(IUserManagerService userManagerService, INavigationService navigationService, IDialogService dialogService)
-        {
-            this.navigationService = navigationService;   
-            this.userManagerService = userManagerService;
-            this.dialogService = dialogService;
-
-            LoginCommand = new DelegateCommand(LoginAsync);
-            RegisterCommand = new DelegateCommand(RegisterAsync);
-            ConfirmCommand = new DelegateCommand(ConfirmAsync);
-        }
         private void ResetFields()
         {
             Name = "";
             Password = "";
+            ConfirmPassword = "";
             ConfirmationToken = "";
             Email = "";
         }

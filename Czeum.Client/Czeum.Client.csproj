@@ -151,6 +151,7 @@
     <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\MatchListDataTemplateSelector.cs" />
+    <Compile Include="UntrustedCertClientFactory.cs" />
     <Compile Include="ViewModels\ApiProblemDetails.cs" />
     <Compile Include="ViewModels\ChessPageViewModel.cs" />
     <Compile Include="ViewModels\Connect4PageViewModel.cs" />
@@ -314,7 +315,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Flurl">
-      <Version>3.0.0-pre1</Version>
+      <Version>2.8.2</Version>
     </PackageReference>
     <PackageReference Include="Flurl.Http">
       <Version>2.4.2</Version>

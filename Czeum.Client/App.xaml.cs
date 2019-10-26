@@ -26,15 +26,13 @@ using Prism.Windows.Navigation;
 using Czeum.Client.Models;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Client.Clients;
+using Flurl.Http;
+using Flurl;
 
 namespace Czeum.Client
 {
     sealed partial class App : PrismUnityApplication
     {
-   
-        public static string Token { get; set; }
-        public static readonly string AppUrl = "https://koppa96.sch.bme.hu/Czeum.Server";
-
         public App()
         {
             this.InitializeComponent();
@@ -50,11 +48,14 @@ namespace Czeum.Client
             Container.RegisterType<ILobbyStore, LobbyStore>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyClient, LobbyClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHubService, HubService>(new ContainerControlledLifetimeManager());
-
-            //Container.RegisterType<IErrorClient, ErrorClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IGameClient, GameClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<Core.Services.IMatchService, MatchService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMatchStore, MatchStore>(new ContainerControlledLifetimeManager());
+
+            // Configure Flurl to ignore untrusted certificates
+            var baseUrl = Current.Resources["BaseUrl"].ToString();
+            FlurlHttp.ConfigureClient(baseUrl.AppendPathSegment("api"), cli => cli.Settings.HttpClientFactory = new UntrustedCertClientFactory());
+
             return Task.FromResult<object>(null);
         }
 

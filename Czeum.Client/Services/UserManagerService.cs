@@ -10,12 +10,16 @@ using System.Threading.Tasks;
 using Flurl.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Flurl;
+using Flurl.Http;
 
 namespace Czeum.Client.Services {
     public class UserManagerService : IUserManagerService
     {
         //private string BASE_URL = "https://localhost:5001";
         private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
+
+        private IDialogService dialogService;
 
         public string AccessToken { get; private set; }
         private string refreshToken;
@@ -29,156 +33,73 @@ namespace Czeum.Client.Services {
             return true;
         }
 
-        public UserManagerService()
+        public UserManagerService(IDialogService dialogService)
         {
+            this.dialogService = dialogService;
         }
 
-        public async Task<bool> ChangePasswordAsync(ChangePasswordModel data) {
-            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
-            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-            using (var client = new HttpClient(ignoreCertHandler)) {
-                var json = JsonConvert.SerializeObject(data);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                try {
-                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/account/change-password");
-                    var response = await client.PostAsync(targetUrl, content);
-                    if (response.StatusCode == HttpStatusCode.OK) {
-                        //Registration successfully completed
-                        return true;
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.InternalServerError) {
-                        //Server error occurred
-                        return false;
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.BadRequest) {
-                        //Malformed request
-                        return false;
-                    }
-                }
-                catch (Exception e) {
-                    //Most probably timeout
-                    return false;
-                }
+        public async Task<bool> ChangePasswordAsync(ChangePasswordModel data) 
+        {
+            try
+            {
+                await BASE_URL.AppendPathSegment("api/account/change-password").PostJsonAsync(data).ReceiveString();
+                return true;
+            }
+            catch (FlurlHttpException e)
+            {
+                await dialogService.ShowError("Changing password failed");
                 return false;
             }
         }
 
         public async Task<bool> LoginAsync(LoginModel data)
         {
-            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
-            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-            using (var client = new HttpClient(ignoreCertHandler))
+            try
             {
-                var formContent = new FormUrlEncodedContent(new []
+                var result = await BASE_URL.AppendPathSegment("connect/token").PostUrlEncodedAsync(new
                 {
-                    new KeyValuePair<string, string>("grant_type", "password"),
-                    new KeyValuePair<string, string>("username", data.Username),
-                    new KeyValuePair<string, string>("password", data.Password),
-                    new KeyValuePair<string, string>("scope", "czeum_api offline_access"),
-                    new KeyValuePair<string, string>("client_id", "CzeumUWPClient"),
-                    new KeyValuePair<string, string>("client_secret", "UWPClientSecret") 
-                });
+                    grant_type = "password",
+                    username = data.Username,
+                    password = data.Password,
+                    scope = "czeum_api offline_access",
+                    client_id = "CzeumUWPClient",
+                    client_secret = "UWPClientSecret"
+                }).ReceiveString();
 
-                try
-                {
-                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/connect/token");
-                    var response = await client.PostAsync(targetUrl, formContent);
-                    string responseString = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        //Login successful
-                        ParseJsonResponse(await response.Content.ReadAsStringAsync());
-                        return true;
-                    }
+                ParseJsonResponse(result);
+                return true;
 
-                    if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        //Server error occurred
-                        return false;
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.BadRequest)
-                    {
-                        //Incorrect credentials
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    //Timeout
-                    return false;
-                }
-
+            } catch (FlurlHttpException e)
+            {
+                await dialogService.ShowError("Login failed");
                 return false;
             }
         }
 
         public async Task<bool> RegisterAsync(RegisterModel data)
         {
-            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
-            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-            using (var client = new HttpClient(ignoreCertHandler)) {
-                var json = JsonConvert.SerializeObject(data);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                
-                try
-                {
-                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/accounts/register");
-                    var response = await client.PostAsync(targetUrl, content);
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        //Registration successfully completed
-                        return true;
-                    }
+            try
+            {
+                await BASE_URL.AppendPathSegment("api/accounts/register").PostJsonAsync(data);
+                return true;
 
-                    if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        //Server error occurred
-                        return false;
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.BadRequest)
-                    {
-                        //Malformed request
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    //Most probably timeout
-                    return false;
-                }
+            }
+            catch (FlurlHttpException e)
+            {
+                await dialogService.ShowError("Registration failed");
                 return false;
             }
         }
         public async Task<bool> ConfirmAsync(string name, string confirmationToken)
         {
-            HttpClientHandler ignoreCertHandler = new HttpClientHandler();
-            ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-            using (var client = new HttpClient(ignoreCertHandler))
+            try
             {
-                try
-                {
-                    var targetUrl = new Flurl.Url(BASE_URL)
-                        .AppendPathSegments(new[] { "api", "confirm-email" })
-                        .SetQueryParams(new { username = name, token = confirmationToken })
-                        .ToString();
-                    var response = await client.PostAsync(targetUrl, null);
-                    string responseString = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        return true;
-                    }
-                }
-                catch (Exception e)
-                {
-                    //Timeout
-                    return false;
-                }
-
+                await BASE_URL.AppendPathSegment("api/accounts/confirm-email").SetQueryParams(new { username = name, token = confirmationToken }).PostAsync(null).ReceiveString();
+                return true;
+            } 
+            catch (FlurlHttpException e)
+            {
+                await dialogService.ShowError("Email confirmation failed");
                 return false;
             }
         }
