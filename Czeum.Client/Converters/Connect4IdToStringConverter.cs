@@ -12,11 +12,11 @@ namespace Czeum.Client.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             int id = (int)value;
-            if (id == 1)
+            if (id == 0)
             {
                 return "red";
             }
-            else if (id == 2)
+            else if (id == 1)
             {
                 return "yellow";
             }

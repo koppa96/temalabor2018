@@ -120,15 +120,7 @@
     <Compile Include="Converters\ChessIdToStringConverter.cs" />
     <Compile Include="Converters\Connect4IdToStringConverter.cs" />
     <Compile Include="Converters\GuestsToStringConverter.cs" />
-    <Compile Include="Converters\MatchStatusSymbolConverter.cs" />
     <Compile Include="Converters\GameStateToStringConverter.cs" />
-    <Compile Include="Converters\MatchStatusVisibilityConverter.cs" />
-    <Compile Include="Converters\PlayerColorConverter.cs" />
-    <Compile Include="Converters\InvitedPlayerNotificationConverter.cs" />
-    <Compile Include="Converters\InvitedPlayersConverter.cs" />
-    <Compile Include="Converters\LobbyStatusConverter.cs" />
-    <Compile Include="Converters\SelectedLobbyVisibilityConverter.cs" />
-    <Compile Include="Converters\StatusToRadioConverter.cs" />
     <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
