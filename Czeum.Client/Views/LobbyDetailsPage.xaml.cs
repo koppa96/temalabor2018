@@ -36,9 +36,5 @@ namespace Czeum.Client.Views {
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConcreteDataContext)));
         }
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            ;
-        }
     }
 }

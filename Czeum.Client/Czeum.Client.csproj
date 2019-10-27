@@ -122,6 +122,7 @@
     <Compile Include="Converters\GuestsToStringConverter.cs" />
     <Compile Include="Converters\GameStateToStringConverter.cs" />
     <Compile Include="Converters\InviteStatusConverter.cs" />
+    <Compile Include="Converters\MessageTrimmerConverter.cs" />
     <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\MatchListDataTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\MessageTemplateSelector.cs" />
     <Compile Include="UntrustedCertClientFactory.cs" />
     <Compile Include="ViewModels\ApiProblemDetails.cs" />
     <Compile Include="ViewModels\ChessPageViewModel.cs" />

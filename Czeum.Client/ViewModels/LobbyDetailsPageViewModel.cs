@@ -54,6 +54,7 @@ namespace Czeum.Client.ViewModels
         public ICommand SendMessageCommand { get; private set; }
 
         public bool IsUserGuest => lobbyStore.SelectedLobby.Guests.Contains(userManagerService.Username);
+        public string Username => userManagerService.Username;
 
         public LobbyDetailsPageViewModel(INavigationService navigationService, 
                                          ILoggerFacade loggerService,
@@ -187,6 +188,10 @@ namespace Czeum.Client.ViewModels
 
         private async void SendMessage()
         {
+            if (string.IsNullOrEmpty(MessageText))
+            {
+                return;
+            }
             try
             {
                 var messageResult = await messageService.SendToLobbyAsync(lobbyStore.SelectedLobby.Id, MessageText);

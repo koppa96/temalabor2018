@@ -77,7 +77,7 @@
         <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
         <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
         <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
-        <converters:InviteStatusConverter x:Name="szar" x:Key="InviteStatusConverter" CompareTo="{x:Bind ConcreteDataContext.Username}"/>
+        <converters:InviteStatusConverter x:Name="InviteStatusConverter" x:Key="InviteStatusConverter" CompareTo="{x:Bind ConcreteDataContext.Username}"/>
     </Page.Resources>
 
     <Grid>

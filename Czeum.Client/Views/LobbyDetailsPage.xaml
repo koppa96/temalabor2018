@@ -13,6 +13,8 @@
     xmlns:chess="using:Czeum.Core.DTOs.Chess"
     xmlns:dtos="using:Czeum.Core.DTOs"
     xmlns:system="using:System"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -32,9 +34,38 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="SentMessageTemplate" x:DataType="dtos:Message">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" HorizontalAlignment="Right" Background="LightGray" BorderBrush="Black" BorderThickness="1" Padding="4" Margin="20, 0, 0, 0" CornerRadius="8">
+                    <TextBlock HorizontalTextAlignment="Right" TextWrapping="WrapWholeWords" ToolTipService.ToolTip="{Binding Timestamp}">
+                        <Run Text="{Binding Text, Converter={StaticResource MessageTrimmerConverter}}"/>
+                    </TextBlock>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ReceivedMessageTemplate" x:DataType="dtos:Message">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Row="0" HorizontalAlignment="Left" Background="LightBlue" BorderBrush="Black" BorderThickness="1" Padding="4" Margin="0, 0, 20, 0" CornerRadius="8">
+                    <TextBlock HorizontalTextAlignment="Left" TextWrapping="WrapWholeWords" ToolTipService.ToolTip="{Binding Timestamp}">
+                        <Run Text="{Binding Sender}" FontWeight="Bold"/>
+                        <Run Text="{Binding Text, Converter={StaticResource MessageTrimmerConverter}}"/>
+                    </TextBlock>
+                </Border>
+            </Grid>
+        </DataTemplate>
+        
         <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+        <templateSelectors:MessageTemplateSelector x:Key="MessageTemplateSelector" SentMessageTemplate="{StaticResource SentMessageTemplate}" ReceivedMessageTemplate="{StaticResource ReceivedMessageTemplate}" Username="{x:Bind ConcreteDataContext.Username}"/>
         <converters:AccessToBooleanConverter x:Key="AccessToBooleanConverter"/>
         <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
+        <converters:MessageTrimmerConverter x:Key="MessageTrimmerConverter"/>
     </Page.Resources>
 
 
@@ -182,19 +213,13 @@
             <TextBlock Text="Lobbby messages: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="MessagesHeader"/>
             
             <ListView ItemsSource="{Binding Messages}" RelativePanel.Below="MessagesHeader" x:Name="MessagesList" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                          RelativePanel.Above="MessageText" Margin="0, 0, 0, 12">
+                          RelativePanel.Above="MessageText" Margin="0, 0, 0, 12" ItemTemplateSelector="{StaticResource MessageTemplateSelector}">
 
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-                
-                <ListView.ItemTemplate>
-                    <DataTemplate x:Name="MessageTemplate" x:DataType="dtos:Message">
-                        <TextBlock Text="{Binding Text}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -205,8 +230,9 @@
             </ListView>
 
             <TextBox x:Name="MessageText" PlaceholderText="Your message" Text="{Binding MessageText, Mode=TwoWay}" 
-                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="SendMessageButton" RelativePanel.AlignLeftWithPanel="True" />
-            <Button  x:Name="SendMessageButton" Margin="12, 0" Command="{Binding SendMessageCommand}"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="SendMessageButton" RelativePanel.AlignLeftWithPanel="True" >
+            </TextBox>
+            <Button x:Name="SendMessageButton" Margin="12, 0" Command="{Binding SendMessageCommand}"
                          RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Send"/>
