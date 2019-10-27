@@ -29,8 +29,7 @@ namespace Czeum.Client.Clients
 
             hubService.Connection.On<MatchStatus>(nameof(ReceiveResult), ReceiveResult);
             hubService.Connection.On<MatchStatus>(nameof(MatchCreated), MatchCreated);
-            hubService.Connection.On<int, Message>(nameof(MatchMessageSent), MatchMessageSent);
-            hubService.Connection.On<int, Message>(nameof(ReceiveMatchMessage), ReceiveMatchMessage);
+            hubService.Connection.On<Guid, Message>(nameof(ReceiveMatchMessage), ReceiveMatchMessage);
         }
 
         public async Task ReceiveResult(MatchStatus status)
@@ -42,16 +41,6 @@ namespace Czeum.Client.Clients
         {
             await matchStore.AddMatch(status);
             navigationService.Navigate(PageTokens.Match.ToString(), null);
-        }
-
-        public async Task MatchMessageSent(int matchId, Message message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task ReceiveMatchMessage(int matchId, Message message)
-        {
-            throw new NotImplementedException();
         }
 
         public Task ReceiveMatchMessage(Guid matchId, Message message)
