@@ -31,7 +31,7 @@ namespace Czeum.Core.Services
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
         /// <returns>The list of messages</returns>
-        Task<IEnumerable<Message>> GetMessagesOfLobby(Guid lobbyId);
+        Task<IEnumerable<Message>> GetMessagesOfLobbyAsync(Guid lobbyId);
 
         /// <summary>
         /// Gets all the messages that were sent to a specific match.

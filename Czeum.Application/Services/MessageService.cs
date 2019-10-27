@@ -88,7 +88,7 @@ namespace Czeum.Application.Services
             return sentMessage;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesOfLobby(Guid lobbyId)
+        public async Task<IEnumerable<Message>> GetMessagesOfLobbyAsync(Guid lobbyId)
         {
             var lobby = lobbyStorage.GetLobby(lobbyId);
             if (!lobby.Contains(identityService.GetCurrentUserName()))

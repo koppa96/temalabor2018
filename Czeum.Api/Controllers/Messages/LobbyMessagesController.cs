@@ -23,7 +23,7 @@ namespace Czeum.Api.Controllers.Messages
         [ProducesResponseType(401)]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessages(Guid lobbyId)
         {
-            return Ok(await messageService.GetMessagesOfLobby(lobbyId));
+            return Ok(await messageService.GetMessagesOfLobbyAsync(lobbyId));
         }
 
         [HttpPost("{lobbyId}")]
