@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.SignalR.Client;
 namespace Czeum.Client.Interfaces {
     public interface IHubService {
         HubConnection Connection { get; }
-        void CreateHubConnection();
         Task ConnectToHubAsync();
         Task DisconnectFromHub();
     }

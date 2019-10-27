@@ -26,10 +26,7 @@ namespace Czeum.Client.Services {
             this.navigationService = navigationService;
             this.dialogService = dialogService;
             this.userManagerService = userManagerService;
-        }
 
-        public void CreateHubConnection()
-        {
             Connection = new HubConnectionBuilder()
                 .WithUrl(Flurl.Url.Combine(BASE_URL, "notifications"), options => {
                     options.AccessTokenProvider = () =>

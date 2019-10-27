@@ -32,7 +32,6 @@ namespace Czeum.Client.Clients {
             this.hubService = hubService;
             this.navigationService = navigationService;
 
-            hubService.CreateHubConnection();
             hubService.Connection.On<Guid>(nameof(LobbyDeleted), LobbyDeleted);
             hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyChanged), LobbyChanged);
             hubService.Connection.On(nameof(KickedFromLobby), KickedFromLobby);
