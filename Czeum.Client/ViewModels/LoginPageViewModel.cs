@@ -68,7 +68,9 @@ namespace Czeum.Client.ViewModels
             }
             bool result = await userManagerService.LoginAsync(new Core.DTOs.UserManagement.LoginModel { Username = Name, Password = Password });
             if (result) {
-                navigationService.Navigate("Lobby", null);
+                navigationService.Navigate(PageTokens.Lobby.ToString(), null);
+                dialogService.HideLoadingDialog();
+                return;
             }
             ResetFields();
             dialogService.HideLoadingDialog();
@@ -122,6 +124,8 @@ namespace Czeum.Client.ViewModels
             if (result)
             {
                 await dialogService.ShowSuccess("You have successfully confirmed your registration. You can now log in to your account.");
+                dialogService.HideLoadingDialog();
+                return;
             }
             ResetFields();
             dialogService.HideLoadingDialog();

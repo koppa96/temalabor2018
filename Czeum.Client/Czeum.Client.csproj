@@ -121,6 +121,7 @@
     <Compile Include="Converters\Connect4IdToStringConverter.cs" />
     <Compile Include="Converters\GuestsToStringConverter.cs" />
     <Compile Include="Converters\GameStateToStringConverter.cs" />
+    <Compile Include="Converters\InviteStatusConverter.cs" />
     <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />

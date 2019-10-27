@@ -35,7 +35,10 @@
                         <Run Text="Guest(s): "/>
                         <Run Text="{Binding Guests, Converter={StaticResource GuestsToStringConverter}}" FontWeight="Bold"/>
                     </TextBlock>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left" Margin="5, 5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" Margin="5, 5"/>
+                        <SymbolIcon Symbol="Mail" Margin="5, 5" Visibility="{x:Bind Path=InvitedPlayers, Converter={StaticResource InviteStatusConverter}}"/>
+                    </StackPanel>
                 </StackPanel>
                 <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
@@ -74,6 +77,7 @@
         <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
         <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
         <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
+        <converters:InviteStatusConverter x:Name="szar" x:Key="InviteStatusConverter" CompareTo="{x:Bind ConcreteDataContext.Username}"/>
     </Page.Resources>
 
     <Grid>
@@ -86,7 +90,7 @@
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                 </Style>
             </ListView.ItemContainerStyle>
 

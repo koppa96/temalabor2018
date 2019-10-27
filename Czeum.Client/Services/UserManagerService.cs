@@ -24,7 +24,7 @@ namespace Czeum.Client.Services {
         public string AccessToken { get; private set; }
         private string refreshToken;
 
-        public string Username { get; }
+        public string Username { get; private set; }
 
         public async Task<bool> LogOutAsync()
         {
@@ -67,6 +67,7 @@ namespace Czeum.Client.Services {
                 }).ReceiveString();
 
                 ParseJsonResponse(result);
+                Username = data.Username;
                 return true;
 
             } catch (FlurlHttpException e)
