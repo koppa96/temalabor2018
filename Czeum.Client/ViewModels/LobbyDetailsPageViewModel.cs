@@ -144,6 +144,7 @@ namespace Czeum.Client.ViewModels
             try
             {
                 await lobbyService.DisconnectFromCurrentLobbyAsync();
+                lobbyStore.SelectedLobby = null;
             }
             catch (FlurlHttpException ex)
             {

@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Czeum.Core.DTOs;
 using Czeum.Client.Interfaces;
 using Czeum.Core.ClientCallbacks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Prism.Windows.Navigation;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
-using Czeum.Core.DTOs.Abstractions.Lobbies;
 using Czeum.Core.DTOs.Wrappers;
+using Czeum.Core.Services;
+using Windows.UI.Xaml.Controls;
+using Flurl.Http;
 
 namespace Czeum.Client.Clients {
 
@@ -20,22 +17,30 @@ namespace Czeum.Client.Clients {
     /// </summary>
     class LobbyClient : ILobbyClient
     {
-        private Core.Services.ILobbyService lobbyService;
         private ILobbyStore lobbyStore;
         private IHubService hubService;
+        private ILobbyService lobbyService;
         private INavigationService navigationService;
-        
-        public LobbyClient(ILobbyStore lobbyStore, IHubService hubService, INavigationService navigationService, Core.Services.ILobbyService lobbyService)
+        private IDialogService dialogService;
+
+        public LobbyClient(ILobbyStore lobbyStore, 
+                           ILobbyService lobbyService,
+                           IHubService hubService, 
+                           INavigationService navigationService, 
+                           IDialogService dialogService)
         {
-            this.lobbyService = lobbyService;
             this.lobbyStore = lobbyStore;
             this.hubService = hubService;
+            this.lobbyService = lobbyService;
             this.navigationService = navigationService;
+            this.dialogService = dialogService;
 
             hubService.Connection.On<Guid>(nameof(LobbyDeleted), LobbyDeleted);
             hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyChanged), LobbyChanged);
             hubService.Connection.On(nameof(KickedFromLobby), KickedFromLobby);
             hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyAdded), LobbyAdded);
+            hubService.Connection.On<Guid, Message>(nameof(ReceiveLobbyMessage), ReceiveLobbyMessage);
+            hubService.Connection.On<LobbyDataWrapper>(nameof(ReceiveLobbyInvite), ReceiveLobbyInvite);
         }
 
         public async Task LobbyDeleted(Guid lobbyId)
@@ -70,8 +75,27 @@ namespace Czeum.Client.Clients {
             throw new NotImplementedException();
         }
 
-        public Task ReceiveLobbyInvite(LobbyDataWrapper lobbyData)
+        public async Task ReceiveLobbyInvite(LobbyDataWrapper lobbyData)
         {
+            var result = await dialogService.ShowConfirmation($"You have been invited to a {lobbyData.GameType.ToString()} lobby by {lobbyData.Content.Host}. Do you want to join them?");
+            if(result == ContentDialogResult.Primary)
+            {
+                try
+                {
+                    if (lobbyStore.SelectedLobby != null)
+                    {
+                        await lobbyService.DisconnectFromCurrentLobbyAsync();
+                    }
+                    var lobby = await lobbyService.JoinToLobbyAsync(lobbyData.Content.Id);
+                    lobbyStore.SelectedLobby = lobby.Content;
+                    await lobbyStore.UpdateLobby(lobby.Content);
+                    navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
+                }
+                catch (FlurlHttpException e)
+                {
+                    await dialogService.ShowError("Could not connect to the lobby");
+                }
+            }
             throw new NotImplementedException();
         }
     }
