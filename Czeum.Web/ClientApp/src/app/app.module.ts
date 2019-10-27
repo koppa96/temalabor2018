@@ -18,6 +18,9 @@ import { MatchValueDirective } from './directives/match-value.directive';
 import { ReverseMatchValueDirective } from './directives/reverse-match-value.directive';
 import { BackendValidatorDirectiveDirective } from './directives/backend-validator-directive.directive';
 import { DetailsComponent } from './components/details/details.component';
+import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
+import { ResetPasswordRequestComponent } from './components/reset-password-request/reset-password-request.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -32,18 +35,23 @@ import { DetailsComponent } from './components/details/details.component';
     ReverseMatchValueDirective,
     BackendValidatorDirectiveDirective,
     DetailsComponent,
+    ConfirmEmailComponent,
+    ResetPasswordRequestComponent,
+    ResetPasswordComponent,
   ],
   imports: [
-    BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
+    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      {path: '', redirectTo: 'home', pathMatch: 'full'},
-      {path: 'home', component: HomeComponent},
-      {path: 'login', component: LoginComponent},
-      {path: 'register', component: RegisterComponent},
-      {path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard]},
-      {path: 'details', component: DetailsComponent}
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', component: HomeComponent },
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: 'change-password', component: ChangePasswordComponent, canActivate: [ AuthGuard ] },
+      { path: 'details', component: DetailsComponent },
+      { path: 'reset-password-request', component: ResetPasswordRequestComponent },
+      { path: 'reset-password', component: ResetPasswordComponent }
     ]),
     ReactiveFormsModule
   ],
@@ -54,6 +62,7 @@ import { DetailsComponent } from './components/details/details.component';
     FormBuilder,
     AuthGuard
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
-export class AppModule { }
+export class AppModule {
+}

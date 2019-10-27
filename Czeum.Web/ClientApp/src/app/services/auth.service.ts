@@ -1,7 +1,15 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {LoginData, RegisterData, TokenResponse, UserInfo} from '../models/auth-models';
+import {
+  ChangePasswordData,
+  LoginData,
+  RegisterData,
+  ResetPasswordData,
+  ResetPasswordRequestData,
+  TokenResponse,
+  UserInfo
+} from '../models/auth-models';
 import { AuthEventListener } from '../interfaces/AuthEventListener';
 
 @Injectable({
@@ -10,7 +18,7 @@ import { AuthEventListener } from '../interfaces/AuthEventListener';
 export class AuthService {
   private authEventListeners: AuthEventListener[] = [];
 
-  constructor(private http: HttpClient, @Inject('API_URL') private apiUrl) { }
+  constructor(private http: HttpClient, @Inject('API_URL') private apiUrl: string) { }
 
   private postTokenRequest(formContent: URLSearchParams): Promise<any> {
     const options = {
@@ -104,6 +112,10 @@ export class AuthService {
     }
   }
 
+  changePassword(changePasswordData: ChangePasswordData): Observable<any> {
+    return this.http.post(this.apiUrl + '/api/accounts/change-password', changePasswordData);
+  }
+
   usernameAvailable(username: string): Observable<boolean> {
     console.log(this);
 
@@ -126,5 +138,17 @@ export class AuthService {
 
   removeAuthEventListener(listener: AuthEventListener) {
     this.authEventListeners.splice(this.authEventListeners.findIndex(x => x === listener), 1);
+  }
+
+  requestResetPassword(requestData: ResetPasswordRequestData) {
+    const query = new URLSearchParams();
+    query.append('username', requestData.username);
+    query.append('email', requestData.email);
+
+    return this.http.get(this.apiUrl + '/api/accounts/reset-password?' + query.toString());
+  }
+
+  resetPassword(resetPasswordData: ResetPasswordData) {
+    return this.http.post(this.apiUrl + '/api/accounts/reset-password', resetPasswordData);
   }
 }

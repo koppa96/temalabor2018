@@ -13,3 +13,8 @@ body {
   height: 8em;
   border-width: 0.5em;
 }
+
+.spinner-medium {
+  width: 4em;
+  height: 4em;
+}

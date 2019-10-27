@@ -20,3 +20,21 @@ export interface TokenResponse {
   refresh_token: string;
   token_type: string;
 }
+
+export interface ChangePasswordData {
+  oldPassword: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ResetPasswordData {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  token: string;
+}
+
+export interface ResetPasswordRequestData {
+  username: string;
+  email: string;
+}
