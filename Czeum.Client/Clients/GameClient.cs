@@ -41,6 +41,7 @@ namespace Czeum.Client.Clients
         public async Task MatchCreated(MatchStatus status)
         {
             await matchStore.AddMatch(status);
+            navigationService.Navigate(PageTokens.Match.ToString(), null);
         }
 
         public async Task MatchMessageSent(int matchId, Message message)
