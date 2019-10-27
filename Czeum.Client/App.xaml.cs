@@ -28,6 +28,7 @@ using Czeum.Core.ClientCallbacks;
 using Czeum.Client.Clients;
 using Flurl.Http;
 using Flurl;
+using Czeum.Core.Services;
 
 namespace Czeum.Client
 {
@@ -44,13 +45,16 @@ namespace Czeum.Client
             Container.RegisterType<IDialogService, DialogService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IUserManagerService, UserManagerService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<Core.Services.ILobbyService, LobbyService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ILobbyService, LobbyService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyStore, LobbyStore>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyClient, LobbyClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHubService, HubService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IGameClient, GameClient>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<Core.Services.IMatchService, MatchService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IMatchService, MatchService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMatchStore, MatchStore>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IMessageService, MessageService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IMessageStore, MessageStore>(new ContainerControlledLifetimeManager());
+            
 
             // Configure Flurl to ignore untrusted certificates
             var baseUrl = Current.Resources["BaseUrl"].ToString();

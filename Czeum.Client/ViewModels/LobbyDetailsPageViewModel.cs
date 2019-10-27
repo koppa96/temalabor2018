@@ -12,6 +12,8 @@ using System.Windows.Input;
 using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.Services;
 using Flurl.Http;
+using Czeum.Core.DTOs;
+using System.Collections.ObjectModel;
 
 namespace Czeum.Client.ViewModels
 {
@@ -24,13 +26,22 @@ namespace Czeum.Client.ViewModels
         private IMatchService matchService;
         private IMatchStore matchStore;
         private IDialogService dialogService;
+        private IMessageService messageService;
+        private IMessageStore messageStore;
 
         private string inviteeName;
-
         public string InviteeName {
             get => inviteeName;
             set => SetProperty(ref inviteeName, value);
         }
+        
+        private string messageText;
+        public string MessageText {
+            get => messageText;
+            set => SetProperty(ref messageText, value);
+        }
+
+        public ObservableCollection<Message> Messages => messageStore.Messages;
 
         public ILobbyStore lobbyStore { get; private set; }
         public ICommand SaveSettingsCommand { get; private set; }
@@ -40,6 +51,7 @@ namespace Czeum.Client.ViewModels
         public ICommand KickGuestCommand { get; private set; }
         public ICommand InvitePlayerCommand { get; private set; }
         public ICommand CancelInviteCommand { get; private set; }
+        public ICommand SendMessageCommand { get; private set; }
 
         public bool IsUserGuest => lobbyStore.SelectedLobby.Guests.Contains(userManagerService.Username);
 
@@ -50,7 +62,9 @@ namespace Czeum.Client.ViewModels
                                          ILobbyStore lobbyStore, 
                                          IMatchService matchService, 
                                          IMatchStore matchStore, 
-                                         IDialogService dialogService)
+                                         IDialogService dialogService,
+                                         IMessageService messageService,
+                                         IMessageStore messageStore)
         {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
@@ -60,6 +74,8 @@ namespace Czeum.Client.ViewModels
             this.matchService = matchService;
             this.matchStore = matchStore;
             this.dialogService = dialogService;
+            this.messageService = messageService;
+            this.messageStore = messageStore;
 
             SaveSettingsCommand = new DelegateCommand(SaveLobbySettings);
             CreateMatchCommand = new DelegateCommand(CreateMatch);
@@ -68,6 +84,7 @@ namespace Czeum.Client.ViewModels
             KickGuestCommand = new DelegateCommand(KickGuest);
             LeaveLobbyCommand = new DelegateCommand(Leave);
             CancelInviteCommand = new DelegateCommand<string>((s) => CancelInvite(s));
+            SendMessageCommand = new DelegateCommand(SendMessage);
         }
 
         private void Leave()
@@ -165,6 +182,20 @@ namespace Czeum.Client.ViewModels
             catch (FlurlHttpException e)
             {
                 await dialogService.ShowError("Could not cancel invite");
+            }
+        }
+
+        private async void SendMessage()
+        {
+            try
+            {
+                var messageResult = await messageService.SendToLobbyAsync(lobbyStore.SelectedLobby.Id, MessageText);
+                await messageStore.AddMessage(messageResult);
+                MessageText = "";
+            }
+            catch (FlurlHttpException e)
+            {
+                await dialogService.ShowError("Could not send message");
             }
         }
     }

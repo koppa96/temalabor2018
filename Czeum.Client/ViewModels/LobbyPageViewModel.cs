@@ -28,20 +28,32 @@ using Flurl.Http;
 namespace Czeum.Client.ViewModels {
     public class LobbyPageViewModel : ViewModelBase
     {
-        private Core.Services.ILobbyService lobbyService;
+        private ILobbyService lobbyService;
         private INavigationService navigationService;
         private ILoggerFacade loggerService;
         private IDialogService dialogService;
         private IUserManagerService userManagerService;
         private ILobbyClient lobbyClient;
         private IHubService hubService;
+        private IMessageService messageService;
+        private IMessageStore messageStore;
         public ILobbyStore lobbyStore { get; private set; }
 
         public ObservableCollection<LobbyData> LobbyList { get => lobbyStore.LobbyList; }
         public string Username { get => userManagerService.Username; }
 
-        public LobbyPageViewModel(Core.Services.ILobbyService lobbyService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService, 
-            ILobbyClient lobbyClient, IUserManagerService userManagerService, IHubService hubService, ILobbyStore lobbyStore) {
+        public LobbyPageViewModel(ILobbyService lobbyService,
+                                  INavigationService navigationService,
+                                  ILoggerFacade loggerService,
+                                  IDialogService dialogService,
+                                  ILobbyClient lobbyClient,
+                                  IUserManagerService userManagerService,
+                                  IHubService hubService,
+                                  ILobbyStore lobbyStore,
+                                  IMessageService messageService,
+                                  IMessageStore messageStore
+                                
+            ) {
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
             this.loggerService = loggerService;
@@ -50,6 +62,8 @@ namespace Czeum.Client.ViewModels {
             this.lobbyClient = lobbyClient;
             this.hubService = hubService;
             this.lobbyStore = lobbyStore;
+            this.messageService = messageService;
+            this.messageStore = messageStore;
 
             JoinLobbyCommand = new DelegateCommand<Guid?>(JoinLobby);
             CreateLobbyCommand = new DelegateCommand<string>(CreateLobby);
@@ -57,6 +71,8 @@ namespace Czeum.Client.ViewModels {
 
         public ICommand JoinLobbyCommand { get; }
         public ICommand CreateLobbyCommand { get; }
+
+
 
         private async void JoinLobby(Guid? id)
         {
@@ -68,6 +84,9 @@ namespace Czeum.Client.ViewModels {
             {
                 var lobby = await lobbyService.JoinToLobbyAsync(id.Value);
                 lobbyStore.SelectedLobby = lobby.Content;
+                await lobbyStore.UpdateLobby(lobby.Content);
+                var messages = await messageService.GetMessagesOfLobbyAsync(id.Value);
+                await messageStore.SetMessages(messages);
                 navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
             } 
             catch(FlurlHttpException e)
@@ -96,6 +115,8 @@ namespace Czeum.Client.ViewModels {
             var result = await lobbyService.CreateAndAddLobbyAsync(type.Value, access, name);
             await lobbyStore.AddLobby(result.Content);
             lobbyStore.SelectedLobby = result.Content;
+            var messages = await messageService.GetMessagesOfLobbyAsync(result.Content.Id);
+            await messageStore.SetMessages(messages);
             navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
         }
 

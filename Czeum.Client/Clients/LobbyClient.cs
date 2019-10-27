@@ -22,18 +22,24 @@ namespace Czeum.Client.Clients {
         private ILobbyService lobbyService;
         private INavigationService navigationService;
         private IDialogService dialogService;
+        private IMessageService messageService;
+        private IMessageStore messageStore;
 
         public LobbyClient(ILobbyStore lobbyStore, 
                            ILobbyService lobbyService,
                            IHubService hubService, 
                            INavigationService navigationService, 
-                           IDialogService dialogService)
+                           IDialogService dialogService,
+                           IMessageService messageService,
+                           IMessageStore messageStore)
         {
             this.lobbyStore = lobbyStore;
             this.hubService = hubService;
             this.lobbyService = lobbyService;
             this.navigationService = navigationService;
             this.dialogService = dialogService;
+            this.messageService = messageService;
+            this.messageStore = messageStore;
 
             hubService.Connection.On<Guid>(nameof(LobbyDeleted), LobbyDeleted);
             hubService.Connection.On<LobbyDataWrapper>(nameof(LobbyChanged), LobbyChanged);
@@ -70,9 +76,13 @@ namespace Czeum.Client.Clients {
             await lobbyStore.AddLobby(lobbyData.Content);
         }
 
-        public Task ReceiveLobbyMessage(Guid lobbyId, Message message)
+        public async Task ReceiveLobbyMessage(Guid lobbyId, Message message)
         {
-            throw new NotImplementedException();
+            // We are in the lobby
+            if(lobbyStore.SelectedLobby.Id == lobbyId)
+            {
+                await messageStore.AddMessage(message);
+            }
         }
 
         public async Task ReceiveLobbyInvite(LobbyDataWrapper lobbyData)
@@ -89,6 +99,8 @@ namespace Czeum.Client.Clients {
                     var lobby = await lobbyService.JoinToLobbyAsync(lobbyData.Content.Id);
                     lobbyStore.SelectedLobby = lobby.Content;
                     await lobbyStore.UpdateLobby(lobby.Content);
+                    var messages = await messageService.GetMessagesOfLobbyAsync(lobbyData.Content.Id);
+                    await messageStore.SetMessages(messages);
                     navigationService.Navigate(PageTokens.LobbyDetails.ToString(), null);
                 }
                 catch (FlurlHttpException e)
@@ -96,7 +108,6 @@ namespace Czeum.Client.Clients {
                     await dialogService.ShowError("Could not connect to the lobby");
                 }
             }
-            throw new NotImplementedException();
         }
     }
 }

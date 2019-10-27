@@ -129,13 +129,16 @@
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
     <Compile Include="Interfaces\IMatchStore.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
+    <Compile Include="Interfaces\IMessageStore.cs" />
     <Compile Include="Models\LobbyStore.cs" />
     <Compile Include="Models\MatchStore.cs" />
+    <Compile Include="Models\MessageStore.cs" />
     <Compile Include="PageTokens.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\HubService.cs" />
     <Compile Include="Services\LobbyService.cs" />
     <Compile Include="Services\MatchService.cs" />
+    <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\UserManagerService.cs" />
     <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />

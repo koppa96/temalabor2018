@@ -39,6 +39,11 @@
 
 
     <Grid>
+        <!--
+              Lobby header | Lobby invites
+            - - - - - - - - - - - - - - - - 
+            Lobby settings | Lobby messages
+        -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="2*"/>
@@ -48,6 +53,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Lobby header -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0" Grid.Column="0" Margin="20" BorderThickness="2" BorderBrush="Black">
             <Grid Name="DetailsPanel" Padding="10">
                 <Grid.ColumnDefinitions>
@@ -95,6 +101,7 @@
             </Grid>
         </ScrollViewer>
 
+        <!-- Lobby settings -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="0" Margin="20" BorderThickness="2" BorderBrush="Black">
             <StackPanel Name="SettingsPanel" Padding="10">
                 <TextBlock Text="Lobby settings" FontWeight="Bold" Margin="0,0,0,20"/>
@@ -128,11 +135,12 @@
             </StackPanel>
         </ScrollViewer>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Grid.Column="1" Margin="20" BorderThickness="2" BorderBrush="Black">
+        <!-- Lobby invites -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Margin="20" BorderThickness="2" BorderBrush="Black">
             <RelativePanel Grid.Row="0" Padding="10">
                 <TextBlock Text="Currently invited players: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="InvitedPlayersHeader"/>
                 <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}" RelativePanel.Below="InvitedPlayersHeader" x:Name="InvitedPlayersList" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                          Margin="0, 0, 0, 40">
+                          RelativePanel.Above="InviteeName" Margin="0, 0, 0, 12">
 
                     <ListView.ItemTemplate>
                         <DataTemplate x:Name="InvitedPlayerTemplate" x:DataType="system:String">
@@ -158,9 +166,9 @@
                 </ListView>
 
                 <TextBox x:Name="InviteeName" PlaceholderText="Invitee name" Text="{Binding InviteeName, Mode=TwoWay}" 
-                         RelativePanel.Below="InvitedPlayersList" RelativePanel.LeftOf="InviteButton" RelativePanel.AlignLeftWithPanel="True" />
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="InviteButton" RelativePanel.AlignLeftWithPanel="True" />
                 <Button  x:Name="InviteButton" Margin="12, 0" Command="{Binding InvitePlayerCommand}"
-                         RelativePanel.Below="InvitedPlayersList" RelativePanel.AlignRightWithPanel="True">
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="AddFriend"/>
                         <TextBlock Text="Invite" Margin="10, 0"/>
@@ -168,6 +176,45 @@
                 </Button>
             </RelativePanel>
         </ScrollViewer>
+        
+        <!-- Lobby messages -->
+        <RelativePanel Grid.Column="1" Grid.Row="1" Margin="20" BorderThickness="2" BorderBrush="Black" Padding="10">
+            <TextBlock Text="Lobbby messages: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="MessagesHeader"/>
+            
+            <ListView ItemsSource="{Binding Messages}" RelativePanel.Below="MessagesHeader" x:Name="MessagesList" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.Above="MessageText" Margin="0, 0, 0, 12">
+
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate x:Name="MessageTemplate" x:DataType="dtos:Message">
+                        <TextBlock Text="{Binding Text}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+            </ListView>
+
+            <TextBox x:Name="MessageText" PlaceholderText="Your message" Text="{Binding MessageText, Mode=TwoWay}" 
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="SendMessageButton" RelativePanel.AlignLeftWithPanel="True" />
+            <Button  x:Name="SendMessageButton" Margin="12, 0" Command="{Binding SendMessageCommand}"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Send"/>
+                    <TextBlock Text="Send" Margin="10, 0"/>
+                </StackPanel>
+            </Button>
+
+        </RelativePanel>
 
     </Grid>
 </prism:SessionStateAwarePage>
