@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using Czeum.Api.Common;
 using Czeum.Core.DTOs;
 using Czeum.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Czeum.Api.Controllers.Messages
 {
     [Route(ApiResources.Messages.Match.BasePath)]
     [ApiController]
+    [Authorize]
     public class MatchMessagesController : ControllerBase
     {
         private readonly IMessageService messageService;
