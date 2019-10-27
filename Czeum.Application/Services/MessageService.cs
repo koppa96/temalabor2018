@@ -88,7 +88,7 @@ namespace Czeum.Application.Services
             return sentMessage;
         }
 
-        public IEnumerable<Message> GetMessagesOfLobby(Guid lobbyId)
+        public async Task<IEnumerable<Message>> GetMessagesOfLobby(Guid lobbyId)
         {
             var lobby = lobbyStorage.GetLobby(lobbyId);
             if (!lobby.Contains(identityService.GetCurrentUserName()))
@@ -96,7 +96,7 @@ namespace Czeum.Application.Services
                 throw new UnauthorizedAccessException("Not authorized to read the messages of this lobby.");
             }
 
-            return lobbyStorage.GetMessages(lobbyId);
+            return lobbyStorage.GetMessages(lobbyId) as IEnumerable<Message>;
         }
 
         public async Task<IEnumerable<Message>> GetMessagesOfMatchAsync(Guid matchId)
