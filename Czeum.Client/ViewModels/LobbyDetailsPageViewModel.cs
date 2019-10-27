@@ -39,6 +39,7 @@ namespace Czeum.Client.ViewModels
         public ICommand LeaveLobbyCommand{ get; private set; }
         public ICommand KickGuestCommand { get; private set; }
         public ICommand InvitePlayerCommand { get; private set; }
+        public ICommand CancelInviteCommand { get; private set; }
 
         public bool IsUserGuest => lobbyStore.SelectedLobby.Guests.Contains(userManagerService.Username);
 
@@ -66,6 +67,7 @@ namespace Czeum.Client.ViewModels
             InvitePlayerCommand = new DelegateCommand(InvitePlayer);
             KickGuestCommand = new DelegateCommand(KickGuest);
             LeaveLobbyCommand = new DelegateCommand(Leave);
+            CancelInviteCommand = new DelegateCommand<string>((s) => CancelInvite(s));
         }
 
         private void Leave()
@@ -151,6 +153,19 @@ namespace Czeum.Client.ViewModels
                 // We are not in a lobby anymore, nothing to do
             }
             base.OnNavigatingFrom(e, viewModelState, suspending);
+        }
+
+        private async void CancelInvite(string name)
+        {
+            try
+            {
+                var updatedLobby = await lobbyService.CancelInviteFromLobby(lobbyStore.SelectedLobby.Id, name);
+                await lobbyStore.UpdateLobby(updatedLobby.Content);
+            }
+            catch (FlurlHttpException e)
+            {
+                await dialogService.ShowError("Could not cancel invite");
+            }
         }
     }
 }

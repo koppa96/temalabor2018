@@ -79,6 +79,11 @@ namespace Czeum.Client.Services
             return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyData.Content.Id}").PutJsonAsync(lobbyData).ReceiveJson<LobbyDataWrapper>();
         }
 
+        public Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player)
+        {
+            return BASE_URL.WithOAuthBearerToken(userManagerService.AccessToken).AppendPathSegment($"api/lobbies/{lobbyId}/invite").SetQueryParam("playerName", player).DeleteAsync().ReceiveJson<LobbyDataWrapper>();
+        }
+
         // Not needed on the client
         public Task<bool> LobbyExists(Guid lobbyId)
         {
@@ -115,9 +120,5 @@ namespace Czeum.Client.Services
             throw new NotImplementedException();
         }
 
-        public Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

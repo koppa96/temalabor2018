@@ -11,6 +11,8 @@
     xmlns:converters="using:Czeum.Client.Converters"
     xmlns:connect4="using:Czeum.Core.DTOs.Connect4"
     xmlns:chess="using:Czeum.Core.DTOs.Chess"
+    xmlns:dtos="using:Czeum.Core.DTOs"
+    xmlns:system="using:System"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -129,8 +131,31 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Grid.Column="1" Margin="20" BorderThickness="2" BorderBrush="Black">
             <RelativePanel Grid.Row="0" Padding="10">
                 <TextBlock Text="Currently invited players: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="InvitedPlayersHeader"/>
-                <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}" RelativePanel.Below="InvitedPlayersHeader" x:Name="InvitedPlayersList"
-                          Margin="0, 0, 0, 40"/>
+                <ListView ItemsSource="{Binding lobbyStore.SelectedLobby.InvitedPlayers}" RelativePanel.Below="InvitedPlayersHeader" x:Name="InvitedPlayersList" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                          Margin="0, 0, 0, 40">
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:Name="InvitedPlayerTemplate" x:DataType="system:String">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding}" Grid.Column="0" VerticalAlignment="Center"/>
+                                <Button Command="{Binding ElementName=InvitedPlayersList, Path=DataContext.CancelInviteCommand}" CommandParameter="{Binding}" Grid.Column="1">
+                                    <SymbolIcon Symbol="Cancel"/>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                </ListView>
 
                 <TextBox x:Name="InviteeName" PlaceholderText="Invitee name" Text="{Binding InviteeName, Mode=TwoWay}" 
                          RelativePanel.Below="InvitedPlayersList" RelativePanel.LeftOf="InviteButton" RelativePanel.AlignLeftWithPanel="True" />
