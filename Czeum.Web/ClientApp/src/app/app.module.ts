@@ -21,6 +21,7 @@ import { DetailsComponent } from './components/details/details.component';
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
 import { ResetPasswordRequestComponent } from './components/reset-password-request/reset-password-request.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ResendConfirmationEmailComponent } from './components/resend-confirmation-email/resend-confirmation-email.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     ConfirmEmailComponent,
     ResetPasswordRequestComponent,
     ResetPasswordComponent,
+    ResendConfirmationEmailComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

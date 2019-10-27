@@ -94,7 +94,7 @@ export class AuthService {
 
   register(registerData: RegisterData): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http.post(this.apiUrl + '/api/accounts', registerData)
+      this.http.post(this.apiUrl + '/api/accounts/register', registerData)
         .subscribe(
           () => resolve(),
           () => reject());
@@ -150,5 +150,9 @@ export class AuthService {
 
   resetPassword(resetPasswordData: ResetPasswordData) {
     return this.http.post(this.apiUrl + '/api/accounts/reset-password', resetPasswordData);
+  }
+
+  resendConfirmationEmail(email: string) {
+    return this.http.get(this.apiUrl + '/api/accounts/resend-confirm-email');
   }
 }

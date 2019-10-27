@@ -15,7 +15,7 @@
               <input id="password" name="password" type="password" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('password')}" formControlName="password" required>
               <div class="invalid-feedback" *ngIf="validator.fieldHasError('password', 'required')">Kötelező</div>
             </div>
-            <a [routerLink]="['reset-password-request-request']" class="d-block">Elfelejtett jelszó</a>
+            <a [routerLink]="['/reset-password-request']" class="d-block">Elfelejtett jelszó</a>
             <a href="#" class="d-block">Megerősítő e-mail újraküldése</a>
             <div class="d-flex justify-content-between align-items-center mt-3">
               <a [routerLink]="['/register']">Fiók létrehozása</a>
@@ -27,7 +27,7 @@
             <div class="alert alert-info mt-4" *ngIf="redirectUrl">
               A funkció eléréséhez bejelentkezés szükséges.
             </div>
-            <div class="alert alert-danger mt-2" *ngIf="loginUnsuccessful">
+            <div class="alert alert-danger" [ngClass]="{'mt-2': redirectUrl, 'mt-4': !redirectUrl}" *ngIf="loginUnsuccessful">
               A megadott felhasználónév vagy jelszó hibás!
             </div>
           </form>

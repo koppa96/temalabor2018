@@ -38,6 +38,12 @@
                 Regisztráció
               </button>
             </div>
+            <div class="alert alert-success mt-3" *ngIf="registerSuccessful">
+              Sikeres regisztráció. A megerősítő e-mailt megküldtük a megadott címre!
+            </div>
+            <div class="alert alert-danger mt-3" *ngIf="registerFailed">
+              Sikertelen regisztráció. Ellenőrizd a megadott adatokat!
+            </div>
           </form>
         </div>
       </div>

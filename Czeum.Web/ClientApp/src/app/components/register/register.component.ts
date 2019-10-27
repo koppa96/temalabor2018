@@ -14,6 +14,8 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   isLoading = false;
   validator: FieldValidator;
+  registerSuccessful = false;
+  registerFailed = false;
 
   usernameValidationContext = new BackendValidatorContext(
     this.authService,
@@ -43,7 +45,23 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(formData: RegisterData) {
-
+    this.registerForm.markAllAsTouched();
+    if (this.registerForm.valid) {
+      this.isLoading = true;
+      this.registerFailed = false;
+      this.registerSuccessful = false;
+      this.authService.register(formData)
+        .then(
+          () => {
+            this.registerSuccessful = true;
+            this.registerForm.reset();
+          }
+        ).catch(
+          () => this.registerFailed = true
+        ).finally(
+          () => this.isLoading = false
+        );
+    }
   }
 
 }

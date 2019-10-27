@@ -58,6 +58,7 @@ export class LoginComponent implements OnInit {
     this.loginForm.markAllAsTouched();
     if (this.loginForm.valid) {
       this.isLoading = true;
+      this.loginUnsuccessful = false;
       this.authService.login(formData)
         .then(
           () => this.onSuccessfulLogin()
