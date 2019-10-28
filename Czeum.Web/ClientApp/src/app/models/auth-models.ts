@@ -38,3 +38,8 @@ export interface ResetPasswordRequestData {
   username: string;
   email: string;
 }
+
+export interface ConfirmEmailData {
+  username: string;
+  token: string;
+}

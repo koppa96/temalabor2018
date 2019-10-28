@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {
-  ChangePasswordData,
+  ChangePasswordData, ConfirmEmailData,
   LoginData,
   RegisterData,
   ResetPasswordData,
@@ -154,5 +154,13 @@ export class AuthService {
 
   resendConfirmationEmail(email: string) {
     return this.http.get(this.apiUrl + '/api/accounts/resend-confirm-email');
+  }
+
+  confirmEmail(confirmEmailData: ConfirmEmailData) {
+    const query = new URLSearchParams();
+    query.append('username', confirmEmailData.username);
+    query.append('token', confirmEmailData.token);
+
+    return this.http.post(this.apiUrl + '/api/accounts/confirm-email?' + query.toString(), null);
   }
 }

@@ -22,6 +22,7 @@ import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.
 import { ResetPasswordRequestComponent } from './components/reset-password-request/reset-password-request.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ResendConfirmationEmailComponent } from './components/resend-confirmation-email/resend-confirmation-email.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -53,9 +54,11 @@ import { ResendConfirmationEmailComponent } from './components/resend-confirmati
       { path: 'change-password', component: ChangePasswordComponent, canActivate: [ AuthGuard ] },
       { path: 'details', component: DetailsComponent },
       { path: 'reset-password-request', component: ResetPasswordRequestComponent },
-      { path: 'reset-password', component: ResetPasswordComponent }
+      { path: 'reset-password', component: ResetPasswordComponent },
+      { path: 'confirm-email', component: ConfirmEmailComponent }
     ]),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FontAwesomeModule
   ],
   providers: [
     HttpClient,
