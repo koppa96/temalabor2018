@@ -9,7 +9,7 @@ export function getBaseUrl() {
 }
 
 export function getApiUrl() {
-  return 'https://localhost:5001';
+  return getBaseUrl();
 }
 
 const providers = [
