@@ -5,12 +5,14 @@ using Czeum.Api.Common;
 using Czeum.Core.DTOs.UserManagement;
 using Czeum.Core.Services;
 using Czeum.Domain.Entities;
+using Flurl;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Czeum.Api.Controllers
@@ -22,13 +24,15 @@ namespace Czeum.Api.Controllers
         private readonly UserManager<User> userManager;
         private readonly ILogger logger;
         private readonly IEmailService emailService;
+        private readonly IConfiguration configuration;
 
         public AccountsController(UserManager<User> userManager, ILogger<AccountsController> logger,
-            IEmailService emailService)
+            IEmailService emailService, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.logger = logger;
             this.emailService = emailService;
+            this.configuration = configuration;
         }
 
         [HttpPost]
@@ -62,11 +66,12 @@ namespace Czeum.Api.Controllers
 		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = Url.Page(
-                    "/Account/ConfirmEmail",
-                    pageHandler: null,
-                    values: new { area = "Identity", id = user.Id, code = token },
-                    protocol: Request.Scheme);
+                var url = configuration["UserManagementUrl"].AppendPathSegment("confirm-email")
+                    .SetQueryParams(new
+                    {
+                        token,
+                        username = user.UserName
+                    }).ToString();
 
                 await emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
