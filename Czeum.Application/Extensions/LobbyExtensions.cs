@@ -34,6 +34,7 @@ namespace Czeum.Application.Extensions
                 if (lobby.Guests.Count > 0)
                 {
                     lobby.Host = lobby.Guests.First();
+                    lobby.Guests.RemoveAt(0);
                 }
             }
             else
