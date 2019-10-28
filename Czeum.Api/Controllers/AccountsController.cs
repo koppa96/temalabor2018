@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -66,7 +67,7 @@ namespace Czeum.Api.Controllers
 		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = configuration["UserManagementUrl"].AppendPathSegment("confirm-email")
+                var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("confirm-email")
                     .SetQueryParams(new
                     {
                         token,
@@ -141,19 +142,20 @@ namespace Czeum.Api.Controllers
                 var user = await userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    return NotFound("No such user found.");
+                    throw new ArgumentOutOfRangeException(nameof(email), "No such user found.");
                 }
                 if (user.UserName != username)
                 {
-                    return BadRequest("No such user found.");
+                    throw new ArgumentOutOfRangeException(nameof(username), "No such user found.");
                 }
 
                 var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
-                var url = Url.Page(
-                    "/Account/ResetPassword",
-                    pageHandler: null,
-                    values: new { area = "Identity", resetToken },
-                    protocol: Request.Scheme);
+                var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("reset-password")
+                    .SetQueryParams(new
+                    {
+                        username,
+                        token = resetToken
+                    }).ToString();
 
                 await emailService.SendPasswordResetEmailAsync(email, resetToken, url);
                 logger.LogInformation($"Password reset email for {username} was sent to {email}.");
@@ -207,11 +209,12 @@ namespace Czeum.Api.Controllers
                 }
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = Url.Page(
-                    "/Account/ConfirmEmail",
-                    pageHandler: null,
-                    values: new { area = "Identity", id = user.Id, code = token },
-                    protocol: Request.Scheme);
+                var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("confirm-email")
+                    .SetQueryParams(new
+                    {
+                        token,
+                        username = user.UserName
+                    }).ToString();
 
                 await emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
                 logger.LogInformation($"Confirmation email resent to {email}.");
