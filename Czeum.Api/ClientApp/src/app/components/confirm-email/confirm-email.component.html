@@ -1,0 +1,14 @@
+<div class="container h-100 d-flex align-items-center justify-content-center">
+  <div *ngIf="isLoading" class="d-flex flex-column align-items-center">
+    <div class="spinner-border spinner-80 text-primary m-3" *ngIf="isLoading"></div>
+    <div class="text-center">E-mail megerősítése folyamatban</div>
+  </div>
+  <div *ngIf="!isLoading && confirmSuccessful" class="d-flex flex-column align-items-center">
+    <fa-icon [icon]="check" class="fa-5x text-success" *ngIf="!isLoading"></fa-icon>
+    <div class="text-center">Sikeres megerősítés! Most már bejelentkezhetsz a fiókodba.</div>
+  </div>
+  <div *ngIf="!isLoading && confirmFailed" class="d-flex flex-column align-items-center">
+    <fa-icon [icon]="fail" class="fa-5x text-danger" *ngIf="!isLoading"></fa-icon>
+    <div class="text-center">Sikertelen megerősítés! Ellenőrizd hogy helyes-e a link!</div>
+  </div>
+</div>

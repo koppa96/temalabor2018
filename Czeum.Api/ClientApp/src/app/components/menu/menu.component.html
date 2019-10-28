@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" [routerLink]="['/home']" >Czeum UserAdmin</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/home']">Kezdőlap</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/change-password']">Jelszóváltoztatás</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/details']">Részletek és szabályok</a>
+        </li>
+      </ul>
+      <div *ngIf="isLoading">
+        <div class="spinner-border text-secondary"></div>
+      </div>
+      <div *ngIf="!isLoading">
+        <ul class="navbar-nav" *ngIf="!userInfo">
+          <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" [routerLink]="['/login']">Bejelentkezés</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/register']">Regisztráció</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav" *ngIf="userInfo">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{ userInfo.username }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" (click)="logout()">Kijelentkezés</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

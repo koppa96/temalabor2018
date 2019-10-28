@@ -1,0 +1,38 @@
+<div class="container h-100">
+  <div class="row justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">Bejelentkezés</h2>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+            <div class="form-group">
+              <label for="username">Felhasználónév</label>
+              <input id="username" name="username" type="text" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('username')}" formControlName="username" required>
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('username', 'required')">Kötelező</div>
+            </div>
+            <div class="form-group">
+              <label for="password">Jelszó</label>
+              <input id="password" name="password" type="password" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('password')}" formControlName="password" required>
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('password', 'required')">Kötelező</div>
+            </div>
+            <a [routerLink]="['/reset-password-request']" class="d-block">Elfelejtett jelszó</a>
+            <a href="#" class="d-block">Megerősítő e-mail újraküldése</a>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a [routerLink]="['/register']">Fiók létrehozása</a>
+              <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span class="spinner-border spinner-border-sm" *ngIf="isLoading"></span>
+                Bejelentkezés
+              </button>
+            </div>
+            <div class="alert alert-info mt-4" *ngIf="redirectUrl">
+              A funkció eléréséhez bejelentkezés szükséges.
+            </div>
+            <div class="alert alert-danger" [ngClass]="{'mt-2': redirectUrl, 'mt-4': !redirectUrl}" *ngIf="loginUnsuccessful">
+              A megadott felhasználónév vagy jelszó hibás!
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
