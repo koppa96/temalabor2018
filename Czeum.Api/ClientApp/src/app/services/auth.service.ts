@@ -18,7 +18,10 @@ import { AuthEventListener } from '../interfaces/AuthEventListener';
 export class AuthService {
   private authEventListeners: AuthEventListener[] = [];
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private apiUrl: string) { }
+  constructor(
+    private http: HttpClient,
+    @Inject('BASE_URL') private apiUrl: string
+  ) { }
 
   private postTokenRequest(formContent: URLSearchParams): Promise<any> {
     const options = {
