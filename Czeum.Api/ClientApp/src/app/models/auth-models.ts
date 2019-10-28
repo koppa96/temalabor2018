@@ -30,7 +30,6 @@ export interface ChangePasswordData {
 export interface ResetPasswordData {
   username: string;
   password: string;
-  confirmPassword: string;
   token: string;
 }
 

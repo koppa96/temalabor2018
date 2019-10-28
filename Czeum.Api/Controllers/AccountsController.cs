@@ -25,15 +25,13 @@ namespace Czeum.Api.Controllers
         private readonly UserManager<User> userManager;
         private readonly ILogger logger;
         private readonly IEmailService emailService;
-        private readonly IConfiguration configuration;
 
         public AccountsController(UserManager<User> userManager, ILogger<AccountsController> logger,
-            IEmailService emailService, IConfiguration configuration)
+            IEmailService emailService)
         {
             this.userManager = userManager;
             this.logger = logger;
             this.emailService = emailService;
-            this.configuration = configuration;
         }
 
         [HttpPost]

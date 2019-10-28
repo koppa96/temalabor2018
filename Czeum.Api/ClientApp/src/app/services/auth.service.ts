@@ -1,6 +1,6 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import {
   ChangePasswordData, ConfirmEmailData,
   LoginData,
@@ -21,7 +21,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     @Inject('BASE_URL') private apiUrl: string
-  ) { }
+  ) {
+  }
 
   private postTokenRequest(formContent: URLSearchParams): Promise<any> {
     const options = {
