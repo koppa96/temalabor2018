@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -40,29 +41,29 @@ namespace Czeum.Api.Controllers
         [Route("register")]
         public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model)
         {
-	        if (!ModelState.IsValid)
-	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError);
-	        }
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
-	        if (await userManager.FindByNameAsync(model.Username) != null)
-	        {
-		        return BadRequest("Username already taken.");
-	        }
+            if (await userManager.FindByNameAsync(model.Username) != null)
+            {
+                return BadRequest("Username already taken.");
+            }
 
             var user = new User
-	        {
-				UserName = model.Username,
-				Email = model.Email
-	        };
+            {
+                UserName = model.Username,
+                Email = model.Email
+            };
 
-	        var result = await userManager.CreateAsync(user, model.Password);
-	        if (result.Succeeded)
-	        {
-		        logger.LogInformation($"New user created: {user.UserName}");
-		        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
-		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
-		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                logger.LogInformation($"New user created: {user.UserName}");
+                await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+                await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
+                await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("confirm-email")
@@ -74,34 +75,34 @@ namespace Czeum.Api.Controllers
 
                 await emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
-		        return Ok();
-	        }
+                return Ok();
+            }
 
-	        var errors = result.Errors.Select(e => e.Code);
-	        return BadRequest(errors);
+            var errors = result.Errors.Select(e => e.Code);
+            return BadRequest(errors);
         }
 
-		[HttpPost]
+        [HttpPost]
         [Route("change-password")]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[Authorize]
-		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
         {
-			if (ModelState.IsValid) {
-				User user = await userManager.FindByNameAsync(User.Identity.Name);
-				var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
+            if (ModelState.IsValid) {
+                User user = await userManager.FindByNameAsync(User.Identity.Name);
+                var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
 
-				if (result.Succeeded) {
-					logger.LogInformation($"{User.Identity.Name} changed their password.");
-					return Ok();
-				}
+                if (result.Succeeded) {
+                    logger.LogInformation($"{User.Identity.Name} changed their password.");
+                    return Ok();
+                }
 
-				return BadRequest("Invalid password.");
-			}
+                return BadRequest("Invalid password.");
+            }
 
-			return StatusCode(StatusCodes.Status500InternalServerError);
-		}
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -250,6 +251,15 @@ namespace Czeum.Api.Controllers
         public Task<bool> EmailAvailable([FromQuery] string email)
         {
             return userManager.Users.AllAsync(u => u.Email != email);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        public Task<List<string>> GetUsernames([FromQuery] string username)
+        {
+            return userManager.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower()))
+                .Select(u => u.UserName)
+                .ToListAsync();
         }
     }
 }
