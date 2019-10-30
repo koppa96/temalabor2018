@@ -10,6 +10,7 @@
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     xmlns:converters="using:Czeum.Client.Converters"
     xmlns:dto="using:Czeum.Core.DTOs"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -74,19 +75,28 @@
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
     </Page.Resources>
 
-    <Grid>
-        <ListView Name="MatchListView" ItemsSource="{Binding MatchStore.MatchList, Mode=OneWay}" ItemTemplateSelector="{StaticResource ResourceKey=MatchListDataTemplateSelector}">
-            <ListView.Header>
-                <Border Height="48" Background="LightBlue" CornerRadius="16">
-                    <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
-                </Border>
-            </ListView.Header>
-
+    <RelativePanel>
+        <ListView Name="MatchListView" ItemsSource="{Binding MatchStore.MatchList, Mode=OneWay}" ItemTemplateSelector="{StaticResource ResourceKey=MatchListDataTemplateSelector}"
+                  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True"
+                  Padding="0, 72, 0, 0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-    </Grid>
+
+        <controls:DropShadowPanel BlurRadius="20" HorizontalContentAlignment="Stretch" Height="64" OffsetY="8" 
+                                  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+            <Border Height="64" CornerRadius="0, 0, 20, 20" BorderBrush="DarkBlue" BorderThickness="2">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="LightSteelBlue" Offset="0"/>
+                        <GradientStop Color="SteelBlue" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+            </Border>
+        </controls:DropShadowPanel>
+    </RelativePanel>
 </prism:SessionStateAwarePage>

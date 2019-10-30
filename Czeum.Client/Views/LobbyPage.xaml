@@ -12,6 +12,7 @@
     xmlns:converters="using:Czeum.Client.Converters"
     xmlns:chess="using:Czeum.Core.DTOs.Chess"
     xmlns:connect4="using:Czeum.Core.DTOs.Connect4"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
@@ -40,8 +41,10 @@
                         <SymbolIcon Symbol="Mail" Margin="5, 5" Visibility="{x:Bind Path=InvitedPlayers, Converter={StaticResource InviteStatusConverter}}"/>
                     </StackPanel>
                 </StackPanel>
-                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
-                    <SymbolIcon Symbol="Play" Height="20" Width="20"/>
+                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2" Background="Transparent" BorderThickness="0">
+                    <Viewbox MaxHeight="48" MaxWidth="48">
+                        <SymbolIcon Symbol="Play"/>
+                    </Viewbox>
                 </Button>
             </Grid>
         </DataTemplate>
@@ -80,14 +83,10 @@
         <converters:InviteStatusConverter x:Name="InviteStatusConverter" x:Key="InviteStatusConverter" CompareTo="{x:Bind ConcreteDataContext.Username}"/>
     </Page.Resources>
 
-    <Grid>
-        <ListView Name="LobbyListView" ItemsSource="{Binding lobbyStore.LobbyList, Mode=OneWay}" ItemTemplateSelector="{StaticResource LobbyListDataTemplateSelector}">
-            <ListView.Header>
-                <Border Height="48" Background="LightBlue" CornerRadius="16">
-                    <TextBlock Text="Currently available lobbies" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
-                </Border>
-            </ListView.Header>
-
+    <RelativePanel>
+        <ListView Name="LobbyListView" ItemsSource="{Binding lobbyStore.LobbyList, Mode=OneWay}" ItemTemplateSelector="{StaticResource LobbyListDataTemplateSelector}"
+                  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True"
+                  Padding="0, 72, 0, 0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
@@ -109,5 +108,19 @@
                 </DropDownButton>
             </ListView.Footer>
         </ListView>
-    </Grid>
+
+        <controls:DropShadowPanel BlurRadius="20" HorizontalContentAlignment="Stretch" Height="64" OffsetY="8" 
+                                  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+            <Border Height="64" CornerRadius="0, 0, 20, 20" BorderBrush="DarkBlue" BorderThickness="2">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="LightSteelBlue" Offset="0"/>
+                        <GradientStop Color="SteelBlue" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Available lobbies" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+            </Border>
+        </controls:DropShadowPanel>
+
+    </RelativePanel>
 </prism:SessionStateAwarePage>
