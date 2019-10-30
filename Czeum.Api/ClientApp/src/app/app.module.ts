@@ -70,7 +70,11 @@ import { NewRequestComponent } from './components/new-request/new-request.compon
         path: 'friends', 
         component: FriendsComponent,
         children: [
-          { path: 'friend-list', component: FriendListComponent }
+          { path: '', redirectTo: 'friend-list', pathMatch: 'full' },
+          { path: 'friend-list', component: FriendListComponent },
+          { path: 'sent-requests', component: SentRequestListComponent },
+          { path: 'received-requests', component: ReceivedRequestListComponent },
+          { path: 'new-request', component: NewRequestComponent }
         ]
       }
     ]),
