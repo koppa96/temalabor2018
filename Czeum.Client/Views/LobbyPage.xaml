@@ -13,10 +13,12 @@
     xmlns:chess="using:Czeum.Core.DTOs.Chess"
     xmlns:connect4="using:Czeum.Core.DTOs.Connect4"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:lobbies="using:Czeum.Core.DTOs.Abstractions.Lobbies"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <DataTemplate x:Key="ChessLobbyTemplate" x:DataType="chess:ChessLobbyData">
+
+        <DataTemplate x:Key="LobbyTemplate" x:DataType="lobbies:LobbyData">
             <Grid Background="LightGray" Margin="0, 5" Padding="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
@@ -29,7 +31,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Image Source="ms-appx:///Assets/chess.png" Width="80" Height="80" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"/>
+                <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource LobbyListDataTemplateSelector}" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"/>
                 <TextBlock FontWeight="Bold" Text="{Binding Name}" Grid.Column="1" Grid.Row="0"/>
                 <TextBlock Grid.Column="1" Grid.Row="1">
                     <Run Text="Host: "/>
@@ -52,43 +54,15 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="Connect4LobbyTemplate" x:DataType="connect4:Connect4LobbyData">
-            <Grid Background="LightGray" Margin="0, 5" Padding="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Image Source="ms-appx:///Assets/connect4.png" Width="80" Height="80" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"/>
-                <TextBlock FontWeight="Bold" Text="{Binding Name}" Grid.Column="1" Grid.Row="0"/>
-                <TextBlock Grid.Column="1" Grid.Row="1">
-                    <Run Text="Host: "/>
-                    <Run Text="{Binding Host}" FontWeight="Bold"/>
-                </TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="2">
-                    <Run Text="Guest(s): "/>
-                    <Run Text="{Binding Guests, Converter={StaticResource GuestsToStringConverter}}" FontWeight="Bold"/>
-                </TextBlock>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"  Grid.Column="1" Grid.Row="3">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" Margin="5, 5"/>
-                    <SymbolIcon Symbol="Mail" Margin="5, 5" Visibility="{x:Bind Path=InvitedPlayers, Converter={StaticResource InviteStatusConverter}}"/>
-                </StackPanel>
-                <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Background="Transparent" BorderThickness="0"
-                        Height="60" Width="60" Grid.Column="2" Grid.Row="0" Grid.RowSpan="4">
-                    <Viewbox MaxHeight="60" MaxWidth="60">
-                        <SymbolIcon Symbol="Play"/>
-                    </Viewbox>
-                </Button>
-            </Grid>
+        <DataTemplate x:Key="ChessImage">
+            <Image Source="ms-appx:///Assets/chess.png" Width="80" Height="80"/>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="Connect4Image">
+            <Image Source="ms-appx:///Assets/connect4.png" Width="80" Height="80"/>
         </DataTemplate>
 
-        <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+        <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessImage}" Connect4DataTemplate="{StaticResource Connect4Image}"/>
         <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
         <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
         <converters:InviteStatusConverter x:Name="InviteStatusConverter" x:Key="InviteStatusConverter" CompareTo="{x:Bind ConcreteDataContext.Username}"/>
@@ -118,7 +92,7 @@
         </StackPanel>
 
         <RelativePanel Grid.Column="1">
-            <ListView Name="LobbyListView" ItemsSource="{Binding FilteredList, Mode=OneWay}" ItemTemplateSelector="{StaticResource LobbyListDataTemplateSelector}"
+            <ListView Name="LobbyListView" ItemsSource="{Binding FilteredList, Mode=OneWay}" ItemTemplate="{StaticResource LobbyTemplate}"
                       RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True"
                       Padding="0, 72, 0, 0">
                 <ListView.ItemContainerStyle>

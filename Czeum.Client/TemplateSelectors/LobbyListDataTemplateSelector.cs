@@ -18,7 +18,7 @@ namespace Czeum.Client.TemplateSelectors {
         {
             if (item == null)
             {
-                throw new ArgumentException("Tried selecting template for null lobby");
+                return null;
             }
             if (item is ChessLobbyData)
             {
