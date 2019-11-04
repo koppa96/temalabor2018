@@ -28,6 +28,8 @@ namespace Czeum.Client.ViewModels
         private IHubService hubService;
         public IMatchStore MatchStore { get; private set; }
 
+        public string Username => userManagerService.Username;
+
         public ObservableCollection<MatchStatus> LobbyList { get => MatchStore.MatchList; }
 
         public ICommand OpenGameCommand { get; set; }

@@ -90,8 +90,8 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Vertical" Padding="8" Background="LightGray">
@@ -137,25 +137,19 @@
                 </ListView.Footer>
             </ListView>
 
-            <controls:DropShadowPanel BlurRadius="20" HorizontalContentAlignment="Stretch" Height="64" OffsetY="8" 
-                                      RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
-                <Border Height="64" CornerRadius="0, 0, 20, 20" BorderBrush="DarkBlue" BorderThickness="2">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="LightSteelBlue" Offset="0"/>
-                            <GradientStop Color="SteelBlue" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}">
-                        <Run Text="Available lobbies" FontWeight="Bold"/>
-                        <Run Text=" (" />
-                        <Run Text="{Binding FilteredList.Count}"/>
-                        <Run Text="/"/>
-                        <Run Text="{Binding LobbyList.Count}"/>
-                        <Run Text=")"/>
-                    </TextBlock>
-                </Border>
-            </controls:DropShadowPanel>
+            <Border Height="64" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <Border.Background>
+                    <SolidColorBrush Color="LightGray"/>
+                </Border.Background>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}">
+                    <Run Text="Available lobbies" FontWeight="Bold"/>
+                    <Run Text=" (" />
+                    <Run Text="{Binding FilteredList.Count}"/>
+                    <Run Text="/"/>
+                    <Run Text="{Binding LobbyList.Count}"/>
+                    <Run Text=")"/>
+                </TextBlock>
+            </Border>
 
         </RelativePanel>
     </Grid>

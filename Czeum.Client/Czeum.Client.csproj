@@ -123,6 +123,7 @@
     <Compile Include="Converters\GameStateToStringConverter.cs" />
     <Compile Include="Converters\InviteStatusConverter.cs" />
     <Compile Include="Converters\MessageTrimmerConverter.cs" />
+    <Compile Include="Converters\PlayersToStringConverter.cs" />
     <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />

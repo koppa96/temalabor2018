@@ -25,14 +25,12 @@
                 <Image Source="ms-appx:///Assets/chess.png" Width="80" Height="80" Grid.Column="0" Margin="10"/>
                 <StackPanel Grid.Column="1" Margin="10, 0">
                     <TextBlock FontWeight="Bold">
-                        <Run>Chess match #</Run>
-                        <Run Text="{Binding Id}"/>
-                        <Run> against </Run>
-                        <Run Text="{Binding OtherPlayer}"/>
+                        <Run>Playing against: </Run>
+                        <Run Text="{Binding Players, Converter={StaticResource PlayersToStringConverter}}"/>
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="You are playing as color "/>
-                        <Run Text="{Binding PlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+                        <Run Text="You are playing as color"/>
+                        <Run Text="{Binding CurrentPlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
                     </TextBlock>
                     <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Margin="30, 1, 1, 1"/>
                 </StackPanel>
@@ -52,14 +50,12 @@
                 <Image Source="ms-appx:///Assets/connect4.png" Width="80" Height="80" Grid.Column="0" Margin="10"/>
                 <StackPanel Grid.Column="1" Margin="10, 0">
                     <TextBlock FontWeight="Bold">
-                        <Run>Connect4 match #</Run>
-                        <Run Text="{Binding Id}"/>
-                        <Run> against </Run>
-                        <Run Text="{Binding OtherPlayer}"/>
+                        <Run>Playing against: </Run>
+                        <Run Text="{Binding Players, Converter={StaticResource PlayersToStringConverter}}"/>
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="You are playing as color "/>
-                        <Run Text="{Binding PlayerId, Converter={StaticResource Connect4IdToStringConverter}}" FontWeight="Bold"/>
+                        <Run Text="You are playing as color"/>
+                        <Run Text="{Binding CurrentPlayerIndex, Converter={StaticResource Connect4IdToStringConverter}}" FontWeight="Bold"/>
                     </TextBlock>
                     <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Margin="30, 1, 1, 1"/>
                 </StackPanel>
@@ -73,6 +69,7 @@
         <converters:ChessIdToStringConverter x:Key="ChessIdToStringConverter"/>
         <converters:Connect4IdToStringConverter x:Key="Connect4IdToStringConverter"/>
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
+        <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>
     </Page.Resources>
 
     <RelativePanel>
@@ -86,17 +83,11 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <controls:DropShadowPanel BlurRadius="20" HorizontalContentAlignment="Stretch" Height="64" OffsetY="8" 
-                                  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
-            <Border Height="64" CornerRadius="0, 0, 20, 20" BorderBrush="DarkBlue" BorderThickness="2">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="LightSteelBlue" Offset="0"/>
-                        <GradientStop Color="SteelBlue" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
-            </Border>
-        </controls:DropShadowPanel>
+        <Border Height="64" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+            <Border.Background>
+                <SolidColorBrush Color="LightGray"/>
+            </Border.Background>
+            <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+        </Border>
     </RelativePanel>
 </prism:SessionStateAwarePage>
