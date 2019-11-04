@@ -36,5 +36,15 @@ namespace Czeum.Client.Views {
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConcreteDataContext)));
         }
+
+        private void MessageText_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if(e.Key == Windows.System.VirtualKey.Enter)
+            {
+                // Hmmm, such lovely UWP stuff
+                ConcreteDataContext.MessageText = (sender as TextBox).Text;
+                ConcreteDataContext.SendMessageCommand.Execute(null);
+            }
+        }
     }
 }

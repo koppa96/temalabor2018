@@ -39,7 +39,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0" HorizontalAlignment="Right" Background="LightGray" BorderBrush="Black" BorderThickness="1" Padding="4" Margin="20, 0, 0, 0" CornerRadius="8">
+                <Border Grid.Row="0" HorizontalAlignment="Right" Background="LightGray" BorderBrush="DarkGray" BorderThickness="1" Padding="4" Margin="20, 0, 0, 0" CornerRadius="8,8,0,8">
                     <TextBlock HorizontalTextAlignment="Right" TextWrapping="WrapWholeWords" ToolTipService.ToolTip="{Binding Timestamp}">
                         <Run Text="{Binding Text, Converter={StaticResource MessageTrimmerConverter}}"/>
                     </TextBlock>
@@ -52,7 +52,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <Border Grid.Row="0" HorizontalAlignment="Left" Background="LightBlue" BorderBrush="Black" BorderThickness="1" Padding="4" Margin="0, 0, 20, 0" CornerRadius="8">
+                <Border Grid.Row="0" HorizontalAlignment="Left" Background="LightBlue" BorderBrush="DarkBlue" BorderThickness="1" Padding="4" Margin="0, 0, 20, 0" CornerRadius="8,8,8,0">
                     <TextBlock HorizontalTextAlignment="Left" TextWrapping="WrapWholeWords" ToolTipService.ToolTip="{Binding Timestamp}">
                         <Run Text="{Binding Sender}" FontWeight="Bold"/>
                         <Run Text="{Binding Text, Converter={StaticResource MessageTrimmerConverter}}"/>
@@ -213,7 +213,7 @@
             <TextBlock Text="Lobbby messages: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="MessagesHeader"/>
             
             <ListView ItemsSource="{Binding Messages}" RelativePanel.Below="MessagesHeader" x:Name="MessagesList" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                          RelativePanel.Above="MessageText" Margin="0, 0, 0, 12" ItemTemplateSelector="{StaticResource MessageTemplateSelector}">
+                          RelativePanel.Above="MessageText" Margin="0, 0, 0, 12" ItemTemplateSelector="{StaticResource MessageTemplateSelector}" SelectionMode="None">
 
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -229,7 +229,7 @@
 
             </ListView>
 
-            <TextBox x:Name="MessageText" PlaceholderText="Your message" Text="{Binding MessageText, Mode=TwoWay}" 
+            <TextBox x:Name="MessageText" PlaceholderText="Your message" Text="{Binding MessageText, Mode=TwoWay}" KeyUp="MessageText_KeyUp"
                          RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="SendMessageButton" RelativePanel.AlignLeftWithPanel="True" >
             </TextBox>
             <Button x:Name="SendMessageButton" Margin="12, 0" Command="{Binding SendMessageCommand}"
