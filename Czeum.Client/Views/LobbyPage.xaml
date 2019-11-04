@@ -74,7 +74,7 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Vertical" Padding="8" Background="LightGray">
+        <StackPanel Orientation="Vertical" Padding="8" Background="LightGray" Grid.Column="0">
             <TextBlock Text="Search filters" FontWeight="Black" Margin="0,0,0,12"/>
             <TextBox Header="Lobby name" Text="{Binding NameFilter, Mode=TwoWay}" PlaceholderText="Lobby name" Margin="0,0,0,4"/>
             <CheckBox Content="Hide private lobbies" IsChecked="{Binding HidePrivate, Mode=TwoWay}" Margin="0,0,0,8"/>

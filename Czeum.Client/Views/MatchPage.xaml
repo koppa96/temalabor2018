@@ -84,22 +84,57 @@
         <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>
     </Page.Resources>
 
-    <RelativePanel>
-        <ListView Name="MatchListView" ItemsSource="{Binding MatchStore.MatchList, Mode=OneWay}" ItemTemplateSelector="{StaticResource ResourceKey=MatchListDataTemplateSelector}"
-                  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True"
-                  Padding="0, 72, 0, 0">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
 
-        <Border Height="64" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
-            <Border.Background>
-                <SolidColorBrush Color="LightGray"/>
-            </Border.Background>
-            <TextBlock Text="Your matches" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
-        </Border>
-    </RelativePanel>
+        <StackPanel Orientation="Vertical" Padding="8" Background="LightGray" Grid.Column="0">
+            <TextBlock Text="Search filters" FontWeight="Black" Margin="0,0,0,12"/>
+            <TextBlock Text="Filter by type:"/>
+            <CheckBox Content="Chess" IsChecked="{Binding FilterChess, Mode=TwoWay}"/>
+            <CheckBox Content="Connect4" IsChecked="{Binding FilterConnect4, Mode=TwoWay}"/>
+            <TextBlock Text="Filter by status:" Margin="0,12,0,0"/>
+            <CheckBox Content="Your turn" IsChecked="{Binding FilterYour, Mode=TwoWay}"/>
+            <CheckBox Content="Opponent's turn" IsChecked="{Binding FilterOpponent, Mode=TwoWay}"/>
+            <CheckBox Content="Won" IsChecked="{Binding FilterWon, Mode=TwoWay}"/>
+            <CheckBox Content="Lost" IsChecked="{Binding FilterLost, Mode=TwoWay}"/>
+            <CheckBox Content="Draw" IsChecked="{Binding FilterDraw, Mode=TwoWay}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Apply" Margin="4,4,8,4" Command="{Binding ApplyFiltersCommand}" Grid.Column="0" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
+                <Button Content="Clear" Margin="4,4,8,4" Command="{Binding ClearFiltersCommand}" Grid.Column="1" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
+            </Grid>
+        </StackPanel>
+
+        <RelativePanel Grid.Column="1">
+            <ListView Name="MatchListView" ItemsSource="{Binding FilteredList, Mode=OneWay}" ItemTemplateSelector="{StaticResource ResourceKey=MatchListDataTemplateSelector}"
+                      RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True"
+                      Padding="0, 72, 0, 0">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+            <Border Height="64" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <Border.Background>
+                    <SolidColorBrush Color="LightGray"/>
+                </Border.Background>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}">
+                    <Run Text="Your matches" FontWeight="Bold"/>
+                    <Run Text=" (" />
+                    <Run Text="{Binding FilteredList.Count}"/>
+                    <Run Text="/"/>
+                    <Run Text="{Binding MatchList.Count}"/>
+                    <Run Text=")"/>
+                </TextBlock>
+            </Border>
+        </RelativePanel>
+    </Grid>
 </prism:SessionStateAwarePage>
