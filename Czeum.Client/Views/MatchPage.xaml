@@ -34,7 +34,7 @@
                 </TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1">
                     <Run Text="You are playing as color"/>
-                    <Run Text="{Binding CurrentPlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+                    <Run Text="{Binding PlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Grid.Column="1" Grid.Row="2"/>
                 <Button Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}" Background="Transparent" BorderThickness="0"
@@ -65,7 +65,7 @@
                 </TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1">
                     <Run Text="You are playing as color"/>
-                    <Run Text="{Binding CurrentPlayerIndex, Converter={StaticResource Connect4IdToStringConverter}}" FontWeight="Bold"/>
+                    <Run Text="{Binding PlayerIndex, Converter={StaticResource Connect4IdToStringConverter}}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Grid.Column="1" Grid.Row="2"/>
                 <Button Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}" Background="Transparent" BorderThickness="0"

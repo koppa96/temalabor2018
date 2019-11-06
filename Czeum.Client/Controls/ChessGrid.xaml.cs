@@ -59,71 +59,55 @@ namespace Czeum.Client.Controls
             }
 
             BoardContainer.Children.Clear();
-            if(Match.PlayerIndex == 0)
-            {
-                DrawBoard();
-                PlacePieces(boardData);
-            }
-            else
-            {
-                DrawBoardFlipped();
-                PlacePiecesFlipped(boardData);
-            }
+            bool isFlipped = Match.PlayerIndex != 0;
+            DrawBoard(isFlipped);
+            PlacePieces(boardData, isFlipped);
         }
-
-        private void PlacePieces(ChessMoveResult boardData)
+        
+        private void PlacePieces(ChessMoveResult boardData, bool flipped)
         {
             foreach (var piece in boardData.PieceInfos)
             {
-                Image i = new Image();
-                i.Stretch = Stretch.Uniform;
-                i.HorizontalAlignment = HorizontalAlignment.Center;
-                i.VerticalAlignment = VerticalAlignment.Center;
                 string colorChar = piece.Color == Core.DTOs.Chess.Color.White ? "w" : "b";
                 string typeChar = GetPieceTypeString(piece);
                 string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
-                i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));
-                i.SetValue(Grid.RowProperty, piece.Row);
-                i.SetValue(Grid.ColumnProperty, piece.Column);
 
-                var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) };
-                var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
+                Image i = new Image
+                {
+                    Stretch = Stretch.Uniform,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"))
+                };
+
+
+                int row = !flipped ? piece.Row : 7 - piece.Row;
+                int column = !flipped ? piece.Column : 7 - piece.Column;
+                i.SetValue(Grid.RowProperty, row);
+                i.SetValue(Grid.ColumnProperty, column);
+
+                var action = new InvokeCommandAction() { 
+                    Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, 
+                    CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) 
+                };
+
+                var behavior = new EventTriggerBehavior() { 
+                    EventName = "Tapped" 
+                };
                 behavior.Actions.Add(action);
-                var bColl = new BehaviorCollection();
-                bColl.Add(behavior);
-                Interaction.SetBehaviors(i, bColl);
-
-                BoardContainer.Children.Add(i);
-            }
-        }
-        private void PlacePiecesFlipped(ChessMoveResult boardData)
-        {
-            foreach (var piece in boardData.PieceInfos)
-            {
-                Image i = new Image();
-                i.Stretch = Stretch.Uniform;
-                i.HorizontalAlignment = HorizontalAlignment.Center;
-                i.VerticalAlignment = VerticalAlignment.Center;
-                string colorChar = piece.Color == Core.DTOs.Chess.Color.White ? "w" : "b";
-                string typeChar = GetPieceTypeString(piece);
-                string imagePath = $"{colorChar}_{piece.Type.ToString().ToLower()}_svg_withShadow.png";
-                i.Source = new BitmapImage(new Uri($"ms-appx:///Assets/{imagePath}"));
-                i.SetValue(Grid.RowProperty, 7 - piece.Row);
-                i.SetValue(Grid.ColumnProperty, 7 - piece.Column);
-
-                var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) };
-                var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
-                behavior.Actions.Add(action);
-                var bColl = new BehaviorCollection();
-                bColl.Add(behavior);
+                var bColl = new BehaviorCollection
+                {
+                    behavior
+                };
                 Interaction.SetBehaviors(i, bColl);
 
                 BoardContainer.Children.Add(i);
             }
         }
 
-        private void DrawBoard()
+        private void DrawBoard(bool flipped)
         {
+
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -138,38 +122,19 @@ namespace Czeum.Client.Controls
                     field.SetValue(Grid.RowProperty, i);
                     field.SetValue(Grid.ColumnProperty, j);
 
-                    var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.FieldSelectedCommand, CommandParameter = new Tuple<int, int>(j, i) };
-                    var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
-                    behavior.Actions.Add(action);
-                    var bColl = new BehaviorCollection();
-                    bColl.Add(behavior);
-                    Interaction.SetBehaviors(field, bColl);
+                    int row = !flipped ? j : 7 - j;
+                    int column = !flipped ? i : 7 - i;
 
-                    BoardContainer.Children.Add(field);
-                }
-            }
-        }
-        private void DrawBoardFlipped()
-        {
-            for (int i = 7; i >= 0; i--)
-            {
-                for (int j = 7; j >= 0; j--)
-                {
-                    var field = new Rectangle
-                    {
-                        Fill = new SolidColorBrush((i + j) % 2 == 0 ? Colors.White : Colors.DarkGray),
-                        Width = 100,
-                        Height = 100,
-                        Stretch = Stretch.Uniform
+                    var action = new InvokeCommandAction() { 
+                        Command = (DataContext as ChessPageViewModel)?.FieldSelectedCommand, 
+                        CommandParameter = new Tuple<int, int>(row, column) 
                     };
-                    field.SetValue(Grid.RowProperty, i);
-                    field.SetValue(Grid.ColumnProperty, j);
-
-                    var action = new InvokeCommandAction() { Command = (DataContext as ChessPageViewModel)?.FieldSelectedCommand, CommandParameter = new Tuple<int, int>(7 - j, 7 - i) };
                     var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
                     behavior.Actions.Add(action);
-                    var bColl = new BehaviorCollection();
-                    bColl.Add(behavior);
+                    var bColl = new BehaviorCollection
+                    {
+                        behavior
+                    };
                     Interaction.SetBehaviors(field, bColl);
 
                     BoardContainer.Children.Add(field);
