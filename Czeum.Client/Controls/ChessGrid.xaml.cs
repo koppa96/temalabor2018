@@ -34,6 +34,8 @@ namespace Czeum.Client.Controls
             public int Row;
         }
         private Field lastTapped = null;
+        private Rectangle lastTappedRect = null;
+        private Windows.UI.Color lastTappedRectColor = Colors.Transparent;
 
         public ChessGrid()
         {
@@ -123,9 +125,10 @@ namespace Czeum.Client.Controls
             {
                 for (int j = 0; j < 8; j++)
                 {
+                    var fieldColor = (i + j) % 2 == 0 ? Colors.White : Colors.DarkGray;
                     var field = new Rectangle
                     {
-                        Fill = new SolidColorBrush((i + j) % 2 == 0 ? Colors.White : Colors.DarkGray),
+                        Fill = new SolidColorBrush(fieldColor),
                         Width = 100,
                         Height = 100,
                         Stretch = Stretch.Uniform
@@ -137,16 +140,19 @@ namespace Czeum.Client.Controls
                     int row = !flipped ? i : 7 - i;
                     field.Tapped += (sender, args) =>
                     {
-                        HandleTap(row, column);
+                        HandleTap(row, column, field as Rectangle);
                     };
                     BoardContainer.Children.Add(field);
                 }
             }
         }
 
-        private void HandleTap(int row, int column)
+        private void HandleTap(int row, int column, Rectangle field)
         {
+            if(Match.State != Core.Enums.GameState.YourTurn) { return; }
+            
             var board = Match.CurrentBoard.Content as ChessMoveResult;
+            var playerIndex = Match.PlayerIndex;
             var clickedPiece = board.PieceInfos.FirstOrDefault(p => p.Row == row && p.Column == column);
             // We clicked on an empty field
             if(clickedPiece == null) { 
@@ -155,25 +161,21 @@ namespace Czeum.Client.Controls
                 {
                     return;
                 }
-                // We will try and move the piece to the selected field
-                var moveData = new ChessMoveData()
-                {
-                    FromColumn = lastTapped.Column,
-                    FromRow = lastTapped.Row,
-                    ToColumn = column,
-                    ToRow = row,
-                    MatchId = Match.Id
-                };
-                MoveCommand.Execute(moveData);
-                lastTapped = null;
-                return;
             }
-            var playerIndex = Match.PlayerIndex;
             // If we clicked on our own piece
-            if ((playerIndex == 0 && clickedPiece.Color == Core.DTOs.Chess.Color.White) || (playerIndex == 1 && clickedPiece.Color == Core.DTOs.Chess.Color.Black))
+            else if ((playerIndex == 0 && clickedPiece.Color == Core.DTOs.Chess.Color.White) || (playerIndex == 1 && clickedPiece.Color == Core.DTOs.Chess.Color.Black))
             {
-                // Save the position as our selected piece
+                // Save the position as our selected piece and return
                 lastTapped = new Field() { Column = column, Row = row };
+                if (lastTappedRect != null)
+                {
+                    lastTappedRect.Fill = new SolidColorBrush(lastTappedRectColor);
+                }
+                lastTappedRect = field;
+                var fieldColor = (row + column) % 2 == 0 ? Colors.White : Colors.DarkGray;
+                lastTappedRectColor = fieldColor;
+                (field as Rectangle).Fill = new SolidColorBrush(Colors.Yellow);
+                return;
             }
             // Else if we clicked on the opponent's piece
             else if((playerIndex == 0 && clickedPiece.Color == Core.DTOs.Chess.Color.Black) || (playerIndex == 1 && clickedPiece.Color == Core.DTOs.Chess.Color.White))
@@ -183,17 +185,20 @@ namespace Czeum.Client.Controls
                 {
                     return;
                 }
-                var moveData = new ChessMoveData()
-                {
-                    FromColumn = lastTapped.Column,
-                    FromRow = lastTapped.Row,
-                    ToColumn = column,
-                    ToRow = row,
-                    MatchId = Match.Id
-                };
-                MoveCommand.Execute(moveData);
-                lastTapped = null;
             }
+            // Perform the move, then reset highlight
+            var moveData = new ChessMoveData()
+            {
+                FromColumn = lastTapped.Column,
+                FromRow = lastTapped.Row,
+                ToColumn = column,
+                ToRow = row,
+                MatchId = Match.Id
+            };
+            MoveCommand.Execute(moveData);
+            lastTapped = null;
+            lastTappedRect.Fill = new SolidColorBrush(lastTappedRectColor);
+            lastTappedRect = null;
         }
 
         private string GetPieceTypeString(PieceInfo piece)
