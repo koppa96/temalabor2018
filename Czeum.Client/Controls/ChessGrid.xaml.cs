@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -27,9 +28,21 @@ namespace Czeum.Client.Controls
 {
     public sealed partial class ChessGrid : UserControl
     {
+        private class Field
+        {
+            public int Column;
+            public int Row;
+        }
+        private Field lastTapped = null;
+
         public ChessGrid()
         {
             this.InitializeComponent();
+        }
+
+        public ICommand MoveCommand {
+            get { return (ICommand)GetValue(MoveCommandProperty); }
+            set { SetValue(MoveCommandProperty, value); }
         }
 
         public static readonly DependencyProperty MatchProperty = DependencyProperty.Register(
@@ -38,6 +51,13 @@ namespace Czeum.Client.Controls
             typeof(ChessGrid),
             new PropertyMetadata(null, new PropertyChangedCallback(OnMatchChanged))
         );
+        public static readonly DependencyProperty MoveCommandProperty = DependencyProperty.Register(
+            "MoveCommand",
+            typeof(ICommand),
+            typeof(ChessGrid),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnMoveCommandChanged))
+        );
+
 
         public MatchStatus Match {
             get { return (MatchStatus)GetValue(MatchProperty); }
@@ -47,6 +67,11 @@ namespace Czeum.Client.Controls
         private static void OnMatchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as ChessGrid).RenderBoard();
+        }
+
+        private static void OnMoveCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ;
         }
 
         private void RenderBoard()
@@ -85,21 +110,7 @@ namespace Czeum.Client.Controls
                 int column = !flipped ? piece.Column : 7 - piece.Column;
                 i.SetValue(Grid.RowProperty, row);
                 i.SetValue(Grid.ColumnProperty, column);
-
-                var action = new InvokeCommandAction() { 
-                    Command = (DataContext as ChessPageViewModel)?.PieceSelectedCommand, 
-                    CommandParameter = new Tuple<int, int>(piece.Column, piece.Row) 
-                };
-
-                var behavior = new EventTriggerBehavior() { 
-                    EventName = "Tapped" 
-                };
-                behavior.Actions.Add(action);
-                var bColl = new BehaviorCollection
-                {
-                    behavior
-                };
-                Interaction.SetBehaviors(i, bColl);
+                i.IsHitTestVisible = false;
 
                 BoardContainer.Children.Add(i);
             }
@@ -122,23 +133,66 @@ namespace Czeum.Client.Controls
                     field.SetValue(Grid.RowProperty, i);
                     field.SetValue(Grid.ColumnProperty, j);
 
-                    int row = !flipped ? j : 7 - j;
-                    int column = !flipped ? i : 7 - i;
-
-                    var action = new InvokeCommandAction() { 
-                        Command = (DataContext as ChessPageViewModel)?.FieldSelectedCommand, 
-                        CommandParameter = new Tuple<int, int>(row, column) 
-                    };
-                    var behavior = new EventTriggerBehavior() { EventName = "Tapped" };
-                    behavior.Actions.Add(action);
-                    var bColl = new BehaviorCollection
+                    int column = !flipped ? j : 7 - j;
+                    int row = !flipped ? i : 7 - i;
+                    field.Tapped += (sender, args) =>
                     {
-                        behavior
+                        HandleTap(row, column);
                     };
-                    Interaction.SetBehaviors(field, bColl);
-
                     BoardContainer.Children.Add(field);
                 }
+            }
+        }
+
+        private void HandleTap(int row, int column)
+        {
+            var board = Match.CurrentBoard.Content as ChessMoveResult;
+            var clickedPiece = board.PieceInfos.FirstOrDefault(p => p.Row == row && p.Column == column);
+            // We clicked on an empty field
+            if(clickedPiece == null) { 
+                // ... and haven't selected any pieces to move, so we return early
+                if(lastTapped == null)
+                {
+                    return;
+                }
+                // We will try and move the piece to the selected field
+                var moveData = new ChessMoveData()
+                {
+                    FromColumn = lastTapped.Column,
+                    FromRow = lastTapped.Row,
+                    ToColumn = column,
+                    ToRow = row,
+                    MatchId = Match.Id
+                };
+                MoveCommand.Execute(moveData);
+                lastTapped = null;
+                return;
+            }
+            var playerIndex = Match.PlayerIndex;
+            // If we clicked on our own piece
+            if ((playerIndex == 0 && clickedPiece.Color == Core.DTOs.Chess.Color.White) || (playerIndex == 1 && clickedPiece.Color == Core.DTOs.Chess.Color.Black))
+            {
+                // Save the position as our selected piece
+                lastTapped = new Field() { Column = column, Row = row };
+            }
+            // Else if we clicked on the opponent's piece
+            else if((playerIndex == 0 && clickedPiece.Color == Core.DTOs.Chess.Color.Black) || (playerIndex == 1 && clickedPiece.Color == Core.DTOs.Chess.Color.White))
+            {
+                // Do nothing if we haven't selected our piece to move yet
+                if(lastTapped == null)
+                {
+                    return;
+                }
+                var moveData = new ChessMoveData()
+                {
+                    FromColumn = lastTapped.Column,
+                    FromRow = lastTapped.Row,
+                    ToColumn = column,
+                    ToRow = row,
+                    MatchId = Match.Id
+                };
+                MoveCommand.Execute(moveData);
+                lastTapped = null;
             }
         }
 

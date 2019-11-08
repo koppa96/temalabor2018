@@ -117,12 +117,11 @@
     </Compile>
     <Compile Include="Converters\AccessToBooleanConverter.cs" />
     <Compile Include="Converters\AccessToStringConverter.cs" />
-    <Compile Include="Converters\ChessIdToStringConverter.cs" />
-    <Compile Include="Converters\Connect4IdToStringConverter.cs" />
     <Compile Include="Converters\GuestsToStringConverter.cs" />
     <Compile Include="Converters\GameStateToStringConverter.cs" />
     <Compile Include="Converters\InviteStatusConverter.cs" />
     <Compile Include="Converters\MessageTrimmerConverter.cs" />
+    <Compile Include="Converters\PlayerIdToStringConverter.cs" />
     <Compile Include="Converters\PlayersToStringConverter.cs" />
     <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
@@ -152,6 +151,7 @@
     <Compile Include="ViewModels\Connect4PageViewModel.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
+    <Compile Include="ViewModels\MatchDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\MatchPageViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
@@ -172,6 +172,9 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\LoginPageViewModel.cs" />
+    <Compile Include="Views\MatchDetailsPage.xaml.cs">
+      <DependentUpon>MatchDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MatchPage.xaml.cs">
       <DependentUpon>MatchPage.xaml</DependentUpon>
     </Compile>
@@ -295,6 +298,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,7 +13,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <converters:ChessIdToStringConverter x:Key="ChessIdToStringConverter"/>
+        <converters:PlayerIdToStringConverter x:Key="PlayerIdToStringConverter"/>
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
     </Page.Resources>
     
@@ -30,7 +30,7 @@
             <TextBlock Text="{Binding OpponentName}"
                        Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
             <TextBlock Text="Color:"/>
-            <TextBlock Text="{Binding matchStore.SelectedMatch.PlayerIndex, Converter={StaticResource ChessIdToStringConverter}}"
+            <TextBlock Text="{Binding matchStore.SelectedMatch, Converter={StaticResource PlayerIdToStringConverter}}"
                        Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
             <TextBlock Text="Match state:"/>
             <TextBlock Text="{Binding matchStore.SelectedMatch.State, Converter={StaticResource GameStateToStringConverter}}"

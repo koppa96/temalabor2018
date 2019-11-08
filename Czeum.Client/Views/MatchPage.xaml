@@ -34,7 +34,7 @@
                 </TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1">
                     <Run Text="You are playing as color"/>
-                    <Run Text="{Binding PlayerIndex, Converter={StaticResource ChessIdToStringConverter}}" FontWeight="Bold"/>
+                    <Run Text="{Binding Converter={StaticResource PlayerIdToStringConverter}}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Grid.Column="1" Grid.Row="2"/>
                 <Button Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}" Background="Transparent" BorderThickness="0"
@@ -65,7 +65,7 @@
                 </TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1">
                     <Run Text="You are playing as color"/>
-                    <Run Text="{Binding PlayerIndex, Converter={StaticResource Connect4IdToStringConverter}}" FontWeight="Bold"/>
+                    <Run Text="{Binding Converter={StaticResource PlayerIdToStringConverter}}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Text="{Binding State, Converter={StaticResource GameStateToStringConverter}}" Grid.Column="1" Grid.Row="2"/>
                 <Button Command="{Binding ElementName=MatchListView, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}" Background="Transparent" BorderThickness="0"
@@ -78,8 +78,7 @@
         </DataTemplate>
 
         <templateSelectors:MatchListDataTemplateSelector x:Key="MatchListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
-        <converters:ChessIdToStringConverter x:Key="ChessIdToStringConverter"/>
-        <converters:Connect4IdToStringConverter x:Key="Connect4IdToStringConverter"/>
+        <converters:PlayerIdToStringConverter x:Key="PlayerIdToStringConverter"/>
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
         <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>
     </Page.Resources>

@@ -1,0 +1,56 @@
+﻿<mvvm:SessionStateAwarePage
+    xmlns:mvvm="using:Prism.Windows.Mvvm"
+    mvvm:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="Czeum.Client.Views.MatchDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Czeum.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Czeum.Client.Converters"
+    xmlns:controls="using:Czeum.Client.Controls"
+    xmlns:templateselectors="using:Czeum.Client.TemplateSelectors"
+    xmlns:dto="using:Czeum.Core.DTOs"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+
+        <DataTemplate x:Key="ChessMatchTemplate" x:DataType="dto:MatchStatus">
+            <controls:ChessGrid Match="{Binding ElementName=Placeholder, Path=DataContext.matchStore.SelectedMatch}" MoveCommand="{Binding ElementName=Placeholder, Path=DataContext.PerformMoveCommand}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="Connect4MatchTemplate" x:DataType="dto:MatchStatus">
+            <controls:Connect4Grid Match="{Binding ElementName=Placeholder, Path=DataContext.matchStore.SelectedMatch}" MoveCommand="{Binding ElementName=Placeholder, Path=DataContext.PerformMoveCommand}"
+                                   HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        </DataTemplate>
+
+        <converters:PlayerIdToStringConverter x:Key="PlayerIdToStringConverter"/>
+        <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
+        <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>
+        
+        <templateselectors:MatchListDataTemplateSelector x:Key="MatchDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
+    </Page.Resources>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <ContentControl Name="Placeholder" ContentTemplateSelector="{StaticResource MatchDataTemplateSelector}" Content="{Binding Match, Mode=TwoWay}" 
+                        Grid.Column="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" DataContext="{x:Bind ConcreteDataContext}"/>
+
+        <StackPanel Grid.Column="1" Margin="0,20">
+            <TextBlock Text="Opponent:"/>
+            <TextBlock Text="{Binding Match.Players, Converter={StaticResource PlayersToStringConverter}}"
+                       Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+            <TextBlock Text="Color:"/>
+            <TextBlock Text="{Binding Match, Converter={StaticResource PlayerIdToStringConverter}}"
+                       Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+            <TextBlock Text="Match state:"/>
+            <TextBlock Text="{Binding Match.State, Converter={StaticResource GameStateToStringConverter}}"
+                       Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+        </StackPanel>
+    </Grid>
+</mvvm:SessionStateAwarePage>

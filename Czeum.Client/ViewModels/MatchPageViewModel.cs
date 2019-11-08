@@ -105,8 +105,9 @@ namespace Czeum.Client.ViewModels
         private void OpenGame(MatchStatus match)
         {
             MatchStore.SelectMatch(match);
-            PageTokens targetPage = match.CurrentBoard.GetPageToken();
-            navigationService.Navigate(targetPage.ToString(), null);
+            //PageTokens targetPage = match.CurrentBoard.GetPageToken();
+            //navigationService.Navigate(targetPage.ToString(), null);
+            navigationService.Navigate("MatchDetails", null);
         }
 
 

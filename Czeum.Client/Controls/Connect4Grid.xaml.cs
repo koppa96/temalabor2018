@@ -5,9 +5,12 @@ using Microsoft.Xaml.Interactions.Core;
 using Microsoft.Xaml.Interactivity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -31,11 +34,23 @@ namespace Czeum.Client.Controls
             this.InitializeComponent();
         }
 
+        public ICommand MoveCommand {
+            get { return (ICommand)GetValue(MoveCommandProperty); }
+            set { SetValue(MoveCommandProperty, value); }
+        }
+
+
         public static readonly DependencyProperty MatchProperty = DependencyProperty.Register(
             "Match",
             typeof(MatchStatus),
             typeof(Connect4Grid),
             new PropertyMetadata(null, new PropertyChangedCallback(OnMatchChanged))
+        );
+        public static readonly DependencyProperty MoveCommandProperty = DependencyProperty.Register(
+            "MoveCommand",
+            typeof(ICommand),
+            typeof(Connect4Grid),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnMoveCommandChanged))
         );
 
         public MatchStatus Match {
@@ -43,9 +58,14 @@ namespace Czeum.Client.Controls
             set { SetValue(MatchProperty, value); }
         }
 
+
         private static void OnMatchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as Connect4Grid).RenderBoard();
+        }
+        private static void OnMoveCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ;
         }
 
         private void RenderBoard()
@@ -77,28 +97,25 @@ namespace Czeum.Client.Controls
                 {
                     Ellipse e = new Ellipse() {
                         Fill = new SolidColorBrush(board[i,j] == Item.Red ? Colors.DarkRed : board[i,j] == Item.Yellow ? Colors.Gold : Colors.Gainsboro),
-                        Stroke = new SolidColorBrush(Colors.DarkGray), StrokeThickness = 4
+                        Stroke = new SolidColorBrush(Colors.DarkGray), StrokeThickness = 4,
+                        Stretch = Stretch.Uniform,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        Margin = new Thickness(10, 5, 10, 5),
+                        Tag = j,
                     };
-                    e.Stretch = Stretch.Uniform;
-                    //e.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    //e.VerticalAlignment = VerticalAlignment.Stretch;
-                    e.Margin = new Thickness(10, 5, 10, 5);
                     e.SetValue(Grid.RowProperty, i);
                     e.SetValue(Grid.ColumnProperty, j);
-
-                    var action = new InvokeCommandAction() { Command = (DataContext as Connect4PageViewModel)?.ObjectPlacedCommand, CommandParameter = new Tuple<int, int>(i, j) };
-                    var behavior = new EventTriggerBehavior() { EventName = "Tapped"};
-                    behavior.Actions.Add(action);
-                    var bColl = new BehaviorCollection();
-                    bColl.Add(behavior);
-                    Interaction.SetBehaviors(e, bColl);
+                    var tempj = j;
+                    e.Tapped += (sender, args) =>
+                    {
+                        var moveData = new Connect4MoveData() { Column = tempj, MatchId = Match.Id};
+                        MoveCommand.Execute(moveData);
+                    };
 
                     BoardContainer.Children.Add(e);
                 }
             }
-            ;
         }
-
-
     }
 }
