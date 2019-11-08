@@ -62,7 +62,7 @@
             <Image Source="ms-appx:///Assets/connect4.png" Width="80" Height="80"/>
         </DataTemplate>
 
-        <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessImage}" Connect4DataTemplate="{StaticResource Connect4Image}"/>
+        <templateSelectors:LobbyDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessImage}" Connect4DataTemplate="{StaticResource Connect4Image}"/>
         <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
         <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
         <converters:InviteStatusConverter x:Name="InviteStatusConverter" x:Key="InviteStatusConverter" CompareTo="{x:Bind ConcreteDataContext.Username}"/>

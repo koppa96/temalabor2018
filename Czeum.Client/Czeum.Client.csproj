@@ -123,7 +123,6 @@
     <Compile Include="Converters\MessageTrimmerConverter.cs" />
     <Compile Include="Converters\PlayerIdToStringConverter.cs" />
     <Compile Include="Converters\PlayersToStringConverter.cs" />
-    <Compile Include="Extensions\MoveResultWrapperExtensions.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
     <Compile Include="Interfaces\ILobbyStore.cs" />
@@ -141,26 +140,17 @@
     <Compile Include="Services\MatchService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\UserManagerService.cs" />
-    <Compile Include="TemplateSelectors\LobbyDetailsDataTemplateSelector.cs" />
-    <Compile Include="TemplateSelectors\LobbyListDataTemplateSelector.cs" />
-    <Compile Include="TemplateSelectors\MatchListDataTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\LobbyDataTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\MatchDataTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\MessageTemplateSelector.cs" />
     <Compile Include="UntrustedCertClientFactory.cs" />
-    <Compile Include="ViewModels\ApiProblemDetails.cs" />
-    <Compile Include="ViewModels\ChessPageViewModel.cs" />
-    <Compile Include="ViewModels\Connect4PageViewModel.cs" />
+    <Compile Include="Models\ApiProblemDetails.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
     <Compile Include="ViewModels\MatchDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\MatchPageViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
-    <Compile Include="Views\ChessPage.xaml.cs">
-      <DependentUpon>ChessPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Connect4Page.xaml.cs">
-      <DependentUpon>Connect4Page.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\LobbyDetailsPage.xaml.cs">
       <DependentUpon>LobbyDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -281,14 +271,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ChessPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Connect4Page.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\LobbyDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -367,7 +349,9 @@
       <Name>Czeum.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

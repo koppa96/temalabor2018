@@ -1,5 +1,4 @@
-﻿using Czeum.Client.Extensions;
-using Czeum.Client.Interfaces;
+﻿using Czeum.Client.Interfaces;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.DTOs;
 using Czeum.Core.Enums;

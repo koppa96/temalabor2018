@@ -61,7 +61,7 @@
             </Grid>
         </DataTemplate>
         
-        <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
+        <templateSelectors:LobbyDataTemplateSelector x:Key="LobbyDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
         <templateSelectors:MessageTemplateSelector x:Key="MessageTemplateSelector" SentMessageTemplate="{StaticResource SentMessageTemplate}" ReceivedMessageTemplate="{StaticResource ReceivedMessageTemplate}" Username="{x:Bind ConcreteDataContext.Username}"/>
         <converters:AccessToBooleanConverter x:Key="AccessToBooleanConverter"/>
         <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
@@ -154,7 +154,7 @@
                 </Grid>
 
                 <!-- Lobby type specific control goes here -->
-                <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding lobbyStore.SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDetailsDataTemplateSelector}" 
+                <ContentControl BorderBrush="Blue" BorderThickness="2" Content="{Binding lobbyStore.SelectedLobby, Mode=TwoWay}" ContentTemplateSelector="{StaticResource LobbyDataTemplateSelector}" 
                                 HorizontalContentAlignment="Stretch"/>
                 <Button Margin="0,20,0,20" Command="{Binding SaveSettingsCommand}">
                     <StackPanel Orientation="Horizontal">

@@ -14,7 +14,6 @@ namespace Czeum.Client
         Match,
         MatchDetails,
         Statistics,
-        Chess,
-        Connect4
+        Friends
     }
 }

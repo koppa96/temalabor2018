@@ -29,7 +29,7 @@
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
         <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>
         
-        <templateselectors:MatchListDataTemplateSelector x:Key="MatchDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
+        <templateselectors:MatchDataTemplateSelector x:Key="MatchDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
     </Page.Resources>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

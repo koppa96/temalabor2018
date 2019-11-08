@@ -77,7 +77,7 @@
             </Grid>
         </DataTemplate>
 
-        <templateSelectors:MatchListDataTemplateSelector x:Key="MatchListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
+        <templateSelectors:MatchDataTemplateSelector x:Key="MatchListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
         <converters:PlayerIdToStringConverter x:Key="PlayerIdToStringConverter"/>
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
         <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>

@@ -1,6 +1,6 @@
-﻿using Czeum.Core.DTOs.Chess;
+﻿using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Chess;
 using Czeum.Core.DTOs.Connect4;
-using Czeum.Core.DTOs.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Czeum.Client.TemplateSelectors {
-    class LobbyListDataTemplateSelector : DataTemplateSelector{
-        public DataTemplate ChessDataTemplate { get; set;}
+namespace Czeum.Client.TemplateSelectors
+{
+    class MatchDataTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate ChessDataTemplate { get; set; }
         public DataTemplate Connect4DataTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject dependencyObject)
@@ -20,15 +22,18 @@ namespace Czeum.Client.TemplateSelectors {
             {
                 return null;
             }
-            if (item is ChessLobbyData)
+
+            var match = (MatchStatus)item;
+
+            if (match.CurrentBoard.Content is ChessMoveResult)
             {
                 return ChessDataTemplate;
             }
-            else if (item is Connect4LobbyData)
+            else if (match.CurrentBoard.Content is Connect4MoveResult)
             {
                 return Connect4DataTemplate;
             }
-            throw new ArgumentException("No template found for this type.");
+            return null;
         }
     }
 }
