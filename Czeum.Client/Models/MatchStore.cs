@@ -68,8 +68,7 @@ namespace Czeum.Client.Models {
             int index = MatchList.IndexOf(matchToUpdate);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 //dirty hack to refresh item in the list
-                MatchList.RemoveAt(index);
-                MatchList.Insert(index, match);
+                MatchList[index] = match;
 
                 if ((selectedMatch != null) && (selectedMatch.Id == match.Id))
                 {

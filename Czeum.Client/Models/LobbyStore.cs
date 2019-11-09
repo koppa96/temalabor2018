@@ -76,8 +76,7 @@ namespace Czeum.Client.Models {
             int index = LobbyList.IndexOf(lobbyToUpdate);
             CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 //dirty hack to refresh item in the list
-                LobbyList.RemoveAt(index);
-                LobbyList.Insert(index, lobby);
+                LobbyList[index] = lobby;
                 
                 if((selectedLobby != null) && (selectedLobby?.Id == lobby.Id))
                 {
