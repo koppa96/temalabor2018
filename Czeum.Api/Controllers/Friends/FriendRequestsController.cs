@@ -18,13 +18,10 @@ namespace Czeum.Api.Controllers.Friends
     public class FriendRequestsController : ControllerBase
     {
         private readonly IFriendService friendService;
-        private readonly IHubContext<NotificationHub, ICzeumClient> hubContext;
 
-        public FriendRequestsController(IFriendService friendService,
-            IHubContext<NotificationHub, ICzeumClient> hubContext)
+        public FriendRequestsController(IFriendService friendService)
         {
             this.friendService = friendService;
-            this.hubContext = hubContext;
         }
 
         [HttpGet("received")]
@@ -43,12 +40,12 @@ namespace Czeum.Api.Controllers.Friends
             return Ok(await friendService.GetRequestsSentAsync());
         }
 
-        [HttpPost("{username}")]
+        [HttpPost("{userId}")]
         [ProducesResponseType(201)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<FriendRequestDto>> SendFriendRequestAsync(string username)
+        public async Task<ActionResult<FriendRequestDto>> SendFriendRequestAsync(Guid userId)
         {
-            var request = await friendService.AddRequestAsync(username);
+            var request = await friendService.AddRequestAsync(userId);
             return StatusCode(201, request);
         }
 

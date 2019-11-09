@@ -255,10 +255,10 @@ namespace Czeum.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
-        public Task<List<string>> GetUsernames([FromQuery] string username)
+        public Task<List<UserDto>> GetUsernames([FromQuery] string username)
         {
             return userManager.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower()))
-                .Select(u => u.UserName)
+                .Select(u => new UserDto { Id = u.Id, Username = u.UserName})
                 .ToListAsync();
         }
     }
