@@ -27,8 +27,8 @@
             <div class="alert alert-info mt-4" *ngIf="redirectUrl">
               A funkció eléréséhez bejelentkezés szükséges.
             </div>
-            <div class="alert alert-danger" [ngClass]="{'mt-2': redirectUrl, 'mt-4': !redirectUrl}" *ngIf="loginUnsuccessful">
-              A megadott felhasználónév vagy jelszó hibás!
+            <div class="alert alert-danger alert-dismissible" [ngClass]="{'mt-2': redirectUrl, 'mt-4': !redirectUrl}" *ngIf="loginUnsuccessful">
+              Sikertelen bejelentkezés! Ellenőrizd az adataid, illetve, hogy az e-mail címed megerősítésre került-e.
             </div>
           </form>
         </div>

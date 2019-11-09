@@ -1,6 +1,6 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import {
   ChangePasswordData, ConfirmEmailData,
   LoginData,
@@ -18,7 +18,11 @@ import { AuthEventListener } from '../interfaces/AuthEventListener';
 export class AuthService {
   private authEventListeners: AuthEventListener[] = [];
 
-  constructor(private http: HttpClient, @Inject('API_URL') private apiUrl: string) { }
+  constructor(
+    private http: HttpClient,
+    @Inject('BASE_URL') private apiUrl: string
+  ) {
+  }
 
   private postTokenRequest(formContent: URLSearchParams): Promise<any> {
     const options = {
@@ -28,7 +32,7 @@ export class AuthService {
     };
 
     return new Promise<any>((resolve, reject) => {
-      this.http.post<TokenResponse>(this.apiUrl + '/connect/token', formContent.toString(), options)
+      this.http.post<TokenResponse>(this.apiUrl + 'connect/token', formContent.toString(), options)
         .subscribe(
           resp => {
             localStorage.setItem('access_token', resp.access_token);
@@ -57,7 +61,7 @@ export class AuthService {
   }
 
   getUserInfo(): Observable<UserInfo> {
-    return this.http.get<UserInfo>(this.apiUrl + '/api/accounts/me');
+    return this.http.get<UserInfo>(this.apiUrl + 'api/accounts/me');
   }
 
   getToken(): string | null {
@@ -94,7 +98,7 @@ export class AuthService {
 
   register(registerData: RegisterData): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http.post(this.apiUrl + '/api/accounts/register', registerData)
+      this.http.post(this.apiUrl + 'api/accounts/register', registerData)
         .subscribe(
           () => resolve(),
           () => reject());
@@ -113,7 +117,7 @@ export class AuthService {
   }
 
   changePassword(changePasswordData: ChangePasswordData): Observable<any> {
-    return this.http.post(this.apiUrl + '/api/accounts/change-password', changePasswordData);
+    return this.http.post(this.apiUrl + 'api/accounts/change-password', changePasswordData);
   }
 
   usernameAvailable(username: string): Observable<boolean> {
@@ -122,14 +126,14 @@ export class AuthService {
     const query = new URLSearchParams();
     query.append('username', username);
 
-    return this.http.get<boolean>(this.apiUrl + '/api/accounts/username-available?' + query.toString());
+    return this.http.get<boolean>(this.apiUrl + 'api/accounts/username-available?' + query.toString());
   }
 
   emailAvailable(email: string): Observable<boolean> {
     const query = new URLSearchParams();
     query.append('email', email);
 
-    return this.http.get<boolean>(this.apiUrl + '/api/accounts/email-available?' + query.toString());
+    return this.http.get<boolean>(this.apiUrl + 'api/accounts/email-available?' + query.toString());
   }
 
   addAuthEventListener(listener: AuthEventListener) {
@@ -145,15 +149,15 @@ export class AuthService {
     query.append('username', requestData.username);
     query.append('email', requestData.email);
 
-    return this.http.get(this.apiUrl + '/api/accounts/reset-password?' + query.toString());
+    return this.http.get(this.apiUrl + 'api/accounts/reset-password?' + query.toString());
   }
 
   resetPassword(resetPasswordData: ResetPasswordData) {
-    return this.http.post(this.apiUrl + '/api/accounts/reset-password', resetPasswordData);
+    return this.http.post(this.apiUrl + 'api/accounts/reset-password', resetPasswordData);
   }
 
   resendConfirmationEmail(email: string) {
-    return this.http.get(this.apiUrl + '/api/accounts/resend-confirm-email');
+    return this.http.get(this.apiUrl + 'api/accounts/resend-confirm-email');
   }
 
   confirmEmail(confirmEmailData: ConfirmEmailData) {
@@ -161,6 +165,6 @@ export class AuthService {
     query.append('username', confirmEmailData.username);
     query.append('token', confirmEmailData.token);
 
-    return this.http.post(this.apiUrl + '/api/accounts/confirm-email?' + query.toString(), null);
+    return this.http.post(this.apiUrl + 'api/accounts/confirm-email?' + query.toString(), null);
   }
 }

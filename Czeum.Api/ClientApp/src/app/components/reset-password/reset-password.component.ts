@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { FieldValidator } from '../../utility/field-validator';
-import { ResetPasswordData } from '../../models/auth-models';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -15,27 +15,40 @@ export class ResetPasswordComponent implements OnInit {
   isLoading = false;
   resetSuccessful = false;
   resetFailed = false;
+  username: string;
+  token: string;
 
   constructor(
+    route: ActivatedRoute,
     formBuilder: FormBuilder,
     private authService: AuthService
   ) {
     this.resetPasswordForm = formBuilder.group({
       password: '',
-      confirmPassword: '',
-      token: ''
+      confirmPassword: ''
     });
     this.validator = new FieldValidator(this.resetPasswordForm);
+
+    route.queryParams.subscribe(params => {
+      this.username = params.username;
+      this.token = params.token;
+    });
   }
 
   ngOnInit() {
   }
 
-  onSubmit(formData: ResetPasswordData) {
+  onSubmit(formData: { password: string; confirmPassword: string }) {
     this.resetPasswordForm.markAllAsTouched();
     if (this.resetPasswordForm.valid) {
       this.isLoading = true;
-      this.authService.resetPassword(formData)
+      this.resetSuccessful = false;
+      this.resetFailed = false;
+      this.authService.resetPassword({
+        username: this.username,
+        token: this.token,
+        password: formData.password
+      })
         .subscribe(
           () => this.resetSuccessful = true,
           () => this.resetFailed = true

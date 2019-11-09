@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -24,15 +26,13 @@ namespace Czeum.Api.Controllers
         private readonly UserManager<User> userManager;
         private readonly ILogger logger;
         private readonly IEmailService emailService;
-        private readonly IConfiguration configuration;
 
         public AccountsController(UserManager<User> userManager, ILogger<AccountsController> logger,
-            IEmailService emailService, IConfiguration configuration)
+            IEmailService emailService)
         {
             this.userManager = userManager;
             this.logger = logger;
             this.emailService = emailService;
-            this.configuration = configuration;
         }
 
         [HttpPost]
@@ -41,32 +41,32 @@ namespace Czeum.Api.Controllers
         [Route("register")]
         public async Task<ActionResult> RegisterAsync([FromBody]RegisterModel model)
         {
-	        if (!ModelState.IsValid)
-	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError);
-	        }
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
-	        if (await userManager.FindByNameAsync(model.Username) != null)
-	        {
-		        return BadRequest("Username already taken.");
-	        }
+            if (await userManager.FindByNameAsync(model.Username) != null)
+            {
+                return BadRequest("Username already taken.");
+            }
 
             var user = new User
-	        {
-				UserName = model.Username,
-				Email = model.Email
-	        };
+            {
+                UserName = model.Username,
+                Email = model.Email
+            };
 
-	        var result = await userManager.CreateAsync(user, model.Password);
-	        if (result.Succeeded)
-	        {
-		        logger.LogInformation($"New user created: {user.UserName}");
-		        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
-		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
-		        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                logger.LogInformation($"New user created: {user.UserName}");
+                await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+                await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
+                await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = configuration["UserManagementUrl"].AppendPathSegment("confirm-email")
+                var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("confirm-email")
                     .SetQueryParams(new
                     {
                         token,
@@ -75,34 +75,34 @@ namespace Czeum.Api.Controllers
 
                 await emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
-		        return Ok();
-	        }
+                return Ok();
+            }
 
-	        var errors = result.Errors.Select(e => e.Code);
-	        return BadRequest(errors);
+            var errors = result.Errors.Select(e => e.Code);
+            return BadRequest(errors);
         }
 
-		[HttpPost]
+        [HttpPost]
         [Route("change-password")]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[Authorize]
-		public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<ActionResult> ChangePasswordAsync([FromBody]ChangePasswordModel model)
         {
-			if (ModelState.IsValid) {
-				User user = await userManager.FindByNameAsync(User.Identity.Name);
-				var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
+            if (ModelState.IsValid) {
+                User user = await userManager.FindByNameAsync(User.Identity.Name);
+                var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
 
-				if (result.Succeeded) {
-					logger.LogInformation($"{User.Identity.Name} changed their password.");
-					return Ok();
-				}
+                if (result.Succeeded) {
+                    logger.LogInformation($"{User.Identity.Name} changed their password.");
+                    return Ok();
+                }
 
-				return BadRequest("Invalid password.");
-			}
+                return BadRequest("Invalid password.");
+            }
 
-			return StatusCode(StatusCodes.Status500InternalServerError);
-		}
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -141,19 +141,20 @@ namespace Czeum.Api.Controllers
                 var user = await userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    return NotFound("No such user found.");
+                    throw new ArgumentOutOfRangeException(nameof(email), "No such user found.");
                 }
                 if (user.UserName != username)
                 {
-                    return BadRequest("No such user found.");
+                    throw new ArgumentOutOfRangeException(nameof(username), "No such user found.");
                 }
 
                 var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
-                var url = Url.Page(
-                    "/Account/ResetPassword",
-                    pageHandler: null,
-                    values: new { area = "Identity", resetToken },
-                    protocol: Request.Scheme);
+                var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("reset-password")
+                    .SetQueryParams(new
+                    {
+                        username,
+                        token = resetToken
+                    }).ToString();
 
                 await emailService.SendPasswordResetEmailAsync(email, resetToken, url);
                 logger.LogInformation($"Password reset email for {username} was sent to {email}.");
@@ -207,11 +208,12 @@ namespace Czeum.Api.Controllers
                 }
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = Url.Page(
-                    "/Account/ConfirmEmail",
-                    pageHandler: null,
-                    values: new { area = "Identity", id = user.Id, code = token },
-                    protocol: Request.Scheme);
+                var url = $"{Request.Scheme}://{Request.Host}".AppendPathSegment("confirm-email")
+                    .SetQueryParams(new
+                    {
+                        token,
+                        username = user.UserName
+                    }).ToString();
 
                 await emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
                 logger.LogInformation($"Confirmation email resent to {email}.");
@@ -249,6 +251,15 @@ namespace Czeum.Api.Controllers
         public Task<bool> EmailAvailable([FromQuery] string email)
         {
             return userManager.Users.AllAsync(u => u.Email != email);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        public Task<List<UserDto>> GetUsernames([FromQuery] string username)
+        {
+            return userManager.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower()))
+                .Select(u => new UserDto { Id = u.Id, Username = u.UserName})
+                .ToListAsync();
         }
     }
 }

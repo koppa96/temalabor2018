@@ -23,6 +23,11 @@ import { ResetPasswordRequestComponent } from './components/reset-password-reque
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ResendConfirmationEmailComponent } from './components/resend-confirmation-email/resend-confirmation-email.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FriendsComponent } from './components/friends/friends.component';
+import { FriendListComponent } from './components/friend-list/friend-list.component';
+import { SentRequestListComponent } from './components/sent-request-list/sent-request-list.component';
+import { ReceivedRequestListComponent } from './components/received-request-list/received-request-list.component';
+import { NewRequestComponent } from './components/new-request/new-request.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +46,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ResetPasswordRequestComponent,
     ResetPasswordComponent,
     ResendConfirmationEmailComponent,
+    FriendsComponent,
+    FriendListComponent,
+    SentRequestListComponent,
+    ReceivedRequestListComponent,
+    NewRequestComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -55,7 +65,18 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       { path: 'details', component: DetailsComponent },
       { path: 'reset-password-request', component: ResetPasswordRequestComponent },
       { path: 'reset-password', component: ResetPasswordComponent },
-      { path: 'confirm-email', component: ConfirmEmailComponent }
+      { path: 'confirm-email', component: ConfirmEmailComponent },
+      {
+        path: 'friends', 
+        component: FriendsComponent,
+        children: [
+          { path: '', redirectTo: 'friend-list', pathMatch: 'full' },
+          { path: 'friend-list', component: FriendListComponent },
+          { path: 'sent-requests', component: SentRequestListComponent },
+          { path: 'received-requests', component: ReceivedRequestListComponent },
+          { path: 'new-request', component: NewRequestComponent }
+        ]
+      }
     ]),
     ReactiveFormsModule,
     FontAwesomeModule

@@ -34,9 +34,9 @@ namespace Czeum.Core.Services
         /// <summary>
         /// Adds a friend request.
         /// </summary>
-        /// <param name="receiver">The receiver of the request</param>
+        /// <param name="receiverId">The receiver of the request</param>
         /// <returns>A task representing the asynchronous operation</returns>
-        Task<FriendRequestDto> AddRequestAsync(string receiver);
+        Task<FriendRequestDto> AddRequestAsync(Guid receiverId);
 
         /// <summary>
         /// Rejects the friend request
