@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="Converters\AccessToBooleanConverter.cs" />
     <Compile Include="Converters\AccessToStringConverter.cs" />
+    <Compile Include="Converters\FriendStatusToColorConverter.cs" />
     <Compile Include="Converters\GuestsToStringConverter.cs" />
     <Compile Include="Converters\GameStateToStringConverter.cs" />
     <Compile Include="Converters\InviteStatusConverter.cs" />

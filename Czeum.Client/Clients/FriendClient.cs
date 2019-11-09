@@ -45,12 +45,13 @@ namespace Czeum.Client.Clients
 
         public async Task FriendConnected(Guid friendshipId)
         {
-            throw new NotImplementedException();
+            await friendStore.SetOnline(friendshipId, true);
         }
 
         public async Task FriendDisconnected(Guid friendshipId)
         {
-            throw new NotImplementedException();
+
+            await friendStore.SetOnline(friendshipId, false);
         }
 
         public async Task FriendRemoved(Guid friendshipId)

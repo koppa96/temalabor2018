@@ -3,6 +3,7 @@ using Czeum.Core.DTOs.UserManagement;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -122,6 +123,24 @@ namespace Czeum.Client.Models
             CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ReceivedRequests.Add(sender);
+            });
+        }
+
+        public async Task SetOnline(Guid friendshipId, bool isOnline)
+        {
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                var friend = Friends.FirstOrDefault(f => f.FriendshipId == friendshipId);
+                if(friend != null)
+                {
+                    var newFriend = new FriendDto
+                    {
+                        FriendshipId = friendshipId,
+                        Username = friend.Username,
+                        IsOnline = isOnline
+                    };
+                    Friends[Friends.IndexOf(friend)] = newFriend;
+                }
             });
         }
     }

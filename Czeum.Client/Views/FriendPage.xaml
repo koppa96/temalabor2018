@@ -9,9 +9,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:usermanagement="using:Czeum.Core.DTOs.UserManagement"
+    xmlns:converters="using:Czeum.Client.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <converters:FriendStatusToColorConverter x:Key="FriendStatusToColorConverter"/>
+    </Page.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -149,11 +154,17 @@
                     <DataTemplate x:Name="FriendTemplate" x:DataType="usermanagement:FriendDto">
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Username}" Grid.Column="0" VerticalAlignment="Center"/>
-                            <Button Grid.Column="1" Command="{Binding ElementName=FriendPageA, Path=DataContext.RemoveFriendCommand}" CommandParameter="{Binding FriendshipId}" Margin="4,0">
+                            <Ellipse Height="16" Width="16" Grid.Column="0">
+                                <Ellipse.Fill>
+                                    <SolidColorBrush Color="{Binding IsOnline, Converter={StaticResource FriendStatusToColorConverter}}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Text="{Binding Username}" Grid.Column="1" VerticalAlignment="Center"/>
+                            <Button Grid.Column="2" Command="{Binding ElementName=FriendPageA, Path=DataContext.RemoveFriendCommand}" CommandParameter="{Binding FriendshipId}" Margin="4,0">
                                 <StackPanel Orientation="Horizontal">
                                     <SymbolIcon Width="20" Height="20" Symbol="BlockContact"/>
                                     <TextBlock Text="Remove" Margin="10, 0"/>
