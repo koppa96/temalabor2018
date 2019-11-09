@@ -107,6 +107,7 @@
     <Compile Include="AppShell.xaml.cs">
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Clients\FriendClient.cs" />
     <Compile Include="Clients\LobbyClient.cs" />
     <Compile Include="Clients\GameClient.cs" />
     <Compile Include="Controls\ChessGrid.xaml.cs">
@@ -124,17 +125,20 @@
     <Compile Include="Converters\PlayerIdToStringConverter.cs" />
     <Compile Include="Converters\PlayersToStringConverter.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
+    <Compile Include="Interfaces\IFriendStore.cs" />
     <Compile Include="Interfaces\IHubService.cs" />
     <Compile Include="Interfaces\ILobbyStore.cs" />
     <Compile Include="Interfaces\ILoginPageViewModel.cs" />
     <Compile Include="Interfaces\IMatchStore.cs" />
     <Compile Include="Interfaces\IUserManagerService.cs" />
     <Compile Include="Interfaces\IMessageStore.cs" />
+    <Compile Include="Models\FriendStore.cs" />
     <Compile Include="Models\LobbyStore.cs" />
     <Compile Include="Models\MatchStore.cs" />
     <Compile Include="Models\MessageStore.cs" />
     <Compile Include="PageTokens.cs" />
     <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\FriendService.cs" />
     <Compile Include="Services\HubService.cs" />
     <Compile Include="Services\LobbyService.cs" />
     <Compile Include="Services\MatchService.cs" />
@@ -145,12 +149,16 @@
     <Compile Include="TemplateSelectors\MessageTemplateSelector.cs" />
     <Compile Include="UntrustedCertClientFactory.cs" />
     <Compile Include="Models\ApiProblemDetails.cs" />
+    <Compile Include="ViewModels\FriendPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\LobbyPageViewModel.cs" />
     <Compile Include="ViewModels\MatchDetailsPageViewModel.cs" />
     <Compile Include="ViewModels\MatchPageViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
+    <Compile Include="Views\FriendPage.xaml.cs">
+      <DependentUpon>FriendPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LobbyDetailsPage.xaml.cs">
       <DependentUpon>LobbyDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -268,6 +276,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\SplitViewSampleStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FriendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

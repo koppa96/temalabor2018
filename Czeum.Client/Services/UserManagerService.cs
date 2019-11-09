@@ -105,12 +105,18 @@ namespace Czeum.Client.Services {
             }
         }
 
+        public async Task<List<UserDto>> SearchUsersAsync(string searchString)
+        {
+            var results = await BASE_URL.AppendPathSegment("api/accounts").SetQueryParam("username", searchString).GetJsonAsync<List<UserDto>>();
+            results.Remove(results.FirstOrDefault(u => u.Username.Equals(Username)));
+            return results;
+        }
+
         private void ParseJsonResponse(string jsonString)
         {
             var jsonObject = JObject.Parse(jsonString);
             AccessToken = jsonObject.GetValue("access_token").ToString();
             refreshToken = jsonObject.GetValue("refresh_token").ToString();
         }
-
     }
 }

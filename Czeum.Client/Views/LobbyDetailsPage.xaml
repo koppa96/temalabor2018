@@ -159,7 +159,7 @@
                 <Button Margin="0,20,0,20" Command="{Binding SaveSettingsCommand}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Width="20" Height="20" Symbol="Save"/>
-                        <TextBlock Text="Save settings"/>
+                        <TextBlock Text="Save settings" Margin="10, 0"/>
                     </StackPanel>
                 </Button>
 

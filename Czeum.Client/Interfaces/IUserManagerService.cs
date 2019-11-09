@@ -17,5 +17,6 @@ namespace Czeum.Client.Interfaces
         Task<bool> ChangePasswordAsync(ChangePasswordModel data);
         Task<bool> RegisterAsync(RegisterModel data);
         Task<bool> ConfirmAsync(string name, string confirmationToken);
+        Task<List<UserDto>> SearchUsersAsync(string searchString);
     }
 }

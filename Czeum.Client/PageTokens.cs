@@ -14,6 +14,6 @@ namespace Czeum.Client
         Match,
         MatchDetails,
         Statistics,
-        Friends
+        Friend
     }
 }
