@@ -80,16 +80,8 @@ namespace Czeum.Tests.ChessLogic.PieceTest
             pawn.AddToField(board[4, 4]);
 
             var enemy = new Pawn(board, Color.Black);
-            enemy.AddToField(board[3, 4]);
+            enemy.AddToField(board[3, 3]);
 
-            var otherEnemy = new Pawn(board, Color.Black);
-            otherEnemy.AddToField(board[3, 3]);
-
-            var friend = new Pawn(board, Color.White);
-            friend.AddToField(board[3, 5]);
-
-            Assert.IsFalse(pawn.Move(board[3, 5]));
-            Assert.IsFalse(pawn.Move(board[3, 4]));
             Assert.IsTrue(pawn.Move(board[3, 3]));
         }
 

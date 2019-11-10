@@ -72,16 +72,5 @@ namespace Czeum.Tests.ChessLogic.PieceTest
             Assert.IsFalse(king.Move(board[5, 4]));
             Assert.IsTrue(king.Move(board[3, 4]));
         }
-
-        [TestMethod]
-        public void TestKingNotHittingDefendedPiece()
-        {
-            var enemyRook = new Rook(board, Color.Black);
-            var enemyPawn = new Pawn(board, Color.Black, true);
-            board.AddPieceToTheGame(enemyRook, board[3, 4]);
-            board.AddPieceToTheGame(enemyPawn, board[2, 3]);
-
-            Assert.IsFalse(king.Move(board[3, 4]));
-        }
     }
 }
