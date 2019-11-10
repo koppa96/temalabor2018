@@ -19,13 +19,23 @@ namespace Czeum.Client.Clients
         private IMatchStore matchStore;
         private IHubService hubService;
         private INavigationService navigationService;
+        private IMessageService messageService;
+        private IMessageStore messageStore;
 
-        public GameClient(IMatchStore matchStore, IHubService hubService, INavigationService navigationService, IMatchService matchService)
+        public GameClient(
+            IMatchStore matchStore, 
+            IHubService hubService, 
+            INavigationService navigationService, 
+            IMatchService matchService,
+            IMessageService messageService,
+            IMessageStore messageStore)
         {
             this.matchService = matchService;
             this.matchStore = matchStore;
             this.hubService = hubService;
             this.navigationService = navigationService;
+            this.messageService = messageService;
+            this.messageStore = messageStore;
 
             hubService.Connection.On<MatchStatus>(nameof(ReceiveResult), ReceiveResult);
             hubService.Connection.On<MatchStatus>(nameof(MatchCreated), MatchCreated);
@@ -43,9 +53,13 @@ namespace Czeum.Client.Clients
             navigationService.Navigate(PageTokens.Match.ToString(), null);
         }
 
-        public Task ReceiveMatchMessage(Guid matchId, Message message)
+        public async Task ReceiveMatchMessage(Guid matchId, Message message)
         {
-            throw new NotImplementedException();
+            // We are in the match
+            if (matchStore.SelectedMatch.Id == matchId)
+            {
+                await messageStore.AddMessage(message);
+            }
         }
     }
 }

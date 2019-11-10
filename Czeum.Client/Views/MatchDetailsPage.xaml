@@ -25,23 +25,57 @@
                                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </DataTemplate>
 
+        <DataTemplate x:Key="SentMessageTemplate" x:DataType="dto:Message">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" HorizontalAlignment="Right" Background="LightGray" BorderBrush="DarkGray" BorderThickness="1" Padding="4" Margin="20, 0, 0, 0" CornerRadius="8,8,0,8">
+                    <TextBlock HorizontalTextAlignment="Right" TextWrapping="WrapWholeWords" ToolTipService.ToolTip="{Binding Timestamp}">
+                        <Run Text="{Binding Text, Converter={StaticResource MessageTrimmerConverter}}"/>
+                    </TextBlock>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ReceivedMessageTemplate" x:DataType="dto:Message">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Row="0" HorizontalAlignment="Left" Background="LightBlue" BorderBrush="DarkBlue" BorderThickness="1" Padding="4" Margin="0, 0, 20, 0" CornerRadius="8,8,8,0" ToolTipService.ToolTip="{Binding Timestamp}">
+                    <StackPanel>
+                        <TextBlock HorizontalTextAlignment="Left" TextWrapping="WrapWholeWords" Text="{Binding Sender}" FontWeight="Bold"/>
+                        <TextBlock HorizontalTextAlignment="Left" TextWrapping="WrapWholeWords" Text="{Binding Text, Converter={StaticResource MessageTrimmerConverter}}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
         <converters:PlayerIdToStringConverter x:Key="PlayerIdToStringConverter"/>
         <converters:GameStateToStringConverter x:Key="GameStateToStringConverter"/>
         <converters:PlayersToStringConverter x:Key="PlayersToStringConverter" Username="{x:Bind ConcreteDataContext.Username}" x:Name="WhyDoIHaveToDoThis"/>
+        <converters:MessageTrimmerConverter x:Key="MessageTrimmerConverter"/>
         
         <templateselectors:MatchDataTemplateSelector x:Key="MatchDataTemplateSelector" ChessDataTemplate="{StaticResource ChessMatchTemplate}" Connect4DataTemplate="{StaticResource Connect4MatchTemplate}"/>
+        <templateselectors:MessageTemplateSelector x:Key="MessageTemplateSelector" SentMessageTemplate="{StaticResource SentMessageTemplate}" ReceivedMessageTemplate="{StaticResource ReceivedMessageTemplate}" Username="{x:Bind ConcreteDataContext.Username}"/>
     </Page.Resources>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
         <ContentControl Name="Placeholder" ContentTemplateSelector="{StaticResource MatchDataTemplateSelector}" Content="{Binding Match, Mode=TwoWay}" 
-                        Grid.Column="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" DataContext="{x:Bind ConcreteDataContext}"/>
+                        Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" DataContext="{x:Bind ConcreteDataContext}"/>
 
-        <StackPanel Grid.Column="1" Margin="0,20">
+        <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,20">
             <TextBlock Text="Opponent:"/>
             <TextBlock Text="{Binding Match.Players, Converter={StaticResource PlayersToStringConverter}}"
                        Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
@@ -52,5 +86,38 @@
             <TextBlock Text="{Binding Match.State, Converter={StaticResource GameStateToStringConverter}}"
                        Padding="8,0,0,0" FontWeight="Bold" Margin="0, 0, 0, 10"/>
         </StackPanel>
+
+        <RelativePanel Grid.Column="1" Grid.Row="1" Margin="20" BorderThickness="2" BorderBrush="Black" Padding="10">
+            <TextBlock Text="Match messages: " FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" x:Name="MessagesHeader"/>
+
+            <ListView ItemsSource="{Binding Messages}" RelativePanel.Below="MessagesHeader" x:Name="MessagesList" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.Above="MessageText" Margin="0, 0, 0, 12" ItemTemplateSelector="{StaticResource MessageTemplateSelector}" SelectionMode="None">
+
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+            </ListView>
+
+            <TextBox x:Name="MessageText" PlaceholderText="Your message" Text="{Binding MessageText, Mode=TwoWay}" KeyUp="MessageText_KeyUp"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="SendMessageButton" RelativePanel.AlignLeftWithPanel="True" >
+            </TextBox>
+            <Button x:Name="SendMessageButton" Margin="12, 0" Command="{Binding SendMessageCommand}"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Send"/>
+                    <TextBlock Text="Send" Margin="10, 0"/>
+                </StackPanel>
+            </Button>
+
+        </RelativePanel>
     </Grid>
 </mvvm:SessionStateAwarePage>

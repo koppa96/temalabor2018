@@ -26,6 +26,8 @@ namespace Czeum.Client.ViewModels
         private IUserManagerService userManagerService;
         private IGameClient gameClient;
         private IHubService hubService;
+        private IMessageService messageService;
+        private IMessageStore messageStore;
         public IMatchStore MatchStore { get; private set; }
 
         public string Username => userManagerService.Username;
@@ -52,8 +54,17 @@ namespace Czeum.Client.ViewModels
         public ICommand ApplyFiltersCommand { get; }
         public ICommand ClearFiltersCommand { get; }
 
-        public MatchPageViewModel(IMatchService matchService, INavigationService navigationService, ILoggerFacade loggerService, IDialogService dialogService,
-            IGameClient gameClient, IUserManagerService userManagerService, IHubService hubService, IMatchStore matchStore)
+        public MatchPageViewModel(
+            IMatchService matchService, 
+            INavigationService navigationService, 
+            ILoggerFacade loggerService, 
+            IDialogService dialogService,
+            IGameClient gameClient, 
+            IUserManagerService userManagerService, 
+            IHubService hubService, 
+            IMatchStore matchStore,
+            IMessageService messageService,
+            IMessageStore messageStore)
         {
             this.matchService = matchService;
             this.navigationService = navigationService;
@@ -63,6 +74,8 @@ namespace Czeum.Client.ViewModels
             this.gameClient = gameClient;
             this.hubService = hubService;
             this.MatchStore = matchStore;
+            this.messageService = messageService;
+            this.messageStore = messageStore;
 
             OpenGameCommand = new DelegateCommand<MatchStatus>(OpenGame);
             ApplyFiltersCommand = new DelegateCommand(FilterMatchList);
@@ -101,11 +114,11 @@ namespace Czeum.Client.ViewModels
             ));
         }
 
-        private void OpenGame(MatchStatus match)
+        private async void OpenGame(MatchStatus match)
         {
             MatchStore.SelectMatch(match);
-            //PageTokens targetPage = match.CurrentBoard.GetPageToken();
-            //navigationService.Navigate(targetPage.ToString(), null);
+            var messages = await messageService.GetMessagesOfMatchAsync(match.Id);
+            await messageStore.SetMessages(messages);
             navigationService.Navigate("MatchDetails", null);
         }
 
