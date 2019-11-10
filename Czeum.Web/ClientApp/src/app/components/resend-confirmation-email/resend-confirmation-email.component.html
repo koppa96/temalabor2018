@@ -1,0 +1,33 @@
+<div class="container h-100">
+  <div class="row justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">Regisztráció</h2>
+          <form [formGroup]="resendEmailForm" (ngSubmit)="onSubmit(resendEmailForm.value)">
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input id="email" name="email" type="email" class="form-control" [ngClass]="{'is-invalid': validator.fieldHasError('email')}" formControlName="email" required email>
+              <div class="invalid-feedback" *ngIf="validator.fieldHasError('email', 'required')">Kötelező</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('email', 'email')">Nem megfelelő formátum</div>
+              <div class="invalid-feedback" *ngIf="validator.notEmptyAndHasError('email', 'backend')">Az e-mail cím már foglalt</div>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-link" [routerLink]="['/login']">Vissza a bejelentkezéshez</button>
+              <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span class="spinner-border spinner-border-sm" *ngIf="isLoading"></span>
+                Regisztráció
+              </button>
+            </div>
+            <div class="alert alert-success mt-3" *ngIf="resendSuccessful">
+              Sikeres regisztráció. A megerősítő e-mailt megküldtük a megadott címre!
+            </div>
+            <div class="alert alert-danger mt-3" *ngIf="resendFailed">
+              Sikertelen regisztráció. Ellenőrizd a megadott adatokat!
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
