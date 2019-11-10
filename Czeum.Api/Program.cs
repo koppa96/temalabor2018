@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ namespace Czeum.Api
     {
         public static void Main(string[] args)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             CreateHostBuilder(args).Build().Run();
         }
 

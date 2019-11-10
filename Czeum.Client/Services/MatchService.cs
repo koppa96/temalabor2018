@@ -1,8 +1,9 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Client.Interfaces;
-using Czeum.DTO;
-using Czeum.DTO.Chess;
-using Czeum.DTO.Connect4;
+﻿using Czeum.Client.Interfaces;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Chess;
+using Czeum.Core.DTOs.Connect4;
+using Czeum.Core.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using Prism.Windows.Navigation;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Czeum.Client.Services
 {
-    class MatchService : IMatchService
+    class MatchService : Core.Services.IMatchService
     {
         //private string BASE_URL = "https://localhost:44301";
         private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
@@ -25,6 +26,7 @@ namespace Czeum.Client.Services
         private IMatchStore matchStore;
         private IHubService hubService;
         private INavigationService navigationService;
+        private Core.Services.IMatchService matchService;
 
         public MatchService(IMatchStore matchStore, IHubService hubService, IUserManagerService userManagerService, INavigationService navigationService)
         {
@@ -93,6 +95,31 @@ namespace Czeum.Client.Services
                 }
 
             }
+        }
+
+        public Task<MatchStatus> CreateMatchAsync(Guid lobbyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateRandomMatchAsync(IEnumerable<string> players)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MatchStatus> HandleMoveAsync(MoveData moveData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<MatchStatus>> GetMatchesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

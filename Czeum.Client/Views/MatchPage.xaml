@@ -7,9 +7,9 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dto="using:Czeum.DTO"
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     xmlns:converters="using:Czeum.Client.Converters"
+    xmlns:dto="using:Czeum.Core.DTOs"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 

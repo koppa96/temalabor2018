@@ -1,13 +1,10 @@
 ﻿using Czeum.Client.Interfaces;
-using Czeum.DTO;
-using Czeum.DTO.Chess;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Chess;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Czeum.Client.ViewModels
@@ -50,11 +47,11 @@ namespace Czeum.Client.ViewModels
 
         private void PieceSelected(Tuple<int, int> selectedPieceCoords)
         {
-            ChessMoveResult moveResult = (ChessMoveResult) matchService.CurrentMatch.CurrentBoard;
+            ChessMoveResult moveResult = (ChessMoveResult) matchService.CurrentMatch.CurrentBoard.Content;
             var clickedPiece = moveResult.PieceInfos.FirstOrDefault(p => p.Column == selectedPieceCoords.Item1 && p.Row == selectedPieceCoords.Item2);
             //If we clicked on the opponent's piece
-            if((matchService.CurrentMatch.PlayerId == 1 && clickedPiece.Color == Color.Black)
-                || (matchService.CurrentMatch.PlayerId == 2 && clickedPiece.Color == Color.White))
+            if((matchService.CurrentMatch.CurrentPlayerIndex == 1 && clickedPiece.Color == Color.Black)
+                || (matchService.CurrentMatch.CurrentPlayerIndex == 2 && clickedPiece.Color == Color.White))
             {
                 FieldSelected(selectedPieceCoords);
                 return;

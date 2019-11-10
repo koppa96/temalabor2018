@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Core.DTOs.UserManagement;
+using Czeum.Core.Exceptions;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
@@ -109,14 +110,14 @@ namespace Czeum.Application.Services
                 client => client.FriendRemoved(friendshipId));
         }
 
-        public async Task<FriendRequestDto> AddRequestAsync(string receiver)
+        public async Task<FriendRequestDto> AddRequestAsync(Guid receiverId)
         {
             var currentUser = identityService.GetCurrentUserName();
             var alreadyRequestedOrFriends = await context.Users.Where(u => u.UserName == currentUser)
-                .AnyAsync(u => u.SentRequests.Any(r => r.Receiver.UserName == receiver) ||
-                               u.ReceivedRequests.Any(r => r.Sender.UserName == receiver) ||
-                               u.User1Friendships.Any(f => f.User2.UserName == receiver) ||
-                               u.User2Friendships.Any(f => f.User1.UserName == receiver));
+                .AnyAsync(u => u.SentRequests.Any(r => r.ReceiverId == receiverId) ||
+                               u.ReceivedRequests.Any(r => r.SenderId == receiverId) ||
+                               u.User1Friendships.Any(f => f.User2Id == receiverId) ||
+                               u.User2Friendships.Any(f => f.User1Id == receiverId));
 
             if (alreadyRequestedOrFriends)
             {
@@ -126,8 +127,7 @@ namespace Czeum.Application.Services
             var request = new FriendRequest
             {
                 Sender = await context.Users.SingleAsync(u => u.UserName == currentUser),
-                Receiver = await context.Users.CustomSingleAsync(u => u.UserName == receiver, 
-                    "No user with the given name exists.")
+                Receiver = await context.Users.CustomFindAsync(receiverId, "No user with the given name exists.")
             };
 
             context.Requests.Add(request);

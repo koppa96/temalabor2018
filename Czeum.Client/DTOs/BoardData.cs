@@ -1,5 +1,4 @@
 ﻿using System;
-using Czeum.DTO;
 
 namespace Czeum.Client {
     public class BoardData {/*

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 using System.Diagnostics;
 using Windows.UI.Xaml;
-using Czeum.DTO;
 
 namespace Czeum.Client.Converters {
     public class LobbyStatusConverter : IValueConverter {
@@ -14,9 +13,8 @@ namespace Czeum.Client.Converters {
             /*LobbyStatus? v = value as LobbyStatus?;
             if(v.Value == LobbyStatus.Public) {
                 return Visibility.Collapsed;
-            }
-            return Visibility.Visible;*/
-            return null;
+            }*/
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

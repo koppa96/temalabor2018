@@ -12,9 +12,8 @@ namespace Czeum.Client.Converters {
             /*var status = value as Connect4Dtos.GameState?;
             if(status == null || status.Value != Connect4Dtos.GameState.YourTurn) {
                 return Visibility.Collapsed;
-            }
-            return Visibility.Visible;*/
-            return null;
+            }*/
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

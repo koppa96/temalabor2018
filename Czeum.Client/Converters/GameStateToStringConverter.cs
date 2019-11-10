@@ -1,4 +1,4 @@
-﻿using Czeum.Abstractions.DTO;
+﻿using Czeum.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,19 @@ namespace Czeum.Client.Converters
             GameState state = (GameState)value;
             switch (state)
             {
-                case GameState.Draw: return "Match ended in a draw";
-                case GameState.EnemyTurn: return "It's your opponent's turn";
-                case GameState.EnemyWon: return "Your opponent won";
-                case GameState.YourTurn: return "It's your turn";
-                case GameState.YouWon: return "You won";
+                case GameState.YourTurn:
+                    return "It's your turn";
+                case GameState.EnemyTurn:
+                    return "It's your opponent's turn";
+                case GameState.Won:
+                    return "You won";
+                case GameState.Lost:
+                    return "You lost";
+                case GameState.Draw:
+                    return "Match ended in a draw";
+                default:
+                    return "";
             }
-            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

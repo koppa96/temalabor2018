@@ -1,6 +1,6 @@
-﻿using Czeum.DTO;
-using Czeum.DTO.Chess;
-using Czeum.DTO.Connect4;
+﻿using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Chess;
+using Czeum.Core.DTOs.Connect4;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,11 +25,11 @@ namespace Czeum.Client.TemplateSelectors
 
             var match = (MatchStatus)item;
 
-            if (match.CurrentBoard is ChessMoveResult)
+            if (match.CurrentBoard.Content is ChessMoveResult)
             {
                 return ChessDataTemplate;
             }
-            else if (match.CurrentBoard is Connect4MoveResult)
+            else if (match.CurrentBoard.Content is Connect4MoveResult)
             {
                 return Connect4DataTemplate;
             }

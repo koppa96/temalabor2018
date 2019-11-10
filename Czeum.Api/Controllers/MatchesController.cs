@@ -23,18 +23,26 @@ namespace Czeum.Api.Controllers
         }
         
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<IEnumerable<MatchStatus>>> GetMatchesAsync()
         {
             return Ok(await matchService.GetMatchesAsync());
         }
 
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<MatchStatus>> CreateMatchAsync([FromQuery] Guid lobbyId)
         {
-            return Ok(await matchService.CreateMatchAsync(lobbyId));
+            return StatusCode(201, await matchService.CreateMatchAsync(lobbyId));
         }
 
         [HttpPut("moves")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<MatchStatus>> MoveAsync([FromBody] MoveDataWrapper moveDataWrapper)
         {
             return Ok(await matchService.HandleMoveAsync(moveDataWrapper.Content));

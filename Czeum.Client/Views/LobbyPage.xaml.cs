@@ -1,6 +1,4 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Client.ViewModels;
-using Czeum.DTO.Connect4;
+﻿using Czeum.Client.ViewModels;
 using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;

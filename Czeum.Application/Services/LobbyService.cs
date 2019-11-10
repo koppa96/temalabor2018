@@ -10,9 +10,12 @@ using Czeum.Core.DTOs.Abstractions.Lobbies;
 using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Enums;
+using Czeum.Core.Exceptions;
 using Czeum.Core.Services;
 using Czeum.DAL;
+using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Czeum.Application.Services {
@@ -107,6 +110,11 @@ namespace Czeum.Application.Services {
 				throw new InvalidOperationException("This player has already been invited.");
 			}
 
+			if (!await context.Users.AnyAsync(u => u.UserName == player))
+			{
+				throw new NotFoundException("Player not found.");
+			}
+
 			lobby.InvitedPlayers.Add(player);
 			lobby.LastModified = DateTime.UtcNow;
 
@@ -135,13 +143,13 @@ namespace Czeum.Application.Services {
 			return mapper.Map<LobbyDataWrapper>(lobby);
 		}
 
-		public LobbyData? GetLobbyOfUser(string user) {
-			return lobbyStorage.GetLobbyOfUser(user);
+		public Task<LobbyData?> GetLobbyOfUser(string user) {
+			return Task.FromResult(lobbyStorage.GetLobbyOfUser(user));
 		}
 
-		public List<LobbyDataWrapper> GetLobbies()
+		public Task<List<LobbyDataWrapper>> GetLobbies()
 		{
-			return lobbyStorage.GetLobbies().Select(mapper.Map<LobbyDataWrapper>).ToList();
+			return Task.FromResult(lobbyStorage.GetLobbies().Select(mapper.Map<LobbyDataWrapper>).ToList());
 		}
 
 		public async Task<LobbyDataWrapper> UpdateLobbySettingsAsync(LobbyDataWrapper lobbyData)
@@ -178,15 +186,15 @@ namespace Czeum.Application.Services {
 			return updatedLobby;
 		}
 
-		public LobbyDataWrapper GetLobby(Guid lobbyId)
+		public Task<LobbyDataWrapper> GetLobby(Guid lobbyId)
 		{
             var lobby = lobbyStorage.GetLobby(lobbyId);
-			return mapper.Map<LobbyDataWrapper>(lobby);
+			return Task.FromResult(mapper.Map<LobbyDataWrapper>(lobby));
 		}
 
-		public bool LobbyExists(Guid lobbyId)
+		public Task<bool> LobbyExists(Guid lobbyId)
 		{
-            return lobbyStorage.LobbyExitsts(lobbyId);
+            return Task.FromResult(lobbyStorage.LobbyExitsts(lobbyId));
 		}
 
 		public async Task<LobbyDataWrapper> CreateAndAddLobbyAsync(GameType type, LobbyAccess access, string name)
@@ -216,9 +224,9 @@ namespace Czeum.Application.Services {
 			return wrapper;
 		}
 
-		public List<Message> GetMessages(Guid lobbyId)
+		public Task<List<Message>> GetMessages(Guid lobbyId)
 		{
-			return lobbyStorage.GetMessages(lobbyId);
+			return Task.FromResult(lobbyStorage.GetMessages(lobbyId));
 		}
 
 		public async Task<LobbyDataWrapper> CancelInviteFromLobby(Guid lobbyId, string player)
@@ -243,13 +251,13 @@ namespace Czeum.Application.Services {
 			lobbyStorage.RemoveLobby(id);
 		}
 
-		public IEnumerable<string> GetOthersInLobby(Guid lobbyId)
+		public Task<IEnumerable<string>> GetOthersInLobby(Guid lobbyId)
 		{
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 			var currentUser = identityService.GetCurrentUserName();
 
-			return lobby.Guests.Append(lobby.Host)
-				.Where(u => u != currentUser);
+			return Task.FromResult(lobby.Guests.Append(lobby.Host)
+				.Where(u => u != currentUser));
 		}
     }
 }

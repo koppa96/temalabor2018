@@ -1,4 +1,4 @@
-﻿using Czeum.DTO;
+﻿using Czeum.Core.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ namespace Czeum.Client.Interfaces
     public interface IMatchStore
     {
         Task AddMatch(MatchStatus match);
-        Task RemoveMatch(int matchId);
+        Task RemoveMatch(Guid matchId);
         Task UpdateMatch(MatchStatus match);
         Task ClearMatches();
 

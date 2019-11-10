@@ -1,5 +1,4 @@
 ﻿using Czeum.Client.Interfaces;
-using Czeum.DTO.UserManagement;
 using Prism.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Czeum.Client.Services
-{
+{/*
     class DummyUserManagerService : IUserManagerService
     {
         public string AccessToken => throw new NotImplementedException();
@@ -55,5 +54,5 @@ namespace Czeum.Client.Services
         {
             throw new NotImplementedException();
         }
-    }
+    }*/
 }

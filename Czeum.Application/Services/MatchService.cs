@@ -43,15 +43,20 @@ namespace Czeum.Application.Services
 
         public async Task<MatchStatus> CreateMatchAsync(Guid lobbyId)
         {
+            var currentUser = identityService.GetCurrentUserName();
             var lobby = lobbyStorage.GetLobby(lobbyId);
+            if (lobby.Host != currentUser)
+            {
+                throw new UnauthorizedAccessException("Only the host can create a match.");
+            }
+            
             if (!lobby.Validate())
             {
                 throw new InvalidOperationException("The lobby is not in a valid state to start a match.");
             }
 
-            var currentUser = identityService.GetCurrentUserName();
             var service = serviceContainer.FindBoardCreator(lobby);
-            var board = (SerializedBoard)service.CreateBoard(lobby);
+            var board = service.CreateBoard(lobby);
 
             var statuses = await CreateMatchWithBoardAsync(lobby.Guests.Append(lobby.Host), board);
             lobbyStorage.RemoveLobby(lobbyId);

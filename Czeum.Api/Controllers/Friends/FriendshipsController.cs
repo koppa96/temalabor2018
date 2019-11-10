@@ -28,12 +28,17 @@ namespace Czeum.Api.Controllers.Friends
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<IEnumerable<FriendDto>>> GetFriendsAsync()
         {
             return Ok(await friendService.GetFriendsOfUserAsync(User.Identity.Name));
         }
 
         [HttpDelete("{friendshipId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> RemoveFriendAsync(Guid friendshipId)
         {
             await friendService.RemoveFriendAsync(friendshipId);
@@ -41,6 +46,9 @@ namespace Czeum.Api.Controllers.Friends
         }
 
         [HttpPost("{requestId}")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<FriendDto>> AcceptRequestAsync(Guid requestId)
         {
             var result = await friendService.AcceptRequestAsync(requestId);

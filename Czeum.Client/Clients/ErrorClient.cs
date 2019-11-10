@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Czeum.Client.Clients
-{
+{/*
     class ErrorClient : ClientCallback.IErrorClient
     {
         private IDialogService dialogService;
@@ -22,5 +22,5 @@ namespace Czeum.Client.Clients
             this.dialogService = dialogService;
             hubService.Connection.On<string>(nameof(ReceiveError), ReceiveError);
         }
-    }
+    }*/
 }

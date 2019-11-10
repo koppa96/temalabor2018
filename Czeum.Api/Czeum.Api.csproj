@@ -4,15 +4,31 @@
       <TargetFramework>netcoreapp3.0</TargetFramework>
       <LangVersion>8.0</LangVersion>
       <Nullable>enable</Nullable>
+      <UserSecretsId>dc117718-345f-4266-a19c-d124ff38531f</UserSecretsId>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="ClientApp\angular.json" />
+      <Content Remove="ClientApp\e2e\tsconfig.e2e.json" />
+      <Content Remove="ClientApp\package-lock.json" />
+      <Content Remove="ClientApp\package.json" />
+      <Content Remove="ClientApp\src\tsconfig.app.json" />
+      <Content Remove="ClientApp\src\tsconfig.server.json" />
+      <Content Remove="ClientApp\src\tsconfig.spec.json" />
+      <Content Remove="ClientApp\src\tslint.json" />
+      <Content Remove="ClientApp\tsconfig.json" />
+      <Content Remove="ClientApp\tslint.json" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+      <PackageReference Include="Flurl" Version="2.8.2" />
       <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="3.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -36,6 +52,28 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\scripts\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="ClientApp\.idea\ClientApp.iml" />
+      <None Include="ClientApp\.idea\codeStyles\codeStyleConfig.xml" />
+      <None Include="ClientApp\.idea\codeStyles\Project.xml" />
+      <None Include="ClientApp\.idea\inspectionProfiles\Project_Default.xml" />
+      <None Include="ClientApp\.idea\jsLibraryMappings.xml" />
+      <None Include="ClientApp\.idea\misc.xml" />
+      <None Include="ClientApp\.idea\modules.xml" />
+      <None Include="ClientApp\.idea\vcs.xml" />
+      <None Include="ClientApp\.idea\workspace.xml" />
+      <None Include="ClientApp\angular.json" />
+      <None Include="ClientApp\e2e\tsconfig.e2e.json" />
+      <None Include="ClientApp\package-lock.json" />
+      <None Include="ClientApp\package.json" />
+      <None Include="ClientApp\src\tsconfig.app.json" />
+      <None Include="ClientApp\src\tsconfig.server.json" />
+      <None Include="ClientApp\src\tsconfig.spec.json" />
+      <None Include="ClientApp\src\tslint.json" />
+      <None Include="ClientApp\tsconfig.json" />
+      <None Include="ClientApp\tslint.json" />
     </ItemGroup>
 
 </Project>

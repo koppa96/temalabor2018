@@ -8,17 +8,16 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dto="using:Czeum.Abstractions.DTO"
-    xmlns:chess="using:Czeum.DTO.Chess"
-    xmlns:connect4="using:Czeum.DTO.Connect4"
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     xmlns:converters="using:Czeum.Client.Converters"
+    xmlns:chess="using:Czeum.Core.DTOs.Chess"
+    xmlns:connect4="using:Czeum.Core.DTOs.Connect4"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
         <DataTemplate x:Key="ChessLobbyTemplate" x:DataType="chess:ChessLobbyData">
             <Grid BorderThickness="2" BorderBrush="Gray" Background="LightGray" Margin="0, 5">
-                <Grid.ColumnDefinitions>
+                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -27,17 +26,20 @@
                 <StackPanel Grid.Column="1" Margin="10, 0">
                     <TextBlock FontWeight="Bold">
                         <Run Text="{Binding Name}"/>
-                        <Run>(</Run>
-                        <Run Text="{Binding Id}"/>
-                        <Run>)</Run>
                     </TextBlock>
-                    <TextBlock Text="{Binding Host}" Margin="30, 1, 1, 1"/>
-                    <TextBlock Text="{Binding Guest}" Margin="30, 1, 1, 1"/>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left"/>
+                    <TextBlock Margin="10, 1, 1, 1">
+                        <Run Text="Host: "/>
+                        <Run Text="{Binding Host}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <TextBlock Margin="10, 1, 1, 1">
+                        <Run Text="Guest(s): "/>
+                        <Run Text="{Binding Guests, Converter={StaticResource GuestsToStringConverter}}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left" Margin="5, 5"/>
                 </StackPanel>
                 <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
-                </Button> 
+                </Button>
             </Grid>
         </DataTemplate>
 
@@ -52,13 +54,16 @@
                 <StackPanel Grid.Column="1" Margin="10, 0">
                     <TextBlock FontWeight="Bold">
                         <Run Text="{Binding Name}"/>
-                        <Run>(</Run>
-                        <Run Text="{Binding Id}"/>
-                        <Run>)</Run>
                     </TextBlock>
-                    <TextBlock Text="{Binding Host}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
-                    <TextBlock Text="{Binding Guest}" RelativePanel.AlignTopWith="NameBlock" Margin="30, 1, 1, 1"/>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left"/>
+                    <TextBlock Margin="10, 1, 1, 1">
+                        <Run Text="Host: "/>
+                        <Run Text="{Binding Host}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <TextBlock Margin="10, 1, 1, 1">
+                        <Run Text="Guest(s): "/>
+                        <Run Text="{Binding Guests, Converter={StaticResource GuestsToStringConverter}}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Path=Access, Converter={StaticResource AccessToStringConverter}}" HorizontalAlignment="Left" Margin="5, 5"/>
                 </StackPanel>
                 <Button Command="{Binding ElementName=LobbyListView, Path=DataContext.JoinLobbyCommand}" CommandParameter="{Binding Id}" Grid.Column="2">
                     <SymbolIcon Symbol="Play" Height="20" Width="20"/>
@@ -68,6 +73,7 @@
 
         <templateSelectors:LobbyListDataTemplateSelector x:Key="LobbyListDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
         <converters:AccessToStringConverter x:Key="AccessToStringConverter"/>
+        <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
     </Page.Resources>
 
     <Grid>

@@ -3,10 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Czeum.Api.SignalR
 {
+    [Authorize]
     public class NotificationHub : Hub<ICzeumClient>
     {
         private readonly IOnlineUserTracker onlineUserTracker;
@@ -28,7 +30,7 @@ namespace Czeum.Api.SignalR
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
-            onlineUserTracker.PutUser(Context.UserIdentifier);
+            onlineUserTracker.PutUser(Context.UserIdentifier, Context.ConnectionId);
 
             await Task.WhenAll((await friendService.GetFriendsOfUserAsync(Context.UserIdentifier))
                 .Select(f => Clients.User(f.Username).FriendConnected(f.FriendshipId)));
@@ -37,14 +39,14 @@ namespace Czeum.Api.SignalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var lobby = lobbyService.GetLobbyOfUser(Context.UserIdentifier);
+            var lobby = await lobbyService.GetLobbyOfUser(Context.UserIdentifier);
 
             if (lobby != null)
             {
                 await lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier);
-                if (lobbyService.LobbyExists(lobby.Id))
+                if (await lobbyService.LobbyExists(lobby.Id))
                 {
-                    await Clients.All.LobbyChanged(lobbyService.GetLobby(lobby.Id));
+                    await Clients.All.LobbyChanged(await lobbyService.GetLobby(lobby.Id));
                 }
                 else
                 {

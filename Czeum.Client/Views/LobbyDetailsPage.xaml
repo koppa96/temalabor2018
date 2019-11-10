@@ -7,10 +7,10 @@
     xmlns:local="using:Czeum.Client.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:chess="using:Czeum.DTO.Chess"
-    xmlns:connect4="using:Czeum.DTO.Connect4"
     xmlns:templateSelectors="using:Czeum.Client.TemplateSelectors"
     xmlns:converters="using:Czeum.Client.Converters"
+    xmlns:connect4="using:Czeum.Core.DTOs.Connect4"
+    xmlns:chess="using:Czeum.Core.DTOs.Chess"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -32,6 +32,7 @@
 
         <templateSelectors:LobbyDetailsDataTemplateSelector x:Key="LobbyDetailsDataTemplateSelector" ChessDataTemplate="{StaticResource ChessLobbyTemplate}" Connect4DataTemplate="{StaticResource Connect4LobbyTemplate}"/>
         <converters:AccessToBooleanConverter x:Key="AccessToBooleanConverter"/>
+        <converters:GuestsToStringConverter x:Key="GuestsToStringConverter"/>
     </Page.Resources>
 
 
@@ -61,7 +62,6 @@
 
                 <TextBlock Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
                     <Run Text="Current lobby:"/>
-                    <Run Text="{Binding lobbyStore.SelectedLobby.LobbyId}" FontWeight="Bold"/>
                     <Run Text="{Binding lobbyStore.SelectedLobby.Name}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
@@ -69,8 +69,8 @@
                     <Run Text="{Binding lobbyStore.SelectedLobby.Host}" FontWeight="Bold"/>
                 </TextBlock>
                 <TextBlock Grid.Row="2" Grid.ColumnSpan="3">
-                    <Run Text="The current guest of the lobby is: "/>
-                    <Run Text="{Binding lobbyStore.SelectedLobby.Guest}" FontWeight="Bold"/>
+                    <Run Text="The current guests of the lobby are: "/>
+                    <Run Text="{Binding lobbyStore.SelectedLobby.Guests, Converter={StaticResource GuestsToStringConverter}}" FontWeight="Bold"/>
                 </TextBlock>
                 <Button Grid.Row="3" Grid.Column="0" Command="{Binding LeaveLobbyCommand}" HorizontalAlignment="Stretch" Margin="12, 0">
                     <StackPanel Orientation="Horizontal">

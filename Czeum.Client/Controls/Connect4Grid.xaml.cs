@@ -1,6 +1,6 @@
 ﻿using Czeum.Client.ViewModels;
-using Czeum.DTO;
-using Czeum.DTO.Connect4;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Connect4;
 using Microsoft.Xaml.Interactions.Core;
 using Microsoft.Xaml.Interactivity;
 using System;
@@ -50,7 +50,7 @@ namespace Czeum.Client.Controls
 
         private void RenderBoard()
         {
-            var boardData = Match.CurrentBoard as Connect4MoveResult;
+            var boardData = Match.CurrentBoard.Content as Connect4MoveResult;
 
             if (boardData == null)
             {

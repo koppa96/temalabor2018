@@ -9,8 +9,8 @@ namespace Czeum.ChessLogic.Pieces
         {
             Type = PieceType.Queen,
             Color = Color,
-            Row = Field.Row,
-            Column = Field.Column
+            Row = Field?.Row ?? -1,
+            Column = Field?.Column ?? -1
         };
 
         public Queen(ChessBoard board, Color color) : base(board, color)
@@ -24,10 +24,10 @@ namespace Czeum.ChessLogic.Pieces
                 return false;
             }
 
-            return targetField.Row == Field.Row && Board.RouteClear(Field, targetField) ||
-                   targetField.Column == Field.Column && Board.RouteClear(Field, targetField) ||
-                   Math.Abs(targetField.Row - Field.Row) == Math.Abs(targetField.Column - Field.Column) &&
-                   Board.RouteClear(Field, targetField);
+            return targetField.Row == Field!.Row && Board.RouteClear(Field!, targetField) ||
+                   targetField.Column == Field!.Column && Board.RouteClear(Field!, targetField) ||
+                   Math.Abs(targetField.Row - Field!.Row) == Math.Abs(targetField.Column - Field!.Column) &&
+                   Board.RouteClear(Field!, targetField);
         }
     }
 }

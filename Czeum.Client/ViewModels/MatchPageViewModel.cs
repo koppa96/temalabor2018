@@ -1,7 +1,6 @@
-﻿using Czeum.Abstractions.DTO;
-using Czeum.Client.Interfaces;
-using Czeum.ClientCallback;
-using Czeum.DTO;
+﻿using Czeum.Client.Interfaces;
+using Czeum.Core.ClientCallbacks;
+using Czeum.Core.DTOs;
 using Prism.Commands;
 using Prism.Logging;
 using Prism.Windows.Mvvm;

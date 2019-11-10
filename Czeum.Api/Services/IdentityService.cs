@@ -2,7 +2,9 @@ using Czeum.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using IdentityModel;
+using IdentityServer4.Extensions;
 
 namespace Czeum.Api.Services
 {
@@ -22,7 +24,7 @@ namespace Czeum.Api.Services
 
         public Guid GetCurrentUserId()
         {
-            return Guid.Parse(httpContext.User.Claims.First(c => c.Type == JwtClaimTypes.Subject).Value);
+            return Guid.Parse(httpContext.User.GetSubjectId());
         }
     }
 }

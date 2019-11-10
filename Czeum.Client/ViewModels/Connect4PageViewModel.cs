@@ -1,13 +1,9 @@
 ﻿using Czeum.Client.Interfaces;
-using Czeum.DTO;
-using Czeum.DTO.Connect4;
+using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Connect4;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Czeum.Client.ViewModels

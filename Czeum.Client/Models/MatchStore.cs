@@ -1,5 +1,5 @@
 ﻿using Czeum.Client.Interfaces;
-using Czeum.DTO;
+using Czeum.Core.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,7 +42,7 @@ namespace Czeum.Client.Models
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { MatchList.Clear(); });
         }
 
-        public async Task RemoveMatch(int matchId)
+        public async Task RemoveMatch(Guid matchId)
         {
             var matchToRemove = MatchList.FirstOrDefault(x => x.Id == matchId);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { MatchList.Remove(matchToRemove); });

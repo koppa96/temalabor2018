@@ -22,6 +22,8 @@ namespace Czeum.Api.Controllers
         }
         
         [HttpPost("join")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult> JoinQueue()
         {
             soloQueueService.JoinSoloQueue(User.Identity.Name!);
@@ -37,6 +39,8 @@ namespace Czeum.Api.Controllers
         }
 
         [HttpPost("leave")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public ActionResult LeaveQueue()
         {
             soloQueueService.LeaveSoloQueue(User.Identity.Name!);

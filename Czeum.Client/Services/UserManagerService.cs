@@ -1,5 +1,5 @@
 ﻿using Czeum.Client.Interfaces;
-using Czeum.DTO.UserManagement;
+using Czeum.Core.DTOs.UserManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 namespace Czeum.Client.Services {
     public class UserManagerService : IUserManagerService
     {
-        //private string BASE_URL = "https://localhost:44301";
+        //private string BASE_URL = "https://localhost:5001";
         private string BASE_URL = App.Current.Resources["BaseUrl"].ToString();
 
         public string AccessToken { get; private set; }
@@ -122,11 +122,11 @@ namespace Czeum.Client.Services {
             ignoreCertHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             using (var client = new HttpClient(ignoreCertHandler)) {
                 var json = JsonConvert.SerializeObject(data);
-                var content = new StringContent(json, Encoding.UTF8,"application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 try
                 {
-                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/account/register");
+                    var targetUrl = Flurl.Url.Combine(BASE_URL, "/api/accounts/register");
                     var response = await client.PostAsync(targetUrl, content);
                     if (response.StatusCode == HttpStatusCode.OK)
                     {

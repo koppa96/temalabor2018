@@ -1,11 +1,10 @@
-﻿using Czeum.Abstractions.DTO;
+﻿using Czeum.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
-using Czeum.Abstractions.DTO.Lobbies;
 
 namespace Czeum.Client.Converters
 {
@@ -20,7 +19,7 @@ namespace Czeum.Client.Converters
                 case LobbyAccess.FriendsOnly: return "\ue779";
                 case LobbyAccess.Private: return "\ue72e";
             }
-            return 0;
+            return "ERROR";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

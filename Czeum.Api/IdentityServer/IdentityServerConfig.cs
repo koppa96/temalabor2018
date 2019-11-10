@@ -71,6 +71,25 @@ namespace Czeum.Api.IdentityServer
                     {
                         "https://localhost:5001/swagger/oauth2-redirect.html"
                     }
+                },
+                new Client
+                {
+                    ClientId = "CzeumAngularClient",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                    ClientSecrets =
+                    {
+                        new Secret("CzeumAngularClientSecret".Sha256())
+                    },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Address,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "czeum_api"
+                    },
+                    AllowOfflineAccess = true
                 }
             };
         }

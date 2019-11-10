@@ -24,7 +24,7 @@ using Prism.Logging;
 using NLog;
 using Prism.Windows.Navigation;
 using Czeum.Client.Models;
-using Czeum.ClientCallback;
+using Czeum.Core.ClientCallbacks;
 using Czeum.Client.Clients;
 
 namespace Czeum.Client
@@ -46,14 +46,14 @@ namespace Czeum.Client
             Container.RegisterType<IDialogService, DialogService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IUserManagerService, UserManagerService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILoggerFacade, NLogAdapter>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ILobbyService, LobbyService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<Core.Services.ILobbyService, LobbyService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyStore, LobbyStore>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILobbyClient, LobbyClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHubService, HubService>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<IErrorClient, ErrorClient>(new ContainerControlledLifetimeManager());
+            //Container.RegisterType<IErrorClient, ErrorClient>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IGameClient, GameClient>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IMatchService, MatchService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<Core.Services.IMatchService, MatchService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMatchStore, MatchStore>(new ContainerControlledLifetimeManager());
             return Task.FromResult<object>(null);
         }
