@@ -55,8 +55,8 @@ namespace Czeum.Application.Services {
 			var lobby = lobbyStorage.GetLobby(lobbyId);
 
 			var friends = await context.Friendships
-				.Where(f => f.User1.UserName == currentUser || f.User2.UserName == currentUser)
-				.Select(f => f.User1.UserName == currentUser ? f.User2.UserName : f.User1.UserName)
+				.Where(f => f.User1.UserName == lobby.Host || f.User2.UserName == lobby.Host)
+				.Select(f => f.User1.UserName == lobby.Host ? f.User2.UserName : f.User1.UserName)
 				.ToListAsync();
 
 			var wrapper = mapper.Map<LobbyDataWrapper>(lobby);
