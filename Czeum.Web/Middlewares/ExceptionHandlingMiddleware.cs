@@ -60,11 +60,11 @@ namespace Czeum.Api.Middlewares
 
             if (e is UnauthorizedAccessException)
             {
-                context.Response.StatusCode = 401;
+                context.Response.StatusCode = 403;
                 return context.Response.WriteJsonAsync(new ProblemDetails
                 {
-                    Status = 401,
-                    Title = "Unauthorized",
+                    Status = 403,
+                    Title = "Forbidden",
                     Detail = e.Message
                 });
             }

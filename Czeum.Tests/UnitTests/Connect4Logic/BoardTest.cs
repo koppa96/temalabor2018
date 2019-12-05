@@ -3,7 +3,7 @@ using Czeum.Connect4Logic;
 using Czeum.Core.DTOs.Connect4;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Czeum.Tests.Connect4Logic
+namespace Czeum.Tests.UnitTests.Connect4Logic
 {
     [TestClass]
     public class BoardTest

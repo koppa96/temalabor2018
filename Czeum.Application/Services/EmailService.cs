@@ -21,7 +21,7 @@ namespace Czeum.Application.Services.EmailSender
         public async Task SendConfirmationEmailAsync(string to, Guid uid, string token, string callbackUrl)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));
+            message.From.Add(new MailboxAddress("Czeum Server", "server.czeum@gmail.com"));
             message.To.Add(new MailboxAddress(to));
             message.Subject = "Confirm your email at Czeum";
 
@@ -37,7 +37,7 @@ namespace Czeum.Application.Services.EmailSender
         public async Task SendPasswordResetEmailAsync(string to, string token, string callbackUrl)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));
+            message.From.Add(new MailboxAddress("Czeum Server", "server.czeum@gmail.com"));
             message.To.Add(new MailboxAddress(to));
             message.Subject = "Password reset at Czeum";
 
@@ -64,7 +64,7 @@ namespace Czeum.Application.Services.EmailSender
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Czeum Server", "czeumserver@gmail.com"));
+            message.From.Add(new MailboxAddress("Czeum Server", "server.czeum@gmail.com"));
             message.To.Add(new MailboxAddress(email));
             message.Subject = subject;
 

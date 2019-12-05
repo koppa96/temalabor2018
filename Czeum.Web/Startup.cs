@@ -30,6 +30,7 @@ using NSwag;
 using System;
 using System.Linq;
 using System.Reflection;
+using Czeum.Api.SignalR;
 
 namespace Czeum.Web
 {
@@ -42,6 +43,33 @@ namespace Czeum.Web
 
         public IConfiguration Configuration { get; }
 
+        public virtual void ConfigureDatabase(IServiceCollection services)
+        {
+            services.AddDbContext<CzeumContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        }
+
+        public virtual void ConfigureAuthentication(IServiceCollection services)
+        {
+            services.AddAuthentication()
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = Configuration["IdentityServer:Authority"];
+                    options.Audience = "czeum_api";
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = JwtClaimTypes.Name
+                    };
+                });
+        }
+
+        public virtual void ConfigureControllers(IServiceCollection services)
+        {
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -53,9 +81,8 @@ namespace Czeum.Web
                 //options.SignIn.RequireConfirmedEmail = true;
             });
 
-            services.AddDbContext<CzeumContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+            ConfigureDatabase(services);
+            
             services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<CzeumContext>();
@@ -69,22 +96,11 @@ namespace Czeum.Web
                 .AddCorsPolicyService<CorsPolicyService>()
                 .AddAspNetIdentity<User>();
 
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson();
+            ConfigureControllers(services);
 
             services.AddRazorPages();
 
-            services.AddAuthentication()
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = Configuration["IdentityServer:Authority"];
-                    options.Audience = "czeum_api";
-                    options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        NameClaimType = JwtClaimTypes.Name
-                    };
-                });
+            ConfigureAuthentication(services);
 
             services.AddAuthorization(options =>
             {
@@ -127,6 +143,8 @@ namespace Czeum.Web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddMvc().AddNewtonsoftJson();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -172,9 +190,8 @@ namespace Czeum.Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/notifications");
             });
 
             app.UseSpa(spa =>
