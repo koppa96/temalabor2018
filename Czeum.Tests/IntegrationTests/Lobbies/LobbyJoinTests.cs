@@ -1,84 +1,21 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Czeum.Api.Common;
-using Czeum.Core.DTOs.Lobbies;
-using Czeum.Core.DTOs.Wrappers;
-using Czeum.Core.Enums;
+﻿using Czeum.Core.Enums;
 using Czeum.DAL;
 using Czeum.Domain.Entities;
 using Czeum.Tests.IntegrationTests.Infrastructure;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
-namespace Czeum.Tests.IntegrationTests
+namespace Czeum.Tests.IntegrationTests.Lobbies
 {
     [TestClass]
-    public class LobbyTests
+    public class LobbyJoinTests : LobbyTestsBase
     {
-        private CzeumFactory factory;
-        private HttpClient client;
-        
-        [TestInitialize]
-        public async Task SetUpWebHost()
-        {
-            factory = new CzeumFactory();
-            client = factory.CreateClient();
-            await factory.SeedUsersAsync();
-        }
-
-        private async Task<LobbyDataWrapper> CreateLobbyAs(LobbyAccess lobbyAccess, string user)
-        {
-            var response = await client.PostJsonAsync(
-                "api/lobbies",
-                new CreateLobbyDto
-                {
-                    GameType = GameType.Chess,
-                    LobbyAccess = lobbyAccess,
-                    Name = "Teszt lobby"
-                },
-                user);
-
-            response.IsSuccessStatusCode.Should().BeTrue();
-            return JsonConvert.DeserializeObject<LobbyDataWrapper>(await response.Content.ReadAsStringAsync());
-        }
-
-        [TestMethod]
-        public async Task CreateLobbyWorks()
-        {
-            await CreateLobbyAs(LobbyAccess.Public, "teszt1");
-
-            var lobbies = await client.GetJsonAsync<IEnumerable<LobbyDataWrapper>>("api/lobbies", "teszt1");
-            lobbies.Should().HaveCount(1);
-
-            var lobby = lobbies.First();
-            lobby.Content.Access.Should().Be(LobbyAccess.Public);
-            lobby.GameType.Should().Be(GameType.Chess);
-            lobby.Content.Name.Should().Be("Teszt lobby");
-        }
-
-        [TestMethod]
-        public async Task CannotCreateMultipleLobbies()
-        {
-            await CreateLobbyAs(LobbyAccess.Public, "teszt1");
-            var response = await client.PostJsonAsync(
-                "api/lobbies",
-                new CreateLobbyDto
-                {
-                    GameType = GameType.Chess,
-                    LobbyAccess = LobbyAccess.Public,
-                    Name = "Teszt lobby2"
-                },
-                "teszt1");
-
-            response.IsSuccessStatusCode.Should().BeFalse();
-        }
-
         [TestMethod]
         public async Task JoinPublicLobbyWorks()
         {
@@ -148,13 +85,6 @@ namespace Czeum.Tests.IntegrationTests
 
             var response = await client.PostJsonAsync($"api/lobbies/{resultLobby.Content.Id}/join", null, "teszt2");
             response.IsSuccessStatusCode.Should().BeTrue();
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            client.Dispose();
-            factory.Dispose();
         }
     }
 }
