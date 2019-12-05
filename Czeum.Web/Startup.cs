@@ -5,6 +5,7 @@ using Czeum.Api.Extensions;
 using Czeum.Api.IdentityServer;
 using Czeum.Api.Middlewares;
 using Czeum.Api.Services;
+using Czeum.Api.SignalR;
 using Czeum.Application.Services;
 using Czeum.Application.Services.Lobby;
 using Czeum.ChessLogic.Services;
