@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Czeum.Api.Common;
 using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Paging;
 using Czeum.Core.Services;
+using Czeum.Web.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Czeum.Api.Controllers.Messages
+namespace Czeum.Web.Controllers.Messages
 {
     [Route(ApiResources.Messages.Lobby.BasePath)]
     [ApiController]
@@ -23,9 +24,9 @@ namespace Czeum.Api.Controllers.Messages
         [HttpGet("{lobbyId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessages(Guid lobbyId)
+        public async Task<ActionResult<RollListDto<Message>>> GetMessages(Guid lobbyId, [FromQuery]Guid? oldestId, [FromQuery]int count)
         {
-            return Ok(await messageService.GetMessagesOfLobbyAsync(lobbyId));
+            return Ok(await messageService.GetMessagesOfLobbyAsync(lobbyId, oldestId, count));
         }
 
         [HttpPost("{lobbyId}")]

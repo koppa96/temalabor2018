@@ -12,6 +12,11 @@ namespace Czeum.Core.GameServices.BoardCreator
 
         public SerializedBoard CreateBoard(LobbyData lobbyData)
         {
+            if (!(lobbyData is TLobbyData))
+            {
+                throw new NotSupportedException("Can not create a board from this lobby.");
+            }
+
             if (!lobbyData.Validate())
             {
                 throw new InvalidOperationException("The lobby validation was unsuccessful.");

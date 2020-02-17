@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Czeum.Api.Common;
-using Czeum.Api.SignalR;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.DTOs.UserManagement;
 using Czeum.Core.Services;
+using Czeum.Web.Common;
+using Czeum.Web.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Czeum.Api.Controllers.Friends
+namespace Czeum.Web.Controllers.Friends
 {
     [Route(ApiResources.Friends.Friendships.BasePath)]
     [ApiController]

@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Czeum.Api.Common;
-using Czeum.Application.Services.Lobby;
 using Czeum.Core.DTOs.Lobbies;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Services;
+using Czeum.Web.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Czeum.Api.Controllers
+namespace Czeum.Web.Controllers
 {
     [Route(ApiResources.Lobbies.BasePath)]
     [ApiController]

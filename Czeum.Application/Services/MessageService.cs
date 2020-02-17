@@ -6,12 +6,14 @@ using AutoMapper;
 using Czeum.Application.Extensions;
 using Czeum.Application.Services.Lobby;
 using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Paging;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace Czeum.Application.Services
 {
@@ -88,7 +90,8 @@ namespace Czeum.Application.Services
             return sentMessage;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesOfLobbyAsync(Guid lobbyId)
+        public Task<RollListDto<Message>> GetMessagesOfLobbyAsync(Guid lobbyId, Guid? oldestId,
+            int requestedCount)
         {
             var lobby = lobbyStorage.GetLobby(lobbyId);
             if (!lobby.Contains(identityService.GetCurrentUserName()))
@@ -96,15 +99,43 @@ namespace Czeum.Application.Services
                 throw new UnauthorizedAccessException("Not authorized to read the messages of this lobby.");
             }
 
-            return lobbyStorage.GetMessages(lobbyId) as IEnumerable<Message>;
+            List<Message>? results = null;
+            if (oldestId.HasValue)
+            {
+                var oldest = lobbyStorage.GetMessages(lobbyId).Single(x => x.Id == oldestId);
+                results = lobbyStorage.GetMessages(lobbyId)
+                    .Where(x => x.Timestamp > oldest.Timestamp)
+                    .OrderByDescending(x => x.Timestamp)
+                    .Take(requestedCount)
+                    .OrderBy(x => x.Timestamp)
+                    .ToList();
+            }
+            else
+            {
+                results = lobbyStorage.GetMessages(lobbyId)
+                    .OrderByDescending(x => x.Timestamp)
+                    .Take(requestedCount)
+                    .OrderBy(x => x.Timestamp)
+                    .ToList();
+            }
+            
+            var hasMore = results.Count < requestedCount || lobbyStorage.GetMessages(lobbyId)
+                          .Any(x => x.Timestamp > results.Last().Timestamp);
+            
+            return Task.FromResult(new RollListDto<Message>
+            {
+                HasMoreLeft = hasMore,
+                Data = results
+            });
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesOfMatchAsync(Guid matchId)
+        public async Task<RollListDto<Message>> GetMessagesOfMatchAsync(Guid matchId, Guid? oldestId,
+            int requestedCount)
         {
             var currentUserId = identityService.GetCurrentUserId();
 
             var match = await context.Matches.Include(m => m.Users)
-                .Include(m => m.Messages)
+                .Include(x => x.Messages)
                 .CustomSingleAsync(m => m.Id == matchId, "No match with the given id was found.");
 
             if (match.Users.All(um => um.UserId != currentUserId))
@@ -112,7 +143,32 @@ namespace Czeum.Application.Services
                 throw new UnauthorizedAccessException("Not authorized to read the messages of this lobby.");
             }
 
-            return match.Messages.Select(mapper.Map<Message>);
+            List<StoredMessage>? results = null;
+            if (oldestId.HasValue)
+            {
+                var oldest = match.Messages.Single(x => x.Id == oldestId);
+                results = match.Messages.Where(x => x.Timestamp > oldest.Timestamp)
+                    .OrderByDescending(x => x.Timestamp)
+                    .Take(requestedCount)
+                    .OrderBy(x => x.Timestamp)
+                    .ToList();
+            }
+            else
+            {
+                results = match.Messages.OrderByDescending(x => x.Timestamp)
+                    .Take(requestedCount)
+                    .OrderBy(x => x.Timestamp)
+                    .ToList();
+            }
+
+            var hasMore = results.Count < requestedCount || 
+                match.Messages.Any(x => x.Timestamp > results.Last().Timestamp);
+
+            return new RollListDto<Message>
+            {
+                HasMoreLeft = hasMore,
+                Data = mapper.Map<List<Message>>(results)
+            };
         }
     }
 }

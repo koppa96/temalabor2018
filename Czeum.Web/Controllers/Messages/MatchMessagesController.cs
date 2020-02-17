@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Czeum.Api.Common;
 using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Paging;
 using Czeum.Core.Services;
+using Czeum.Web.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Czeum.Api.Controllers.Messages
+namespace Czeum.Web.Controllers.Messages
 {
     [Route(ApiResources.Messages.Match.BasePath)]
     [ApiController]
@@ -24,9 +25,9 @@ namespace Czeum.Api.Controllers.Messages
         [HttpGet("{matchId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesAsync(Guid matchId)
+        public async Task<ActionResult<RollListDto<Message>>> GetMessagesAsync(Guid matchId, [FromQuery]Guid? oldestId, [FromQuery]int count)
         {
-            return Ok(await messageService.GetMessagesOfMatchAsync(matchId));
+            return Ok(await messageService.GetMessagesOfMatchAsync(matchId, oldestId, count));
         }
 
         [HttpPost("{matchId}")]

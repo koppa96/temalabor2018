@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Czeum.Api.Common;
 using Czeum.Core.DTOs.Lobbies;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Enums;

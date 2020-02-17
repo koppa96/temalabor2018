@@ -1,12 +1,9 @@
-using Czeum.Domain.Services;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Linq;
-using System.Security.Claims;
-using IdentityModel;
+using Czeum.Domain.Services;
 using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Http;
 
-namespace Czeum.Api.Services
+namespace Czeum.Web.Services
 {
     public class IdentityService : IIdentityService
     {

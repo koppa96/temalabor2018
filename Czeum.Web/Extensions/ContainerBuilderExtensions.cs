@@ -3,7 +3,7 @@ using Czeum.Core.GameServices.BoardConverter;
 using Czeum.Core.GameServices.BoardCreator;
 using Czeum.Core.GameServices.MoveHandler;
 
-namespace Czeum.Api.Extensions
+namespace Czeum.Web.Extensions
 {
     public static class ContainerBuilderExtensions
     {

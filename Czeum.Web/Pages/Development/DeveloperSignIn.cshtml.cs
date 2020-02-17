@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json.Linq;
 
-namespace Czeum.Api.Pages.Development
+namespace Czeum.Web.Pages.Development
 {
     public class DeveloperSignInModel : PageModel
     {

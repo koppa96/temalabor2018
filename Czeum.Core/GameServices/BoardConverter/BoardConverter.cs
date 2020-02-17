@@ -1,5 +1,6 @@
 ﻿using Czeum.Core.Domain;
 using Czeum.Core.DTOs.Abstractions;
+using System;
 
 namespace Czeum.Core.GameServices.BoardConverter
 {
@@ -10,6 +11,11 @@ namespace Czeum.Core.GameServices.BoardConverter
 
         public IMoveResult Convert(SerializedBoard serializedBoard)
         {
+            if (!(serializedBoard is TBoard))
+            {
+                throw new NotSupportedException("This converter can not convert this board.");
+            }
+
             return Convert((TBoard)serializedBoard);
         }    
     }

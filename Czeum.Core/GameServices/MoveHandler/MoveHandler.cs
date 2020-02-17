@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Czeum.Core.DTOs.Abstractions;
 
 namespace Czeum.Core.GameServices.MoveHandler
@@ -8,6 +9,11 @@ namespace Czeum.Core.GameServices.MoveHandler
     {
         public Task<InnerMoveResult> HandleAsync(MoveData moveData, int playerId)
         {
+            if (!(moveData is TMoveData))
+            {
+                throw new NotSupportedException("This handler can not handler this type of move.");
+            }
+
             return HandleAsync((TMoveData)moveData, playerId);
         }
 

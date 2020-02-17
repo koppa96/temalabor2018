@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using IdentityServer4.Services;
 
-namespace Czeum.Api.IdentityServer
+namespace Czeum.Web.IdentityServer
 {
     public class CorsPolicyService : ICorsPolicyService
     {

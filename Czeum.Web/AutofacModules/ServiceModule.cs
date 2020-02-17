@@ -3,7 +3,7 @@ using Autofac;
 using Czeum.Application.Services;
 using Module = Autofac.Module;
 
-namespace Czeum.Api.AutofacModules
+namespace Czeum.Web.AutofacModules
 {
     public class ServiceModule : Module
     {

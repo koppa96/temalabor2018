@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Paging;
 
 namespace Czeum.Core.Services
 {
@@ -30,14 +31,18 @@ namespace Czeum.Core.Services
         /// Gets all the messages that were sent to a specific lobby.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
+        /// <param name="oldestId"></param>
+        /// <param name="requestedCount"></param>
         /// <returns>The list of messages</returns>
-        Task<IEnumerable<Message>> GetMessagesOfLobbyAsync(Guid lobbyId);
+        Task<RollListDto<Message>> GetMessagesOfLobbyAsync(Guid lobbyId, Guid? oldestId, int requestedCount);
 
         /// <summary>
         /// Gets all the messages that were sent to a specific match.
         /// </summary>
         /// <param name="matchId">The identifier of the match</param>
+        /// <param name="oldestId"></param>
+        /// <param name="requestedCount"></param>
         /// <returns>The list of messages</returns>
-        Task<IEnumerable<Message>> GetMessagesOfMatchAsync(Guid matchId);
+        Task<RollListDto<Message>> GetMessagesOfMatchAsync(Guid matchId, Guid? oldestId, int requestedCount);
     }
 }

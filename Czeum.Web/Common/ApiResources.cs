@@ -1,4 +1,4 @@
-namespace Czeum.Api.Common
+namespace Czeum.Web.Common
 {
     public static class ApiResources
     {

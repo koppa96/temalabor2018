@@ -6,7 +6,7 @@ using Czeum.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Czeum.Api.SignalR
+namespace Czeum.Web.SignalR
 {
     [Authorize]
     public class NotificationHub : Hub<ICzeumClient>

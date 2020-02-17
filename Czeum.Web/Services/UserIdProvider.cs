@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Czeum.Api.Services
+namespace Czeum.Web.Services
 {
     public class UserIdProvider : IUserIdProvider
     {

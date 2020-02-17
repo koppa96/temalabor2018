@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Czeum.Api.SignalR;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.Services;
+using Czeum.Web.SignalR;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Czeum.Api.Services
+namespace Czeum.Web.Services
 {
     public class NotificationService : INotificationService
     {

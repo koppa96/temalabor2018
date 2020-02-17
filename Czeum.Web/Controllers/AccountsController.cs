@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Czeum.Api.Common;
 using Czeum.Core.DTOs.UserManagement;
 using Czeum.Core.Services;
 using Czeum.Domain.Entities;
+using Czeum.Web.Common;
 using Flurl;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
@@ -14,10 +14,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Czeum.Api.Controllers
+namespace Czeum.Web.Controllers
 {
     [Route(ApiResources.Accounts.BasePath)]
     [ApiController]

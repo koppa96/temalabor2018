@@ -1,11 +1,5 @@
 using Autofac;
 using AutoMapper;
-using Czeum.Api.AutofacModules;
-using Czeum.Api.Extensions;
-using Czeum.Api.IdentityServer;
-using Czeum.Api.Middlewares;
-using Czeum.Api.Services;
-using Czeum.Api.SignalR;
 using Czeum.Application.Services;
 using Czeum.Application.Services.Lobby;
 using Czeum.ChessLogic.Services;
@@ -31,7 +25,12 @@ using NSwag;
 using System;
 using System.Linq;
 using System.Reflection;
-using Czeum.Api.SignalR;
+using Czeum.Web.AutofacModules;
+using Czeum.Web.Extensions;
+using Czeum.Web.IdentityServer;
+using Czeum.Web.Middlewares;
+using Czeum.Web.Services;
+using Czeum.Web.SignalR;
 
 namespace Czeum.Web
 {
