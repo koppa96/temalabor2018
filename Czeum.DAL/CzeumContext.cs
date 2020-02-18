@@ -15,8 +15,9 @@ namespace Czeum.DAL
         public DbSet<SerializedBoard> Boards { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<FriendRequest> Requests { get; set; }
-        public DbSet<StoredMessage> Messages { get; set; }
+        public DbSet<StoredMessage> MatchMessages { get; set; }
         public DbSet<UserMatch> UserMatches { get; set; }
+        public DbSet<DirectMessage> DirectMessages { get; set; }
 
         public CzeumContext(DbContextOptions<CzeumContext> options)
             : base(options)
@@ -25,8 +26,9 @@ namespace Czeum.DAL
             Boards = Set<SerializedBoard>();
             Friendships = Set<Friendship>();
             Requests = Set<FriendRequest>();
-            Messages = Set<StoredMessage>();
+            MatchMessages = Set<StoredMessage>();
             UserMatches = Set<UserMatch>();
+            DirectMessages = Set<DirectMessage>();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

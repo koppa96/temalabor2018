@@ -11,6 +11,5 @@ namespace Czeum.Core.ClientCallbacks
     {
         Task ReceiveResult(MatchStatus status);
         Task MatchCreated(MatchStatus status);
-        Task ReceiveMatchMessage(Guid matchId, Message message);
     }
 }

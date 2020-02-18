@@ -25,7 +25,7 @@ namespace Czeum.Web.Controllers.Messages
         [HttpGet("{matchId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<RollListDto<Message>>> GetMessagesAsync(Guid matchId, [FromQuery]Guid? oldestId, [FromQuery]int count)
+        public async Task<ActionResult<RollListDto<Message>>> GetMessagesAsync(Guid matchId, [FromQuery]Guid? oldestId, [FromQuery]int count = 25)
         {
             return Ok(await messageService.GetMessagesOfMatchAsync(matchId, oldestId, count));
         }
@@ -33,7 +33,7 @@ namespace Czeum.Web.Controllers.Messages
         [HttpPost("{matchId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<Message>> SendMessageAsync(Guid matchId, [FromBody] string message)
+        public async Task<ActionResult<Message>> SendMessageAsync(Guid matchId, [FromBody]string message)
         {
             return Ok(await messageService.SendToMatchAsync(matchId, message));
         }

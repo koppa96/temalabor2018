@@ -28,21 +28,38 @@ namespace Czeum.Core.Services
         Task<Message> SendToMatchAsync(Guid matchId, string message);
 
         /// <summary>
-        /// Gets all the messages that were sent to a specific lobby.
+        /// Sends a message to a friendship.
+        /// </summary>
+        /// <param name="friendshipId">The identifier of the friendship</param>
+        /// <param name="message">The content of the message</param>
+        /// <returns></returns>
+        Task<Message> SendToFriendAsync(Guid friendshipId, string message);
+
+        /// <summary>
+        /// Gets the requested amount of the latest messages sent before the message with the given id.
         /// </summary>
         /// <param name="lobbyId">The identifier of the lobby</param>
-        /// <param name="oldestId"></param>
-        /// <param name="requestedCount"></param>
+        /// <param name="oldestId">The identifier of the message before the newest message</param>
+        /// <param name="requestedCount">The amount of messages requested</param>
         /// <returns>The list of messages</returns>
         Task<RollListDto<Message>> GetMessagesOfLobbyAsync(Guid lobbyId, Guid? oldestId, int requestedCount);
 
         /// <summary>
-        /// Gets all the messages that were sent to a specific match.
+        /// Gets the requested amount of the latest messages sent before the message with the given id.
         /// </summary>
         /// <param name="matchId">The identifier of the match</param>
-        /// <param name="oldestId"></param>
-        /// <param name="requestedCount"></param>
+        /// <param name="oldestId">The identifier of the message before the newest message</param>
+        /// <param name="requestedCount">The amount of messages requested</param>
         /// <returns>The list of messages</returns>
         Task<RollListDto<Message>> GetMessagesOfMatchAsync(Guid matchId, Guid? oldestId, int requestedCount);
+
+        /// <summary>
+        /// Gets the requested amount of the latest messages sent before the message with the given id.
+        /// </summary>
+        /// <param name="friendshipId">The identifier of the friendship</param>
+        /// <param name="oldestId">The identifier of the message before the newest message</param>
+        /// <param name="requestedCount">The amount of messages requested</param>
+        /// <returns></returns>
+        Task<RollListDto<Message>> GetMessagesOfFrienshipAsync(Guid friendshipId, Guid? oldestId, int requestedCount);
     }
 }

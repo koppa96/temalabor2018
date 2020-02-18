@@ -15,6 +15,10 @@ namespace Czeum.DAL.EntityConfigurations
             builder.HasOne(f => f.User2)
                 .WithMany(u => u.User2Friendships)
                 .HasForeignKey(f => f.User2Id);
+
+            builder.HasMany(f => f.Messages)
+                .WithOne(m => m.Friendship)
+                .HasForeignKey(m => m.FriendshipId);
         }
     }
 }

@@ -10,6 +10,9 @@ namespace Czeum.Application.Mappings
         {
             CreateMap<StoredMessage, Message>()
                 .ForMember(dst => dst.Sender, cfg => cfg.MapFrom(src => src.Sender.UserName));
+
+            CreateMap<DirectMessage, Message>()
+                .ForMember(dst => dst.Sender, cfg => cfg.MapFrom(src => src.Sender.UserName));
         }
     }
 }

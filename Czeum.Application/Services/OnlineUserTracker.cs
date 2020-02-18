@@ -41,7 +41,7 @@ namespace Czeum.Application.Services
                 return users[user];
             }
 
-            return null;
+            throw new KeyNotFoundException("The given user is not in the list of users.");
         }
     }
 }

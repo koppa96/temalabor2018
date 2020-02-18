@@ -80,7 +80,7 @@ namespace Czeum.Application.Services
                 Text = message,
                 Timestamp = DateTime.UtcNow
             };
-            context.Messages.Add(storedMessage);
+            context.MatchMessages.Add(storedMessage);
             await context.SaveChangesAsync();
             
             var sentMessage = mapper.Map<Message>(storedMessage);
@@ -136,6 +136,7 @@ namespace Czeum.Application.Services
 
             var match = await context.Matches.Include(m => m.Users)
                 .Include(x => x.Messages)
+                    .ThenInclude(x => x.Sender)
                 .CustomSingleAsync(m => m.Id == matchId, "No match with the given id was found.");
 
             if (match.Users.All(um => um.UserId != currentUserId))
@@ -163,6 +164,77 @@ namespace Czeum.Application.Services
 
             var hasMore = results.Count < requestedCount || 
                 match.Messages.Any(x => x.Timestamp > results.Last().Timestamp);
+
+            return new RollListDto<Message>
+            {
+                HasMoreLeft = hasMore,
+                Data = mapper.Map<List<Message>>(results)
+            };
+        }
+
+        public async Task<Message> SendToFriendAsync(Guid friendshipId, string message)
+        {
+            var senderId = identityService.GetCurrentUserId();
+            var friendship = await context.Friendships
+                .Include(x => x.User1)
+                .Include(x => x.User2)
+                .CustomSingleAsync(f => f.Id == friendshipId);
+
+            if (friendship.User1Id != senderId && friendship.User2Id != senderId)
+            {
+                throw new UnauthorizedAccessException("You are not a member of this friendship.");
+            }
+
+            var directMessage = new DirectMessage
+            {
+                Sender = senderId == friendship.User1Id ? friendship.User1 : friendship.User2,
+                Friendship = friendship,
+                Text = message,
+                Timestamp = DateTime.UtcNow
+            };
+            context.DirectMessages.Add(directMessage);
+            await context.SaveChangesAsync();
+
+            var sentMessage = mapper.Map<Message>(directMessage);
+            await notificationService.NotifyAsync(friendship.User1Id == senderId ? friendship.User2.UserName : friendship.User1.UserName,
+                client => client.ReceiveDirectMessage(friendship.Id, sentMessage));
+
+            return sentMessage;
+        }
+
+        public async Task<RollListDto<Message>> GetMessagesOfFrienshipAsync(Guid friendshipId, Guid? oldestId, int requestedCount)
+        {
+            var currentUserId = identityService.GetCurrentUserId();
+
+            var friendship = await context.Friendships.Include(x => x.Messages)
+                    .ThenInclude(x => x.Sender)
+                .CustomSingleAsync(x => x.Id == friendshipId, "No match with the given id was found");
+
+            if (friendship.User1Id != currentUserId && friendship.User2Id != currentUserId)
+            {
+                throw new UnauthorizedAccessException("You are not a member of this friendship.");
+            }
+
+            List<DirectMessage>? results = null;
+            if (oldestId.HasValue)
+            {
+                var oldest = friendship.Messages.Single(x => x.Id == oldestId);
+                results = friendship.Messages.Where(x => x.Timestamp > oldest.Timestamp)
+                    .OrderByDescending(x => x.Timestamp)
+                    .Take(requestedCount)
+                    .OrderBy(x => x.Timestamp)
+                    .ToList();
+            }
+            else
+            {
+                results = friendship.Messages.OrderByDescending(x => x.Timestamp)
+                    .Take(requestedCount)
+                    .OrderBy(x => x.Timestamp)
+                    .ToList();
+            }
+
+            var hasMore = results.Count < requestedCount || friendship.Messages
+                .Any(x => x.Timestamp > results.Last().Timestamp);
 
             return new RollListDto<Message>
             {

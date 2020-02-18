@@ -24,7 +24,7 @@ namespace Czeum.Web.Controllers.Messages
         [HttpGet("{lobbyId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<RollListDto<Message>>> GetMessages(Guid lobbyId, [FromQuery]Guid? oldestId, [FromQuery]int count)
+        public async Task<ActionResult<RollListDto<Message>>> GetMessages(Guid lobbyId, [FromQuery]Guid? oldestId, [FromQuery]int count = 25)
         {
             return Ok(await messageService.GetMessagesOfLobbyAsync(lobbyId, oldestId, count));
         }
