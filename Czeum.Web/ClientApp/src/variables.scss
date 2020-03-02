@@ -1,3 +1,4 @@
 @import "~@angular/material/theming";
 
 $primary-color: map-get($mat-indigo, 500);
+$accent-color: map-get($mat-cyan, 100);
