@@ -3,5 +3,7 @@
 @import "~bootstrap-4-grid/scss/grid";
 @import "variables";
 
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #F2F2F2; }

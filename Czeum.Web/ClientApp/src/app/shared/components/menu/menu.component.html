@@ -1,4 +1,4 @@
-<div class="menu-container mat-elevation-z10">
+<div class="menu-container mat-elevation-z10 d-flex flex-column">
   <div class="d-flex align-items-center logo-container">
     <mat-icon>cloud_queue</mat-icon>
     <div>
@@ -6,4 +6,55 @@
       <p>Kiterjeszthető társasjáték keretrendszer</p>
     </div>
   </div>
+  <mat-nav-list class="flex-grow-1 d-flex flex-column">
+    <mat-list-item (click)="closeSubmenu()">
+      <mat-icon mat-list-icon>home</mat-icon>
+      <h4 mat-line>Kezdőlap</h4>
+    </mat-list-item>
+    <mat-list-item (click)="toggleSubmenu()">
+      <mat-icon mat-list-icon>videogame_asset</mat-icon>
+      <h4 mat-line>Játékok kezelése</h4>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </mat-list-item>
+    <div class="submenu-container" [ngClass]="{ 'open': submenuOpen }">
+      <mat-list-item>
+        <mat-icon mat-list-icon></mat-icon>
+        <h4 mat-line>Folyamatban lévő játékok</h4>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon mat-list-icon></mat-icon>
+        <h4 mat-line>Korábbi játékok</h4>
+      </mat-list-item>
+    </div>
+    <mat-list-item (click)="closeSubmenu()">
+      <mat-icon mat-list-icon>computer</mat-icon>
+      <h4 mat-line>Saját szobám</h4>
+    </mat-list-item>
+    <mat-list-item (click)="closeSubmenu()">
+      <mat-icon mat-list-icon>list</mat-icon>
+      <h4 mat-line>Szobalista</h4>
+    </mat-list-item>
+    <mat-list-item (click)="closeSubmenu()">
+      <mat-icon mat-list-icon>people</mat-icon>
+      <h4 mat-line>Barátok kezelése</h4>
+    </mat-list-item>
+    <mat-list-item (click)="closeSubmenu()">
+      <mat-icon mat-list-icon>message</mat-icon>
+      <h4 mat-line>Üzenetek</h4>
+    </mat-list-item>
+    <div class="flex-grow-6"></div>
+    <mat-list-item>
+      <mat-icon mat-list-icon>perm_identity</mat-icon>
+      <h4 mat-line>{{ username }}</h4>
+    </mat-list-item>
+    <mat-list-item (click)="closeSubmenu()">
+      <mat-icon mat-list-icon>settings</mat-icon>
+      <h4 mat-line>Beállítások</h4>
+    </mat-list-item>
+    <mat-list-item>
+      <mat-icon mat-list-icon>lock</mat-icon>
+      <h4 mat-line>Kijelentkezés</h4>
+    </mat-list-item>
+    <div class="flex-grow-1"></div>
+  </mat-nav-list>
 </div>

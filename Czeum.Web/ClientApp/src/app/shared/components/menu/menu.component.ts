@@ -7,10 +7,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MenuComponent implements OnInit {
   username = 'Példa Pál';
+  submenuOpen = false;
 
   constructor() { }
 
   ngOnInit() {
   }
 
+  closeSubmenu() {
+    this.submenuOpen = false;
+  }
+
+  toggleSubmenu() {
+    this.submenuOpen = !this.submenuOpen;
+  }
 }
