@@ -6,9 +6,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
+import { MenuComponent } from './components/menu/menu.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
-  declarations: [],
+  declarations: [MenuComponent],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -16,7 +18,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatCheckboxModule,
     MatInputModule,
     MatListModule,
-    MatSelectModule
+    MatSelectModule,
+    MatIconModule
   ],
   exports: [
     MatButtonModule,
@@ -24,7 +27,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatCheckboxModule,
     MatInputModule,
     MatListModule,
-    MatSelectModule
+    MatSelectModule,
+    MenuComponent,
+    MatIconModule
   ]
 })
 export class SharedModule { }
