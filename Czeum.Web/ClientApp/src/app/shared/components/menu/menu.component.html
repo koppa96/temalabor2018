@@ -18,20 +18,20 @@
       <mat-icon *ngIf="submenuOpen">arrow_drop_up</mat-icon>
     </mat-list-item>
     <div class="submenu-container" [ngClass]="{ 'open': submenuOpen }">
-      <mat-list-item [routerLink]="['/current-games']" routerLinkActive="active-link">
+      <mat-list-item [routerLink]="['/games/current']" routerLinkActive="active-link">
         <mat-icon mat-list-icon></mat-icon>
         <h4 mat-line>Folyamatban lévő játékok</h4>
       </mat-list-item>
-      <mat-list-item [routerLink]="['/previous-games']" routerLinkActive="active-link">
+      <mat-list-item [routerLink]="['/games/previous']" routerLinkActive="active-link">
         <mat-icon mat-list-icon></mat-icon>
         <h4 mat-line>Korábbi játékok</h4>
       </mat-list-item>
     </div>
-    <mat-list-item [routerLink]="['/my-lobby']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [routerLink]="['/lobbies/mine']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>computer</mat-icon>
       <h4 mat-line>Saját szobám</h4>
     </mat-list-item>
-    <mat-list-item [routerLink]="['/lobby-list']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [routerLink]="['/lobbies/list']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>list</mat-icon>
       <h4 mat-line>Szobalista</h4>
     </mat-list-item>
