@@ -9,9 +9,19 @@ import { MatSelectModule } from '@angular/material/select';
 import { MenuComponent } from './components/menu/menu.component';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { NotificationComponent } from './components/notification/notification.component';
+import { MatCardModule } from '@angular/material/card';
+import { FlexModule } from '@angular/flex-layout';
+import { FriendsListComponent } from './components/friends-list/friends-list.component';
+import { NotificationListItemComponent } from './components/notification-list-item/notification-list-item.component';
 
 @NgModule({
-  declarations: [MenuComponent],
+  declarations: [
+    MenuComponent,
+    NotificationComponent,
+    FriendsListComponent,
+    NotificationListItemComponent
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -21,7 +31,9 @@ import { RouterModule } from '@angular/router';
     MatListModule,
     MatSelectModule,
     MatIconModule,
-    RouterModule
+    MatCardModule,
+    RouterModule,
+    FlexModule
   ],
   exports: [
     MatButtonModule,
@@ -31,7 +43,11 @@ import { RouterModule } from '@angular/router';
     MatListModule,
     MatSelectModule,
     MenuComponent,
-    MatIconModule
+    NotificationComponent,
+    MatIconModule,
+    MatCardModule,
+    FlexModule,
+    FriendsListComponent
   ]
 })
 export class SharedModule { }

@@ -3,7 +3,14 @@
 @import "~bootstrap-4-grid/scss/grid";
 @import "variables";
 
-@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #F2F2F2; }
+
+mat-card.mat-card {
+  border-radius: 15px;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

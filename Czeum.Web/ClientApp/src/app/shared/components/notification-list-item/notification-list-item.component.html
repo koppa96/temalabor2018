@@ -1,0 +1,17 @@
+<div class="p-2" fxLayoutAlign="space-between start" fxLayoutGap="12px">
+  <mat-icon>{{ notification.icon }}</mat-icon>
+  <div fxFlex="grow">
+    <span>{{ notification.text }}</span>
+    <div fxLayoutAlign="center center" fxLayoutGap="8px" *ngIf="notification.actions">
+      <button color="primary" mat-button *ngIf="notification.actions.secondary" (click)="notification.invokeSecondaryAction()">
+        {{ notification.actions.secondary.name }}
+      </button>
+      <button color="primary" mat-raised-button (click)="notification.invokePrimaryAction()">
+        {{ notification.actions.primary.name }}
+      </button>
+    </div>
+  </div>
+  <button mat-icon-button>
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>
