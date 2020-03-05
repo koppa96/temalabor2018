@@ -1,4 +1,4 @@
-<div class="p-2" fxLayoutAlign="space-between start" fxLayoutGap="12px">
+<div class="notification-container" fxLayoutAlign="space-between start" fxLayoutGap="12px">
   <mat-icon>{{ notification.icon }}</mat-icon>
   <div fxFlex="grow">
     <span>{{ notification.text }}</span>
@@ -11,7 +11,7 @@
       </button>
     </div>
   </div>
-  <button mat-icon-button>
+  <button mat-icon-button (click)="onDeleteRequested()">
     <mat-icon>delete</mat-icon>
   </button>
 </div>

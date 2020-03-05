@@ -1,9 +1,3 @@
-::ng-deep mat-list-item {
-  h4.mat-line {
-    text-wrap: normal;
-  }
-
-  mat-list-item-content mat-list-text div.mat-line {
-    overflow: visible !important;
-  }
+.notification-container {
+  padding: 8px 16px;
 }

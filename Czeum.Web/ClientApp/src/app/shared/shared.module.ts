@@ -14,13 +14,15 @@ import { MatCardModule } from '@angular/material/card';
 import { FlexModule } from '@angular/flex-layout';
 import { FriendsListComponent } from './components/friends-list/friends-list.component';
 import { NotificationListItemComponent } from './components/notification-list-item/notification-list-item.component';
+import { FriendListItemComponent } from './components/friend-list-item/friend-list-item.component';
 
 @NgModule({
   declarations: [
     MenuComponent,
     NotificationComponent,
     FriendsListComponent,
-    NotificationListItemComponent
+    NotificationListItemComponent,
+    FriendListItemComponent
   ],
   imports: [
     CommonModule,

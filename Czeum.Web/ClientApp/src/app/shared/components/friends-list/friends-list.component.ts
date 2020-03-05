@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { State } from '../../../reducers';
+import { updateFriendList } from '../../../reducers/friend-list/friend-list-actions';
+import { Observable } from 'rxjs';
+import { FriendListItem } from '../../models/friend-list.models';
 
 @Component({
   selector: 'app-friends-list',
@@ -6,10 +11,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./friends-list.component.scss']
 })
 export class FriendsListComponent implements OnInit {
+  friendList$: Observable<FriendListItem[]>;
 
-  constructor() { }
+  constructor(private store: Store<State>) { }
 
   ngOnInit() {
+    this.friendList$ = this.store.select(s => s.friendList);
   }
 
 }
