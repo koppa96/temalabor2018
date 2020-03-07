@@ -6,6 +6,8 @@ namespace Czeum.Domain.Entities
 {
     public class User : IdentityUser<Guid>
     {
+        public int MoveCount { get; set; }
+
         public List<UserMatch> Matches { get; set; }
         public List<Match> WonMatches { get; set; }
 
@@ -16,5 +18,7 @@ namespace Czeum.Domain.Entities
         public List<FriendRequest> ReceivedRequests { get; set; }
 
         public List<Notification> ReceivedNotifications { get; set; }
+
+        public List<UserAchivement> UserAchivements { get; set; }
     }
 }

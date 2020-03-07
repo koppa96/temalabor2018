@@ -7,6 +7,7 @@ namespace Czeum.Domain.Entities
 {
     public class Match : EntityBase
     {
+        public bool IsQuickMatch { get; set; }
         public MatchState State { get; private set; }
         public SerializedBoard Board { get; set; }
 

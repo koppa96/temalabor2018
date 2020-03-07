@@ -58,7 +58,7 @@ namespace Czeum.Application.Services
             var service = serviceContainer.FindBoardCreator(lobby);
             var board = service.CreateBoard(lobby);
 
-            var statuses = await CreateMatchWithBoardAsync(lobby.Guests.Append(lobby.Host), board);
+            var statuses = await CreateMatchWithBoardAsync(lobby.Guests.Append(lobby.Host), board, false);
             lobbyStorage.RemoveLobby(lobbyId);
             
             await notificationService.NotifyEachAsync(statuses
@@ -73,12 +73,12 @@ namespace Czeum.Application.Services
             var service = serviceContainer.GetRandomBoardCreator();
             var board = (SerializedBoard)service.CreateDefaultBoard();
 
-            var statues = await CreateMatchWithBoardAsync(players, board);
+            var statues = await CreateMatchWithBoardAsync(players, board, true);
             await notificationService.NotifyEachAsync(statues
                 .Select(x => new KeyValuePair<string,Func<ICzeumClient, Task>>(x.Key, client => client.MatchCreated(x.Value))));
         }
 
-        private async Task<Dictionary<string, MatchStatus>> CreateMatchWithBoardAsync(IEnumerable<string> players, SerializedBoard board)
+        private async Task<Dictionary<string, MatchStatus>> CreateMatchWithBoardAsync(IEnumerable<string> players, SerializedBoard board, bool isQuickMatch)
         {
             var users = await context.Users.Where(u => players.Any(p => p == u.UserName))
                 .ToListAsync();
@@ -86,7 +86,8 @@ namespace Czeum.Application.Services
             var match = new Match
             {
                 Board = board,
-                CurrentPlayerIndex = 0
+                CurrentPlayerIndex = 0,
+                IsQuickMatch = isQuickMatch
             };
 
             match.Users = Enumerable.Range(0, users.Count)
@@ -121,6 +122,7 @@ namespace Czeum.Application.Services
 
             var service = serviceContainer.FindMoveHandler(moveData);
             var result = await service.HandleAsync(moveData, playerIndex.Value);
+            match.Users.Single(x => x.UserId == currentUserId).User.MoveCount++;
 
             switch (result.Status)
             {
