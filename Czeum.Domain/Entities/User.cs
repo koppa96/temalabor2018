@@ -14,5 +14,7 @@ namespace Czeum.Domain.Entities
         
         public List<FriendRequest> SentRequests { get; set; }
         public List<FriendRequest> ReceivedRequests { get; set; }
+
+        public List<Notification> ReceivedNotifications { get; set; }
     }
 }

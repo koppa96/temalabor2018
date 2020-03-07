@@ -18,6 +18,7 @@ namespace Czeum.DAL
         public DbSet<StoredMessage> MatchMessages { get; set; }
         public DbSet<UserMatch> UserMatches { get; set; }
         public DbSet<DirectMessage> DirectMessages { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         public CzeumContext(DbContextOptions<CzeumContext> options)
             : base(options)
@@ -29,6 +30,7 @@ namespace Czeum.DAL
             MatchMessages = Set<StoredMessage>();
             UserMatches = Set<UserMatch>();
             DirectMessages = Set<DirectMessage>();
+            Notifications = Set<Notification>();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

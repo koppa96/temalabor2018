@@ -53,5 +53,20 @@ namespace Czeum.Web.Common
         {
             public const string BasePath = ApiResources.BasePath + "/solo-queue";
         }
+
+        public static class Notifications
+        {
+            public const string BasePath = ApiResources.BasePath + "/notifications";
+        }
+
+        public static class Statistics
+        {
+            public const string BasePath = ApiResources.BasePath + "/statistics";
+        }
+
+        public static class Achivements
+        {
+            public const string BasePath = ApiResources.BasePath + "/achivements";
+        }
     }
 }
