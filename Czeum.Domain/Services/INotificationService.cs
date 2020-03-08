@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Core.ClientCallbacks;
 
-namespace Czeum.Core.Services
+namespace Czeum.Domain.Services
 {
     public interface INotificationService
     {

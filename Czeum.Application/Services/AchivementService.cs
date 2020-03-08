@@ -27,44 +27,33 @@ namespace Czeum.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserAchivement>> CheckUnlockedAchivementsAsync()
+        public async Task<IEnumerable<UserAchivement>> CheckUnlockedAchivementsAsync(IEnumerable<User> users)
         {
-            var currentUserId = identityService.GetCurrentUserId();
-            var user = await context.Users.Include(x => x.UserAchivements)
-                .Include(x => x.Matches)
-                    .ThenInclude(x => x.Match)
-                        .ThenInclude(x => x.Board)
-                .SingleAsync(x => x.Id == currentUserId);
-
-            var unfullfilledAchivements = await context.Achivements
-                .Where(x => !user.UserAchivements.Select(x => x.AchivementId).ToList().Contains(x.Id))
+            var achivements = await context.Achivements
                 .ToListAsync();
 
             var unlockedAchivements = new List<UserAchivement>();
-            foreach (var achivement in unfullfilledAchivements)
+            foreach (var achivement in achivements)
             {
-                if (achivement.CheckCriteria(user))
+                foreach (var user in users)
                 {
-                    var userAchivement = new UserAchivement
+                    if (user.UserAchivements.All(x => x.Id != achivement.Id) && achivement.CheckCriteria(user))
                     {
-                        Achivement = achivement,
-                        UnlockedAt = DateTime.UtcNow,
-                        IsStarred = false,
-                        User = user
-                    };
+                        var userAchivement = new UserAchivement
+                        {
+                            Achivement = achivement,
+                            UnlockedAt = DateTime.UtcNow,
+                            IsStarred = false,
+                            User = user
+                        };
 
-                    unlockedAchivements.Add(userAchivement);
+                        unlockedAchivements.Add(userAchivement);
+                    }
                 }
+                
             }
 
-            return unfullfilledAchivements.Where(x => x.CheckCriteria(user))
-                .Select(x => new UserAchivement
-                {
-                    Achivement = x,
-                    UnlockedAt = DateTime.UtcNow,
-                    IsStarred = false,
-                    User = user
-                });
+            return unlockedAchivements;
         }
 
         public async Task<IEnumerable<AchivementDto>> GetAchivementsAsync()

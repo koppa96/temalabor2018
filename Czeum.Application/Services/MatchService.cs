@@ -111,6 +111,12 @@ namespace Czeum.Application.Services
             var currentUserId = identityService.GetCurrentUserId();
             var match = await context.Matches.Include(m => m.Users)
                     .ThenInclude(um => um.User)
+                        .ThenInclude(u => u.UserAchivements)
+                .Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                        .ThenInclude(u => u.Matches)
+                            .ThenInclude(um => um.Match)
+                                .ThenInclude(m => m.Board)
                 .CustomSingleAsync(m => m.Id == moveData.MatchId, "No match with the given id was found.");
 
             var playerIndex = match.Users.SingleOrDefault(um => um.UserId == currentUserId)?.PlayerIndex;
