@@ -8,7 +8,6 @@ namespace Czeum.Core.Services
 {
     public interface IAchivementService
     {
-        Task CheckUnlockedAchivementsAsync();
         Task<IEnumerable<AchivementDto>> GetAchivementsAsync();
         Task<AchivementDto> StarAchivementAsync(Guid userAchivementId);
         Task<AchivementDto> UnstarAchivementAsync(Guid userAchivementId);

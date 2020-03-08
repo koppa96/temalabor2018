@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Achivement;
 
 namespace Czeum.Core.ClientCallbacks
 {
@@ -11,5 +12,6 @@ namespace Czeum.Core.ClientCallbacks
     {
         Task ReceiveResult(MatchStatus status);
         Task MatchCreated(MatchStatus status);
+        Task AchivementUnlocked(AchivementDto achivementDto);
     }
 }

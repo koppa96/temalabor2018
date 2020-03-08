@@ -8,6 +8,7 @@ using Czeum.Core.ClientCallbacks;
 using Czeum.Core.Domain;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Achivement;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Services;
 using Czeum.DAL;
@@ -27,10 +28,12 @@ namespace Czeum.Application.Services
         private readonly IMatchConverter matchConverter;
         private readonly INotificationService notificationService;
         private readonly ILobbyStorage lobbyStorage;
+        private readonly IAchivementCheckerService achivementService;
 
         public MatchService(IServiceContainer serviceContainer, CzeumContext context,
             IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter,
-            INotificationService notificationService, ILobbyStorage lobbyStorage)
+            INotificationService notificationService, ILobbyStorage lobbyStorage,
+            IAchivementCheckerService achivementService)
         {
             this.serviceContainer = serviceContainer;
             this.context = context;
@@ -39,6 +42,7 @@ namespace Czeum.Application.Services
             this.matchConverter = matchConverter;
             this.notificationService = notificationService;
             this.lobbyStorage = lobbyStorage;
+            this.achivementService = achivementService;
         }
 
         public async Task<MatchStatus> CreateMatchAsync(Guid lobbyId)
@@ -137,11 +141,19 @@ namespace Czeum.Application.Services
                     break;
             }
 
+            var unlockedAchivements = await achivementService.CheckUnlockedAchivementsAsync(match.Users.Select(x => x.User));
+            context.UserAchivements.AddRange(unlockedAchivements);
+
             await context.SaveChangesAsync();
+
             await notificationService.NotifyEachAsync(match.Users
                 .Where(um => um.UserId != currentUserId)
                 .Select(um => new KeyValuePair<string, Func<ICzeumClient, Task>>(um.User.UserName, 
                     client => client.ReceiveResult(matchConverter.ConvertFor(match, um.User.UserName)))));
+
+            await notificationService.NotifyEachAsync(unlockedAchivements
+                .Select(x => new KeyValuePair<string, Func<ICzeumClient, Task>>(x.User.UserName,
+                    client => client.AchivementUnlocked(mapper.Map<AchivementDto>(x)))));
 
             return matchConverter.ConvertFor(match, 
                 match.Users.Single(um => um.UserId == currentUserId).User.UserName);

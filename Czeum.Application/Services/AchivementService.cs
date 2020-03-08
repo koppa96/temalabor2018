@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Czeum.Application.Services
 {
-    public class AchivementService : IAchivementService
+    public class AchivementService : IAchivementService, IAchivementCheckerService
     {
         private readonly CzeumContext context;
         private readonly IIdentityService identityService;
@@ -27,7 +27,7 @@ namespace Czeum.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task CheckUnlockedAchivementsAsync()
+        public async Task<IEnumerable<UserAchivement>> CheckUnlockedAchivementsAsync()
         {
             var currentUserId = identityService.GetCurrentUserId();
             var user = await context.Users.Include(x => x.UserAchivements)
@@ -40,6 +40,7 @@ namespace Czeum.Application.Services
                 .Where(x => !user.UserAchivements.Select(x => x.AchivementId).ToList().Contains(x.Id))
                 .ToListAsync();
 
+            var unlockedAchivements = new List<UserAchivement>();
             foreach (var achivement in unfullfilledAchivements)
             {
                 if (achivement.CheckCriteria(user))
@@ -52,11 +53,18 @@ namespace Czeum.Application.Services
                         User = user
                     };
 
-                    context.UserAchivements.Add(userAchivement);
+                    unlockedAchivements.Add(userAchivement);
                 }
             }
 
-            await context.SaveChangesAsync();
+            return unfullfilledAchivements.Where(x => x.CheckCriteria(user))
+                .Select(x => new UserAchivement
+                {
+                    Achivement = x,
+                    UnlockedAt = DateTime.UtcNow,
+                    IsStarred = false,
+                    User = user
+                });
         }
 
         public async Task<IEnumerable<AchivementDto>> GetAchivementsAsync()
