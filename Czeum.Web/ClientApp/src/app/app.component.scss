@@ -1,4 +1,10 @@
-.left-menu {
-  height: 100%;
-  width: 380px;
+.content {
+  padding-left: 91px;
+  height: 100vh;
+}
+
+app-menu {
+  position: absolute;
+  height: 100vh;
+  z-index: 1;
 }

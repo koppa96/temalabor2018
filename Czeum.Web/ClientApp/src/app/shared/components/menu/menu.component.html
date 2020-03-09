@@ -1,7 +1,7 @@
 <div class="menu-container mat-elevation-z10 d-flex flex-column">
-  <div class="d-flex align-items-center logo-container">
+  <div class="d-flex align-items-center logo-container position-absolute">
     <mat-icon>cloud_queue</mat-icon>
-    <div>
+    <div class="logo-text">
       <h1>CZEUM</h1>
       <p>Kiterjeszthető társasjáték keretrendszer</p>
     </div>
@@ -14,8 +14,8 @@
     <mat-list-item (click)="toggleSubmenu()">
       <mat-icon mat-list-icon>videogame_asset</mat-icon>
       <h4 mat-line>Játékok kezelése</h4>
-      <mat-icon *ngIf="!submenuOpen">arrow_drop_down</mat-icon>
-      <mat-icon *ngIf="submenuOpen">arrow_drop_up</mat-icon>
+      <mat-icon class="dropdown-icon" *ngIf="!submenuOpen">arrow_drop_down</mat-icon>
+      <mat-icon class="dropdown-icon" *ngIf="submenuOpen">arrow_drop_up</mat-icon>
     </mat-list-item>
     <div class="submenu-container" [ngClass]="{ 'open': submenuOpen }">
       <mat-list-item [routerLink]="['/games/current']" routerLinkActive="active-link">

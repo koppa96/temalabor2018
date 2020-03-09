@@ -20,5 +20,6 @@ export class MenuComponent implements OnInit {
 
   toggleSubmenu() {
     this.submenuOpen = !this.submenuOpen;
+    console.log(this.submenuOpen);
   }
 }
