@@ -9,6 +9,7 @@ using Czeum.Core.Domain;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Abstractions;
 using Czeum.Core.DTOs.Achivement;
+using Czeum.Core.DTOs.Notifications;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Services;
 using Czeum.DAL;
@@ -29,11 +30,12 @@ namespace Czeum.Application.Services
         private readonly INotificationService notificationService;
         private readonly ILobbyStorage lobbyStorage;
         private readonly IAchivementCheckerService achivementService;
+        private readonly INotificationPersistenceService notificationPersistenceService;
 
         public MatchService(IServiceContainer serviceContainer, CzeumContext context,
             IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter,
             INotificationService notificationService, ILobbyStorage lobbyStorage,
-            IAchivementCheckerService achivementService)
+            IAchivementCheckerService achivementService, INotificationPersistenceService notificationPersistenceService)
         {
             this.serviceContainer = serviceContainer;
             this.context = context;
@@ -43,6 +45,7 @@ namespace Czeum.Application.Services
             this.notificationService = notificationService;
             this.lobbyStorage = lobbyStorage;
             this.achivementService = achivementService;
+            this.notificationPersistenceService = notificationPersistenceService;
         }
 
         public async Task<MatchStatus> CreateMatchAsync(Guid lobbyId)
@@ -151,6 +154,9 @@ namespace Czeum.Application.Services
             context.UserAchivements.AddRange(unlockedAchivements);
 
             await context.SaveChangesAsync();
+
+            await notificationPersistenceService.PersistNotificationsAsync(NotificationType.AchivementUnlocked,
+                unlockedAchivements.Select(x => x.UserId));
 
             await notificationService.NotifyEachAsync(match.Users
                 .Where(um => um.UserId != currentUserId)

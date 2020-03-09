@@ -43,7 +43,7 @@ namespace Czeum.Core.DTOs.Extensions
                 .First(v => v.GetGameTypeAttribute().MoveDataType == moveData.GetType());
         }
 
-        private static GameTypeAttribute GetGameTypeAttribute(this Enum @enum)
+        public static GameTypeAttribute GetGameTypeAttribute(this Enum @enum)
         {
             var enumType = @enum.GetType();
             var memberInfo = enumType.GetMember(@enum.ToString());

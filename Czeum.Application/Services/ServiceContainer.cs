@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Czeum.Core.Domain;
 using Czeum.Core.DTOs.Abstractions;
 using Czeum.Core.DTOs.Abstractions.Lobbies;
@@ -50,6 +51,16 @@ namespace Czeum.Application.Services
         public IBoardCreator GetRandomBoardCreator()
         {
             return boardCreators.ToList()[random.Next(boardCreators.Count())];
+        }
+
+        public IEnumerable<Type> GetRegisteredBoardTypes()
+        {
+            return boardConverters.Select(x => x.GetType().GetGenericArguments().First());
+        }
+
+        public IEnumerable<Type> GetRegisteredMoveHandlerTypes()
+        {
+            return moveHandlers.Select(x => x.GetType());
         }
     }
 }

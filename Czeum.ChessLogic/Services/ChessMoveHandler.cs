@@ -8,13 +8,10 @@ using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.ChessLogic.Services
 {
-    public class ChessMoveHandler : MoveHandler<ChessMoveData>
+    public class ChessMoveHandler : MoveHandler<ChessMoveData, SerializedChessBoard>
     {
-        private readonly IBoardLoader<SerializedChessBoard> boardLoader;
-
-        public ChessMoveHandler(IBoardLoader<SerializedChessBoard> boardLoader)
+        public ChessMoveHandler(IBoardLoader<SerializedChessBoard> boardLoader) : base(boardLoader)
         {
-            this.boardLoader = boardLoader;
         }
 
         protected override async Task<InnerMoveResult> HandleAsync(ChessMoveData moveData, int playerId)

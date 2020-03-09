@@ -8,11 +8,13 @@ using Czeum.Application.Services.Lobby;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Abstractions.Lobbies;
 using Czeum.Core.DTOs.Extensions;
+using Czeum.Core.DTOs.Notifications;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Enums;
 using Czeum.Core.Exceptions;
 using Czeum.Core.Services;
 using Czeum.DAL;
+using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
 using Microsoft.AspNetCore.Identity;
@@ -27,13 +29,15 @@ namespace Czeum.Application.Services {
         private readonly IIdentityService identityService;
         private readonly ISoloQueueService soloQueueService;
         private readonly INotificationService notificationService;
+		private readonly INotificationPersistenceService notificationPersistenceService;
 
-        public LobbyService(ILobbyStorage lobbyStorage, 
+		public LobbyService(ILobbyStorage lobbyStorage, 
 			CzeumContext context,
 			IMapper mapper,
             IIdentityService identityService,
             ISoloQueueService soloQueueService,
-			INotificationService notificationService)
+			INotificationService notificationService,
+			INotificationPersistenceService notificationPersistenceService)
 		{
 			this.lobbyStorage = lobbyStorage;
 			this.context = context;
@@ -41,6 +45,7 @@ namespace Czeum.Application.Services {
             this.identityService = identityService;
             this.soloQueueService = soloQueueService;
             this.notificationService = notificationService;
+			this.notificationPersistenceService = notificationPersistenceService;
 		}
 
 		public async Task<LobbyDataWrapper> JoinToLobbyAsync(Guid lobbyId)
@@ -110,10 +115,7 @@ namespace Czeum.Application.Services {
 				throw new InvalidOperationException("This player has already been invited.");
 			}
 
-			if (!await context.Users.AnyAsync(u => u.UserName == player))
-			{
-				throw new NotFoundException("Player not found.");
-			}
+			var invitedUser = await context.Users.CustomSingleAsync(x => x.UserName == player, "No such player found.");
 
 			lobby.InvitedPlayers.Add(player);
 			lobby.LastModified = DateTime.UtcNow;
@@ -124,6 +126,11 @@ namespace Czeum.Application.Services {
 
 			await notificationService.NotifyAllExceptAsync(identityService.GetCurrentUserName(),
 				client => client.LobbyChanged(wrapper));
+
+			await notificationPersistenceService.PersistNotificationAsync(NotificationType.InviteReceived,
+				invitedUser.Id,
+				identityService.GetCurrentUserId(),
+				lobby.Id);
 
 			return wrapper;
 		}

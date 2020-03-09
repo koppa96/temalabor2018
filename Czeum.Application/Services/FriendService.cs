@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Czeum.Core.DTOs.Notifications;
 using Czeum.Core.DTOs.UserManagement;
 using Czeum.Core.Exceptions;
 using Czeum.Core.Services;
@@ -21,18 +22,21 @@ namespace Czeum.Application.Services
         private readonly IIdentityService identityService;
         private readonly IOnlineUserTracker onlineUserTracker;
         private readonly INotificationService notificationService;
+        private readonly INotificationPersistenceService notificationPersistenceService;
 
         public FriendService(CzeumContext context,
             IMapper mapper,
             IIdentityService identityService,
             IOnlineUserTracker onlineUserTracker,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            INotificationPersistenceService notificationPersistenceService)
         {
             this.context = context;
             this.mapper = mapper;
             this.identityService = identityService;
             this.onlineUserTracker = onlineUserTracker;
             this.notificationService = notificationService;
+            this.notificationPersistenceService = notificationPersistenceService;
         }
 
         public async Task<IEnumerable<FriendDto>> GetFriendsOfUserAsync(string user)
@@ -82,6 +86,10 @@ namespace Czeum.Application.Services
                     IsOnline = onlineUserTracker.IsOnline(friendship.User2.UserName),
                     Username = friendship.User2.UserName
                 }));
+
+            await notificationPersistenceService.PersistNotificationAsync(NotificationType.FriendRequestAccepted,
+                request.Receiver.Id,
+                request.Sender.Id);
             
             return new FriendDto
             {
@@ -136,6 +144,11 @@ namespace Czeum.Application.Services
 
             await notificationService.NotifyAsync(
                 request.Receiver.UserName, client => client.ReceiveRequest(requestDto));
+
+            await notificationPersistenceService.PersistNotificationAsync(NotificationType.FriendRequestReceived,
+                request.Receiver.Id,
+                request.Sender.Id,
+                request.Id);
 
             return requestDto;
         }

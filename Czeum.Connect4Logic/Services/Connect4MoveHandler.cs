@@ -7,13 +7,10 @@ using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Connect4Logic.Services
 {
-    public class Connect4MoveHandler : MoveHandler<Connect4MoveData>
+    public class Connect4MoveHandler : MoveHandler<Connect4MoveData, SerializedConnect4Board>
     {
-        private readonly IBoardLoader<SerializedConnect4Board> boardLoader;
-
-        public Connect4MoveHandler(IBoardLoader<SerializedConnect4Board> boardLoader)
+        public Connect4MoveHandler(IBoardLoader<SerializedConnect4Board> boardLoader) : base(boardLoader)
         {
-            this.boardLoader = boardLoader;
         }
 
         protected override async Task<InnerMoveResult> HandleAsync(Connect4MoveData moveData, int playerId)
