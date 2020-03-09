@@ -2,3 +2,11 @@
   overflow: auto;
   overflow-x: hidden;
 }
+
+app-friend-list-item {
+  margin: 0 16px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid lightgray;
+  }
+}

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Czeum.Core.ClientCallbacks;
 using Czeum.Core.Services;
+using Czeum.Domain.Services;
 using Czeum.Web.SignalR;
 using Microsoft.AspNetCore.SignalR;
 

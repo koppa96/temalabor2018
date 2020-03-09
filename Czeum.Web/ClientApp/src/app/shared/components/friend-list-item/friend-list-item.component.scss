@@ -1,4 +1,9 @@
 ::ng-deep mat-list-item {
+  &.friend-list-item.mat-list-item > .mat-list-item-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .online {
     box-shadow: 0px 0px 10px 0px rgba(49,143,34,1);
   }

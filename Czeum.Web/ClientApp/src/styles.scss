@@ -14,3 +14,20 @@ mat-card.mat-card {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: darkgray;
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}

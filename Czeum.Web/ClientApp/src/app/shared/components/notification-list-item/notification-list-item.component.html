@@ -1,5 +1,5 @@
-<div class="notification-container" fxLayoutAlign="space-between start" fxLayoutGap="12px">
-  <mat-icon>{{ notification.icon }}</mat-icon>
+<div class="notification-container" fxLayoutAlign="space-between center" fxLayoutGap="12px">
+  <mat-icon fontSet="material-icons-outlined">{{ notification.icon }}</mat-icon>
   <div fxFlex="grow">
     <span>{{ notification.text }}</span>
     <div fxLayoutAlign="center center" fxLayoutGap="8px" *ngIf="notification.actions">

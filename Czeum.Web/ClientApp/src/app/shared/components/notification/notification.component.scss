@@ -1,3 +1,11 @@
 .overflow-auto {
   overflow: auto;
 }
+
+app-notification-list-item {
+  margin: 0 16px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid lightgray;
+  }
+}
