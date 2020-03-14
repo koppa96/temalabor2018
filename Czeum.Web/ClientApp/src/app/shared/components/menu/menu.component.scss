@@ -1,11 +1,11 @@
-@import "src/variables";
+@import "~src/variables";
 
 .menu-container {
   height: 100%;
   background: $primary-color;
   color: white;
   width: 82px;
-  transition: all 0.2s;
+  transition: all 0.4s;
 
   &:hover {
     width: 380px;
@@ -45,7 +45,7 @@
 
     .logo-text {
       max-width: 0;
-      transition: max-width 0.2s, opacity 0.1s;
+      transition: max-width 0.4s, opacity 0.2s;
       overflow: hidden;
       opacity: 0;
     }
@@ -76,11 +76,11 @@
   .submenu-container {
     max-height: 0;
     overflow: hidden;
-    transition: all 0.2s;
+    transition: all 0.4s;
 
     &.open {
       max-height: 0;
-      transition: all 0.2s;
+      transition: all 0.4s;
     }
   }
 
@@ -95,12 +95,12 @@
     & > .mat-list-item-content > .mat-list-text {
       max-width: 0;
       opacity: 0;
-      transition: max-width 0.2s, opacity 0.1s;
+      transition: max-width 0.4s, opacity 0.2s;
     }
 
     & > .mat-list-item-content > mat-icon.dropdown-icon {
       max-width: 0;
-      transition: all 0.2s;
+      transition: all 0.4s;
       overflow: hidden;
     }
 
@@ -115,9 +115,9 @@
     }
 
     h4.mat-line {
-      font-family: Roboto, "Helvetica Neue", sans-serif;
+      font-family: Poppins, "Helvetica Neue", sans-serif;
       font-size: 18px;
-      font-weight: normal;
+      font-weight: 500;
       user-select: none;
     }
   }

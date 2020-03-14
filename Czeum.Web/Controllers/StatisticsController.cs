@@ -1,4 +1,6 @@
-﻿using Czeum.Web.Common;
+﻿using Czeum.Core.DTOs.Statistics;
+using Czeum.Core.Services;
+using Czeum.Web.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,5 +15,17 @@ namespace Czeum.Web.Controllers
     [Authorize]
     public class StatisticsController : ControllerBase
     {
+        private readonly IStatisticsService statisticsService;
+
+        public StatisticsController(IStatisticsService statisticsService)
+        {
+            this.statisticsService = statisticsService;
+        }
+
+        [HttpGet]
+        public Task<StatisticsDto> GetStatisticsAsync()
+        {
+            return statisticsService.GetStatisticsAsync();
+        }
     }
 }

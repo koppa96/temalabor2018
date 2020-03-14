@@ -4,11 +4,15 @@ import { HomePageComponent } from './pages/home.page.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 import { HomeComponent } from './components/home/home.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
+import { AchivementsComponent } from './components/achivements/achivements.component';
 
 @NgModule({
   declarations: [
     HomePageComponent,
-    HomeComponent
+    HomeComponent,
+    StatisticsComponent,
+    AchivementsComponent
   ],
   imports: [
     CommonModule,

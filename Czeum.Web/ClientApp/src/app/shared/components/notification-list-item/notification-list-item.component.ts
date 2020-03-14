@@ -8,6 +8,7 @@ import { Notification } from '../../models/notification.models';
 })
 export class NotificationListItemComponent implements OnInit {
   @Input() notification: Notification;
+  @Input() hideDelete = false;
   @Output() deleteRequested = new EventEmitter();
 
   constructor() { }

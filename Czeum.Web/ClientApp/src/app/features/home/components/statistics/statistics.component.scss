@@ -1,0 +1,27 @@
+.statistics-table {
+  width: 100%;
+
+  .stat-row {
+    width: 100%;
+    display: flex;
+
+    * {
+      padding: 5px 10px;
+    }
+
+    .label {
+      width: 60%;
+      border-right: 1px solid lightgray;
+    }
+
+    .value {
+      display: flex;
+      justify-content: flex-end;
+      width: 40%;
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid lightgray;
+    }
+  }
+}

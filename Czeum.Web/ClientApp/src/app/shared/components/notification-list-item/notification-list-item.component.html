@@ -11,7 +11,7 @@
       </button>
     </div>
   </div>
-  <button mat-icon-button (click)="onDeleteRequested()">
-    <mat-icon>delete</mat-icon>
+  <button mat-icon-button *ngIf="!hideDelete" (click)="onDeleteRequested()">
+    <mat-icon fontSet="material-icons-outlined">delete</mat-icon>
   </button>
 </div>

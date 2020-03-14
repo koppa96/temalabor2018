@@ -1,7 +1,9 @@
 <mat-card class="h-100 w-100 mat-elevation-z10" fxLayout="column">
-  <mat-card-title>Barátok</mat-card-title>
-  <mat-list class="scroll-list" fxLayout="column" fxFlex="grow">
-    <app-friend-list-item *ngFor="let friendListItem of friendList$ | async" [friendListItem]="friendListItem">
-    </app-friend-list-item>
-  </mat-list>
+  <mat-card-title class="small">Barátok</mat-card-title>
+  <perfect-scrollbar>
+    <mat-list fxLayout="column" fxFlex="grow">
+      <app-friend-list-item *ngFor="let friendListItem of friendList$ | async" [friendListItem]="friendListItem">
+      </app-friend-list-item>
+    </mat-list>
+  </perfect-scrollbar>
 </mat-card>

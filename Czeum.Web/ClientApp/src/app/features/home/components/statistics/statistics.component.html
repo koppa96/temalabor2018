@@ -1,0 +1,35 @@
+<h2>Statisztikák</h2>
+<div class="statistics-table">
+  <div class="stat-row">
+    <div class="label">Játszott játékok</div>
+    <div class="value">{{ statistics.playedGames }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Nyert játékok</div>
+    <div class="value">{{ statistics.wonGames }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Nyerési arány (%)</div>
+    <div class="value">{{ getWinrate(statistics.wonGames, statistics.playedGames) }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Kedvenc játék</div>
+    <div class="value">{{ getGameName(statistics.favouriteGame) }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Játszott játékok ({{ getGameName(statistics.favouriteGame) }})</div>
+    <div class="value">{{ statistics.playedGamesOfFavourite }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Nyert játékok ({{ getGameName(statistics.favouriteGame) }})</div>
+    <div class="value">{{ statistics.wonGamesOfFavourite }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Nyerési arány ({{ getGameName(statistics.favouriteGame) }})</div>
+    <div class="value">{{ getWinrate(statistics.wonGamesOfFavourite, statistics.playedGamesOfFavourite) }}</div>
+  </div>
+  <div class="stat-row">
+    <div class="label">Legtöbbet vele játszottál</div>
+    <div class="value">{{ statistics.mostPlayedWithName }}</div>
+  </div>
+</div>

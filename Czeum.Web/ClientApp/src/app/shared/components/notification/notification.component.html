@@ -1,9 +1,15 @@
 <mat-card class="h-100 w-100 mat-elevation-z10" fxLayout="column">
-  <mat-card-title>Értesítések</mat-card-title>
-  <mat-list class="overflow-auto" fxLayout="column" fxFlex="grow">
-    <app-notification-list-item
-      *ngFor="let notification of notifications"
-      [notification]="notification"
-      (deleteRequested)="deleteRequested(notification)"></app-notification-list-item>
-  </mat-list>
+  <mat-card-title class="small">Értesítések</mat-card-title>
+  <perfect-scrollbar>
+    <mat-list fxLayout="column" fxFlex="grow">
+      <app-notification-list-item
+        [notification]="queueNotification"
+        *ngIf="isQueuing | async"
+        [hideDelete]="true"></app-notification-list-item>
+      <app-notification-list-item
+        *ngFor="let notification of notifications"
+        [notification]="notification"
+        (deleteRequested)="deleteRequested(notification)"></app-notification-list-item>
+    </mat-list>
+  </perfect-scrollbar>
 </mat-card>

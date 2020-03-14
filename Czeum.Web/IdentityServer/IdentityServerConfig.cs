@@ -23,7 +23,7 @@ namespace Czeum.Web.IdentityServer
             {
                 new ApiResource("czeum_api", "Czeum API")
                 {
-                    UserClaims = { JwtClaimTypes.Name, JwtClaimTypes.Email }
+                    UserClaims = { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Subject }
                 }
             };
         }
@@ -34,62 +34,19 @@ namespace Czeum.Web.IdentityServer
             {
                 new Client
                 {
-                    ClientId = "CzeumUWPClient",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
-                    ClientSecrets =
-                    {
-                        new Secret("UWPClientSecret".Sha256())
-                    },
+                    ClientId = "czeum_angular_client",
+                    ClientName = "Czeum Offical Angular Client",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+
+                    RedirectUris = { "http://localhost:4200/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:4200/signout-oidc" },
+
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
-                        IdentityServerConstants.StandardScopes.Address,
-                        IdentityServerConstants.StandardScopes.OfflineAccess,
                         "czeum_api"
-                    },
-                    AllowOfflineAccess = true
-                },
-                new Client
-                {
-                    ClientId = "SwaggerClient",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    ClientSecrets =
-                    {
-                        new Secret("SwaggerClientSecret".Sha256())
-                    },
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
-                        IdentityServerConstants.StandardScopes.Address,
-                        "czeum_api"
-                    },
-                    RedirectUris =
-                    {
-                        "https://localhost:5001/swagger/oauth2-redirect.html"
                     }
-                },
-                new Client
-                {
-                    ClientId = "CzeumAngularClient",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
-                    ClientSecrets =
-                    {
-                        new Secret("CzeumAngularClientSecret".Sha256())
-                    },
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
-                        IdentityServerConstants.StandardScopes.Address,
-                        IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "czeum_api"
-                    },
-                    AllowOfflineAccess = true
                 }
             };
         }

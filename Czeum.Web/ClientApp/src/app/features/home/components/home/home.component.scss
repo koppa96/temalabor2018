@@ -1,0 +1,45 @@
+@import "~src/variables";
+
+.quick-actions-container {
+  mat-icon {
+    font-size: 120px;
+    height: 120px;
+    width: 120px;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  h2 {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+  }
+
+  p {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0;
+
+    &.search-progress {
+      text-align: left;
+    }
+  }
+
+  .solo-queue-icon {
+    transition: all 0.3s;
+
+    &.queuing {
+      animation-name: queuing-animation;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+  }
+}
+
+@keyframes queuing-animation {
+  0% { color: black; }
+  50% { color: $primary-color; }
+  100% { color: black}
+}

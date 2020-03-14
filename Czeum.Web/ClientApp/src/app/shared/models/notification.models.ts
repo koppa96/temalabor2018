@@ -18,7 +18,7 @@ export interface INotification {
 export class Notification implements INotification {
   icon: string;
   text: string;
-  data: any;
+  data?: any;
   actions?: NotificationActions;
 
   constructor(content: INotification) {

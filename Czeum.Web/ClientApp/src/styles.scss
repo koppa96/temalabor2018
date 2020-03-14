@@ -6,28 +6,24 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #F2F2F2; }
+body { margin: 0; font-family: 'Poppins', sans-serif; background: #F2F2F2; }
 
 mat-card.mat-card {
   border-radius: 15px;
+
+  mat-card-title {
+    font-size: 30px;
+    font-weight: 600;
+
+    &.small {
+      font-size: 25px;
+    }
+  }
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+$custom-typography: mat-typography-config(
+  $font-family: 'Poppins, sans-serif'
+);
 
-*::-webkit-scrollbar {
-  width: 5px;
-}
-
-*::-webkit-scrollbar-button {
-  display: none;
-}
-
-*::-webkit-scrollbar-thumb {
-  background: darkgray;
-  border-radius: 5px;
-}
-
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
+@include mat-base-typography($custom-typography);
+@include angular-material-typography($custom-typography);
