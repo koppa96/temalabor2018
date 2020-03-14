@@ -25,14 +25,6 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  toggleQueuing() {
-    this.isQueuing.pipe( take(1) ).subscribe(res => {
-      if (res) {
-        this.store.dispatch(leaveSoloQueue());
-      } else {
-        this.store.dispatch(joinSoloQueue());
-      }
-    });
-  }
+
 
 }

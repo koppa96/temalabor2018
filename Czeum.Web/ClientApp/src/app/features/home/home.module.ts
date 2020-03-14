@@ -6,13 +6,15 @@ import { SharedModule } from '../../shared/shared.module';
 import { HomeComponent } from './components/home/home.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { AchivementsComponent } from './components/achivements/achivements.component';
+import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
 
 @NgModule({
   declarations: [
     HomePageComponent,
     HomeComponent,
     StatisticsComponent,
-    AchivementsComponent
+    AchivementsComponent,
+    QuickActionsComponent
   ],
   imports: [
     CommonModule,

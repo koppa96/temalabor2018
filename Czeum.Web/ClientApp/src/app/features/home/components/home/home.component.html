@@ -1,30 +1,7 @@
-<mat-card class="mat-elevation-z10 h-100 w-100">
+<mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
   <mat-card-title>Kezdőlap</mat-card-title>
   <perfect-scrollbar>
-    <p class="mb-4">Üdv {{ username }}! Válassz egy lehetőséget a bal oldali menüből, vagy az alábbiak közül. Kellemes időtöltést!</p>
-    <div class="quick-actions-container" fxLayoutAlign="space-around start">
-      <div fxLayout="column" fxLayoutAlign="start center" fxFlex="25%">
-        <mat-icon fontSet="material-icons-outlined" matRipple [matRippleCentered]="true" [matRippleRadius]="60">add</mat-icon>
-        <h2>Szoba létrehozása</h2>
-        <p>Testreszabható szoba létrehozása új játék indításához barátaiddal.</p>
-      </div>
-      <div fxLayout="column" fxLayoutAlign="start center" fxFlex="25%">
-        <mat-icon fontSet="material-icons-outlined" matRipple [matRippleCentered]="true" [matRippleRadius]="60">videogame_asset</mat-icon>
-        <h2>Játékok megtekintése</h2>
-        <p>Már futó játékok megtekintése és kezelése</p>
-      </div>
-      <div fxLayout="column" fxLayoutAlign="start center" fxFlex="25%">
-        <mat-icon class="solo-queue-icon"
-                  [ngClass]="{ 'queuing': isQueuing | async }"
-                  fontSet="material-icons-outlined"
-                  matRipple [matRippleCentered]="true" [matRippleRadius]="60"
-                  (click)="toggleQueuing()"
-        >speed</mat-icon>
-        <h2>Gyors játék</h2>
-        <p *ngIf="!(isQueuing | async)">Gyors meccs keresés indítása véletlenszerű játékhoz, véletlen játékosok ellen.</p>
-        <p *ngIf="isQueuing | async">Gyors meccskeresés folyamatban. Kattints az ikonra a leállításhoz!</p>
-      </div>
-    </div>
+    <app-quick-actions></app-quick-actions>
     <div fxLayout>
       <app-statistics class="pr-3" [statistics]="statistics" fxFlex="50%"></app-statistics>
       <app-achivements class="pl-3" [achivements]="achivements" fxFlex="50%"></app-achivements>
