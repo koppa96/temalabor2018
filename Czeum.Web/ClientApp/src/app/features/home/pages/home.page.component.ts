@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GameType, StatisticsDto } from '../../../shared/clients';
+import { GameType, StatisticsDto, AchivementDto } from '../../../shared/clients';
 
 @Component({
   selector: 'app-home.page',
@@ -15,6 +15,37 @@ export class HomePageComponent implements OnInit {
     wonGamesOfFavourite: 22,
     mostPlayedWithName: 'Gipsz Jakab'
   });
+
+  mockAchivements: AchivementDto[] = [
+    new AchivementDto({
+      id: 'a',
+      title: 'Connect4 király - 1. szint',
+      description: 'Játssz és nyerj 1 Connect4 játékot!',
+      isStarred: true,
+      unlockedAt: new Date()
+    }),
+    new AchivementDto({
+      id: 'b',
+      title: 'Susztermatt',
+      description: 'Adj mattot valakinek a lehető legkevesebb lépésből',
+      isStarred: true,
+      unlockedAt: new Date(2020, 1, 12)
+    }),
+    new AchivementDto({
+      id: 'c',
+      title: 'Sakk király - 2. szint',
+      description: 'Játssz és nyerj 25 sakk játékot!',
+      isStarred: false,
+      unlockedAt: new Date(2020, 2, 14)
+    }),
+    new AchivementDto({
+      id: 'd',
+      title: 'Gyorsjáték bajnok',
+      description: 'Nyerj 25 gyors játékot!',
+      isStarred: false,
+      unlockedAt: new Date(2020, 2, 2)
+    })
+  ];
 
   constructor() { }
 

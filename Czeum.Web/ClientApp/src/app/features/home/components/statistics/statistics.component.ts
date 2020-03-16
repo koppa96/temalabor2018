@@ -12,7 +12,6 @@ export class StatisticsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.statistics);
   }
 
   getWinrate(wonCount: number, playedCount): string {
