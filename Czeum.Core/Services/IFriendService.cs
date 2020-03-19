@@ -10,7 +10,7 @@ namespace Czeum.Core.Services
     /// </summary>
     public interface IFriendService
     {
-        /// <summary>
+        /// <summa>
         /// Gets the names of the user's friends.
         /// </summary>
         /// <param name="user">The name of the user</param>
@@ -65,5 +65,12 @@ namespace Czeum.Core.Services
         /// <param name="user">The name of the user</param>
         /// <returns>The list of usernames</returns>
         Task<IEnumerable<FriendRequestDto>> GetRequestsReceivedAsync();
+
+        /// <summary>
+        /// Gets the up to date friend data for notifications, with the names of the friends to be notified.
+        /// </summary>
+        /// <param name="username">The name of the player</param>
+        /// <returns>The notification data with the names of the users to be notified</returns>
+        Task<Dictionary<string, FriendDto>> GetNotificationDataAsync(string username);
     }
 }

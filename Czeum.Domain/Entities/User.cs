@@ -6,6 +6,8 @@ namespace Czeum.Domain.Entities
 {
     public class User : IdentityUser<Guid>
     {
+        public DateTime CreatedAt { get; set; }
+        public DateTime LastDisconnected { get; set; }
         public int MoveCount { get; set; }
 
         public List<UserMatch> Matches { get; set; }

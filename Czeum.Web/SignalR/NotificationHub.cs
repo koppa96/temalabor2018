@@ -15,16 +15,19 @@ namespace Czeum.Web.SignalR
         private readonly IFriendService friendService;
         private readonly ISoloQueueService soloQueueService;
         private readonly ILobbyService lobbyService;
+        private readonly IUserService userService;
 
         public NotificationHub(IOnlineUserTracker onlineUserTracker,
             IFriendService friendService,
             ISoloQueueService soloQueueService,
-            ILobbyService lobbyService)
+            ILobbyService lobbyService,
+            IUserService userService)
         {
             this.onlineUserTracker = onlineUserTracker;
             this.friendService = friendService;
             this.soloQueueService = soloQueueService;
             this.lobbyService = lobbyService;
+            this.userService = userService;
         }
         
         public override async Task OnConnectedAsync()
@@ -32,9 +35,8 @@ namespace Czeum.Web.SignalR
             await base.OnConnectedAsync();
             onlineUserTracker.PutUser(Context.UserIdentifier, Context.ConnectionId);
 
-            await Task.WhenAll((await friendService.GetFriendsOfUserAsync(Context.UserIdentifier))
-                .Select(f => Clients.User(f.Username).FriendConnected(f.FriendshipId)));
-            
+            await Task.WhenAll((await friendService.GetNotificationDataAsync(Context.UserIdentifier))
+                .Select(x => Clients.User(x.Key).FriendConnectionStateChanged(x.Value)));
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -56,10 +58,13 @@ namespace Czeum.Web.SignalR
 
             soloQueueService.LeaveSoloQueue(Context.UserIdentifier);
 
-            await Task.WhenAll((await friendService.GetFriendsOfUserAsync(Context.UserIdentifier))
-                .Select(f => Clients.User(f.Username).FriendDisconnected(f.FriendshipId)));
+            await userService.UpdateLastDisconnectDate(Context.UserIdentifier);
 
             onlineUserTracker.RemoveUser(Context.UserIdentifier);
+
+            await Task.WhenAll((await friendService.GetNotificationDataAsync(Context.UserIdentifier))
+                .Select(x => Clients.User(x.Key).FriendConnectionStateChanged(x.Value)));
+
             await base.OnDisconnectedAsync(exception);
         }
     }

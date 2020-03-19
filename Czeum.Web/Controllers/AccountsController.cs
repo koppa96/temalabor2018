@@ -53,7 +53,9 @@ namespace Czeum.Web.Controllers
             var user = new User
             {
                 UserName = model.Username,
-                Email = model.Email
+                Email = model.Email,
+                CreatedAt = DateTime.UtcNow,
+                LastDisconnected = DateTime.UtcNow
             };
 
             var result = await userManager.CreateAsync(user, model.Password);

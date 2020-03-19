@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.Mappers;
 using Czeum.Core.DTOs.Notifications;
 using Czeum.Core.DTOs.UserManagement;
 using Czeum.Core.Exceptions;
@@ -12,6 +13,7 @@ using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using MimeKit.Encodings;
 
 namespace Czeum.Application.Services
 {
@@ -47,12 +49,14 @@ namespace Czeum.Application.Services
                 .ToListAsync())
                 .Select(f =>
                 {
-                    var friendName = f.User1.UserName == user ? f.User2.UserName : f.User1.UserName;
+                    var friend = f.User1.UserName == user ? f.User2 : f.User1;
                     return new FriendDto
                     {
                         FriendshipId = f.Id,
-                        IsOnline = onlineUserTracker.IsOnline(friendName),
-                        Username = friendName
+                        IsOnline = onlineUserTracker.IsOnline(friend.UserName),
+                        Username = friend.UserName,
+                        LastDisconnect = friend.LastDisconnected,
+                        RegistrationTime = friend.CreatedAt
                     };
                 });
         }
@@ -207,6 +211,34 @@ namespace Czeum.Application.Services
                 .Where(r => r.Receiver.UserName == currentUser)
                 .ToListAsync())
                 .Select(r => mapper.Map<FriendRequestDto>(r));
+        }
+
+        public async Task<Dictionary<string, FriendDto>> GetNotificationDataAsync(string username)
+        {
+            var friendships = await context.Friendships
+                .Include(x => x.User1)
+                .Include(x => x.User2)
+                .Where(x => x.User1.UserName == username || x.User2.UserName == username)
+                .ToListAsync();
+
+            return friendships.Select(x =>
+            {
+                var currentUser = x.User1.UserName == username ? x.User1 : x.User2;
+                var friend = x.User1.UserName == username ? x.User2 : x.User1;
+
+                return new
+                {
+                    FriendName = friend.UserName,
+                    Data = new FriendDto
+                    {
+                        FriendshipId = x.Id,
+                        Username = currentUser.UserName,
+                        IsOnline = onlineUserTracker.IsOnline(currentUser.UserName),
+                        LastDisconnect = currentUser.LastDisconnected,
+                        RegistrationTime = currentUser.CreatedAt
+                    }
+                };
+            }).ToDictionary(x => x.FriendName, x => x.Data);
         }
     }
 }

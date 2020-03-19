@@ -10,5 +10,7 @@ namespace Czeum.Core.DTOs.UserManagement
         public Guid FriendshipId { get; set; }
         public bool IsOnline { get; set; }
         public string Username { get; set; }
+        public DateTime LastDisconnect { get; set; }
+        public DateTime RegistrationTime { get; set; }
     }
 }
