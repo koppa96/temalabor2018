@@ -191,6 +191,7 @@ namespace Czeum.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
                 endpoints.MapHub<NotificationHub>("/notifications");
             });
 

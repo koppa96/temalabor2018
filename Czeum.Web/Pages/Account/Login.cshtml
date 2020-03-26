@@ -1,0 +1,59 @@
+﻿@page
+@model Czeum.Web.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<html>
+<head>
+    <title>Bejelentkezés</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/styles/styles.css" />
+</head>
+<body>
+    <main class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-6">
+                <h1>Bejelentkezés</h1>
+                <form method="post" class="w-100">
+                    <input type="hidden" asp-for="ReturnUrl"/>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input asp-for="Username" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Password</label>
+                                <input asp-for="Password" class="form-control" type="password" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input type="checkbox" asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row flex-row-reverse mt-3">
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary">Bejelentkezés</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+

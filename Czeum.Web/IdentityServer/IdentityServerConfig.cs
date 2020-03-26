@@ -46,7 +46,10 @@ namespace Czeum.Web.IdentityServer
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "czeum_api"
-                    }
+                    },
+
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false
                 }
             };
         }
