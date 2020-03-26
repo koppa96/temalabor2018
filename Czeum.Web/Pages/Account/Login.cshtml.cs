@@ -58,7 +58,8 @@ namespace Czeum.Web.Pages.Account
                     {
                         ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
                         AllowRefresh = true,
-                        RedirectUri = ReturnUrl
+                        RedirectUri = ReturnUrl,
+                        IsPersistent = RememberMe
                     };
 
                     var claimsPrincipal = await claimsPrincipalFactory.CreateAsync(user);
