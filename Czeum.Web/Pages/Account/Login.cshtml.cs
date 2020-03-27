@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Czeum.Domain.Entities;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NSwag;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace Czeum.Web.Pages.Account
 {
@@ -18,11 +22,11 @@ namespace Czeum.Web.Pages.Account
         private readonly IUserClaimsPrincipalFactory<User> claimsPrincipalFactory;
         private readonly UserManager<User> userManager;
 
-        [Required]
+        [Required(ErrorMessage = "Kötelező")]
         [BindProperty]
         public string Username { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = "Kötelező")]
         [BindProperty]
         public string Password { get; set; } = "";
 
@@ -31,6 +35,8 @@ namespace Czeum.Web.Pages.Account
 
         [BindProperty]
         public string ReturnUrl { get; set; } = "";
+
+        public List<string> Errors { get; set; } = new List<string>();
 
         public LoginModel(
             IIdentityServerInteractionService interactionService,
@@ -47,8 +53,13 @@ namespace Czeum.Web.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string action)
         {
+            if (action == "register")
+            {
+                return RedirectToPage("/Account/Register", new { returnUrl = Request.GetEncodedUrl() + HttpUtility.UrlEncode(ReturnUrl) });
+            }
+
             if (ModelState.IsValid)
             {
                 var user = await userManager.FindByNameAsync(Username);
@@ -70,6 +81,11 @@ namespace Czeum.Web.Pages.Account
                     {
                         return Redirect(ReturnUrl);
                     }
+                }
+                else
+                {
+                    Errors.Add("Hibás felhasználónév vagy jelszó!");
+                    return Page();
                 }
             }
 

@@ -1,59 +1,63 @@
 ﻿@page
 @model Czeum.Web.Pages.Account.LoginModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Bejelentkezés";
+    Layout = "_Layout";
 }
 
-<html>
-<head>
-    <title>Bejelentkezés</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="~/styles/styles.css" />
-</head>
-<body>
-    <main class="container h-100">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div class="col-6">
-                <h1>Bejelentkezés</h1>
-                <form method="post" class="w-100">
-                    <input type="hidden" asp-for="ReturnUrl"/>
+<main class="container vh-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-12 col-md-9 col-lg-7 p-4 mdl-card mdl-shadow--8dp card-round">
+            <h3>Bejelentkezés</h3>
 
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input asp-for="Username" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
+            @if (Model.Errors.Count > 0)
+            {
+                <div class="alert alert-danger">
+                    @foreach (var error in Model.Errors)
+                    {
+                        <p class="m-0">@error</p>
+                    }
+                </div>
+            }
 
-                    <div>
-                        <div class="row">
-                            <div class="col-12">
-                                <label>Password</label>
-                                <input asp-for="Password" class="form-control" type="password" />
-                            </div>
-                        </div>
-                    </div>
+            <form method="post" class="w-100">
+                <input type="hidden" asp-for="ReturnUrl" />
 
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input type="checkbox" asp-for="RememberMe" class="form-check-input" />
-                                <label asp-for="RememberMe"></label>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label class="pure-material-textfield-outlined w-100">
+                            <input placeholder=" " asp-for="Username"/>
+                            <span>Felhasználónév</span>
+                        </label>
+                        <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
+                </div>
 
-                    <div class="row flex-row-reverse mt-3">
-                        <div class="col">
-                            <button type="submit" class="btn btn-primary">Bejelentkezés</button>
-                        </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label class="pure-material-textfield-outlined w-100">
+                            <input type="password" placeholder=" " asp-for="Password"/>
+                            <span>Jelszó</span>
+                        </label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" asp-for="RememberMe">
+                            <input type="checkbox" class="mdl-checkbox__input" asp-for="RememberMe"/>
+                            <span>Emlékezz rám!</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button name="action" value="register" class="poppins mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect">Fiók létrehozása</button>
+                    <button name="action" value="login" class="poppins mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Bejelentkezés</button>
+                </div>
+            </form>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+</main>
 

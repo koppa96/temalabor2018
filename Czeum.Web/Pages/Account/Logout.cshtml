@@ -2,31 +2,25 @@
 @model Czeum.Web.Pages.Account.LogoutModel
 @{
     ViewData["Title"] = "Logout";
+    Layout = "_Layout";
 }
 
-<html>
-<head>
-    <title>Bejelentkezés</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="~/styles/styles.css" />
-</head>
-<body>
-    <main class="container h-100">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div class="col-6">
-                <h1>Kijelentkezés</h1>
-                <form method="post" class="w-100">
-                    <input type="hidden" asp-for="LogoutId"/>
 
-                    <p>Biztosan ki szeretne jelentkezni?</p>
+<main class="container vh-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-12 col-md-9 col-lg-7 p-4 mdl-card mdl-shadow--8dp card-round">
+            <h3>Kijelentkezés</h3>
+            <form method="post" class="w-100">
+                <input type="hidden" asp-for="LogoutId" />
 
-                    <div class="d-flex justify-content-between mt-3">
-                        <button name="action" type="submit" class="btn btn-secondary" value="cancel">Mégse</button>
-                        <button name="action" type="submit" class="btn btn-primary" value="logout">Kijelentkezés</button>
-                    </div>
-                </form>
-            </div>
+                <p>Biztosan ki szeretne jelentkezni?</p>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <button name="action" type="submit" class="poppins mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" value="cancel">Mégse</button>
+                    <button name="action" type="submit" class="poppins mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" value="logout">Kijelentkezés</button>
+                </div>
+            </form>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+</main>
+
