@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Czeum.Domain.Entities;
+using IdentityServer4;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -57,7 +58,7 @@ namespace Czeum.Web.Pages.Account
         {
             if (action == "register")
             {
-                return RedirectToPage("/Account/Register", new { returnUrl = Request.GetEncodedUrl() + HttpUtility.UrlEncode(ReturnUrl) });
+                return RedirectToPage("/Account/Register", new { returnUrl = Request.GetEncodedUrl() });
             }
 
             if (ModelState.IsValid)

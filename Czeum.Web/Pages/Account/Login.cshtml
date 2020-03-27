@@ -5,6 +5,9 @@
     Layout = "_Layout";
 }
 
+@using Microsoft.AspNetCore.Http.Extensions
+@using System.Web
+
 <main class="container vh-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12 col-md-9 col-lg-7 p-4 mdl-card mdl-shadow--8dp card-round">
@@ -51,6 +54,9 @@
                         </label>
                     </div>
                 </div>
+
+                <a class="mt-3 login-nav-link" href="@Url.Page("/Account/GetPasswordReset", new { returnUrl = Request.GetEncodedUrl() })">Elfelejtett jelszó</a><br />
+                <a class="mt-3 login-nav-link" href="@Url.Page("/Account/ConfirmEmail", new { returnUrl = Request.GetEncodedUrl(), resend = true })">Megerősítő e-mail újraküldése</a>
 
                 <div class="d-flex justify-content-between mt-4">
                     <button name="action" value="register" class="poppins mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect">Fiók létrehozása</button>
