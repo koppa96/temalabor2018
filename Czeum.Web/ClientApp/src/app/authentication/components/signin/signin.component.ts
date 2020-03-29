@@ -17,7 +17,7 @@ export class SigninComponent implements OnInit {
 
   ngOnInit() {
     const authCode = this.route.snapshot.queryParams.code;
-    this.authService.onAuthCodeReceived(authCode, true).then(
+    this.authService.onAuthCodeReceived(authCode, false).then(
       () => this.router.navigate(['/home'])
     );
   }

@@ -8,6 +8,7 @@ import { CLIENT_CONFIG, SERVER_CONFIG } from '../dependecy-injection/config-inje
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { create } from 'pkce';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,10 @@ export class AuthService {
     @Inject(CLIENT_CONFIG) private clientConfig: ClientConfig,
     @Inject(SERVER_CONFIG) private serverConfig: ServerConfig,
     private store: Store<State>,
-    private http: HttpClient) {
+    private http: HttpClient,
+    private router: Router) {
     document.addEventListener('silent-refresh-callback', event => {
-      this.silentRefreshCallback((event as any).detail);
+      this.silentRefreshCallback((event as CustomEvent).detail);
     });
   }
 
@@ -133,7 +135,7 @@ export class AuthService {
       take(1)
     ).subscribe(res => {
       const now = new Date();
-      if (true) {// now.getTime() > res.expires.getTime() || res.expires.getTime() - now.getTime() < 60000) {
+      if (res.expires.getTime() - now.getTime() < 60000) {
         const iframe = document.getElementById('silent-refresh-iframe');
         (iframe as any).src = this.createAuthorizeUrl(true);
       }
@@ -148,6 +150,7 @@ export class AuthService {
       this.onAuthCodeReceived(authcode, true);
     } else {
       this.onPostLogout();
+      this.router.navigate(['/welcome']);
     }
   }
 }

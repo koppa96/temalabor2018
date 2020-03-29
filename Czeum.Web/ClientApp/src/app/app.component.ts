@@ -19,12 +19,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.authService.silentRefreshIfRequired();
-
-    /*const self = this;
+    const self = this;
     this.interval = setInterval(() => {
       this.authService.silentRefreshIfRequired();
-    }, 60000);*/
+    }, 60000);
   }
 
   ngOnDestroy() {

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SigninComponent } from './components/signin/signin.component';
-import { SharedModule } from '../shared/shared.module';
 import { SignoutComponent } from './components/signout/signout.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -11,7 +11,7 @@ import { SignoutComponent } from './components/signout/signout.component';
   ],
   imports: [
     CommonModule,
-    SharedModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     SigninComponent,
