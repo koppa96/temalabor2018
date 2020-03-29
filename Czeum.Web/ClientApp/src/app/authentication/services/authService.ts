@@ -7,6 +7,7 @@ import { updateAuthState, updatePkceString } from '../../reducers/authentication
 import { CLIENT_CONFIG, SERVER_CONFIG } from '../dependecy-injection/config-injections';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { create } from 'pkce';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,12 @@ export class AuthService {
     @Inject(SERVER_CONFIG) private serverConfig: ServerConfig,
     private store: Store<State>,
     private http: HttpClient) {
+    document.addEventListener('silent-refresh-callback', event => {
+      this.silentRefreshCallback((event as any).detail);
+    });
   }
-  
-  initiateAuthCodeFlow() {
+
+  private createAuthorizeUrl(silentRefresh: boolean) {
     const codePair = create();
     this.store.dispatch(updatePkceString({ updatedString: codePair.codeVerifier }));
 
@@ -27,13 +31,24 @@ export class AuthService {
     params.append('client_id', this.clientConfig.clientId);
     params.append('scope', this.clientConfig.scope);
     params.append('response_type', this.clientConfig.responseType);
-    params.append('redirect_uri', this.clientConfig.postLoginRedirectUri);
+
     params.append('code_challenge', codePair.codeChallenge);
     params.append('code_challenge_method', 'S256');
-    window.location.href = `${this.serverConfig.authorizeUrl}?${params.toString()}`;
+    if (silentRefresh) {
+      params.append('prompt', 'none');
+      params.append('redirect_uri', this.clientConfig.silentRefreshRedirectUri);
+    } else {
+      params.append('redirect_uri', this.clientConfig.postLoginRedirectUri);
+    }
+
+    return `${this.serverConfig.authorizeUrl}?${params.toString()}`;
   }
 
-  onAuthCodeReceived(authCode: string): Promise<void> {
+  initiateAuthCodeFlow() {
+    window.location.href = this.createAuthorizeUrl(false);
+  }
+
+  onAuthCodeReceived(authCode: string, silentRenew: boolean): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.store.select(x => x.pkceString).pipe(
         take(1)
@@ -43,8 +58,14 @@ export class AuthService {
         params.append('scope', this.clientConfig.scope);
         params.append('grant_type', 'authorization_code');
         params.append('code', authCode);
-        params.append('redirect_uri', this.clientConfig.postLoginRedirectUri);
+
         params.append('code_verifier', res);
+
+        if (silentRenew) {
+          params.append('redirect_uri', this.clientConfig.silentRefreshRedirectUri);
+        } else {
+          params.append('redirect_uri', this.clientConfig.postLoginRedirectUri);
+        }
 
         this.http.post(this.serverConfig.tokenUrl, params.toString(), {
           headers: new HttpHeaders({
@@ -101,5 +122,32 @@ export class AuthService {
     };
 
     this.store.dispatch(updateAuthState({updatedState: authState}));
+  }
+
+  getAuthState(): Observable<AuthState> {
+    return this.store.select(x => x.authState);
+  }
+
+  silentRefreshIfRequired() {
+    this.getAuthState().pipe(
+      take(1)
+    ).subscribe(res => {
+      const now = new Date();
+      if (true) {// now.getTime() > res.expires.getTime() || res.expires.getTime() - now.getTime() < 60000) {
+        const iframe = document.getElementById('silent-refresh-iframe');
+        (iframe as any).src = this.createAuthorizeUrl(true);
+      }
+    });
+  }
+
+  silentRefreshCallback(url: string) {
+    const query = url.split('?')[1];
+    if (query.includes('code')) {
+      const params = new URLSearchParams(query);
+      const authcode = params.get('code');
+      this.onAuthCodeReceived(authcode, true);
+    } else {
+      this.onPostLogout();
+    }
   }
 }

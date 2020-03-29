@@ -3,7 +3,8 @@ export interface ClientConfig {
   scope: string;
   responseType: string;
   postLoginRedirectUri: string;
-postLogoutRedirectUri: string;
+  silentRefreshRedirectUri: string;
+  postLogoutRedirectUri: string;
 }
 
 export interface ServerConfig {

@@ -38,7 +38,11 @@ namespace Czeum.Web.IdentityServer
                     ClientName = "Czeum Offical Angular Client",
                     AllowedGrantTypes = GrantTypes.Code,
                     
-                    RedirectUris = { "http://localhost:4200/signin-oidc" },
+                    RedirectUris =
+                    { 
+                        "http://localhost:4200/signin-oidc",
+                        "http://localhost:4200/silent-refresh.html"
+                    },
                     PostLogoutRedirectUris = { "http://localhost:4200/signout-oidc" },
 
                     AllowedScopes =

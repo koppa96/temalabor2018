@@ -3,6 +3,7 @@ import { ClientConfig, ServerConfig } from './auth-config-models';
 export const clientConfig: ClientConfig = {
   clientId: 'czeum_angular_client',
   postLoginRedirectUri: 'http://localhost:4200/signin-oidc',
+  silentRefreshRedirectUri: 'http://localhost:4200/silent-refresh.html',
   postLogoutRedirectUri: 'http://localhost:4200/signout-oidc',
   responseType: 'code',
   scope: 'openid profile czeum_api'

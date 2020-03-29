@@ -16,15 +16,10 @@ export class SigninComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    /*const params = new URLSearchParams(this.route.snapshot.fragment);
-    const idToken = params.get('id_token');
-    const accessToken = params.get('access_token');
-
-    this.authService.onPostLogin(idToken, accessToken);
-    this.router.navigate(['/home']);*/
-
     const authCode = this.route.snapshot.queryParams.code;
-    this.authService.onAuthCodeReceived(authCode);
+    this.authService.onAuthCodeReceived(authCode, true).then(
+      () => this.router.navigate(['/home'])
+    );
   }
 
 }

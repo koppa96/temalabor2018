@@ -27,3 +27,7 @@ $custom-typography: mat-typography-config(
 
 @include mat-base-typography($custom-typography);
 @include angular-material-typography($custom-typography);
+
+#silent-refresh-iframe {
+  display: none;
+}
