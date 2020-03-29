@@ -1,4 +1,4 @@
-@import "~src/variables";
+@import "src/variables";
 
 .menu-container {
   height: 100%;
@@ -91,6 +91,11 @@
 
   & ::ng-deep mat-list-item {
     color: white;
+
+    &.disabled {
+      color: lightgray;
+      pointer-events: none;
+    }
 
     & > .mat-list-item-content > .mat-list-text {
       max-width: 0;

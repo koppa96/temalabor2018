@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../authentication/services/authService';
+import { AuthState } from '../../../reducers';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-menu',
@@ -6,10 +9,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
-  username = 'Példa Pál';
+  authState$: Observable<AuthState>;
   submenuOpen = false;
 
-  constructor() { }
+  constructor(private authService: AuthService) {
+    this.authState$ = this.authService.getAuthState();
+  }
 
   ngOnInit() {
   }
@@ -21,5 +26,13 @@ export class MenuComponent implements OnInit {
   toggleSubmenu() {
     this.submenuOpen = !this.submenuOpen;
     console.log(this.submenuOpen);
+  }
+
+  login() {
+    this.authService.initiateAuthCodeFlow();
+  }
+
+  logout() {
+    this.authService.initiateLogout();
   }
 }
