@@ -65,7 +65,8 @@ namespace Czeum.Web.Pages.Account
                 var user = new User
                 {
                     UserName = Username,
-                    Email = Email
+                    Email = Email,
+                    CreatedAt = DateTime.UtcNow
                 };
 
                 var createResult = await userManager.CreateAsync(user, Password);

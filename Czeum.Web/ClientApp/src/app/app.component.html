@@ -1,6 +1,11 @@
-<div class="h-100 w-100">
+<!--<div class="h-100 w-100">
   <app-menu></app-menu>
   <div class="content">
     <router-outlet></router-outlet>
   </div>
-</div>
+</div>-->
+<button (click)="login()">Login</button>
+<button (click)="logout()">Logout</button>
+<span>Token: {{ (authState | async)?.accessToken }}</span>
+<span>Expires: {{ (authState | async)?.expires | date:'yyyy. MM. dd. HH:mm:ss' }}</span>
+<router-outlet></router-outlet>

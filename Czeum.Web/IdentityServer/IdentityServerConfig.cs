@@ -36,8 +36,8 @@ namespace Czeum.Web.IdentityServer
                 {
                     ClientId = "czeum_angular_client",
                     ClientName = "Czeum Offical Angular Client",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-
+                    AllowedGrantTypes = GrantTypes.Code,
+                    
                     RedirectUris = { "http://localhost:4200/signin-oidc" },
                     PostLogoutRedirectUris = { "http://localhost:4200/signout-oidc" },
 
@@ -48,7 +48,8 @@ namespace Czeum.Web.IdentityServer
                         "czeum_api"
                     },
 
-                    AllowAccessTokensViaBrowser = true,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
                     RequireConsent = false
                 }
             };

@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { SigninComponent } from './authentication/components/signin/signin.component';
+import { SignoutComponent } from './authentication/components/signout/signout.component';
 
 
 const routes: Routes = [
@@ -7,6 +9,14 @@ const routes: Routes = [
     path: '',
     pathMatch: 'full',
     redirectTo: 'home'
+  },
+  {
+    path: 'signin-oidc',
+    component: SigninComponent
+  },
+  {
+    path: 'signout-oidc',
+    component: SignoutComponent
   },
   {
     path: 'home',

@@ -18,6 +18,7 @@ import { FriendListItemComponent } from './components/friend-list-item/friend-li
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule } from '@angular/material';
+import { AuthenticationModule } from '../authentication/authentication.module';
 
 @NgModule({
   declarations: [
