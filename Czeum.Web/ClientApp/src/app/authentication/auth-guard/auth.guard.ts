@@ -18,6 +18,7 @@ export class AuthGuard implements CanActivate {
       this.authService.getAuthState().pipe(
         take(1)
       ).subscribe(res => {
+        console.log(res);
         if (res.isAuthenticated && res.expires.getTime() > new Date().getTime()) {
           resolve(true);
         } else {

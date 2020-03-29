@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ClientConfig, ServerConfig } from '../auth-config-models';
 import { Store } from '@ngrx/store';
 import { AuthState, State } from '../../reducers';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { updateAuthState, updatePkceString } from '../../reducers/authentication/auth-actions';
 import { CLIENT_CONFIG, SERVER_CONFIG } from '../dependecy-injection/config-injections';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -90,7 +90,6 @@ export class AuthService {
       if (res.isAuthenticated) {
         const params = new URLSearchParams();
         params.append('id_token_hint', res.idToken);
-        console.log(res.idToken);
         params.append('post_logout_redirect_uri', this.clientConfig.postLogoutRedirectUri);
         window.location.href = `${this.serverConfig.endsessionUrl}?${params.toString()}`;
       }
@@ -127,7 +126,13 @@ export class AuthService {
   }
 
   getAuthState(): Observable<AuthState> {
-    return this.store.select(x => x.authState);
+    return this.store.select(x => x.authState).pipe(
+      tap(x => {
+        if (typeof x.expires === 'string') {
+          x.expires = new Date(x.expires);
+        }
+      })
+    );
   }
 
   silentRefreshIfRequired() {
@@ -135,7 +140,7 @@ export class AuthService {
       take(1)
     ).subscribe(res => {
       const now = new Date();
-      if (res.expires.getTime() - now.getTime() < 60000) {
+      if (res.isAuthenticated && res.expires.getTime() - now.getTime() < 60000) {
         const iframe = document.getElementById('silent-refresh-iframe');
         (iframe as any).src = this.createAuthorizeUrl(true);
       }

@@ -1,1 +1,24 @@
-
+<div class="h-100 w-100 row justify-content-center align-items-center">
+  <div class="col-12 col-md-9 col-lg-7">
+    <mat-card class="mat-elevation-z10 h-100 w-100 d-flex align-items-center">
+      <mat-icon class="big-icon">lock</mat-icon>
+      <div>
+        <mat-card-title>Kezdőlap</mat-card-title>
+        <p>Úgy tűnik, nem vagy bejelentkezve. Az alkalmazás teljeskörű használatához bejelentkezés szükséges! Jelentkezz be, vagy hozz létre új fiókot!</p>
+        <div class="d-flex justify-content-between">
+          <button mat-button color="primary" [mat-menu-trigger-for]="menu">
+            EGYÉB LEHETŐSÉGEK
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="redirectToRegister()">Regisztráció</button>
+            <button mat-menu-item (click)="redirectToPasswordReset()">Elfelejtett jelszó</button>
+            <button mat-menu-item (click)="redirectToResendConfirmationEmail()">E-mail cím visszaigazolás</button>
+          </mat-menu>
+          <button mat-raised-button color="primary" (click)="redirectToLogin()">
+            BEJELENTKEZÉS
+          </button>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>
