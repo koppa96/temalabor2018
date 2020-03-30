@@ -19,6 +19,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule } from '@angular/material';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { MatMenuModule } from '@angular/material/menu';
     PerfectScrollbarModule,
     MatProgressSpinnerModule,
     MatRippleModule,
-    MatMenuModule
+    MatMenuModule,
+    MatButtonToggleModule
   ],
   exports: [
     MatButtonModule,
@@ -61,7 +63,8 @@ import { MatMenuModule } from '@angular/material/menu';
     PerfectScrollbarModule,
     MatProgressSpinnerModule,
     MatRippleModule,
-    MatMenuModule
+    MatMenuModule,
+    MatButtonToggleModule
   ]
 })
 export class SharedModule { }
