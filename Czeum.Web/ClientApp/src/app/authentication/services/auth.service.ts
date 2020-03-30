@@ -175,7 +175,10 @@ export class AuthService {
       this.onAuthCodeReceived(authcode, true);
     } else {
       this.onPostLogout();
-      this.router.navigate(['/welcome']);
+      this.router.navigate(['/welcome']).then(() => {
+        AuthService.isHandling = false;
+        this.authListeners.forEach(x => x());
+      });
     }
   }
 }
