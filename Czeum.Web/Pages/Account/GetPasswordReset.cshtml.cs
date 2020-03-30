@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Czeum.Core.Services;
 using Czeum.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ namespace Czeum.Web.Pages.Account
     public class GetPasswordResetModel : PageModel
     {
         private readonly UserManager<User> userManager;
+        private readonly IEmailService emailService;
 
         [Required(ErrorMessage = "Kötelező")]
         [EmailAddress(ErrorMessage = "Nem érvényes e-mail cím")]
@@ -24,9 +26,10 @@ namespace Czeum.Web.Pages.Account
 
         public bool SendSuccessful { get; set; }
 
-        public GetPasswordResetModel(UserManager<User> userManager)
+        public GetPasswordResetModel(UserManager<User> userManager, IEmailService emailService)
         {
             this.userManager = userManager;
+            this.emailService = emailService;
         }
 
         public void OnGet(string? returnUrl)
@@ -51,9 +54,9 @@ namespace Czeum.Web.Pages.Account
                 else
                 {
                     var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                    var url = Url.PageLink(pageName: "/Account/PasswordReset", values: new { username = user.UserName, token });
 
-                    // TODO: Send e-mail
-
+                    await emailService.SendPasswordResetEmailAsync(user.Email, url);
                     SendSuccessful = true;
                 }
             }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.Domain.Entities;
 using IdentityModel;
@@ -19,6 +20,7 @@ namespace Czeum.Web.Pages.Account
     {
         private readonly UserManager<User> userManager;
         private readonly CzeumContext context;
+        private readonly IEmailService emailService;
 
         [Required(ErrorMessage = "Kötelező")]
         [BindProperty]
@@ -40,10 +42,11 @@ namespace Czeum.Web.Pages.Account
         [BindProperty]
         public string ReturnUrl { get; set; } = "";
 
-        public RegisterModel(UserManager<User> userManager, CzeumContext context)
+        public RegisterModel(UserManager<User> userManager, CzeumContext context, IEmailService emailService)
         {
             this.userManager = userManager;
             this.context = context;
+            this.emailService = emailService;
         }
 
         public void OnGet(string returnUrl)
@@ -75,7 +78,10 @@ namespace Czeum.Web.Pages.Account
                     await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Name, user.UserName));
                     await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Id, user.Id.ToString()));
 
-                    // TODO: Send Confirmation email
+                    var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var url = Url.PageLink(pageName: "/Account/ConfirmEmail", values: new { username = user.UserName, token });
+
+                    await emailService.SendConfirmationEmailAsync(user.Email, url);
 
                     return Redirect(ReturnUrl);
                 }

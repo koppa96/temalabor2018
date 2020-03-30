@@ -77,7 +77,7 @@
       <h4 mat-line>Kijelentkezés</h4>
     </mat-list-item>
     <mat-list-item (click)="login()" *ngIf="!(authState$ | async)?.isAuthenticated">
-      <mat-icon mat-list-icon>lock</mat-icon>
+      <mat-icon mat-list-icon>lock_open</mat-icon>
       <h4 mat-line>Bejelentkezés</h4>
     </mat-list-item>
     <div class="flex-grow-1"></div>

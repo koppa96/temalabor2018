@@ -68,7 +68,7 @@ namespace Czeum.Web.Pages.Account
                 {
                     var signInProperties = new AuthenticationProperties
                     {
-                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1),
                         AllowRefresh = true,
                         RedirectUri = ReturnUrl,
                         IsPersistent = RememberMe

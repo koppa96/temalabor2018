@@ -1,4 +1,7 @@
-<div class="h-100 w-100">
+<div *ngIf="showInitialLoading" class="h-100 w-100 d-flex justify-content-center align-items-center">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!showInitialLoading" class="h-100 w-100">
   <app-menu></app-menu>
   <div class="content">
     <router-outlet></router-outlet>

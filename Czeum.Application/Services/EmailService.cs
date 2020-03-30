@@ -18,33 +18,31 @@ namespace Czeum.Application.Services.EmailSender
             gmailPassword = config.GetValue<string>("Gmail:Password");
         }
 
-        public async Task SendConfirmationEmailAsync(string to, Guid uid, string token, string callbackUrl)
+        public async Task SendConfirmationEmailAsync(string to, string callbackUrl)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Czeum Server", "server.czeum@gmail.com"));
+            message.From.Add(new MailboxAddress("Czeum Server", gmailAccount));
             message.To.Add(new MailboxAddress(to));
-            message.Subject = "Confirm your email at Czeum";
+            message.Subject = "Czeum - E-mail megerősítés";
 
             var bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = "<p>An account was registered with your e-mail address. You can activate it with this code:</p>" +
-                $"<p>{token}</p>" +
-                $"<p>You can also click this link to activate your account: <a href='{callbackUrl}'>{callbackUrl}</a></p>";
+            bodyBuilder.HtmlBody = "<p>Egy fiók lett létrehozva ezzel az e-mail címmel. Használd az alábbi linket a regisztráció aktiválásához!</p>" +
+                $"<p><a href='{callbackUrl}'>Aktiválás</a></p>";
             message.Body = bodyBuilder.ToMessageBody();
 
             await SendMailAsync(message);
         }
 
-        public async Task SendPasswordResetEmailAsync(string to, string token, string callbackUrl)
+        public async Task SendPasswordResetEmailAsync(string to, string callbackUrl)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Czeum Server", "server.czeum@gmail.com"));
             message.To.Add(new MailboxAddress(to));
-            message.Subject = "Password reset at Czeum";
+            message.Subject = "Czeum - Jelszó visszaállítás";
 
             var bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = "<p>A password reset was requested with your account. You can reset your password with this code:</p>" +
-                $"<p>{token}</p>" +
-                $"<p>You can also click this link to activate your account: <a href='{callbackUrl}'>{callbackUrl}</a></p>" ;
+            bodyBuilder.HtmlBody = "<p>Az erre az e-mail címre regisztrált fiókodra jelszóvisszaállítási kérés érkezett. Használd az alábbi linket a jelszó visszaállításához!</p>" +
+                $"<p><a href='{callbackUrl}'>Jelszó visszaállítása</a></p>" ;
             message.Body = bodyBuilder.ToMessageBody();
 
             await SendMailAsync(message);

@@ -1,0 +1,12 @@
+<mat-card fxLayout="column" class="mat-elevation-z10 h-100 w-100">
+  <mat-card-title>Barátok</mat-card-title>
+  <perfect-scrollbar fxFlex="grow">
+    <mat-nav-list>
+      <mat-list-item *ngFor="let friend of friendList$ | async" (click)="selectFriend(friend)">
+        <img [src]="friend.imageUrl" mat-list-avatar>
+        <span class="friend-name" mat-line>{{ friend.username }}</span>
+        <span class="friend-state" mat-line>{{ getFriendStateString(friend) }}</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </perfect-scrollbar>
+</mat-card>

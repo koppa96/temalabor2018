@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Czeum.Core.Services;
 using Czeum.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ namespace Czeum.Web.Pages.Account
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<User> userManager;
+        private readonly IEmailService emailService;
 
         [BindProperty]
         [Required(ErrorMessage = "Kötelező")]
@@ -28,9 +30,10 @@ namespace Czeum.Web.Pages.Account
         [BindProperty]
         public string? ReturnUrl { get; set; } = "";
 
-        public ConfirmEmailModel(UserManager<User> userManager)
+        public ConfirmEmailModel(UserManager<User> userManager, IEmailService emailService)
         {
             this.userManager = userManager;
+            this.emailService = emailService;
         }
 
         public async Task OnGetAsync(string? username, string? token, string? returnUrl, bool resend = false)
@@ -40,7 +43,7 @@ namespace Czeum.Web.Pages.Account
 
             if (!resend && username != null && token != null)
             {
-                await CheckDataAsync(username, token);
+                await CheckDataAsync(token, username);
             }
         }
 
@@ -72,9 +75,9 @@ namespace Czeum.Web.Pages.Account
                 else
                 {
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var url = Url.PageLink(pageName: "/Account/ConfirmEmail", values: new { username = user.UserName, token });
 
-                    // TODO: Send the token to the user
-
+                    await emailService.SendConfirmationEmailAsync(user.Email, url);
                     SendSuccessful = true;
                 }
             }

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { AuthState, State } from '../../../../reducers';
 import { take } from 'rxjs/operators';
 import { joinSoloQueue, leaveSoloQueue } from '../../../../reducers/solo-queue/solo-queue-actions';
-import { AuthService } from '../../../../authentication/services/authService';
+import { AuthService } from '../../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-quick-actions',

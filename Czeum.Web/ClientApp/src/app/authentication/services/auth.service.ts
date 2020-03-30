@@ -14,7 +14,9 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
+  // Check if authService is currently handling an authentication request
   static isHandling = false;
+  private authListeners: Array<() => void> = [];
 
   constructor(
     @Inject(CLIENT_CONFIG) private clientConfig: ClientConfig,
@@ -48,12 +50,16 @@ export class AuthService {
     return `${this.serverConfig.authorizeUrl}?${params.toString()}`;
   }
 
+  addAuthenticationCallback(callback: () => void) {
+    this.authListeners.push(callback);
+  }
+
   initiateAuthCodeFlow() {
+    AuthService.isHandling = true;
     window.location.href = this.createAuthorizeUrl(false);
   }
 
   onAuthCodeReceived(authCode: string, silentRenew: boolean): Promise<void> {
-    AuthService.isHandling = true;
     return new Promise<void>((resolve, reject) => {
       this.store.select(x => x.pkceString).pipe(
         take(1)
@@ -76,13 +82,16 @@ export class AuthService {
           headers: new HttpHeaders({
             'Content-Type': 'application/x-www-form-urlencoded'
           })
-        }).subscribe((tokenResponse: { id_token: string; access_token: string; }) => {
-          this.onPostLogin(tokenResponse.id_token, tokenResponse.access_token);
-          AuthService.isHandling = false;
-          resolve();
-        },
+        }).subscribe(
+          (tokenResponse: { id_token: string; access_token: string; }) => {
+            this.onPostLogin(tokenResponse.id_token, tokenResponse.access_token);
+            AuthService.isHandling = false;
+            this.authListeners.forEach(x => x());
+            resolve();
+          },
           () => {
             AuthService.isHandling = false;
+            this.authListeners.forEach(x => x());
             reject();
           }
         );
@@ -142,15 +151,19 @@ export class AuthService {
     );
   }
 
-  silentRefreshIfRequired() {
-    this.getAuthState().pipe(
-      take(1)
-    ).subscribe(res => {
-      const now = new Date();
-      if (!AuthService.isHandling && res.isAuthenticated && res.expires.getTime() - now.getTime() < 60000) {
-        const iframe = document.getElementById('silent-refresh-iframe');
-        (iframe as any).src = this.createAuthorizeUrl(true);
-      }
+  silentRefreshIfRequired(): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.getAuthState().pipe(
+        take(1)
+      ).subscribe(res => {
+        const now = new Date();
+        if (!AuthService.isHandling && res.isAuthenticated && res.expires.getTime() - now.getTime() < 60000) {
+          const iframe = document.getElementById('silent-refresh-iframe');
+          (iframe as any).src = this.createAuthorizeUrl(true);
+          AuthService.isHandling = true;
+        }
+        resolve();
+      });
     });
   }
 

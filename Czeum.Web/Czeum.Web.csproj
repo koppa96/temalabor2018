@@ -12,6 +12,7 @@
     <DebugType>Full</DebugType>
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
+    <UserSecretsId>a20e9b3c-212f-4cb7-9223-51eac80eea2a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
