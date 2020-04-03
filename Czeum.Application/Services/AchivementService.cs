@@ -37,7 +37,7 @@ namespace Czeum.Application.Services
             {
                 foreach (var user in users)
                 {
-                    if (user.UserAchivements.All(x => x.Id != achivement.Id) && achivement.CheckCriteria(user))
+                    if (user.UserAchivements.All(x => x.AchivementId != achivement.Id) && achivement.CheckCriteria(user))
                     {
                         var userAchivement = new UserAchivement
                         {
