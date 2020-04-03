@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Abstractions;
+using Czeum.Core.DTOs.Paging;
 
 namespace Czeum.Core.Services
 {
@@ -37,6 +38,10 @@ namespace Czeum.Core.Services
         /// </summary>
         /// <returns>The list of matches</returns>
         Task<IEnumerable<MatchStatus>> GetMatchesAsync();
+
+        Task<RollListDto<MatchStatus>> GetCurrentMatchesAsync(Guid? oldestId, int count);
+
+        Task<RollListDto<MatchStatus>> GetFinishedMatchesAsync(Guid? oldestId, int count);
 
         /// <summary>
         /// Returns a list with the names of the other players that are playing in the match.

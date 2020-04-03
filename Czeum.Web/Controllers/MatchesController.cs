@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Paging;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Services;
 using Czeum.Web.Common;
@@ -28,6 +30,22 @@ namespace Czeum.Web.Controllers
         public async Task<ActionResult<IEnumerable<MatchStatus>>> GetMatchesAsync()
         {
             return Ok(await matchService.GetMatchesAsync());
+        }
+
+        [HttpGet("current")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<RollListDto<MatchStatus>>> GetCurrentMatchesAsync(Guid? oldestId, int count = 25)
+        {
+            return Ok(await matchService.GetCurrentMatchesAsync(oldestId, count));
+        }
+
+        [HttpGet("finished")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<RollListDto<MatchStatus>>> GetFinishedMatchesAsync(Guid? oldestId, int count = 25)
+        {
+            return Ok(await matchService.GetFinishedMatchesAsync(oldestId, count));
         }
 
         [HttpPost]

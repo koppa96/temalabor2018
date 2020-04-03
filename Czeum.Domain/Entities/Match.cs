@@ -18,6 +18,9 @@ namespace Czeum.Domain.Entities
         public User Winner { get; set; }
         public Guid? WinnerId { get; set; }
 
+        public DateTime CreateTime { get; set; }
+        public DateTime LastMove { get; set; }
+
         public Match()
         {
             State = MatchState.InProgress;

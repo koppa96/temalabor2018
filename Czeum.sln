@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29319.158
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.DAL", "Czeum.DAL\Czeum.DAL.csproj", "{349371D3-EC4C-46C5-9217-D3915987FF2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Czeum.DAL", "Czeum.DAL\Czeum.DAL.csproj", "{349371D3-EC4C-46C5-9217-D3915987FF2A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Czeum.Connect4Logic", "Czeum.Connect4Logic\Czeum.Connect4Logic.csproj", "{53505D79-EE7C-4835-A265-E51A010271BE}"
 EndProject

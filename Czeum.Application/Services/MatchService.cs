@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Czeum.Application.Services.Lobby;
@@ -10,13 +11,17 @@ using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Abstractions;
 using Czeum.Core.DTOs.Achivement;
 using Czeum.Core.DTOs.Notifications;
+using Czeum.Core.DTOs.Paging;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Enums;
 using Czeum.Domain.Services;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace Czeum.Application.Services
 {
@@ -78,7 +83,7 @@ namespace Czeum.Application.Services
         public async Task CreateRandomMatchAsync(IEnumerable<string> players)
         {
             var service = serviceContainer.GetRandomBoardCreator();
-            var board = (SerializedBoard)service.CreateDefaultBoard();
+            var board = service.CreateDefaultBoard();
 
             var statues = await CreateMatchWithBoardAsync(players, board, true);
             await notificationService.NotifyEachAsync(statues
@@ -196,6 +201,44 @@ namespace Czeum.Application.Services
             var board = await context.Boards.SingleAsync(b => b.MatchId == matchId);
             var service = serviceContainer.FindBoardConverter(board);
             return mapper.Map<MoveResultWrapper>(service.Convert(board));
+        }
+
+        private async Task<RollListDto<MatchStatus>> GetRollListByState(MatchState matchState, Guid? oldestId, int count)
+        {
+            var currentUserName = identityService.GetCurrentUserName();
+            Expression<Func<Match, bool>> filter = x => x.State == matchState;
+            if (oldestId.HasValue)
+            {
+                var oldest = await context.Matches.CustomFindAsync(oldestId, "No such match.");
+                filter = filter.And(x => x.LastMove < oldest.LastMove);
+            }
+
+            var matches = await context.Matches.AsNoTracking()
+                    .Include(x => x.Board)
+                    .Include(x => x.Users)
+                        .ThenInclude(x => x.User)
+                    .Where(filter)
+                    .OrderByDescending(x => x.LastMove)
+                    .Take(count)
+                    .ToListAsync();
+
+            var hasMore = matches.Count < count || await context.Matches.AnyAsync(x => x.LastMove < matches.Last().LastMove);
+
+            return new RollListDto<MatchStatus>
+            {
+                Data = matches.Select(x => matchConverter.ConvertFor(x, currentUserName)),
+                HasMoreLeft = hasMore
+            };
+        }
+
+        public Task<RollListDto<MatchStatus>> GetCurrentMatchesAsync(Guid? oldestId, int count)
+        {
+            return GetRollListByState(MatchState.InProgress, oldestId, count);
+        }
+
+        public Task<RollListDto<MatchStatus>> GetFinishedMatchesAsync(Guid? oldestId, int count)
+        {
+            return GetRollListByState(MatchState.Finished, oldestId, count);
         }
     }
 }
