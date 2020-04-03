@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { GameType, StatisticsDto, AchivementDto } from '../../../shared/clients';
 
 @Component({
-  selector: 'app-home.page',
   templateUrl: './home.page.component.html',
   styleUrls: ['./home.page.component.scss']
 })

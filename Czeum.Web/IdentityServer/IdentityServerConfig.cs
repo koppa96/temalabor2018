@@ -36,9 +36,13 @@ namespace Czeum.Web.IdentityServer
                 {
                     ClientId = "czeum_angular_client",
                     ClientName = "Czeum Offical Angular Client",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-
-                    RedirectUris = { "http://localhost:4200/signin-oidc" },
+                    AllowedGrantTypes = GrantTypes.Code,
+                    
+                    RedirectUris =
+                    { 
+                        "http://localhost:4200/signin-oidc",
+                        "http://localhost:4200/silent-refresh.html"
+                    },
                     PostLogoutRedirectUris = { "http://localhost:4200/signout-oidc" },
 
                     AllowedScopes =
@@ -46,7 +50,11 @@ namespace Czeum.Web.IdentityServer
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "czeum_api"
-                    }
+                    },
+
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+                    RequireConsent = false
                 }
             };
         }

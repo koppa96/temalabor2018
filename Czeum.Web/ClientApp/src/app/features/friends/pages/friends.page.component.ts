@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./friends.page.component.scss']
 })
 export class FriendsPageComponent implements OnInit {
+  selectedPage = 'friend-list';
 
   constructor() { }
 

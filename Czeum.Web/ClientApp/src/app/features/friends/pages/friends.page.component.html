@@ -1,0 +1,18 @@
+<div class="h-100 w-100 view-container" fxLayout fxLayoutGap="36px">
+  <mat-card class="mat-elevation-z10" fxFlex="70%">
+    <mat-card-title class="d-flex justify-content-between align-items-center">
+      <span>Barátok kezelése</span>
+      <mat-button-toggle-group [(value)]="selectedPage" class="top-toggle-group">
+        <mat-button-toggle value="friend-list">Barátlista</mat-button-toggle>
+        <mat-button-toggle value="incoming-requests">Bejövő kérelmek</mat-button-toggle>
+        <mat-button-toggle value="outgoing-requests">Kimenő kérelmek</mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-card-title>
+    <div [ngSwitch]="selectedPage">
+      <app-detailed-friend-list *ngSwitchCase="'friend-list'"></app-detailed-friend-list>
+      <app-incoming-requests *ngSwitchCase="'incoming-requests'"></app-incoming-requests>
+      <app-outgoing-requests *ngSwitchCase="'outgoing-requests'"></app-outgoing-requests>
+    </div>
+  </mat-card>
+  <app-notification fxFlex="30%"></app-notification>
+</div>

@@ -74,7 +74,7 @@ namespace Czeum.Web.Controllers
                         username = user.UserName
                     }).ToString();
 
-                await emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
+                // await emailService.SendConfirmationEmailAsync(user.Email, user.Id, token, url);
 
                 return Ok();
             }
@@ -157,7 +157,7 @@ namespace Czeum.Web.Controllers
                         token = resetToken
                     }).ToString();
 
-                await emailService.SendPasswordResetEmailAsync(email, resetToken, url);
+                // await emailService.SendPasswordResetEmailAsync(email, resetToken, url);
                 logger.LogInformation($"Password reset email for {username} was sent to {email}.");
 
                 return Ok();
@@ -216,7 +216,7 @@ namespace Czeum.Web.Controllers
                         username = user.UserName
                     }).ToString();
 
-                await emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
+                // await emailService.SendConfirmationEmailAsync(email, user.Id, token, url);
                 logger.LogInformation($"Confirmation email resent to {email}.");
 
                 return Ok();

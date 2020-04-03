@@ -18,6 +18,8 @@ import { FriendListItemComponent } from './components/friend-list-item/friend-li
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule } from '@angular/material';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,9 @@ import { MatRippleModule } from '@angular/material';
     FlexModule,
     PerfectScrollbarModule,
     MatProgressSpinnerModule,
-    MatRippleModule
+    MatRippleModule,
+    MatMenuModule,
+    MatButtonToggleModule
   ],
   exports: [
     MatButtonModule,
@@ -58,7 +62,9 @@ import { MatRippleModule } from '@angular/material';
     FriendsListComponent,
     PerfectScrollbarModule,
     MatProgressSpinnerModule,
-    MatRippleModule
+    MatRippleModule,
+    MatMenuModule,
+    MatButtonToggleModule
   ]
 })
 export class SharedModule { }

@@ -31,6 +31,7 @@ using Czeum.Web.IdentityServer;
 using Czeum.Web.Middlewares;
 using Czeum.Web.Services;
 using Czeum.Web.SignalR;
+using IdentityServer4;
 
 namespace Czeum.Web
 {
@@ -106,6 +107,9 @@ namespace Czeum.Web
             {
                 options.AddPolicy("MyPolicy", options => options.RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
+
+                options.AddPolicy("MyCookiePolicy", options => options.RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(IdentityConstants.ApplicationScheme));
 
                 options.DefaultPolicy = options.GetPolicy("MyPolicy");
                 options.InvokeHandlersAfterFailure = false;
@@ -191,21 +195,22 @@ namespace Czeum.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
                 endpoints.MapHub<NotificationHub>("/notifications");
             });
 
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
+            //app.UseSpa(spa =>
+            //{
+            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
+            //    // see https://go.microsoft.com/fwlink/?linkid=864501
 
-                spa.Options.SourcePath = "ClientApp";
+            //    spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseAngularCliServer(npmScript: "start");
+            //    }
+            //});
         }
     }
 }

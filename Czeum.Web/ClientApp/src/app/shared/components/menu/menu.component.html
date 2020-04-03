@@ -7,54 +7,78 @@
     </div>
   </div>
   <mat-nav-list class="flex-grow-1 d-flex flex-column">
-    <mat-list-item [routerLink]="['/home']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [ngClass]="{
+      'disabled': !(authState$ | async).isAuthenticated
+    }" [routerLink]="['/home']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon >home</mat-icon>
       <h4 mat-line>Kezdőlap</h4>
     </mat-list-item>
-    <mat-list-item (click)="toggleSubmenu()">
+    <mat-list-item (click)="toggleSubmenu()" [ngClass]="{
+      'disabled': !(authState$ | async).isAuthenticated
+    }">
       <mat-icon mat-list-icon>videogame_asset</mat-icon>
       <h4 mat-line>Játékok kezelése</h4>
       <mat-icon class="dropdown-icon" *ngIf="!submenuOpen">arrow_drop_down</mat-icon>
       <mat-icon class="dropdown-icon" *ngIf="submenuOpen">arrow_drop_up</mat-icon>
     </mat-list-item>
     <div class="submenu-container" [ngClass]="{ 'open': submenuOpen }">
-      <mat-list-item [routerLink]="['/games/current']" routerLinkActive="active-link">
+      <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/games/current']" routerLinkActive="active-link">
         <mat-icon mat-list-icon></mat-icon>
         <h4 mat-line>Folyamatban lévő játékok</h4>
       </mat-list-item>
-      <mat-list-item [routerLink]="['/games/previous']" routerLinkActive="active-link">
+      <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/games/previous']" routerLinkActive="active-link">
         <mat-icon mat-list-icon></mat-icon>
         <h4 mat-line>Korábbi játékok</h4>
       </mat-list-item>
     </div>
-    <mat-list-item [routerLink]="['/lobbies/mine']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/lobbies/mine']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>computer</mat-icon>
       <h4 mat-line>Saját szobám</h4>
     </mat-list-item>
-    <mat-list-item [routerLink]="['/lobbies/list']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/lobbies/list']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>list</mat-icon>
       <h4 mat-line>Szobalista</h4>
     </mat-list-item>
-    <mat-list-item [routerLink]="['/friends']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/friends']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>people</mat-icon>
       <h4 mat-line>Barátok kezelése</h4>
     </mat-list-item>
-    <mat-list-item [routerLink]="['/messages']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/messages']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>message</mat-icon>
       <h4 mat-line>Üzenetek</h4>
     </mat-list-item>
     <div class="flex-grow-6"></div>
-    <mat-list-item>
+    <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }">
       <mat-icon mat-list-icon>perm_identity</mat-icon>
-      <h4 mat-line>{{ username }}</h4>
+      <h4 mat-line>{{ (authState$ | async)?.profile?.userName || 'Vendég' }}</h4>
     </mat-list-item>
-    <mat-list-item [routerLink]="['/settings']" routerLinkActive="active-link" (click)="closeSubmenu()">
+    <mat-list-item [ngClass]="{
+        'disabled': !(authState$ | async).isAuthenticated
+      }" [routerLink]="['/settings']" routerLinkActive="active-link" (click)="closeSubmenu()">
       <mat-icon mat-list-icon>settings</mat-icon>
       <h4 mat-line>Beállítások</h4>
     </mat-list-item>
-    <mat-list-item>
+    <mat-list-item (click)="logout()" *ngIf="(authState$ | async)?.isAuthenticated">
       <mat-icon mat-list-icon>lock</mat-icon>
       <h4 mat-line>Kijelentkezés</h4>
+    </mat-list-item>
+    <mat-list-item (click)="login()" *ngIf="!(authState$ | async)?.isAuthenticated">
+      <mat-icon mat-list-icon>lock_open</mat-icon>
+      <h4 mat-line>Bejelentkezés</h4>
     </mat-list-item>
     <div class="flex-grow-1"></div>
   </mat-nav-list>
