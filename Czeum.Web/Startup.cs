@@ -32,6 +32,7 @@ using Czeum.Web.Middlewares;
 using Czeum.Web.Services;
 using Czeum.Web.SignalR;
 using IdentityServer4;
+using System.Threading.Tasks;
 
 namespace Czeum.Web
 {
@@ -61,6 +62,20 @@ namespace Czeum.Web
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = JwtClaimTypes.Name
+                    };
+
+                    // SignalR JS Client
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var token = context.Request.Query["access_token"];
+                            if (!string.IsNullOrEmpty(token) && context.Request.Path.StartsWithSegments("/notifications"))
+                            {
+                                context.Token = token;
+                            }
+                            return Task.CompletedTask;
+                        }
                     };
                 });
         }
@@ -113,6 +128,17 @@ namespace Czeum.Web
 
                 options.DefaultPolicy = options.GetPolicy("MyPolicy");
                 options.InvokeHandlersAfterFailure = false;
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             });
 
             services.AddSwaggerDocument(options =>
@@ -174,6 +200,7 @@ namespace Czeum.Web
                 app.UseHsts();
             }
 
+            app.UseCors();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

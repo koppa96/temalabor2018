@@ -10,6 +10,7 @@ import { reducers } from './reducers';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { storageSyncMetaReducer } from 'ngrx-store-persist';
+import { API_BASE_URL } from './shared/clients';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { storageSyncMetaReducer } from 'ngrx-store-persist';
     AuthenticationModule
   ],
   providers: [
-    HttpClient
+    HttpClient,
+    { provide: API_BASE_URL, useValue: 'https://localhost:5001' }
   ],
   bootstrap: [AppComponent]
 })

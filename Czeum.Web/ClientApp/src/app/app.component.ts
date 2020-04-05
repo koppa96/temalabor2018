@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthState, State } from './reducers';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
+import { HubService } from './shared/services/hub.service';
 
 @Component({
   selector: 'app-root',
@@ -15,29 +16,31 @@ export class AppComponent implements OnInit, OnDestroy {
   authState: Observable<AuthState>;
   showInitialLoading: boolean;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private hubService: HubService) {
     this.authState = this.authService.getAuthState();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.showInitialLoading = true;
-    this.authService.silentRefreshIfRequired().then(() => {
-      if (AuthService.isHandling) {
-        this.authService.addAuthenticationCallback(() => {
-          this.showInitialLoading = false;
-        });
-      } else {
+    await this.authService.silentRefreshIfRequired();
+    if (AuthService.isHandling) {
+      this.authService.addAuthenticationCallback(async () => {
         this.showInitialLoading = false;
-      }
-    });
+        await this.hubService.connect();
+      });
+    } else {
+      this.showInitialLoading = false;
+      await this.hubService.connect();
+    }
 
     const self = this;
-    this.interval = setInterval(() => {
-      self.authService.silentRefreshIfRequired();
+    this.interval = setInterval(async () => {
+      await self.authService.silentRefreshIfRequired();
     }, 60000);
   }
 
-  ngOnDestroy() {
+  async ngOnDestroy() {
     clearInterval(this.interval);
+    await this.hubService.disconnect();
   }
 }
