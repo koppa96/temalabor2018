@@ -17,5 +17,7 @@ namespace Czeum.Core.DTOs
         public MoveResultWrapper CurrentBoard { get; set; }
         public GameState State { get; set; }
         public string Winner { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime? LastMoveDate { get; set; }
     }
 }

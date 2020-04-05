@@ -141,6 +141,7 @@ namespace Czeum.Application.Services
             var service = serviceContainer.FindMoveHandler(moveData);
             var result = await service.HandleAsync(moveData, playerIndex.Value);
             match.Users.Single(x => x.UserId == currentUserId).User.MoveCount++;
+            match.LastMove = DateTime.UtcNow;
 
             switch (result.Status)
             {
@@ -210,7 +211,14 @@ namespace Czeum.Application.Services
             if (oldestId.HasValue)
             {
                 var oldest = await context.Matches.CustomFindAsync(oldestId, "No such match.");
-                filter = filter.And(x => x.LastMove < oldest.LastMove);
+                if (oldest.LastMove != null)
+                {
+                    filter = filter.And(x => x.LastMove == null && x.CreateTime < oldest.LastMove || x.LastMove < oldest.LastMove);
+                }
+                else
+                {
+                    filter = filter.And(x => x.LastMove == null && x.CreateTime < oldest.CreateTime || x.LastMove < oldest.CreateTime);
+                }
             }
 
             var matches = await context.Matches.AsNoTracking()

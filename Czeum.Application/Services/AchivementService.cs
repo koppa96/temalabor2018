@@ -32,28 +32,26 @@ namespace Czeum.Application.Services
             var achivements = await context.Achivements
                 .ToListAsync();
 
-            var unlockedAchivements = new List<UserAchivement>();
+            var achivementList = new List<UserAchivement>();
             foreach (var achivement in achivements)
             {
                 foreach (var user in users)
                 {
                     if (user.UserAchivements.All(x => x.AchivementId != achivement.Id) && achivement.CheckCriteria(user))
                     {
-                        var userAchivement = new UserAchivement
+                        achivementList.Add(new UserAchivement
                         {
                             Achivement = achivement,
                             UnlockedAt = DateTime.UtcNow,
                             IsStarred = false,
                             User = user
-                        };
-
-                        unlockedAchivements.Add(userAchivement);
+                        });
                     }
                 }
-                
+
             }
 
-            return unlockedAchivements;
+            return achivementList;
         }
 
         public async Task<IEnumerable<AchivementDto>> GetAchivementsAsync()

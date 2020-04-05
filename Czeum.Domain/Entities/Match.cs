@@ -19,7 +19,7 @@ namespace Czeum.Domain.Entities
         public Guid? WinnerId { get; set; }
 
         public DateTime CreateTime { get; set; }
-        public DateTime LastMove { get; set; }
+        public DateTime? LastMove { get; set; }
 
         public Match()
         {

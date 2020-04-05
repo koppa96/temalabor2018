@@ -32,7 +32,9 @@ namespace Czeum.Application.Services
                 CurrentBoard = mapper.Map<MoveResultWrapper>(converter.Convert(match.Board)),
                 Players = match.Users.Select(um => new Player { Username = um.User.UserName, PlayerIndex = um.PlayerIndex }),
                 State = ConvertState(match, user),
-                Winner = match.Winner?.UserName
+                Winner = match.Winner?.UserName,
+                CreateDate = match.CreateTime,
+                LastMoveDate = match.LastMove
             };
         }
 

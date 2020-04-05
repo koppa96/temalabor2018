@@ -4,14 +4,16 @@ using Czeum.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Czeum.DAL.Migrations
 {
     [DbContext(typeof(CzeumContext))]
-    partial class CzeumContextModelSnapshot : ModelSnapshot
+    [Migration("20200405092027_MatchCreateAndLastMoveDate")]
+    partial class MatchCreateAndLastMoveDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
