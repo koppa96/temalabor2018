@@ -12,11 +12,12 @@ namespace Czeum.Domain.Entities.Achivements
         public double WinRate { get; set; }
 
         public override string Title => $"Több mint szerencse - {Level}. szint";
-        public override string Description => $"Legyen legalább {WinRate.ToString("0.##")}%-os nyerési arányod.";
+        public override string Description => $"Játssz le legalább 25 meccset és legyen legalább {WinRate:0.##}%-os nyerési arányod.";
 
         public override bool CheckCriteria(User user)
         {
-            return (double)user.WonMatches.Count / user.Matches.Count(x => x.Match.State == MatchState.Finished) >= WinRate;
+            return user.Matches.Count(x => x.Match.State == MatchState.Finished) > 25 &&
+                (double)user.WonMatches.Count / user.Matches.Count(x => x.Match.State == MatchState.Finished) >= WinRate;
         }
     }
 }
