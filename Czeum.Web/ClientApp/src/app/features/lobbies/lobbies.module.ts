@@ -10,6 +10,7 @@ import { LobbyChatComponent } from './components/lobby-chat/lobby-chat.component
 import { LobbyListComponent } from './components/lobby-list/lobby-list.component';
 import { LobbyService } from './services/lobby.service';
 import { LobbyCreateComponent } from './components/lobby-create/lobby-create.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { LobbyCreateComponent } from './components/lobby-create/lobby-create.com
   imports: [
     CommonModule,
     LobbiesRoutingModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ],
   providers: [
     LobbyService

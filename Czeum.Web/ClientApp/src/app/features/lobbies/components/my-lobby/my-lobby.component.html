@@ -1,3 +1,8 @@
 <mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
-  <mat-card-title>Saját szobám</mat-card-title>
+  <mat-card-title class="d-flex align-items-center">
+    <span>Saját szobám</span>
+    <button mat-icon-button matTooltip="Szoba elhagyása" (click)="onLobbyLeave()">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </mat-card-title>
 </mat-card>

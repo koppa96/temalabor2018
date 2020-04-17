@@ -38,6 +38,23 @@ namespace Czeum.Web.Controllers
             return await lobbyService.GetLobby(id);
         }
 
+        [HttpGet("current")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<LobbyDataWrapper>> GetCurrentLobby()
+        {
+            var currentLobby = await lobbyService.GetLobbyOfUser(User.Identity.Name);
+            if (currentLobby == null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return Ok(currentLobby);
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]

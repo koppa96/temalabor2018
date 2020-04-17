@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-my-lobby',
@@ -6,10 +6,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./my-lobby.component.scss']
 })
 export class MyLobbyComponent implements OnInit {
+  @Output() lobbyLeave = new EventEmitter();
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onLobbyLeave() {
+    this.lobbyLeave.emit();
   }
 
 }

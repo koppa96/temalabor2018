@@ -14,18 +14,18 @@
   </div>
   <div class="stat-row">
     <div class="label">Kedvenc játék</div>
-    <div class="value">{{ getGameName(statistics.favouriteGame) }}</div>
+    <div class="value">{{ statistics.favouriteGame.displayName }}</div>
   </div>
   <div class="stat-row">
-    <div class="label">Játszott játékok ({{ getGameName(statistics.favouriteGame) }})</div>
+    <div class="label">Játszott játékok ({{ statistics.favouriteGame.displayName }})</div>
     <div class="value">{{ statistics.playedGamesOfFavourite }}</div>
   </div>
   <div class="stat-row">
-    <div class="label">Nyert játékok ({{ getGameName(statistics.favouriteGame) }})</div>
+    <div class="label">Nyert játékok ({{ statistics.favouriteGame.displayName }})</div>
     <div class="value">{{ statistics.wonGamesOfFavourite }}</div>
   </div>
   <div class="stat-row">
-    <div class="label">Nyerési arány ({{ getGameName(statistics.favouriteGame) }})</div>
+    <div class="label">Nyerési arány ({{ statistics.favouriteGame.displayName }})</div>
     <div class="value">{{ getWinrate(statistics.wonGamesOfFavourite, statistics.playedGamesOfFavourite) }}</div>
   </div>
   <div class="stat-row">

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GameType, StatisticsDto } from '../../../../shared/clients';
+import { StatisticsDto } from '../../../../shared/clients';
 
 @Component({
   selector: 'app-statistics',
@@ -20,15 +20,6 @@ export class StatisticsComponent implements OnInit {
     }
 
     return `${(wonCount / playedCount * 100).toFixed(2)}%`;
-  }
-
-  getGameName(gameType: GameType): string {
-    switch (gameType) {
-      case GameType.Chess:
-        return 'Sakk';
-      case GameType.Connect4:
-        return 'Connect4';
-    }
   }
 
 }

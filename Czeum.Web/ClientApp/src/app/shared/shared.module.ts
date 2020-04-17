@@ -17,7 +17,7 @@ import { NotificationListItemComponent } from './components/notification-list-it
 import { FriendListItemComponent } from './components/friend-list-item/friend-list-item.component';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRippleModule } from '@angular/material';
+import { MatRippleModule, MatTooltipModule } from '@angular/material';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -47,7 +47,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatRippleModule,
     MatMenuModule,
     MatButtonToggleModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    MatTooltipModule
   ],
   exports: [
     MatButtonModule,
@@ -67,7 +68,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatRippleModule,
     MatMenuModule,
     MatButtonToggleModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    MatTooltipModule
   ]
 })
 export class SharedModule { }

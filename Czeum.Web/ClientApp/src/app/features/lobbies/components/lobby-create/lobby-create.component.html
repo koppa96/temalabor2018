@@ -1,0 +1,23 @@
+<mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
+  <mat-card-title>Szoba létrehozása</mat-card-title>
+  <p>Jelenleg nem vagy csatlakozva egy szobához sem. Itt létrehozhatsz saját szobát, vagy csatlakozhatsz létező szobákhoz a szobalistán.</p>
+  <mat-form-field appearance="outline">
+    <mat-label>Szobanév</mat-label>
+    <input [(ngModel)]="lobbyName" type="text" matInput>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Játéktípus</mat-label>
+    <mat-select [(value)]="selectedGameType">
+      <mat-option *ngFor="let gameType of gameTypes" [value]="gameType">{{ gameType.displayName }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Hozzáférés típusa</mat-label>
+    <mat-select [(value)]="selectedLobbyAccess">
+      <mat-option *ngFor="let lobbyAccess of lobbyAccesses" [value]="lobbyAccess">{{ lobbyAccess.displayName }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="d-flex flex-row-reverse">
+    <button mat-raised-button color="primary" (click)="onLobbyCreate()">LÉTREHOZÁS</button>
+  </div>
+</mat-card>

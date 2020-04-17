@@ -7,6 +7,7 @@ import { HubService } from '../../../../shared/services/hub.service';
 import { LobbyService } from '../../services/lobby.service';
 import { take } from 'rxjs/operators';
 import { leaveLobby, updateLobby } from '../../../../reducers/current-lobby/current-lobby-actions';
+import { LobbyCreateDetails } from '../../models/lobby-create.models';
 
 @Component({
   templateUrl: './lobby-details.page.component.html',
@@ -24,17 +25,13 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentLobby$.pipe(
-      take(1)
-    ).subscribe(res => {
+    this.lobbyService.getCurrentLobby().pipe().subscribe(res => {
       if (res === null) {
-        return;
+        this.store.dispatch(leaveLobby());
       } else {
-        this.lobbyService.getLobbyDetails(res.content.id).subscribe(lobbyRes => {
-          this.store.dispatch(updateLobby({ newLobby: lobbyRes }));
-          this.hubService.registerCallback('LobbyChanged', this.onLobbyChange);
-          this.hubService.registerCallback('KickedFromLobby', this.onKicked);
-        });
+        this.store.dispatch(updateLobby({newLobby: res}));
+        this.hubService.registerCallback('LobbyChanged', this.onLobbyChange);
+        this.hubService.registerCallback('KickedFromLobby', this.onKicked);
       }
     });
   }
@@ -49,7 +46,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
       take(1)
     ).subscribe(res => {
       if (lobbyData.content.id === res.content.id) {
-        this.store.dispatch(updateLobby({ newLobby: lobbyData }));
+        this.store.dispatch(updateLobby({newLobby: lobbyData}));
       }
     });
   }
@@ -58,4 +55,17 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
     this.store.dispatch(leaveLobby());
   }
 
+  onLobbyCreate(details: LobbyCreateDetails) {
+    this.lobbyService.createLobby(details).subscribe(res => {
+      this.store.dispatch(updateLobby({ newLobby: res }));
+      this.hubService.registerCallback('LobbyChanged', this.onLobbyChange);
+      this.hubService.registerCallback('KickedFromLobby', this.onKicked);
+    });
+  }
+
+  onLobbyLeave() {
+    this.lobbyService.leaveLobby().subscribe(() => {
+      this.store.dispatch(leaveLobby());
+    });
+  }
 }
