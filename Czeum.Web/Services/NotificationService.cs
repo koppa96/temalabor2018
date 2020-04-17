@@ -44,7 +44,15 @@ namespace Czeum.Web.Services
 
         public Task NotifyAllExceptAsync(string client, Func<ICzeumClient, Task> action)
         {
-            return action(hubContext.Clients.AllExcept(onlineUserTracker.GetConnectionId(client)));
+            var connectionId = onlineUserTracker.GetConnectionId(client);
+            if (connectionId != null)
+            {
+                return action(hubContext.Clients.AllExcept(connectionId));
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }

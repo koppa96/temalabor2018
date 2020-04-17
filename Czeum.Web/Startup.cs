@@ -33,6 +33,8 @@ using Czeum.Web.Services;
 using Czeum.Web.SignalR;
 using IdentityServer4;
 using System.Threading.Tasks;
+using Czeum.Core.GameServices;
+using Czeum.Core.GameServices.ServiceMappings;
 
 namespace Czeum.Web
 {
@@ -175,14 +177,16 @@ namespace Czeum.Web
             });
 
             services.AddMvc().AddNewtonsoftJson();
+
+            services.AddSingleton<IGameTypeMapping>(provider => GameTypeMapping.Instance);
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule<ServiceModule>();
 
-            builder.RegisterGame<Connect4BoardCreator, Connect4BoardConverter, Connect4MoveHandler>()
-                .RegisterGame<ChessBoardCreator, ChessBoardConverter, ChessMoveHandler>();
+            builder.RegisterGame<Connect4BoardCreator, Connect4BoardConverter, Connect4MoveHandler>("Connect4")
+                .RegisterGame<ChessBoardCreator, ChessBoardConverter, ChessMoveHandler>("Sakk");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

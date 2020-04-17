@@ -4,10 +4,11 @@ using System;
 
 namespace Czeum.Core.GameServices.BoardConverter
 {
-    public abstract class BoardConverter<TBoard> : IBoardConverter
+    public abstract class BoardConverter<TBoard, TMoveResult> : IBoardConverter
         where TBoard : SerializedBoard
+        where TMoveResult : IMoveResult
     {
-        public abstract IMoveResult Convert(TBoard serializedBoard);
+        public abstract TMoveResult Convert(TBoard serializedBoard);
 
         public IMoveResult Convert(SerializedBoard serializedBoard)
         {

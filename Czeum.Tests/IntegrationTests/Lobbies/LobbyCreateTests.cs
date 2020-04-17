@@ -31,7 +31,7 @@ namespace Czeum.Tests.IntegrationTests
 
             var lobby = lobbies.First();
             lobby.Content.Access.Should().Be(LobbyAccess.Public);
-            lobby.GameType.Should().Be(GameType.Chess);
+            lobby.GameIdentifier.Should().Be(0);
             lobby.Content.Name.Should().Be("Teszt lobby");
         }
 
@@ -43,7 +43,7 @@ namespace Czeum.Tests.IntegrationTests
                 "api/lobbies",
                 new CreateLobbyDto
                 {
-                    GameType = GameType.Chess,
+                    GameIdentifier = 0,
                     LobbyAccess = LobbyAccess.Public,
                     Name = "Teszt lobby2"
                 },

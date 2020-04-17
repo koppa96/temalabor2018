@@ -1,16 +1,14 @@
-﻿using Czeum.Core.DTOs.Statistics;
-using Czeum.Core.Enums;
+﻿using Czeum.Core.DTOs;
+using Czeum.Core.DTOs.Statistics;
+using Czeum.Core.GameServices.ServiceMappings;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Czeum.Core.DTOs.Extensions;
 
 namespace Czeum.Application.Services
 {
@@ -19,12 +17,18 @@ namespace Czeum.Application.Services
         private readonly CzeumContext context;
         private readonly IIdentityService identityService;
         private readonly IServiceContainer serviceContainer;
+        private readonly IGameTypeMapping gameTypeMapping;
 
-        public StatisticsService(CzeumContext context, IIdentityService identityService, IServiceContainer serviceContainer)
+        public StatisticsService(
+            CzeumContext context,
+            IIdentityService identityService,
+            IServiceContainer serviceContainer,
+            IGameTypeMapping gameTypeMapping)
         {
             this.context = context;
             this.identityService = identityService;
             this.serviceContainer = serviceContainer;
+            this.gameTypeMapping = gameTypeMapping;
         }
 
         public async Task<StatisticsDto> GetStatisticsAsync()
@@ -65,7 +69,7 @@ namespace Czeum.Application.Services
                 .First().Key;
         }
 
-        private GameType GetFavouriteGameType(User user)
+        private GameTypeDto GetFavouriteGameType(User user)
         {
             var serializedBoardType = GetFavouriteBoardType(user);
 
@@ -74,8 +78,12 @@ namespace Czeum.Application.Services
 
             var moveDataType = moveHandlerType.GetGenericArguments().First();
 
-            return Enum.GetValues(typeof(GameType)).Cast<GameType>()
-                .First(x => x.GetGameTypeAttribute().MoveDataType == moveDataType);
+            var (identifier, displayName) = gameTypeMapping.GetDisplayDataBy(x => x.MoveDataType, moveDataType);
+            return new GameTypeDto
+            {
+                Identifier = identifier,
+                DisplayName = displayName
+            };
         }
     }
 }

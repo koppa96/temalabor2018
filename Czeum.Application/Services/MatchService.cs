@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Czeum.Core.DTOs.Achivement;
 using Czeum.Core.DTOs.Notifications;
 using Czeum.Core.DTOs.Paging;
 using Czeum.Core.DTOs.Wrappers;
+using Czeum.Core.GameServices.ServiceMappings;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
@@ -36,11 +38,19 @@ namespace Czeum.Application.Services
         private readonly ILobbyStorage lobbyStorage;
         private readonly IAchivementCheckerService achivementService;
         private readonly INotificationPersistenceService notificationPersistenceService;
+        private readonly IGameTypeMapping gameTypeMapping;
 
-        public MatchService(IServiceContainer serviceContainer, CzeumContext context,
-            IMapper mapper, IIdentityService identityService, IMatchConverter matchConverter,
-            INotificationService notificationService, ILobbyStorage lobbyStorage,
-            IAchivementCheckerService achivementService, INotificationPersistenceService notificationPersistenceService)
+        public MatchService(
+            IServiceContainer serviceContainer,
+            CzeumContext context,
+            IMapper mapper,
+            IIdentityService identityService,
+            IMatchConverter matchConverter,
+            INotificationService notificationService,
+            ILobbyStorage lobbyStorage,
+            IAchivementCheckerService achivementService,
+            INotificationPersistenceService notificationPersistenceService,
+            IGameTypeMapping gameTypeMapping)
         {
             this.serviceContainer = serviceContainer;
             this.context = context;
@@ -51,6 +61,7 @@ namespace Czeum.Application.Services
             this.lobbyStorage = lobbyStorage;
             this.achivementService = achivementService;
             this.notificationPersistenceService = notificationPersistenceService;
+            this.gameTypeMapping = gameTypeMapping;
         }
 
         public async Task<MatchStatus> CreateMatchAsync(Guid lobbyId)
@@ -230,7 +241,8 @@ namespace Czeum.Application.Services
                     .Take(count)
                     .ToListAsync();
 
-            var hasMore = matches.Count < count || await context.Matches.AnyAsync(x => x.LastMove < matches.Last().LastMove);
+            var last = matches.LastOrDefault();
+            var hasMore = matches.Count == count && last != null && await context.Matches.AnyAsync(x => x.LastMove < last.LastMove);
 
             return new RollListDto<MatchStatus>
             {
@@ -247,6 +259,15 @@ namespace Czeum.Application.Services
         public Task<RollListDto<MatchStatus>> GetFinishedMatchesAsync(Guid? oldestId, int count)
         {
             return GetRollListByState(MatchState.Finished, oldestId, count);
+        }
+
+        public Task<IEnumerable<GameTypeDto>> GetAvailableGameTypesAsync()
+        {
+            return Task.FromResult(gameTypeMapping.GetGameTypeNames().Select(x => new GameTypeDto
+            {
+                Identifier = x.Identifier,
+                DisplayName = x.DisplayName
+            }));
         }
     }
 }

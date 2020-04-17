@@ -27,3 +27,9 @@ $custom-typography: mat-typography-config(
 
 @include mat-base-typography($custom-typography);
 @include angular-material-typography($custom-typography);
+
+fa-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

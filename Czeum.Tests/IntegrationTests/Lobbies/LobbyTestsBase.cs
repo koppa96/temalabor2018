@@ -24,7 +24,7 @@ namespace Czeum.Tests.IntegrationTests.Lobbies
                 "api/lobbies",
                 new CreateLobbyDto
                 {
-                    GameType = GameType.Chess,
+                    GameIdentifier = 0,
                     LobbyAccess = lobbyAccess,
                     Name = "Teszt lobby"
                 },

@@ -7,10 +7,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { StoreModule } from '@ngrx/store';
 import { reducers } from './reducers';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { storageSyncMetaReducer } from 'ngrx-store-persist';
-import { API_BASE_URL } from './shared/clients';
+import { API_BASE_URL, MatchesClient } from './shared/clients';
+import { AuthInterceptor } from './authentication/services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -23,11 +24,17 @@ import { API_BASE_URL } from './shared/clients';
     SharedModule,
     HttpClientModule,
     StoreModule.forRoot(reducers, { metaReducers: [ storageSyncMetaReducer ] }),
-    AuthenticationModule
+    AuthenticationModule,
   ],
   providers: [
     HttpClient,
-    { provide: API_BASE_URL, useValue: 'https://localhost:5001' }
+    { provide: API_BASE_URL, useValue: 'https://localhost:5001' },
+    MatchesClient,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

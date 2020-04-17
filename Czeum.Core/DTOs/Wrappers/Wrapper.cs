@@ -8,7 +8,7 @@ namespace Czeum.Core.DTOs.Wrappers
     /// <typeparam name="TContent">The type of the content</typeparam>
     public class Wrapper<TContent>
     {
-        public GameType GameType { get; set; }
+        public int GameIdentifier { get; set; }
         public TContent Content { get; set; }
     }
 }

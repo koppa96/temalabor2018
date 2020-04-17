@@ -88,11 +88,11 @@ namespace Czeum.Core.Services
         /// <summary>
         /// Creates a lobby of the desired type and adds it to the lobby storage.
         /// </summary>
-        /// <param name="type">The type of the new lobby (must be a LobbyData subclass)</param>
+        /// <param name="gameIdentifier">The identifier of the game type</param>
         /// <param name="access">The access type of the lobby</param>
         /// <param name="name">The name of the lobby</param>
         /// <returns>The created lobby</returns>
-        Task<LobbyDataWrapper> CreateAndAddLobbyAsync(GameType type, LobbyAccess access, string name);
+        Task<LobbyDataWrapper> CreateAndAddLobbyAsync(int gameIdentifier, LobbyAccess access, string name);
 
         /// <summary>
         /// Removes a lobby from the storage.

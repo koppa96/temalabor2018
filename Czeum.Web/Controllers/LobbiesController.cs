@@ -30,13 +30,21 @@ namespace Czeum.Web.Controllers
             return await lobbyService.GetLobbies();
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<LobbyDataWrapper>> GetLobby(Guid id)
+        {
+            return await lobbyService.GetLobby(id);
+        }
+
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<LobbyDataWrapper>> CreateLobbyAsync([FromBody] CreateLobbyDto dto)
         {
             return StatusCode(201, await lobbyService.CreateAndAddLobbyAsync(
-                dto.GameType,  
+                dto.GameIdentifier,  
                 dto.LobbyAccess, 
                 dto.Name));
         }

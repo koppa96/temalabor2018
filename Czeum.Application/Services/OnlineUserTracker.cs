@@ -34,14 +34,14 @@ namespace Czeum.Application.Services
             return users.ContainsKey(user);
         }
 
-        public string GetConnectionId(string user)
+        public string? GetConnectionId(string user)
         {
             if (users.ContainsKey(user))
             {
                 return users[user];
             }
 
-            throw new KeyNotFoundException("The given user is not in the list of users.");
+            return null;
         }
     }
 }

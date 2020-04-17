@@ -23,7 +23,15 @@ namespace Czeum.Web.Controllers
         {
             this.matchService = matchService;
         }
-        
+
+        [HttpGet("types")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<IEnumerable<GameTypeDto>>> GetGameTypesAsync()
+        {
+            return Ok(await matchService.GetAvailableGameTypesAsync());
+        }
+
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]

@@ -1,10 +1,9 @@
-using System;
 using Czeum.Core.DTOs.Abstractions;
-using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.DTOs.Wrappers;
-using Czeum.Core.Enums;
+using Czeum.Core.GameServices.ServiceMappings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Czeum.Core.DTOs.Converters
 {
@@ -21,11 +20,11 @@ namespace Czeum.Core.DTOs.Converters
             JsonSerializer serializer)
         {
             var obj = JObject.Load(reader);
-            var gameType = (GameType)obj.GetValue("GameType", StringComparison.OrdinalIgnoreCase).Value<int>();
-            var moveType = gameType.GetMoveDataType();
+            var gameIdentifier = obj.GetValue("GameType", StringComparison.OrdinalIgnoreCase).Value<int>();
+            var moveType = GameTypeMapping.Instance.GetMoveDataType(gameIdentifier);
             return new MoveDataWrapper
             {
-                GameType = gameType,
+                GameIdentifier = gameIdentifier,
                 Content = JsonConvert.DeserializeObject(obj.GetValue("Content", StringComparison.OrdinalIgnoreCase).ToString(), moveType) as MoveData
             };
         }

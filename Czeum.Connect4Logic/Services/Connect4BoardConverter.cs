@@ -5,9 +5,9 @@ using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.Connect4Logic.Services
 {
-    public class Connect4BoardConverter : BoardConverter<SerializedConnect4Board>
+    public class Connect4BoardConverter : BoardConverter<SerializedConnect4Board, Connect4MoveResult>
     {
-        public override IMoveResult Convert(SerializedConnect4Board serializedBoard)
+        public override Connect4MoveResult Convert(SerializedConnect4Board serializedBoard)
         {
             var board = new Connect4Board();
             board.DeserializeContent(serializedBoard);

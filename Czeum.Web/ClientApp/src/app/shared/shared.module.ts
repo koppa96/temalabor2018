@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule } from '@angular/material';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressSpinnerModule,
     MatRippleModule,
     MatMenuModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    FontAwesomeModule
   ],
   exports: [
     MatButtonModule,
@@ -64,7 +66,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressSpinnerModule,
     MatRippleModule,
     MatMenuModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    FontAwesomeModule
   ]
 })
 export class SharedModule { }

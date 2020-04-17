@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Czeum.Application.Extensions;
 using Czeum.Application.Services.Lobby;
 using Czeum.Core.DTOs;
 using Czeum.Core.DTOs.Abstractions.Lobbies;
-using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.DTOs.Notifications;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Enums;
-using Czeum.Core.Exceptions;
+using Czeum.Core.GameServices.ServiceMappings;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.DAL.Extensions;
-using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Czeum.Application.Services {
+namespace Czeum.Application.Services
+{
 	public class LobbyService : ILobbyService
 	{
 		private readonly ILobbyStorage lobbyStorage;
@@ -30,6 +28,7 @@ namespace Czeum.Application.Services {
         private readonly ISoloQueueService soloQueueService;
         private readonly INotificationService notificationService;
 		private readonly INotificationPersistenceService notificationPersistenceService;
+		private readonly IGameTypeMapping gameTypeMapping;
 
 		public LobbyService(ILobbyStorage lobbyStorage, 
 			CzeumContext context,
@@ -37,7 +36,8 @@ namespace Czeum.Application.Services {
             IIdentityService identityService,
             ISoloQueueService soloQueueService,
 			INotificationService notificationService,
-			INotificationPersistenceService notificationPersistenceService)
+			INotificationPersistenceService notificationPersistenceService,
+			IGameTypeMapping gameTypeMapping)
 		{
 			this.lobbyStorage = lobbyStorage;
 			this.context = context;
@@ -46,6 +46,7 @@ namespace Czeum.Application.Services {
             this.soloQueueService = soloQueueService;
             this.notificationService = notificationService;
 			this.notificationPersistenceService = notificationPersistenceService;
+			this.gameTypeMapping = gameTypeMapping;
 		}
 
 		public async Task<LobbyDataWrapper> JoinToLobbyAsync(Guid lobbyId)
@@ -204,7 +205,7 @@ namespace Czeum.Application.Services {
             return Task.FromResult(lobbyStorage.LobbyExitsts(lobbyId));
 		}
 
-		public async Task<LobbyDataWrapper> CreateAndAddLobbyAsync(GameType type, LobbyAccess access, string name)
+		public async Task<LobbyDataWrapper> CreateAndAddLobbyAsync(int gameIdentifier, LobbyAccess access, string name)
 		{
             var currentUser = identityService.GetCurrentUserName();
             if (lobbyStorage.GetLobbyOfUser(currentUser) != null)
@@ -212,7 +213,7 @@ namespace Czeum.Application.Services {
                 throw new InvalidOperationException("To create a new lobby, leave your current lobby first.");
             }
 
-			var lobbyType = type.GetLobbyType();
+			var lobbyType = gameTypeMapping.GetLobbyDataType(gameIdentifier);
 			if (!lobbyType.IsSubclassOf(typeof(LobbyData)))
 			{
 				throw new ArgumentException("Invalid lobby type.");
@@ -221,7 +222,7 @@ namespace Czeum.Application.Services {
 			var lobby = (LobbyData) Activator.CreateInstance(lobbyType)!;
 			lobby.Host = currentUser;
 			lobby.Access = access;
-			lobby.Name = string.IsNullOrEmpty(name) ? $"{currentUser}'s {type.ToString()} lobby" : name;
+			lobby.Name = name;
 			lobbyStorage.AddLobby(lobby);
 			var wrapper = mapper.Map<LobbyDataWrapper>(lobby);
 

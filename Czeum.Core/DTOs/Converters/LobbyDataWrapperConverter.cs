@@ -1,15 +1,16 @@
-using System;
 using Czeum.Core.DTOs.Abstractions.Lobbies;
-using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.DTOs.Wrappers;
-using Czeum.Core.Enums;
+using Czeum.Core.GameServices.ServiceMappings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Czeum.Core.DTOs.Converters
 {
     public class LobbyDataWrapperConverter : JsonConverter<LobbyDataWrapper>
     {
+        private readonly GameTypeMapping gameTypeMapping;
+
         public override bool CanWrite => false;
 
         public override void WriteJson(JsonWriter writer, LobbyDataWrapper value, JsonSerializer serializer)
@@ -21,11 +22,11 @@ namespace Czeum.Core.DTOs.Converters
             JsonSerializer serializer)
         {
             var obj = JObject.Load(reader);
-            var gameType = (GameType)obj.GetValue("GameType", StringComparison.OrdinalIgnoreCase).Value<int>();
-            var lobbyType = gameType.GetLobbyType();
+            var GameIdentifier = obj.GetValue("GameType", StringComparison.OrdinalIgnoreCase).Value<int>();
+            var lobbyType = GameTypeMapping.Instance.GetLobbyDataType(GameIdentifier);
             return new LobbyDataWrapper
             {
-                GameType = gameType,
+                GameIdentifier = GameIdentifier,
                 Content = JsonConvert.DeserializeObject(obj.GetValue("Content", StringComparison.OrdinalIgnoreCase).ToString(), lobbyType) as LobbyData
             };
         }

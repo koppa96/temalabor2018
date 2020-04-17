@@ -1,8 +1,8 @@
 using AutoMapper;
 using Czeum.Core.DTOs.Abstractions;
 using Czeum.Core.DTOs.Abstractions.Lobbies;
-using Czeum.Core.DTOs.Extensions;
 using Czeum.Core.DTOs.Wrappers;
+using Czeum.Core.GameServices.ServiceMappings;
 
 namespace Czeum.Application.Mappings
 {
@@ -11,11 +11,11 @@ namespace Czeum.Application.Mappings
         public WrapperMappings()
         {
             CreateMap<LobbyData, LobbyDataWrapper>()
-                .ForMember(dst => dst.GameType, cfg => cfg.MapFrom(src => src.GetGameType()))
+                .ForMember(dst => dst.GameIdentifier, cfg => cfg.MapFrom<LobbyGameTypeValueResolver>())
                 .ForMember(dst => dst.Content, cfg => cfg.MapFrom(src => src));
 
             CreateMap<IMoveResult, MoveResultWrapper>()
-                .ForMember(dst => dst.GameType, cfg => cfg.MapFrom(src => src.GetGameType()))
+                .ForMember(dst => dst.GameIdentifier, cfg => cfg.MapFrom<MoveResultGameTypeValueResolver>())
                 .ForMember(dst => dst.Content, cfg => cfg.MapFrom(src => src));
         }
     }

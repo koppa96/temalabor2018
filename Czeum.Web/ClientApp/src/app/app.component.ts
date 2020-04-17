@@ -3,7 +3,7 @@ import { AuthService } from './authentication/services/auth.service';
 import { Observable } from 'rxjs';
 import { AuthState, State } from './reducers';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs/operators';
+import { filter, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { HubService } from './shared/services/hub.service';
 
 @Component({
@@ -22,16 +22,29 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.showInitialLoading = true;
-    await this.authService.silentRefreshIfRequired();
-    if (AuthService.isHandling) {
-      this.authService.addAuthenticationCallback(async () => {
-        this.showInitialLoading = false;
-        await this.hubService.connect();
+    const isSilentRefreshing = await this.authService.silentRefreshIfRequired();
+    if (isSilentRefreshing) {
+      this.authState.pipe(
+        takeWhile(x => x.isHandling, true)
+      ).subscribe(res => {
+        if (!res.isHandling) {
+          this.showInitialLoading = false;
+          if (res.isAuthenticated) {
+            this.hubService.connect();
+          }
+        }
       });
     } else {
-      this.showInitialLoading = false;
-      await this.hubService.connect();
+      this.authState.pipe(
+        takeWhile(x => x.isHandling, true)
+      ).subscribe(res => {
+        this.showInitialLoading = false;
+        if (res.isAuthenticated) {
+          this.hubService.connect();
+        }
+      });
     }
+
 
     const self = this;
     this.interval = setInterval(async () => {

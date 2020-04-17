@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { AuthService } from '../../authentication/services/auth.service';
 import { API_BASE_URL } from '../clients';
 import { Observable } from 'rxjs';

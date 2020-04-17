@@ -8,6 +8,8 @@ import { GameSettingsComponent } from './components/game-settings/game-settings.
 import { SharedModule } from '../../shared/shared.module';
 import { LobbyChatComponent } from './components/lobby-chat/lobby-chat.component';
 import { LobbyListComponent } from './components/lobby-list/lobby-list.component';
+import { LobbyService } from './services/lobby.service';
+import { LobbyCreateComponent } from './components/lobby-create/lobby-create.component';
 
 @NgModule({
   declarations: [
@@ -16,11 +18,15 @@ import { LobbyListComponent } from './components/lobby-list/lobby-list.component
     MyLobbyComponent,
     GameSettingsComponent,
     LobbyChatComponent,
-    LobbyListComponent],
+    LobbyListComponent,
+    LobbyCreateComponent],
   imports: [
     CommonModule,
     LobbiesRoutingModule,
     SharedModule
+  ],
+  providers: [
+    LobbyService
   ]
 })
 export class LobbiesModule { }

@@ -6,3 +6,6 @@ export const updateAuthState = createAction('[AuthState] Update',
 
 export const updatePkceString = createAction('[PkceString] updatePkceString',
   props<{ updatedString: string; }>());
+
+export const updateIsHandling = createAction('[AuthState] UpdateIsHandling',
+  props<{ isHandling: boolean }>());

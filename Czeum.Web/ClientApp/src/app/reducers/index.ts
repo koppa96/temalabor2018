@@ -4,6 +4,8 @@ import { friendListReducer } from './friend-list/friend-list-reducers';
 import { soloQueueReducer } from './solo-queue/solo-queue-reducers';
 import { Profile } from '../authentication/auth-config-models';
 import { authStateReducer, pkcsStringReducer } from './authentication/auth-reducers';
+import { LobbyDataWrapper } from '../shared/clients';
+import { currentLobbyReducer } from './current-lobby/current-lobby-reducers';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -11,6 +13,7 @@ export interface AuthState {
   accessToken: string | null;
   idToken: string | null;
   expires: Date | null;
+  isHandling: boolean;
 }
 
 export interface State {
@@ -18,11 +21,13 @@ export interface State {
   isQueueing: boolean;
   authState: AuthState;
   pkceString: string;
+  currentLobby: LobbyDataWrapper;
 }
 
 export const reducers: ActionReducerMap<State> = {
   friendList: friendListReducer,
   isQueueing: soloQueueReducer,
   authState: authStateReducer,
-  pkceString: pkcsStringReducer
+  pkceString: pkcsStringReducer,
+  currentLobby: currentLobbyReducer
 };

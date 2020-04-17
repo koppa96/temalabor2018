@@ -9,7 +9,7 @@ namespace Czeum.Core.DTOs.Statistics
     {
         public int PlayedGames { get; set; }
         public int WonGames { get; set; }
-        public GameType FavouriteGame { get; set; }
+        public GameTypeDto FavouriteGame { get; set; }
         public int PlayedGamesOfFavourite { get; set; }
         public int WonGamesOfFavourite { get; set; }
         public string MostPlayedWithName { get; set; }

@@ -49,5 +49,6 @@ namespace Czeum.Core.Services
         /// <param name="matchId">The id of the match</param>
         /// <returns>A list of player names</returns>
         Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId);
+        Task<IEnumerable<GameTypeDto>> GetAvailableGameTypesAsync();
     }
 }

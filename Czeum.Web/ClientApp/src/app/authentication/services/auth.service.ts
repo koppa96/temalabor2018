@@ -3,7 +3,7 @@ import { ClientConfig, ServerConfig } from '../auth-config-models';
 import { Store } from '@ngrx/store';
 import { AuthState, State } from '../../reducers';
 import { take, tap } from 'rxjs/operators';
-import { updateAuthState, updatePkceString } from '../../reducers/authentication/auth-actions';
+import { updateAuthState, updateIsHandling, updatePkceString } from '../../reducers/authentication/auth-actions';
 import { CLIENT_CONFIG, SERVER_CONFIG } from '../dependecy-injection/config-injections';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { create } from 'pkce';
@@ -14,10 +14,6 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  // Check if authService is currently handling an authentication request
-  static isHandling = false;
-  private authListeners: Array<() => void> = [];
-
   constructor(
     @Inject(CLIENT_CONFIG) private clientConfig: ClientConfig,
     @Inject(SERVER_CONFIG) private serverConfig: ServerConfig,
@@ -50,12 +46,8 @@ export class AuthService {
     return `${this.serverConfig.authorizeUrl}?${params.toString()}`;
   }
 
-  addAuthenticationCallback(callback: () => void) {
-    this.authListeners.push(callback);
-  }
-
   initiateAuthCodeFlow() {
-    AuthService.isHandling = true;
+    this.store.dispatch(updateIsHandling({ isHandling: true }));
     window.location.href = this.createAuthorizeUrl(false);
   }
 
@@ -85,13 +77,11 @@ export class AuthService {
         }).subscribe(
           (tokenResponse: { id_token: string; access_token: string; }) => {
             this.onPostLogin(tokenResponse.id_token, tokenResponse.access_token);
-            AuthService.isHandling = false;
-            this.authListeners.forEach(x => x());
+            this.store.dispatch(updateIsHandling({ isHandling: false }));
             resolve();
           },
           () => {
-            AuthService.isHandling = false;
-            this.authListeners.forEach(x => x());
+            this.store.dispatch(updateIsHandling({ isHandling: false }));
             reject();
           }
         );
@@ -104,6 +94,7 @@ export class AuthService {
       take(1)
     ).subscribe(res => {
       if (res.isAuthenticated) {
+        this.store.dispatch(updateIsHandling({ isHandling: true }));
         const params = new URLSearchParams();
         params.append('id_token_hint', res.idToken);
         params.append('post_logout_redirect_uri', this.clientConfig.postLogoutRedirectUri);
@@ -123,7 +114,8 @@ export class AuthService {
         userId: tokenPayload.sub,
         userName: tokenPayload.name
       },
-      expires: new Date(tokenPayload.exp * 1000)
+      expires: new Date(tokenPayload.exp * 1000),
+      isHandling: false
     };
 
     this.store.dispatch(updateAuthState({updatedState: authState}));
@@ -135,7 +127,8 @@ export class AuthService {
       accessToken: null,
       profile: null,
       isAuthenticated: false,
-      expires: null
+      expires: null,
+      isHandling: false
     };
 
     this.store.dispatch(updateAuthState({updatedState: authState}));
@@ -151,18 +144,20 @@ export class AuthService {
     );
   }
 
-  silentRefreshIfRequired(): Promise<void> {
-    return new Promise<void>(resolve => {
+  silentRefreshIfRequired(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
       this.getAuthState().pipe(
         take(1)
       ).subscribe(res => {
         const now = new Date();
-        if (!AuthService.isHandling && res.isAuthenticated && res.expires.getTime() - now.getTime() < 60000) {
+        if (!res.isHandling && res.isAuthenticated && res.expires.getTime() - now.getTime() < 60000) {
           const iframe = document.getElementById('silent-refresh-iframe');
           (iframe as any).src = this.createAuthorizeUrl(true);
-          AuthService.isHandling = true;
+          this.store.dispatch(updateIsHandling({ isHandling: true }));
+          resolve(true);
+        } else {
+          resolve(false);
         }
-        resolve();
       });
     });
   }
@@ -176,8 +171,7 @@ export class AuthService {
     } else {
       this.onPostLogout();
       this.router.navigate(['/welcome']).then(() => {
-        AuthService.isHandling = false;
-        this.authListeners.forEach(x => x());
+        this.store.dispatch(updateIsHandling({ isHandling: false }));
       });
     }
   }

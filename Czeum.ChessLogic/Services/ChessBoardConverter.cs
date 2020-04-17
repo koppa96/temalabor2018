@@ -5,9 +5,9 @@ using Czeum.Domain.Entities.Boards;
 
 namespace Czeum.ChessLogic.Services
 {
-    public class ChessBoardConverter : BoardConverter<SerializedChessBoard>
+    public class ChessBoardConverter : BoardConverter<SerializedChessBoard, ChessMoveResult>
     {
-        public override IMoveResult Convert(SerializedChessBoard serializedBoard)
+        public override ChessMoveResult Convert(SerializedChessBoard serializedBoard)
         {
             var board = new ChessBoard(false);
             board.DeserializeContent(serializedBoard);
