@@ -5,6 +5,7 @@ using Czeum.Core.ClientCallbacks;
 using Czeum.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace Czeum.Web.SignalR
 {
@@ -16,18 +17,21 @@ namespace Czeum.Web.SignalR
         private readonly ISoloQueueService soloQueueService;
         private readonly ILobbyService lobbyService;
         private readonly IUserService userService;
+        private readonly ILogger<NotificationHub> logger;
 
         public NotificationHub(IOnlineUserTracker onlineUserTracker,
             IFriendService friendService,
             ISoloQueueService soloQueueService,
             ILobbyService lobbyService,
-            IUserService userService)
+            IUserService userService,
+            ILogger<NotificationHub> logger)
         {
             this.onlineUserTracker = onlineUserTracker;
             this.friendService = friendService;
             this.soloQueueService = soloQueueService;
             this.lobbyService = lobbyService;
             this.userService = userService;
+            this.logger = logger;
         }
         
         public override async Task OnConnectedAsync()
@@ -36,9 +40,11 @@ namespace Czeum.Web.SignalR
             var reconnected = onlineUserTracker.OnReconnect(Context.UserIdentifier);
             if (reconnected)
             {
+                logger.LogInformation($"{Context.UserIdentifier} has reconnected within the timeout.");
                 return;
             }
-            
+
+            logger.LogInformation($"{Context.UserIdentifier} has connected.");
             onlineUserTracker.PutUser(Context.UserIdentifier, Context.ConnectionId);
 
             await Task.WhenAll((await friendService.GetNotificationDataAsync(Context.UserIdentifier))
@@ -47,12 +53,14 @@ namespace Czeum.Web.SignalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            logger.LogInformation($"Lost connection to {Context.UserIdentifier}. Waiting for reconnect...");
             var waitForReconnect = await onlineUserTracker.WaitTimeout(Context.UserIdentifier);
             if (waitForReconnect)
             {
                 return;
             }
-            
+
+            logger.LogInformation($"{Context.UserIdentifier} failed to reconnect within the timeout period.");
             var lobby = await lobbyService.GetLobbyOfUser(Context.UserIdentifier);
 
             if (lobby != null)

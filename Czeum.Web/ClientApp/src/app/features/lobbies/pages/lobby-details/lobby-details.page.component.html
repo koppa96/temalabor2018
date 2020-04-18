@@ -1,8 +1,11 @@
 <div class="h-100 w-100 view-container" fxLayout fxLayoutGap="36px">
-  <div fxFlex="70%" fxLayoutAlign="center center" *ngIf="!(currentLobby$ | async)">
+  <div fxFlex="70%" fxLayoutAlign="center center" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div fxFlex="70%" fxLayoutAlign="center center" *ngIf="!isLoading && !(currentLobby$ | async)">
     <app-lobby-create class="w-75" (lobbyCreateInitiated)="onLobbyCreate($event)"></app-lobby-create>
   </div>
-  <div fxFlex="70%" fxLayout="column" *ngIf="currentLobby$ | async">
+  <div fxFlex="70%" fxLayout="column" *ngIf="!isLoading && (currentLobby$ | async)">
     <app-my-lobby (lobbyLeave)="onLobbyLeave()" fxFlex="55%"></app-my-lobby>
     <div fxFlex="45%" class="settings-container" fxLayout fxLayoutGap="36px">
       <app-game-settings fxFlex="40%"></app-game-settings>

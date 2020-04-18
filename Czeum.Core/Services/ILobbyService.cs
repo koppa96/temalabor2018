@@ -106,5 +106,7 @@ namespace Czeum.Core.Services
         /// <param name="lobbyId">The id of the lobby</param>
         /// <returns>The list of players</returns>
         Task<IEnumerable<string>> GetOthersInLobby(Guid lobbyId);
+
+        Task<LobbyDataWrapper> GetCurrentLobbyAsync();
     }
 }

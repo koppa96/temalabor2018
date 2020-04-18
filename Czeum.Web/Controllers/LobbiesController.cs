@@ -44,7 +44,7 @@ namespace Czeum.Web.Controllers
         [ProducesResponseType(401)]
         public async Task<ActionResult<LobbyDataWrapper>> GetCurrentLobby()
         {
-            var currentLobby = await lobbyService.GetLobbyOfUser(User.Identity.Name);
+            var currentLobby = await lobbyService.GetCurrentLobbyAsync();
             if (currentLobby == null)
             {
                 return NoContent();

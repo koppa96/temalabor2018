@@ -267,5 +267,13 @@ namespace Czeum.Application.Services
 			return Task.FromResult(lobby.Guests.Append(lobby.Host)
 				.Where(u => u != currentUser));
 		}
-    }
+
+		public Task<LobbyDataWrapper> GetCurrentLobbyAsync()
+		{
+			var currentUser = identityService.GetCurrentUserName();
+			var lobby = lobbyStorage.GetLobbyOfUser(currentUser);
+
+			return Task.FromResult(mapper.Map<LobbyDataWrapper>(lobby));
+		}
+	}
 }

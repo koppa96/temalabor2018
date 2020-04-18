@@ -15,6 +15,7 @@ import { LobbyCreateDetails } from '../../models/lobby-create.models';
 })
 export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
   currentLobby$: Observable<LobbyDataWrapper>;
+  isLoading = false;
 
   constructor(
     private store: Store<State>,
@@ -25,7 +26,8 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.lobbyService.getCurrentLobby().pipe().subscribe(res => {
+    this.isLoading = true;
+    this.lobbyService.getCurrentLobby().subscribe(res => {
       if (res === null) {
         this.store.dispatch(leaveLobby());
       } else {
@@ -33,6 +35,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
         this.hubService.registerCallback('LobbyChanged', this.onLobbyChange);
         this.hubService.registerCallback('KickedFromLobby', this.onKicked);
       }
+      this.isLoading = false;
     });
   }
 
