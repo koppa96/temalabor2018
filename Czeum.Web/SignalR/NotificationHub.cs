@@ -33,6 +33,12 @@ namespace Czeum.Web.SignalR
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
+            var reconnected = onlineUserTracker.OnReconnect(Context.UserIdentifier);
+            if (reconnected)
+            {
+                return;
+            }
+            
             onlineUserTracker.PutUser(Context.UserIdentifier, Context.ConnectionId);
 
             await Task.WhenAll((await friendService.GetNotificationDataAsync(Context.UserIdentifier))
@@ -41,6 +47,12 @@ namespace Czeum.Web.SignalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            var waitForReconnect = await onlineUserTracker.WaitTimeout(Context.UserIdentifier);
+            if (waitForReconnect)
+            {
+                return;
+            }
+            
             var lobby = await lobbyService.GetLobbyOfUser(Context.UserIdentifier);
 
             if (lobby != null)

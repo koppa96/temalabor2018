@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Czeum.Core.Services
 {
@@ -39,5 +40,19 @@ namespace Czeum.Core.Services
         /// <param name="user">The name of the user</param>
         /// <returns>The id of the connection</returns>
         string GetConnectionId(string user);
+
+        /// <summary>
+        /// Waits a predefined amount of time and returns whether the user has reconnected.
+        /// </summary>
+        /// <param name="username">The name of the user</param>
+        /// <returns>Whether the user has reconnected</returns>
+        Task<bool> WaitTimeout(string username);
+        
+        /// <summary>
+        /// Signals that the user has reconnected
+        /// </summary>
+        /// <param name="username">The name of the user</param>
+        /// <returns>Whether the user has reconnected within the timeout</returns>
+        bool OnReconnect(string username);
     }
 }
