@@ -23,7 +23,6 @@ export class HubService {
         .withUrl(this.baseUrl + '/notifications', {
           accessTokenFactory: () => new Promise<string>((resolve, reject) => {
             this.authSate$.pipe(take(1)).subscribe(res => {
-              console.log(res);
               if (res.isAuthenticated) {
                 resolve(res.accessToken);
               } else {

@@ -1,3 +1,15 @@
 <mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
   <mat-card-title class="small">Játékbeállítások</mat-card-title>
+  <div class="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+    <span *ngIf="!(settings$ | async)">Ehhez a játéktípushoz nem tartoznak beállítások.</span>
+    <ng-container *ngFor="let item of settings$ | async | keyvalue">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ item.value.displayName }}</mat-label>
+        <input matInput [(ngModel)]="item.value.value">
+      </mat-form-field>
+    </ng-container>
+  </div>
+  <div *ngIf="settings$ | async" class="d-flex flex-row-reverse">
+    <button mat-raised-button color="primary">MENTÉS</button>
+  </div>
 </mat-card>

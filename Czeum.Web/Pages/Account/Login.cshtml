@@ -58,9 +58,9 @@
                 <a class="mt-3 login-nav-link" href="@Url.Page("/Account/GetPasswordReset", new { returnUrl = Request.GetEncodedUrl() })">Elfelejtett jelszó</a><br />
                 <a class="mt-3 login-nav-link" href="@Url.Page("/Account/ConfirmEmail", new { returnUrl = Request.GetEncodedUrl(), resend = true })">Megerősítő e-mail újraküldése</a>
 
-                <div class="d-flex justify-content-between mt-4">
-                    <button name="action" value="register" class="poppins mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect">Fiók létrehozása</button>
+                <div class="d-flex justify-content-between flex-row-reverse mt-4">
                     <button name="action" value="login" class="poppins mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Bejelentkezés</button>
+                    <button name="action" value="register" class="poppins mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect">Fiók létrehozása</button>
                 </div>
             </form>
         </div>

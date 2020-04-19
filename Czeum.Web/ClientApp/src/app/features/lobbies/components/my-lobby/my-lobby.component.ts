@@ -1,37 +1,57 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
-import { LobbyDataWrapper } from '../../../../shared/clients';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { GameTypeDto, LobbyDataWrapper } from '../../../../shared/clients';
 import { LobbyAccessDropdownItem, lobbyAccessDropdownItems } from '../../models/lobby-create.models';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { AuthService } from '../../../../authentication/services/auth.service';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
+import { LobbyService } from '../../services/lobby.service';
 
 @Component({
   selector: 'app-my-lobby',
   templateUrl: './my-lobby.component.html',
   styleUrls: ['./my-lobby.component.scss']
 })
-export class MyLobbyComponent implements OnInit {
+export class MyLobbyComponent implements OnInit, OnDestroy {
+  startErrorMessage: string;
   currentLobby: Observable<LobbyDataWrapper>;
   @Output() lobbyLeave = new EventEmitter();
 
   currentLobbyName: string;
   lobbyAccesses = lobbyAccessDropdownItems;
   currentLobbyAccess: LobbyAccessDropdownItem;
+  currentGameTypeName: string;
 
-  constructor(private authService: AuthService, private store: Store<State>) {
+  subscription: Subscription;
+
+  constructor(
+    private authService: AuthService,
+    private store: Store<State>,
+    private lobbyService: LobbyService
+  ) {
     this.currentLobby = this.store.select(x => x.currentLobby);
   }
 
   ngOnInit() {
-    this.currentLobby.subscribe(res => {
-      console.log(res);
+    this.lobbyService.getAvailableGameTypes().subscribe(res => {
+      this.currentLobby.pipe(
+        take(1)
+      ).subscribe(lobby => {
+        this.currentGameTypeName = res.find(x => x.identifier === lobby.gameIdentifier).displayName;
+      });
+    });
+
+    this.subscription = this.currentLobby.subscribe(res => {
       if (res) {
         this.currentLobbyAccess = this.lobbyAccesses.find(x => x.lobbyAccess === res.content.access);
         this.currentLobbyName = res.content.name;
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   onLobbyLeave() {
@@ -42,6 +62,25 @@ export class MyLobbyComponent implements OnInit {
     return combineLatest(this.authService.getAuthState(), this.currentLobby).pipe(
       map(([authState, lobby]) => {
         return !!lobby && lobby.content.host === authState.profile.userName;
+      })
+    );
+  }
+
+  canStart(): Observable<boolean> {
+    return combineLatest(this.isHost(), this.currentLobby).pipe(
+      map(([isHost, lobby]) => {
+        const playerCount = lobby.content.guests.length + 1;
+        const minPlayerCount: number = (lobby.content as any).minimumPlayerCount;
+        const maxPlayerCount: number = (lobby.content as any).maxiumumPlayerCount;
+        if (playerCount < minPlayerCount) {
+          this.startErrorMessage = 'Nincs elég játékos a szobában ehhez a játéktípushoz!';
+          return false;
+        } else if (playerCount > maxPlayerCount) {
+          this.startErrorMessage = 'Túl sok játékos van a szobában ehhez a játéktípushoz!';
+          return false;
+        } else {
+          return isHost;
+        }
       })
     );
   }
