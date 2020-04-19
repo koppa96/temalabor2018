@@ -39,4 +39,9 @@ namespace Czeum.Core.DTOs.Abstractions.Lobbies {
 
         public abstract bool ValidateSettings();
     }
+    
+    public abstract class LobbyDataWithSettings<TSettings> : LobbyData
+    {
+	    public TSettings Settings { get; set; }
+    }
 }
