@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { GameTypeDto, LobbyDataWrapper } from '../../../../shared/clients';
 import { LobbyAccessDropdownItem, lobbyAccessDropdownItems } from '../../models/lobby-create.models';
@@ -13,10 +13,11 @@ import { LobbyService } from '../../services/lobby.service';
   templateUrl: './my-lobby.component.html',
   styleUrls: ['./my-lobby.component.scss']
 })
-export class MyLobbyComponent implements OnInit, OnDestroy {
+export class MyLobbyComponent implements OnInit, OnDestroy, AfterViewInit {
   startErrorMessage: string;
   currentLobby: Observable<LobbyDataWrapper>;
   @Output() lobbyLeave = new EventEmitter();
+  @Output() gameStart = new EventEmitter();
 
   currentLobbyName: string;
   lobbyAccesses = lobbyAccessDropdownItems;
@@ -28,7 +29,8 @@ export class MyLobbyComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private store: Store<State>,
-    private lobbyService: LobbyService
+    private lobbyService: LobbyService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.currentLobby = this.store.select(x => x.currentLobby);
   }
@@ -50,12 +52,21 @@ export class MyLobbyComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    // Fix ExpressionChangedAfterItHasBeenCheckedError
+    this.changeDetectorRef.detectChanges();
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   onLobbyLeave() {
     this.lobbyLeave.emit();
+  }
+
+  onGameStart() {
+    this.gameStart.emit();
   }
 
   isHost(): Observable<boolean> {
@@ -79,6 +90,7 @@ export class MyLobbyComponent implements OnInit, OnDestroy {
           this.startErrorMessage = 'Túl sok játékos van a szobában ehhez a játéktípushoz!';
           return false;
         } else {
+          this.startErrorMessage = '';
           return isHost;
         }
       })

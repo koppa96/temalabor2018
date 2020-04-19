@@ -1,0 +1,7 @@
+<div class="d-flex flex-column" [ngClass]="{
+  'align-items-end': currentUser === message.sender,
+  'align-items-start': currentUser !== message.sender
+}">
+  <span class="sender-name">{{ message.sender === currentUser ? 'Te' : message.sender }}</span>
+  <div class="message-body" [ngClass]="{ 'mine': currentUser === message.sender }">{{ message.text }}</div>
+</div>

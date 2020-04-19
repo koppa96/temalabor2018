@@ -50,12 +50,12 @@ export class HubService {
     return this.hubConnection.stop();
   }
 
-  registerCallback<T>(callbackId: string, callback: (param: T) => void) {
+  registerCallback(callbackId: string, callback: (...params: any[]) => void) {
     this.hubConnection.on(callbackId, callback);
   }
 
-  removeCallback<T>(callbackId: string, callback: (param: T) => void) {
-    this.hubConnection.off(callbackId, callback);
+  removeCallback(callbackId: string) {
+    this.hubConnection.off(callbackId);
   }
 }
 

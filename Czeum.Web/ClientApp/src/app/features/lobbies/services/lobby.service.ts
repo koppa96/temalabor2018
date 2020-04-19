@@ -1,12 +1,26 @@
 import { Injectable } from '@angular/core';
-import { GameTypeDto, LobbiesClient, LobbyDataWrapper, MatchesClient } from '../../../shared/clients';
+import {
+  GameTypeDto,
+  LobbiesClient,
+  LobbyDataWrapper,
+  LobbyMessagesClient,
+  MatchesClient,
+  MatchStatus,
+  Message
+} from '../../../shared/clients';
 import { Observable } from 'rxjs';
 import { LobbyCreateDetails } from '../models/lobby-create.models';
+import { RollList } from '../../../shared/models/roll-list';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class LobbyService {
 
-  constructor(private lobbiesClient: LobbiesClient, private matchesClient: MatchesClient) { }
+  constructor(
+    private lobbiesClient: LobbiesClient,
+    private matchesClient: MatchesClient,
+    private lobbyMessagesClient: LobbyMessagesClient)
+  { }
 
   getLobbyDetails(id: string): Observable<LobbyDataWrapper> {
     return this.lobbiesClient.getLobby(id);
@@ -30,6 +44,22 @@ export class LobbyService {
 
   leaveLobby(): Observable<void> {
     return this.lobbiesClient.leaveLobby();
+  }
+
+  getLobbyMessages(lobbyId: string, count = 25, oldestId?: string): Observable<RollList<Message>> {
+    return this.lobbyMessagesClient.getMessages(lobbyId, oldestId || '', count).pipe(
+      map(res => {
+        return new RollList<Message>(res.data, res.hasMoreLeft);
+      })
+    );
+  }
+
+  sendMessage(lobbyId: string, messageText: string): Observable<Message> {
+    return this.lobbyMessagesClient.sendMessage(lobbyId, messageText);
+  }
+
+  createMatchFromLobby(lobbyId: string): Observable<MatchStatus> {
+    return this.matchesClient.createMatch(lobbyId);
   }
 
 }

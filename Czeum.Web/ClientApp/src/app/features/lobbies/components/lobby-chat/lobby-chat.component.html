@@ -1,3 +1,20 @@
-<mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
+<mat-card class="mat-elevation-z10 h-100 w-100 chat-container" fxLayout="column">
   <mat-card-title class="small">Beszélgetés</mat-card-title>
+  <div *ngIf="!messages || !messages.elements || messages.elements.length === 0" class="d-flex flex-grow-1 w-100 justify-content-center align-items-center gray-text">
+    <mat-icon class="no-message-icon">forum</mat-icon>
+    <span>Még nem érkezett üzenet.</span>
+  </div>
+  <perfect-scrollbar #scrollbar class="flex-grow-1" *ngIf="messages && messages.elements && messages.elements.length > 0">
+    <div class="d-flex w-100 justify-content-center">
+      <button mat-button color="primary" *ngIf="messages.hasMore">KORÁBBIAK BETÖLTÉSE</button>
+    </div>
+    <app-chat-message *ngFor="let message of messages?.elements" [message]="message" [currentUser]="'koppa96'"></app-chat-message>
+  </perfect-scrollbar>
+  <mat-form-field appearance="outline">
+    <mat-label>Üzenet</mat-label>
+    <input autocomplete="off" matInput type="text" [(ngModel)]="newMessageText" (keypress)="onTyping($event)">
+    <button mat-icon-button matSuffix color="primary" (click)="onSend($event)">
+      <mat-icon>send</mat-icon>
+    </button>
+  </mat-form-field>
 </mat-card>

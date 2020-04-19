@@ -6,10 +6,10 @@
     <app-lobby-create class="w-75" (lobbyCreateInitiated)="onLobbyCreate($event)"></app-lobby-create>
   </div>
   <div fxFlex="70%" fxLayout="column" *ngIf="!isLoading && (currentLobby$ | async)">
-    <app-my-lobby (lobbyLeave)="onLobbyLeave()" fxFlex="55%"></app-my-lobby>
+    <app-my-lobby (lobbyLeave)="onLobbyLeave()" (gameStart)="startMatch()" fxFlex="55%"></app-my-lobby>
     <div fxFlex="45%" class="settings-container" fxLayout fxLayoutGap="36px">
       <app-game-settings fxFlex="40%"></app-game-settings>
-      <app-lobby-chat fxFlex="60%"></app-lobby-chat>
+      <app-lobby-chat fxFlex="60%" [isSending]="isSending" [messages]="messages" (newMessage)="onMessageSending($event)"></app-lobby-chat>
     </div>
   </div>
   <div fxFlex="30%" fxLayout="column">

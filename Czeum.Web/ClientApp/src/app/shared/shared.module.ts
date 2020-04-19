@@ -21,6 +21,7 @@ import { MatRippleModule, MatTooltipModule } from '@angular/material';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ChatMessageComponent } from './components/chat-message/chat-message.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     NotificationComponent,
     FriendsListComponent,
     NotificationListItemComponent,
-    FriendListItemComponent
+    FriendListItemComponent,
+    ChatMessageComponent
   ],
   imports: [
     CommonModule,
@@ -69,7 +71,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatMenuModule,
     MatButtonToggleModule,
     FontAwesomeModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ChatMessageComponent
   ]
 })
 export class SharedModule { }

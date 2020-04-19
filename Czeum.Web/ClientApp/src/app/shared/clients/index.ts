@@ -931,9 +931,11 @@ export class LobbiesClient {
         result200 = _responseText === "" ? null : <LobbyDataWrapper>JSON.parse(_responseText, this.jsonParseReviver);
         return _observableOf(result200);
       }));
-    } else if (status === 204) {
+    } else if (status === 404) {
       return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
+        let result404: any = null;
+        result404 = _responseText === "" ? null : <ProblemDetails>JSON.parse(_responseText, this.jsonParseReviver);
+        return throwException("A server side error occurred.", status, _responseText, _headers, result404);
       }));
     } else if (status === 401) {
       return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {

@@ -37,8 +37,8 @@ export class CurrentGameListPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.hubService.removeCallback('MatchCreated', this.onMatchCreated);
-    this.hubService.removeCallback('ReceiveResult', this.onMatchUpdated);
+    this.hubService.removeCallback('MatchCreated');
+    this.hubService.removeCallback('ReceiveResult');
   }
 
 }

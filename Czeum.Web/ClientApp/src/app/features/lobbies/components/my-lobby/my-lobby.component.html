@@ -18,7 +18,7 @@
     </mat-form-field>
   </div>
   <h2>Játékosok</h2>
-  <div class="d-flex align-items-center justify-content-center flex-grow-1">
+  <div fxFlex="grow" fxLayoutAlign="center center" fxLayoutGap="50px">
     <div class="d-flex flex-column align-items-center position-relative">
       <mat-icon class="host-icon">star</mat-icon>
       <mat-icon class="player-icon">perm_identity</mat-icon>
@@ -34,6 +34,6 @@
       <mat-icon class="error-message" *ngIf="startErrorMessage">warning</mat-icon>
       <span class="error-message">{{ startErrorMessage }}</span>
     </div>
-    <button mat-raised-button color="primary" [disabled]="!(canStart() | async)">JÁTÉK INDÍTÁSA</button>
+    <button mat-raised-button color="primary" [disabled]="!(canStart() | async)" (click)="onGameStart()">JÁTÉK INDÍTÁSA</button>
   </div>
 </mat-card>

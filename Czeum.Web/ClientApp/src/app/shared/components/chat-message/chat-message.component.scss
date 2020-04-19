@@ -1,0 +1,20 @@
+@import "src/variables";
+
+.sender-name {
+  color: gray;
+  font-size: 12px;
+  margin: 0 16px;
+}
+
+.message-body {
+  padding: 4px 16px;
+  border-radius: 16px;
+  background: lightgray;
+  max-width: 60%;
+
+  &.mine {
+    background: $primary-color;
+    color: white;
+    margin-right: 12px;
+  }
+}

@@ -119,8 +119,8 @@ namespace Czeum.Application.Services
                     .ToList();
             }
             
-            var hasMore = results.Count < requestedCount || lobbyStorage.GetMessages(lobbyId)
-                          .Any(x => x.Timestamp > results.Last().Timestamp);
+            var hasMore = results.Count == requestedCount && lobbyStorage.GetMessages(lobbyId)
+                          .Any(x => x.Timestamp < results.First().Timestamp);
             
             return Task.FromResult(new RollListDto<Message>
             {
@@ -162,8 +162,8 @@ namespace Czeum.Application.Services
                     .ToList();
             }
 
-            var hasMore = results.Count < requestedCount || 
-                match.Messages.Any(x => x.Timestamp > results.Last().Timestamp);
+            var hasMore = results.Count == requestedCount && 
+                match.Messages.Any(x => x.Timestamp < results.First().Timestamp);
 
             return new RollListDto<Message>
             {
@@ -233,8 +233,8 @@ namespace Czeum.Application.Services
                     .ToList();
             }
 
-            var hasMore = results.Count < requestedCount || friendship.Messages
-                .Any(x => x.Timestamp > results.Last().Timestamp);
+            var hasMore = results.Count == requestedCount && friendship.Messages
+                .Any(x => x.Timestamp < results.First().Timestamp);
 
             return new RollListDto<Message>
             {
