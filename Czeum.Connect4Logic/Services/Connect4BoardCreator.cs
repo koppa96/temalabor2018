@@ -8,7 +8,8 @@ namespace Czeum.Connect4Logic.Services
     {
         public override SerializedBoard CreateBoard(Connect4LobbyData lobbyData)
         {
-            return new Connect4Board(lobbyData.BoardWidth, lobbyData.BoardHeight).SerializeContent();
+            return new Connect4Board(lobbyData.Settings.BoardWidth.Value, 
+                lobbyData.Settings.BoardHeight.Value).SerializeContent();
         }
 
         public override SerializedBoard CreateDefaultBoard()
