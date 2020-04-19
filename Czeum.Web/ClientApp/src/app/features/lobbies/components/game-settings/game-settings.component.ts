@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { State } from '../../../../reducers';
-import { Observable } from 'rxjs';
-import { LobbyDataWrapper } from '../../../../shared/clients';
+import { AuthState, State } from '../../../../reducers';
+import { combineLatest, Observable } from 'rxjs';
 import { LobbySettings } from '../../models/lobby-settings.models';
 import { map } from 'rxjs/operators';
 
@@ -24,6 +23,14 @@ export class GameSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.settings$.subscribe(res => console.log(res));
+  }
+
+  isHost(): Observable<boolean> {
+    return combineLatest(this.store.select(x => x.authState), this.store.select(x => x.currentLobby)).pipe(
+      map(([authState, lobby]) => {
+        return !!lobby && lobby.content.host === authState.profile.userName;
+      })
+    );
   }
 
 }

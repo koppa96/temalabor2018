@@ -8,13 +8,14 @@
     <div class="d-flex w-100 justify-content-center">
       <button mat-button color="primary" *ngIf="messages.hasMore">KORÁBBIAK BETÖLTÉSE</button>
     </div>
-    <app-chat-message *ngFor="let message of messages?.elements" [message]="message" [currentUser]="'koppa96'"></app-chat-message>
+    <app-chat-message *ngFor="let message of messages?.elements" [message]="message" [currentUser]="(authState$ | async)?.profile?.userName"></app-chat-message>
   </perfect-scrollbar>
   <mat-form-field appearance="outline">
     <mat-label>Üzenet</mat-label>
     <input autocomplete="off" matInput type="text" [(ngModel)]="newMessageText" (keypress)="onTyping($event)">
-    <button mat-icon-button matSuffix color="primary" (click)="onSend($event)">
+    <button *ngIf="!isSending" mat-icon-button matSuffix color="primary" (click)="onSend($event)">
       <mat-icon>send</mat-icon>
     </button>
+    <mat-spinner class="mr-3" matSuffix *ngIf="isSending" diameter="30"></mat-spinner>
   </mat-form-field>
 </mat-card>

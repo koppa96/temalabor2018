@@ -1,0 +1,16 @@
+<mat-list-item>
+  <div class="h-100 w-100 d-flex align-items-center">
+    <fa-icon [icon]="getIcon(lobby.gameIdentifier)"></fa-icon>
+    <div class="flex-grow-1">
+      <div fxLayoutAlign="start center" fxLayoutGap="10px">
+        <h4 matLine>{{ lobby.content.name || (lobby.content.host + ' szobája') }}</h4>
+        <mat-icon fontSet="material-icons-outlined" *ngIf="isInvited(lobby)">email</mat-icon>
+      </div>
+      <p class="gray-text">{{ getGameTypeDisplayName() }}</p>
+      <p class="gray-text">{{ getLobbyAccessDisplayName() }}</p>
+    </div>
+    <button mat-icon-button *ngIf="canJoin(lobby)" (click)="onJoinClicked(lobby.content.id)">
+      <mat-icon class="play-icon">play_arrow</mat-icon>
+    </button>
+  </div>
+</mat-list-item>

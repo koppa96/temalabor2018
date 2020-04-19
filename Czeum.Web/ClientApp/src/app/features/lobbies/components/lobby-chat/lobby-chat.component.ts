@@ -2,6 +2,9 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, QueryLis
 import { Message } from '../../../../shared/clients';
 import { RollList } from '../../../../shared/models/roll-list';
 import { PerfectScrollbarComponent } from 'ngx-perfect-scrollbar';
+import { AuthService } from '../../../../authentication/services/auth.service';
+import { Observable } from 'rxjs';
+import { AuthState } from '../../../../reducers';
 
 @Component({
   selector: 'app-lobby-chat',
@@ -19,8 +22,11 @@ export class LobbyChatComponent implements OnInit, AfterViewInit {
   scrollbars: QueryList<PerfectScrollbarComponent>;
 
   newMessageText: string;
+  authState$: Observable<AuthState>;
 
-  constructor() { }
+  constructor(private authService: AuthService) {
+    this.authState$ = this.authService.getAuthState();
+  }
 
   ngOnInit() {
   }

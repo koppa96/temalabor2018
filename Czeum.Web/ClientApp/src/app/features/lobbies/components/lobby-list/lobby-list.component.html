@@ -1,3 +1,25 @@
 <mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
   <mat-card-title>Szobalista</mat-card-title>
+  <h3>Szűrés</h3>
+  <div fxLayoutGap="10px">
+    <mat-form-field appearance="outline" fxFlex="25%">
+      <mat-label>Szobanév</mat-label>
+      <input matInput>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25%">
+      <mat-label>Rendezés</mat-label>
+      <mat-select>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <perfect-scrollbar class="flex-grow-1">
+    <app-lobby-list-item
+      *ngFor="let lobby of lobbies"
+      [lobby]="lobby"
+      [gameTypes]="gameTypes"
+      [currentUserName]="(authState$ | async)?.profile?.userName"
+      [friendList]="friendList$ | async"
+      (joinLobby)="this.joinLobby.emit($event)"
+    ></app-lobby-list-item>
+  </perfect-scrollbar>
 </mat-card>

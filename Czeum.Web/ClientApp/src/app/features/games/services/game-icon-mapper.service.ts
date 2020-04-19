@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import { faChessPawn, faCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GameIconMapperService {
   mapIcon(gameIdentifier: number): IconDefinition {
     switch (gameIdentifier) {

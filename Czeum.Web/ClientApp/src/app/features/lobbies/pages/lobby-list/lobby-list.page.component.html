@@ -1,5 +1,5 @@
 <div class="h-100 w-100 view-container" fxLayout fxLayoutGap="36px">
-  <app-lobby-list fxFlex="70%"></app-lobby-list>
+  <app-lobby-list [gameTypes]="gameTypes" [lobbies]="lobbies" (joinLobby)="joinLobby($event)" fxFlex="70%"></app-lobby-list>
   <div fxFlex="30%" fxLayout="column">
     <app-notification fxFlex="35%"></app-notification>
     <div class="friend-list-container" fxFlex="65%">

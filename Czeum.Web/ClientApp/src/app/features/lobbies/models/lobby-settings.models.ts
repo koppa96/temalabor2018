@@ -6,3 +6,4 @@ export interface LobbySettingsField {
 export interface LobbySettings {
   [key: string]: LobbySettingsField;
 }
+

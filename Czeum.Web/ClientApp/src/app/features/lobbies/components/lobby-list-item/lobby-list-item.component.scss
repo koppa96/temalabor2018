@@ -1,0 +1,34 @@
+fa-icon {
+  font-size: 45px;
+  height: 45px;
+  width: 45px;
+  margin-right: 10px;
+}
+
+.play-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  height: 35px;
+  width: 35px;
+}
+
+h4 {
+  margin: 0;
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.gray-text {
+  color: gray;
+}
+
+:host {
+  display: block;
+  padding: 8px 12px;
+}

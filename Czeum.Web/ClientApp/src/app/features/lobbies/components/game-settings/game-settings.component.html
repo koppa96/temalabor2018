@@ -5,11 +5,11 @@
     <ng-container *ngFor="let item of settings$ | async | keyvalue">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>{{ item.value.displayName }}</mat-label>
-        <input matInput [(ngModel)]="item.value.value">
+        <input matInput [(ngModel)]="item.value.value" [disabled]="!(isHost() | async)">
       </mat-form-field>
     </ng-container>
   </div>
   <div *ngIf="settings$ | async" class="d-flex flex-row-reverse">
-    <button mat-raised-button color="primary">MENTÉS</button>
+    <button mat-raised-button color="primary" [disabled]="!(isHost() | async)">MENTÉS</button>
   </div>
 </mat-card>

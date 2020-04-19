@@ -19,8 +19,8 @@ export class LobbyService {
   constructor(
     private lobbiesClient: LobbiesClient,
     private matchesClient: MatchesClient,
-    private lobbyMessagesClient: LobbyMessagesClient)
-  { }
+    private lobbyMessagesClient: LobbyMessagesClient
+  ) { }
 
   getLobbyDetails(id: string): Observable<LobbyDataWrapper> {
     return this.lobbiesClient.getLobby(id);
@@ -60,6 +60,14 @@ export class LobbyService {
 
   createMatchFromLobby(lobbyId: string): Observable<MatchStatus> {
     return this.matchesClient.createMatch(lobbyId);
+  }
+
+  joinLobby(lobbyId: string): Observable<LobbyDataWrapper> {
+    return this.lobbiesClient.joinLobby(lobbyId);
+  }
+
+  getLobbies(): Observable<LobbyDataWrapper[]> {
+    return this.lobbiesClient.getLobbies();
   }
 
 }

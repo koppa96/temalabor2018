@@ -11,6 +11,7 @@ import { LobbyListComponent } from './components/lobby-list/lobby-list.component
 import { LobbyService } from './services/lobby.service';
 import { LobbyCreateComponent } from './components/lobby-create/lobby-create.component';
 import { FormsModule } from '@angular/forms';
+import { LobbyListItemComponent } from './components/lobby-list-item/lobby-list-item.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,9 @@ import { FormsModule } from '@angular/forms';
     GameSettingsComponent,
     LobbyChatComponent,
     LobbyListComponent,
-    LobbyCreateComponent],
+    LobbyCreateComponent,
+    LobbyListItemComponent
+  ],
   imports: [
     CommonModule,
     LobbiesRoutingModule,
