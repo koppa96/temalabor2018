@@ -70,4 +70,8 @@ export class LobbyService {
     return this.lobbiesClient.getLobbies();
   }
 
+  updateLobby(lobby: LobbyDataWrapper): Observable<LobbyDataWrapper> {
+    return this.lobbiesClient.updateLobby(lobby, lobby.content.id);
+  }
+
 }

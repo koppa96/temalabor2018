@@ -1,16 +1,29 @@
 <mat-list-item>
-  <div class="h-100 w-100 d-flex align-items-center">
-    <fa-icon [icon]="getIcon(lobby.gameIdentifier)"></fa-icon>
-    <div class="flex-grow-1">
-      <div fxLayoutAlign="start center" fxLayoutGap="10px">
-        <h4 matLine>{{ lobby.content.name || (lobby.content.host + ' szobája') }}</h4>
-        <mat-icon fontSet="material-icons-outlined" *ngIf="isInvited(lobby)">email</mat-icon>
+  <div class="h-100 w-100 d-flex align-items-center justify-content-between py-2">
+    <div class="d-flex align-items-center left-cell">
+      <fa-icon [icon]="getIcon(lobby.gameIdentifier)"></fa-icon>
+      <div>
+        <div fxLayoutAlign="start center" fxLayoutGap="10px">
+          <h4 matLine>{{ lobby.content.name || (lobby.content.host + ' szobája') }}</h4>
+          <mat-icon fontSet="material-icons-outlined" *ngIf="isInvited(lobby)">email</mat-icon>
+        </div>
+        <p class="gray-text">{{ getGameTypeDisplayName() }}</p>
+        <p class="gray-text">{{ getLobbyAccessDisplayName() }}</p>
       </div>
-      <p class="gray-text">{{ getGameTypeDisplayName() }}</p>
-      <p class="gray-text">{{ getLobbyAccessDisplayName() }}</p>
     </div>
-    <button mat-icon-button *ngIf="canJoin(lobby)" (click)="onJoinClicked(lobby.content.id)">
-      <mat-icon class="play-icon">play_arrow</mat-icon>
-    </button>
+    <div fxLayout="center center" fxLayoutGap="12px">
+      <app-player [username]="lobby.content.host" [isHost]="true" [iconSize]="45"></app-player>
+      <app-player *ngFor="let player of lobby.content.guests" [username]="player" [iconSize]="45"></app-player>
+    </div>
+    <div class="right-cell">
+      <button mat-raised-button color="warn" *ngIf="isCurrentLobby(lobby)" (click)="onLeaveClicked()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>KILÉPÉS</span>
+      </button>
+      <button mat-raised-button color="primary" *ngIf="canJoin(lobby)" (click)="onJoinClicked(lobby.content.id)">
+        <mat-icon matPrefix>play_arrow</mat-icon>
+        <span>CSATLAKOZÁS</span>
+      </button>
+    </div>
   </div>
 </mat-list-item>

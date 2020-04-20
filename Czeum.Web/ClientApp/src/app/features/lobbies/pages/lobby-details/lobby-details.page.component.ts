@@ -143,4 +143,10 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
       });
     };
   }
+
+  updateLobby(lobby: LobbyDataWrapper) {
+    this.lobbyService.updateLobby(lobby).subscribe(res => {
+      this.store.dispatch(updateLobby({ newLobby: res }));
+    });
+  }
 }

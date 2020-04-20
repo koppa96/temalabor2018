@@ -5,29 +5,29 @@
       <mat-icon>exit_to_app</mat-icon>
     </button>
   </mat-card-title>
-  <div fxLayout fxLayoutGap="10px">
-    <mat-form-field appearance="outline" fxFlex="30%">
-      <mat-label>Szobanév</mat-label>
-      <input type="text" matInput [(ngModel)]="currentLobbyName" [disabled]="!(isHost() | async)">
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="30%">
-      <mat-label>Hozzáférés</mat-label>
-      <mat-select [(value)]="currentLobbyAccess" [disabled]="!(isHost() | async)">
-        <mat-option *ngFor="let access of lobbyAccesses" [value]="access">{{ access.displayName }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div class="d-flex justify-content-between align-items-center">
+    <div fxLayout fxLayoutGap="10px" class="flex-grow-1">
+      <mat-form-field appearance="outline" fxFlex="30%">
+        <mat-label>Szobanév</mat-label>
+        <input autocomplete="off" type="text" matInput [(ngModel)]="currentLobbyName" [disabled]="!(isHost() | async)">
+        <mat-hint *ngIf="(currentLobby | async).content.name !== currentLobbyName && !(!(currentLobby | async).content.name && ! currentLobbyName)">A változás még nincs elmentve!</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="30%">
+        <mat-label>Hozzáférés</mat-label>
+        <mat-select [(value)]="currentLobbyAccess" [disabled]="!(isHost() | async)">
+          <mat-option *ngFor="let access of lobbyAccesses" [value]="access">{{ access.displayName }}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="(currentLobby | async).content.access !== currentLobbyAccess.lobbyAccess">A változás még nincs elmentve!</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="button-container">
+      <button mat-raised-button color="primary" (click)="onSaveChanges()" [disabled]="!(isHost() | async)">MÓDOSÍTÁSOK MENTÉSE</button>
+    </div>
   </div>
   <h2>Játékosok</h2>
   <div fxFlex="grow" fxLayoutAlign="center center" fxLayoutGap="50px">
-    <div class="d-flex flex-column align-items-center position-relative">
-      <mat-icon class="host-icon">star</mat-icon>
-      <mat-icon class="player-icon">perm_identity</mat-icon>
-      <span>{{ (currentLobby | async).content.host }}</span>
-    </div>
-    <div class="d-flex flex-column align-items-center" *ngFor="let guest of (currentLobby | async).content.guests">
-      <mat-icon class="player-icon">perm_identity</mat-icon>
-      <span>{{ guest }}</span>
-    </div>
+    <app-player [username]="(currentLobby | async).content.host" [isHost]="true"></app-player>
+    <app-player *ngFor="let player of (currentLobby | async).content.guests" [username]="player"></app-player>
   </div>
   <div class="d-flex justify-content-between align-items-center">
     <div class="d-flex">

@@ -33,3 +33,12 @@ fa-icon {
   align-items: center;
   justify-content: center;
 }
+
+.snackbar {
+  background: $primary-color;
+  color: white;
+}
+
+simple-snack-bar button {
+  color: $accent-color !important;
+}

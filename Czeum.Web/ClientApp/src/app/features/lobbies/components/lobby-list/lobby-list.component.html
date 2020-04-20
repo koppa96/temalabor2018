@@ -4,22 +4,35 @@
   <div fxLayoutGap="10px">
     <mat-form-field appearance="outline" fxFlex="25%">
       <mat-label>Szobanév</mat-label>
-      <input matInput>
+      <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterAndSortLobbies()">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25%">
       <mat-label>Rendezés</mat-label>
-      <mat-select>
+      <mat-select [(value)]="selectedOrdering" (valueChange)="filterAndSortLobbies()">
+        <mat-option *ngFor="let ordering of orderings" [value]="ordering">{{ ordering.displayName }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
-  <perfect-scrollbar class="flex-grow-1">
-    <app-lobby-list-item
-      *ngFor="let lobby of lobbies"
-      [lobby]="lobby"
-      [gameTypes]="gameTypes"
-      [currentUserName]="(authState$ | async)?.profile?.userName"
-      [friendList]="friendList$ | async"
-      (joinLobby)="this.joinLobby.emit($event)"
-    ></app-lobby-list-item>
+  <div class="d-flex justify-content-between list-header">
+    <h4 class="d-inline-block header-left-cell column-title">Szoba adatai</h4>
+    <h4 class="column-title">Játékosok</h4>
+    <div class="header-right-cell"></div>
+  </div>
+  <div class="flex-grow-1 d-flex align-items-center justify-content-center" *ngIf="filteredLobbies.length === 0">
+    <mat-icon class="not-found-icon gray-text mr-3">cloud_off</mat-icon>
+    <span class="gray-text">Nem találtunk szobát{{ filterText ? ' a megadott keresési feltételekkel.' : '.' }}</span>
+  </div>
+  <perfect-scrollbar class="flex-grow-1" *ngIf="filteredLobbies.length > 0">
+    <mat-list>
+      <app-lobby-list-item
+        *ngFor="let lobby of filteredLobbies"
+        [lobby]="lobby"
+        [gameTypes]="gameTypes"
+        [currentUserName]="(authState$ | async)?.profile?.userName"
+        [friendList]="friendList$ | async"
+        (joinLobby)="this.joinLobby.emit($event)"
+        (leaveCurrentLobby)="this.leaveCurrentLobby.emit()"
+      ></app-lobby-list-item>
+    </mat-list>
   </perfect-scrollbar>
 </mat-card>

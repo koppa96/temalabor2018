@@ -7,6 +7,7 @@ import { AuthService } from '../../../../authentication/services/auth.service';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
 import { LobbyService } from '../../services/lobby.service';
+import { updateLobby } from '../../../../reducers/current-lobby/current-lobby-actions';
 
 @Component({
   selector: 'app-my-lobby',
@@ -18,6 +19,7 @@ export class MyLobbyComponent implements OnInit, OnDestroy, AfterViewInit {
   currentLobby: Observable<LobbyDataWrapper>;
   @Output() lobbyLeave = new EventEmitter();
   @Output() gameStart = new EventEmitter();
+  @Output() saveChanges = new EventEmitter<LobbyDataWrapper>();
 
   currentLobbyName: string;
   lobbyAccesses = lobbyAccessDropdownItems;
@@ -95,6 +97,16 @@ export class MyLobbyComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       })
     );
+  }
+
+  onSaveChanges() {
+    this.currentLobby.pipe(
+      take(1)
+    ).subscribe(lobby => {
+      lobby.content.name = this.currentLobbyName;
+      lobby.content.access = this.currentLobbyAccess.lobbyAccess;
+      this.saveChanges.emit(lobby);
+    });
   }
 
 }

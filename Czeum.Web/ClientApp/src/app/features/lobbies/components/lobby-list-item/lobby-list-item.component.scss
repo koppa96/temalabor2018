@@ -1,3 +1,5 @@
+@import "src/variables";
+
 fa-icon {
   font-size: 45px;
   height: 45px;
@@ -30,5 +32,23 @@ p {
 
 :host {
   display: block;
-  padding: 8px 12px;
+
+  & ::ng-deep mat-list-item.mat-list-item {
+    height: auto;
+  }
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+  }
+}
+
+.right-cell {
+  min-width: 150px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.left-cell {
+  min-width: 300px;
 }

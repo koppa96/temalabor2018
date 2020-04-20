@@ -1,0 +1,16 @@
+<div class="d-flex flex-column align-items-center position-relative">
+  <mat-icon
+    class="host-icon"
+    *ngIf="isHost"
+    [ngStyle]="{
+      height: iconSize / 3 + 'px',
+      width: iconSize / 3 + 'px',
+      fontSize: iconSize / 3 + 'px'
+  }">star</mat-icon>
+  <mat-icon [ngStyle]="{
+    height: iconSize + 'px',
+    width: iconSize + 'px',
+    fontSize: iconSize + 'px'
+  }">perm_identity</mat-icon>
+  <span [ngStyle]="{ fontSize: math.max(iconSize / 7, 11) + 'px' }">{{ username }}</span>
+</div>

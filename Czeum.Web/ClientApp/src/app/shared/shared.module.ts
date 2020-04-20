@@ -17,11 +17,12 @@ import { NotificationListItemComponent } from './components/notification-list-it
 import { FriendListItemComponent } from './components/friend-list-item/friend-list-item.component';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRippleModule, MatTooltipModule } from '@angular/material';
+import { MatRippleModule, MatSnackBarModule, MatTooltipModule } from '@angular/material';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ChatMessageComponent } from './components/chat-message/chat-message.component';
+import { PlayerComponent } from './components/player/player.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ChatMessageComponent } from './components/chat-message/chat-message.com
     FriendsListComponent,
     NotificationListItemComponent,
     FriendListItemComponent,
-    ChatMessageComponent
+    ChatMessageComponent,
+    PlayerComponent
   ],
   imports: [
     CommonModule,
@@ -50,7 +52,8 @@ import { ChatMessageComponent } from './components/chat-message/chat-message.com
     MatMenuModule,
     MatButtonToggleModule,
     FontAwesomeModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSnackBarModule
   ],
   exports: [
     MatButtonModule,
@@ -72,7 +75,9 @@ import { ChatMessageComponent } from './components/chat-message/chat-message.com
     MatButtonToggleModule,
     FontAwesomeModule,
     MatTooltipModule,
-    ChatMessageComponent
+    ChatMessageComponent,
+    MatSnackBarModule,
+    PlayerComponent
   ]
 })
 export class SharedModule { }

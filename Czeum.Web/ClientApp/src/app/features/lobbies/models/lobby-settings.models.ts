@@ -7,3 +7,6 @@ export interface LobbySettings {
   [key: string]: LobbySettingsField;
 }
 
+export interface OriginalSettingsValues {
+  [key: string]: any;
+}

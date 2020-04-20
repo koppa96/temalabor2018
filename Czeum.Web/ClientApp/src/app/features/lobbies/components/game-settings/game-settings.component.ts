@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AuthState, State } from '../../../../reducers';
 import { combineLatest, Observable } from 'rxjs';
-import { LobbySettings } from '../../models/lobby-settings.models';
+import { LobbySettings, OriginalSettingsValues } from '../../models/lobby-settings.models';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 })
 export class GameSettingsComponent implements OnInit {
   settings$: Observable<LobbySettings>;
+  originalSettings: OriginalSettingsValues;
 
   constructor(private store: Store<State>) {
     this.settings$ = this.store.select(x => x.currentLobby).pipe(
@@ -22,7 +23,15 @@ export class GameSettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.settings$.subscribe(res => console.log(res));
+    this.settings$.subscribe(res => {
+      this.originalSettings = {};
+      if (res) {
+        const keys = Object.keys(res);
+        for (const key of keys) {
+          this.originalSettings[key] = res[key].value;
+        }
+      }
+    });
   }
 
   isHost(): Observable<boolean> {

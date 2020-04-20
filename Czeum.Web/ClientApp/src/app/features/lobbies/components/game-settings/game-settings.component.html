@@ -6,6 +6,7 @@
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>{{ item.value.displayName }}</mat-label>
         <input matInput [(ngModel)]="item.value.value" [disabled]="!(isHost() | async)">
+        <mat-hint *ngIf="item.value.value != originalSettings[item.key]">A változás még nincs elmentve!</mat-hint>
       </mat-form-field>
     </ng-container>
   </div>

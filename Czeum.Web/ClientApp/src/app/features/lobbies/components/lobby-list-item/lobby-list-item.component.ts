@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { GameTypeDto, LobbyAccess, LobbyDataWrapper } from '../../../../shared/clients';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import { GameIconMapperService } from '../../../games/services/game-icon-mapper.service';
@@ -17,6 +17,7 @@ export class LobbyListItemComponent implements OnInit {
   @Input() friendList: FriendListItem[];
 
   @Output() joinLobby = new EventEmitter<string>();
+  @Output() leaveCurrentLobby = new EventEmitter();
 
   lobbyAccesses = lobbyAccessDropdownItems;
 
@@ -43,9 +44,10 @@ export class LobbyListItemComponent implements OnInit {
   }
 
   canJoin(lobby: LobbyDataWrapper): boolean {
-    return lobby.content.access === LobbyAccess.Public ||
+    return lobby.content.host !== this.currentUserName && !lobby.content.guests.includes(this.currentUserName) &&
+      (lobby.content.access === LobbyAccess.Public ||
       lobby.content.access === LobbyAccess.FriendsOnly && this.friendList.some(x => x.username === lobby.content.host) ||
-      lobby.content.invitedPlayers.includes(this.currentUserName);
+      lobby.content.invitedPlayers.includes(this.currentUserName));
   }
 
   isInvited(lobby: LobbyDataWrapper): boolean {
@@ -56,4 +58,11 @@ export class LobbyListItemComponent implements OnInit {
     this.joinLobby.emit(lobbyId);
   }
 
+  isCurrentLobby(lobby: LobbyDataWrapper): boolean {
+    return lobby.content.host === this.currentUserName || lobby.content.guests.includes(this.currentUserName);
+  }
+
+  onLeaveClicked() {
+    this.leaveCurrentLobby.emit();
+  }
 }
