@@ -20,7 +20,7 @@ namespace Czeum.Core.DTOs.Converters
             JsonSerializer serializer)
         {
             var obj = JObject.Load(reader);
-            var gameIdentifier = obj.GetValue("GameType", StringComparison.OrdinalIgnoreCase).Value<int>();
+            var gameIdentifier = obj.GetValue("GameIdentifier", StringComparison.OrdinalIgnoreCase).Value<int>();
             var moveType = GameTypeMapping.Instance.GetMoveResultType(gameIdentifier);
             return new MoveResultWrapper
             {

@@ -22,7 +22,7 @@ namespace Czeum.Core.DTOs.Converters
             JsonSerializer serializer)
         {
             var obj = JObject.Load(reader);
-            var GameIdentifier = obj.GetValue("GameType", StringComparison.OrdinalIgnoreCase).Value<int>();
+            var GameIdentifier = obj.GetValue("GameIdentifier", StringComparison.OrdinalIgnoreCase).Value<int>();
             var lobbyType = GameTypeMapping.Instance.GetLobbyDataType(GameIdentifier);
             return new LobbyDataWrapper
             {
