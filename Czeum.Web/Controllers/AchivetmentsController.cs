@@ -29,15 +29,15 @@ namespace Czeum.Web.Controllers
         }
 
         [HttpPatch("{id}/star")]
-        public Task<AchivementDto> StarAchivementAsync(Guid achivementId)
+        public Task<AchivementDto> StarAchivementAsync(Guid id)
         {
-            return achivementService.StarAchivementAsync(achivementId);
+            return achivementService.StarAchivementAsync(id);
         }
 
         [HttpPatch("{id}/unstar")]
-        public Task<AchivementDto> UnstarAchivementAsync(Guid achivementId)
+        public Task<AchivementDto> UnstarAchivementAsync(Guid id)
         {
-            return achivementService.UnstarAchivementAsync(achivementId);
+            return achivementService.UnstarAchivementAsync(id);
         }
     }
 }
