@@ -1,22 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { StatisticsDto, AchivementDto, GameTypeDto } from '../../../shared/clients';
+import { StatisticsService } from '../services/statistics.service';
+import { Observable } from 'rxjs';
 
 @Component({
   templateUrl: './home.page.component.html',
   styleUrls: ['./home.page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-  mockStatistics: StatisticsDto = {
-    playedGames: 152,
-    wonGames: 101,
-    favouriteGame: {
-      identifier: 0,
-      displayName: 'Connect4'
-    },
-    playedGamesOfFavourite: 43,
-    wonGamesOfFavourite: 22,
-    mostPlayedWithName: 'Gipsz Jakab'
-  };
+  statistics$: Observable<StatisticsDto>;
 
   mockAchivements: AchivementDto[] = [
     {
@@ -49,9 +41,10 @@ export class HomePageComponent implements OnInit {
     }
   ];
 
-  constructor() { }
+  constructor(private statisticsService: StatisticsService) { }
 
   ngOnInit() {
+    this.statistics$ = this.statisticsService.getStatistics();
   }
 
 }

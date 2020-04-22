@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { AchivementsComponent } from './components/achivements/achivements.component';
 import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
+import { StatisticsService } from './services/statistics.service';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,9 @@ import { QuickActionsComponent } from './components/quick-actions/quick-actions.
     CommonModule,
     HomeRoutingModule,
     SharedModule
+  ],
+  providers: [
+    StatisticsService
   ]
 })
 export class HomeModule { }
