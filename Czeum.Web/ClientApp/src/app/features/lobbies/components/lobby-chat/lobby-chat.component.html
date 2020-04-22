@@ -6,7 +6,7 @@
   </div>
   <perfect-scrollbar #scrollbar class="flex-grow-1" *ngIf="messages && messages.elements && messages.elements.length > 0">
     <div class="d-flex w-100 justify-content-center">
-      <button mat-button color="primary" *ngIf="messages.hasMore">KORÁBBIAK BETÖLTÉSE</button>
+      <button mat-button color="primary" *ngIf="messages.hasMore" (click)="loadMore.emit()">KORÁBBIAK BETÖLTÉSE</button>
     </div>
     <app-chat-message *ngFor="let message of messages?.elements" [message]="message" [currentUser]="(authState$ | async)?.profile?.userName"></app-chat-message>
   </perfect-scrollbar>

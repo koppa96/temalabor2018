@@ -47,43 +47,52 @@ namespace Czeum.Application.Services
                 PlayedGames = currentUser.Matches.Count,
                 WonGames = currentUser.WonMatches.Count,
                 FavouriteGame = GetFavouriteGameType(currentUser),
-                PlayedGamesOfFavourite = currentUser.Matches.Count(x => x.Match.Board.GetType() == favouriteBoardType),
-                WonGamesOfFavourite = currentUser.WonMatches.Count(x => x.Board.GetType() == favouriteBoardType),
-                MostPlayedWithName = GetFavouriteEnemy(currentUser).UserName
+                PlayedGamesOfFavourite = favouriteBoardType != null ?
+                    currentUser.Matches.Count(x => x.Match.Board.GetType() == favouriteBoardType) : 0,
+                WonGamesOfFavourite = favouriteBoardType != null ?
+                    currentUser.WonMatches.Count(x => x.Board.GetType() == favouriteBoardType) : 0,
+                MostPlayedWithName = GetFavouriteEnemy(currentUser)?.UserName
             };
         }
 
-        private User GetFavouriteEnemy(User user)
+        private User? GetFavouriteEnemy(User user)
         {
             return user.Matches.SelectMany(x => x.Match.Users.Where(u => u.UserId != x.Id).Select(x => x.User))
                 .GroupBy(x => x.Id)
                 .OrderByDescending(x => x.Count())
-                .First()
-                .First();
+                .FirstOrDefault()
+                ?.FirstOrDefault();
         }
 
-        private Type GetFavouriteBoardType(User user)
+        private Type? GetFavouriteBoardType(User user)
         {
             return user.Matches.GroupBy(x => x.Match.Board.GetType())
                 .OrderByDescending(x => x.Count())
-                .First().Key;
+                .FirstOrDefault()?.Key;
         }
 
-        private GameTypeDto GetFavouriteGameType(User user)
+        private GameTypeDto? GetFavouriteGameType(User user)
         {
             var serializedBoardType = GetFavouriteBoardType(user);
 
-            var moveHandlerType = serviceContainer.GetRegisteredMoveHandlerTypes()
+            if (serializedBoardType != null)
+            {
+                var moveHandlerType = serviceContainer.GetRegisteredMoveHandlerTypes()
                 .First(x => x.GetGenericArguments().Last() == serializedBoardType);
 
-            var moveDataType = moveHandlerType.GetGenericArguments().First();
+                var moveDataType = moveHandlerType.GetGenericArguments().First();
 
-            var (identifier, displayName) = gameTypeMapping.GetDisplayDataBy(x => x.MoveDataType, moveDataType);
-            return new GameTypeDto
+                var (identifier, displayName) = gameTypeMapping.GetDisplayDataBy(x => x.MoveDataType, moveDataType);
+                return new GameTypeDto
+                {
+                    Identifier = identifier,
+                    DisplayName = displayName
+                };
+            }
+            else
             {
-                Identifier = identifier,
-                DisplayName = displayName
-            };
+                return null;
+            }
         }
     }
 }

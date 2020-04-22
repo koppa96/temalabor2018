@@ -50,6 +50,7 @@ namespace Czeum.Application.Services
 
             var msg = new Message
             {
+                Id = Guid.NewGuid(),
                 Sender = sender,
                 Text = message,
                 Timestamp = DateTime.UtcNow
@@ -75,6 +76,7 @@ namespace Czeum.Application.Services
             var senderUser = await context.Users.FindAsync(senderId);
             var storedMessage = new StoredMessage
             {
+                Id = Guid.NewGuid(),
                 Sender = senderUser,
                 Match = match,
                 Text = message,
@@ -104,7 +106,7 @@ namespace Czeum.Application.Services
             {
                 var oldest = lobbyStorage.GetMessages(lobbyId).Single(x => x.Id == oldestId);
                 results = lobbyStorage.GetMessages(lobbyId)
-                    .Where(x => x.Timestamp > oldest.Timestamp)
+                    .Where(x => x.Timestamp < oldest.Timestamp)
                     .OrderByDescending(x => x.Timestamp)
                     .Take(requestedCount)
                     .OrderBy(x => x.Timestamp)
@@ -148,7 +150,7 @@ namespace Czeum.Application.Services
             if (oldestId.HasValue)
             {
                 var oldest = match.Messages.Single(x => x.Id == oldestId);
-                results = match.Messages.Where(x => x.Timestamp > oldest.Timestamp)
+                results = match.Messages.Where(x => x.Timestamp < oldest.Timestamp)
                     .OrderByDescending(x => x.Timestamp)
                     .Take(requestedCount)
                     .OrderBy(x => x.Timestamp)
@@ -187,6 +189,7 @@ namespace Czeum.Application.Services
 
             var directMessage = new DirectMessage
             {
+                Id = Guid.NewGuid(),
                 Sender = senderId == friendship.User1Id ? friendship.User1 : friendship.User2,
                 Friendship = friendship,
                 Text = message,
@@ -219,7 +222,7 @@ namespace Czeum.Application.Services
             if (oldestId.HasValue)
             {
                 var oldest = friendship.Messages.Single(x => x.Id == oldestId);
-                results = friendship.Messages.Where(x => x.Timestamp > oldest.Timestamp)
+                results = friendship.Messages.Where(x => x.Timestamp < oldest.Timestamp)
                     .OrderByDescending(x => x.Timestamp)
                     .Take(requestedCount)
                     .OrderBy(x => x.Timestamp)

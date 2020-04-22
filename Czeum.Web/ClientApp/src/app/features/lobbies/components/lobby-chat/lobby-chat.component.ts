@@ -15,6 +15,7 @@ export class LobbyChatComponent implements OnInit, AfterViewInit {
   @Input() isSending = false;
   @Input() messages: RollList<Message> = new RollList<Message>();
   @Output() newMessage = new EventEmitter<string>();
+  @Output() loadMore = new EventEmitter();
 
   scrollbar: PerfectScrollbarComponent;
 

@@ -9,7 +9,12 @@
     <app-my-lobby (lobbyLeave)="onLobbyLeave()" (gameStart)="startMatch()" (saveChanges)="updateLobby($event)" fxFlex="55%"></app-my-lobby>
     <div fxFlex="45%" class="settings-container" fxLayout fxLayoutGap="36px">
       <app-game-settings fxFlex="40%"></app-game-settings>
-      <app-lobby-chat fxFlex="60%" [isSending]="isSending" [messages]="messages" (newMessage)="onMessageSending($event)"></app-lobby-chat>
+      <app-lobby-chat 
+        fxFlex="60%"
+        [isSending]="isSending"
+        [messages]="messages"
+        (newMessage)="onMessageSending($event)"
+        (loadMore)="loadMoreMessages()"></app-lobby-chat>
     </div>
   </div>
   <div fxFlex="30%" fxLayout="column">

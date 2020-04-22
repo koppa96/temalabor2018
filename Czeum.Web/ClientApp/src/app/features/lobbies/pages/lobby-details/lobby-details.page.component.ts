@@ -80,6 +80,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
   onLobbyLeave() {
     this.lobbyService.leaveLobby().subscribe(() => {
       this.store.dispatch(leaveLobby());
+      this.messages = new RollList<Message>();
     });
   }
 
@@ -124,6 +125,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
     const self = this;
     return () => {
       self.store.dispatch(leaveLobby());
+      self.messages = new RollList<Message>();
       self.hubService.removeCallback('LobbyChanged');
       self.hubService.removeCallback('KickedFromLobby');
       self.hubService.removeCallback('ReceiveLobbyMessage');
@@ -147,6 +149,18 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
   updateLobby(lobby: LobbyDataWrapper) {
     this.lobbyService.updateLobby(lobby).subscribe(res => {
       this.store.dispatch(updateLobby({ newLobby: res }));
+    });
+  }
+
+  loadMoreMessages() {
+    this.currentLobby$.pipe(
+      take(1)
+    ).subscribe(lobby => {
+      const oldestMessage = this.messages.elements[0];
+      this.lobbyService.getLobbyMessages(lobby.content.id, 25, oldestMessage.id).subscribe(res => {
+        this.messages.hasMore = res.hasMore;
+        this.messages.elements = res.elements.concat(this.messages.elements);
+      });
     });
   }
 }
