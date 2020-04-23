@@ -40,14 +40,14 @@ namespace Czeum.Web.Controllers
 
         [HttpGet("current")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(401)]
         public async Task<ActionResult<LobbyDataWrapper>> GetCurrentLobby()
         {
             var currentLobby = await lobbyService.GetCurrentLobbyAsync();
             if (currentLobby == null)
             {
-                return NoContent();
+                return NotFound();
             }
             else
             {

@@ -4,6 +4,7 @@ using Czeum.Core.GameServices.ServiceMappings;
 using Czeum.Core.Services;
 using Czeum.DAL;
 using Czeum.Domain.Entities;
+using Czeum.Domain.Enums;
 using Czeum.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -34,21 +35,25 @@ namespace Czeum.Application.Services
         public async Task<StatisticsDto> GetStatisticsAsync()
         {
             var currentUserId = identityService.GetCurrentUserId();
-            var currentUser = await context.Users.AsNoTracking()
+            var currentUser = await context.Users
                 .Include(x => x.Matches)
                     .ThenInclude(x => x.Match)
                         .ThenInclude(x => x.Users)
                             .ThenInclude(x => x.User)
+                .Include(x => x.Matches)
+                    .ThenInclude(x => x.Match)
+                        .ThenInclude(x => x.Board)
+                .Include(x => x.WonMatches)
                 .SingleAsync(x => x.Id == currentUserId);
 
             var favouriteBoardType = GetFavouriteBoardType(currentUser);
             return new StatisticsDto
             {
-                PlayedGames = currentUser.Matches.Count,
-                WonGames = currentUser.WonMatches.Count,
+                PlayedGames = currentUser.Matches.Count(x => x.Match.State == MatchState.Finished),
+                WonGames = currentUser.WonMatches?.Count ?? 0,
                 FavouriteGame = GetFavouriteGameType(currentUser),
                 PlayedGamesOfFavourite = favouriteBoardType != null ?
-                    currentUser.Matches.Count(x => x.Match.Board.GetType() == favouriteBoardType) : 0,
+                    currentUser.Matches.Count(x => x.Match.Board.GetType() == favouriteBoardType && x.Match.State == MatchState.Finished) : 0,
                 WonGamesOfFavourite = favouriteBoardType != null ?
                     currentUser.WonMatches.Count(x => x.Board.GetType() == favouriteBoardType) : 0,
                 MostPlayedWithName = GetFavouriteEnemy(currentUser)?.UserName
@@ -57,11 +62,11 @@ namespace Czeum.Application.Services
 
         private User? GetFavouriteEnemy(User user)
         {
-            return user.Matches.SelectMany(x => x.Match.Users.Where(u => u.UserId != x.Id).Select(x => x.User))
+            return user.Matches.SelectMany(x => x.Match.Users.Select(m => m.User))
+                .Where(x => x.Id != user.Id)
                 .GroupBy(x => x.Id)
                 .OrderByDescending(x => x.Count())
-                .FirstOrDefault()
-                ?.FirstOrDefault();
+                .FirstOrDefault()?.First();
         }
 
         private Type? GetFavouriteBoardType(User user)
@@ -78,9 +83,9 @@ namespace Czeum.Application.Services
             if (serializedBoardType != null)
             {
                 var moveHandlerType = serviceContainer.GetRegisteredMoveHandlerTypes()
-                .First(x => x.GetGenericArguments().Last() == serializedBoardType);
+                    .First(x => x.BaseType!.GetGenericArguments().Last() == serializedBoardType);
 
-                var moveDataType = moveHandlerType.GetGenericArguments().First();
+                var moveDataType = moveHandlerType.BaseType!.GetGenericArguments().First();
 
                 var (identifier, displayName) = gameTypeMapping.GetDisplayDataBy(x => x.MoveDataType, moveDataType);
                 return new GameTypeDto

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ namespace Czeum.Web
     {
         public static void Main(string[] args)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             CreateWebHostBuilder(args).Build().Run();
         }
 
