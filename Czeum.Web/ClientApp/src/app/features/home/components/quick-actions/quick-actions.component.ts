@@ -12,7 +12,6 @@ import { AuthService } from '../../../../authentication/services/auth.service';
   styleUrls: ['./quick-actions.component.scss']
 })
 export class QuickActionsComponent implements OnInit {
-
   authState$: Observable<AuthState>;
   isQueuing$: Observable<boolean>;
 
@@ -25,7 +24,9 @@ export class QuickActionsComponent implements OnInit {
   }
 
   toggleQueuing() {
-    this.isQueuing$.pipe( take(1) ).subscribe(res => {
+    this.isQueuing$.pipe(
+      take(1)
+    ).subscribe(res => {
       if (res) {
         this.store.dispatch(leaveSoloQueue());
       } else {
@@ -33,5 +34,4 @@ export class QuickActionsComponent implements OnInit {
       }
     });
   }
-
 }

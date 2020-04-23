@@ -1,4 +1,5 @@
-<p class="mb-4">Üdv {{ (authState$ | async)?.profile?.userName }}! Válassz egy lehetőséget a bal oldali menüből, vagy az alábbiak közül. Kellemes
+<p class="mb-4">Üdv {{ (authState$ | async)?.profile?.userName }}! Válassz egy lehetőséget a bal oldali menüből, vagy az
+  alábbiak közül. Kellemes
   időtöltést!</p>
 <div class="quick-actions-container" fxLayoutAlign="space-around start">
   <div fxLayout="column" fxLayoutAlign="start center" fxFlex="25%">
@@ -15,16 +16,12 @@
     <p>Már futó játékok megtekintése és kezelése</p>
   </div>
   <div fxLayout="column" fxLayoutAlign="start center" fxFlex="25%">
-    <mat-icon class="solo-queue-icon"
-              [ngClass]="{ 'queuing': isQueuing$ | async }"
-              fontSet="material-icons-outlined"
-              matRipple [matRippleCentered]="true" [matRippleRadius]="60"
-              (click)="toggleQueuing()"
-    >speed
+    <mat-icon class="solo-queue-icon" [ngClass]="{ 'queuing': isQueuing$ | async }" fontSet="material-icons-outlined"
+      matRipple [matRippleCentered]="true" [matRippleRadius]="60" (click)="toggleQueuing()">speed
     </mat-icon>
     <h2>Gyors játék</h2>
     <p *ngIf="!(isQueuing$ | async)">Gyors meccs keresés indítása véletlenszerű játékhoz, véletlen játékosok
       ellen.</p>
-    <p *ngIf="isQueuing$ | async">Gyors meccskeresés folyamatban. Kattints az ikonra a leállításhoz!</p>
+    <p *ngIf="isQueuing$ | async">Gyors meccskeresés folyamatban. Kattints az ikonra a keresés leállításhoz!</p>
   </div>
 </div>

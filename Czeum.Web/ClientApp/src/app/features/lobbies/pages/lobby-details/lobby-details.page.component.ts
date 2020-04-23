@@ -42,7 +42,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
       if (res === null) {
         this.store.dispatch(leaveLobby());
       } else {
-        this.store.dispatch(updateLobby({newLobby: res}));
+        this.store.dispatch(updateLobby({ newLobby: res }));
         this.hubService.registerCallback('LobbyChanged', this.createLobbyChangedCallback());
         this.hubService.registerCallback('KickedFromLobby', this.createKickCallback());
         this.hubService.registerCallback('ReceiveLobbyMessage', this.createReceiveLobbyMessageCallback());
@@ -53,7 +53,11 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
       }
       this.isLoading = false;
     },
-      err => console.log(err));
+      () => {
+        this.store.dispatch(leaveLobby());
+        this.isLoading = false;
+      }
+    );
   }
 
   ngAfterViewInit() {

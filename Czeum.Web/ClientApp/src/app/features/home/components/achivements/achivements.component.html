@@ -1,13 +1,23 @@
 <h2>Mérföldkövek</h2>
-<mat-list>
-  <mat-list-item *ngFor="let achivement of achivements">
-    <mat-icon mat-list-icon fontSet="material-icons-outlined">emoji_events</mat-icon>
-    <div class="achivement-title" mat-line>{{ achivement.title }}</div>
-    <div mat-line>{{ achivement.description }}</div>
-    <div class="achivement-unlocked-at" mat-line>Feloldva: {{ achivement.unlockedAt | date:'yyyy. MM. dd.' }}</div>
-    <button mat-icon-button>
-      <mat-icon *ngIf="achivement.isStarred">star</mat-icon>
-      <mat-icon *ngIf="!achivement.isStarred">star_border</mat-icon>
-    </button>
-  </mat-list-item>
-</mat-list>
+<div *ngIf="!achivements" class="d-flex align-items-center justify-content-center flex-grow-1">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="achivements && achivements.length === 0"
+  class="d-flex align-items-center justify-content-center gray-text flex-grow-1">
+  <mat-icon class="no-achivement-icon">emoji_events</mat-icon>
+  <span>Még nem teljesítettél egy mérföldkövet sem.</span>
+</div>
+<perfect-scrollbar *ngIf="achivements && achivements.length > 0" class="flex-grow-1">
+  <mat-list>
+    <mat-list-item *ngFor="let achivement of achivements">
+      <mat-icon mat-list-icon fontSet="material-icons-outlined">emoji_events</mat-icon>
+      <div class="achivement-title" mat-line>{{ achivement.title }}</div>
+      <div mat-line>{{ achivement.description }}</div>
+      <div class="achivement-unlocked-at" mat-line>Feloldva: {{ achivement.unlockedAt | date:'yyyy. MM. dd.' }}</div>
+      <button mat-icon-button>
+        <mat-icon *ngIf="achivement.isStarred">star</mat-icon>
+        <mat-icon *ngIf="!achivement.isStarred">star_border</mat-icon>
+      </button>
+    </mat-list-item>
+  </mat-list>
+</perfect-scrollbar>

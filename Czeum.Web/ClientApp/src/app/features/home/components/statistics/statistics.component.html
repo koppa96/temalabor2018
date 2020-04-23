@@ -1,35 +1,38 @@
 <h2>Statisztikák</h2>
-<div class="statistics-table">
+<div class="statistics-table position-relative" [ngClass]="{ 'loading': !statistics }">
+  <div class="spinner-container" *ngIf="!statistics">
+    <mat-spinner></mat-spinner>
+  </div>
   <div class="stat-row">
     <div class="label">Játszott játékok</div>
-    <div class="value">{{ statistics.playedGames }}</div>
+    <div class="value">{{ statistics?.playedGames }}</div>
   </div>
   <div class="stat-row">
     <div class="label">Nyert játékok</div>
-    <div class="value">{{ statistics.wonGames }}</div>
+    <div class="value">{{ statistics?.wonGames }}</div>
   </div>
   <div class="stat-row">
     <div class="label">Nyerési arány (%)</div>
-    <div class="value">{{ getWinrate(statistics.wonGames, statistics.playedGames) }}</div>
+    <div class="value">{{ statistics ? getWinrate(statistics.wonGames, statistics.playedGames) : '' }}</div>
   </div>
   <div class="stat-row">
     <div class="label">Kedvenc játék</div>
-    <div class="value">{{ statistics.favouriteGame.displayName }}</div>
+    <div class="value">{{ statistics?.favouriteGame?.displayName }}</div>
   </div>
   <div class="stat-row">
-    <div class="label">Játszott játékok ({{ statistics.favouriteGame.displayName }})</div>
-    <div class="value">{{ statistics.playedGamesOfFavourite }}</div>
+    <div class="label">Játszott játékok ({{ statistics?.favouriteGame?.displayName }})</div>
+    <div class="value">{{ statistics?.playedGamesOfFavourite }}</div>
   </div>
   <div class="stat-row">
-    <div class="label">Nyert játékok ({{ statistics.favouriteGame.displayName }})</div>
-    <div class="value">{{ statistics.wonGamesOfFavourite }}</div>
+    <div class="label">Nyert játékok ({{ statistics?.favouriteGame?.displayName }})</div>
+    <div class="value">{{ statistics?.wonGamesOfFavourite }}</div>
   </div>
   <div class="stat-row">
-    <div class="label">Nyerési arány ({{ statistics.favouriteGame.displayName }})</div>
-    <div class="value">{{ getWinrate(statistics.wonGamesOfFavourite, statistics.playedGamesOfFavourite) }}</div>
+    <div class="label">Nyerési arány ({{ statistics?.favouriteGame?.displayName }})</div>
+    <div class="value">{{ getWinrate(statistics?.wonGamesOfFavourite, statistics?.playedGamesOfFavourite) }}</div>
   </div>
   <div class="stat-row">
     <div class="label">Legtöbbet vele játszottál</div>
-    <div class="value">{{ statistics.mostPlayedWithName }}</div>
+    <div class="value">{{ statistics?.mostPlayedWithName }}</div>
   </div>
 </div>
