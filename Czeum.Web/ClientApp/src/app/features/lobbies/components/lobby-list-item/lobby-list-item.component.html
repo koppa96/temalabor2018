@@ -4,7 +4,7 @@
       <fa-icon [icon]="getIcon(lobby.gameIdentifier)"></fa-icon>
       <div>
         <div fxLayoutAlign="start center" fxLayoutGap="10px">
-          <h4 matLine>{{ lobby.content.name || (lobby.content.host + ' szobája') }}</h4>
+          <h4>{{ lobby.content.name || (lobby.content.host + ' szobája') }}</h4>
           <mat-icon fontSet="material-icons-outlined" *ngIf="isInvited(lobby)">email</mat-icon>
         </div>
         <p class="gray-text">{{ getGameTypeDisplayName() }}</p>

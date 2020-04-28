@@ -23,6 +23,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ChatMessageComponent } from './components/chat-message/chat-message.component';
 import { PlayerComponent } from './components/player/player.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { PlayerComponent } from './components/player/player.component';
     NotificationListItemComponent,
     FriendListItemComponent,
     ChatMessageComponent,
-    PlayerComponent
+    PlayerComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +56,8 @@ import { PlayerComponent } from './components/player/player.component';
     MatButtonToggleModule,
     FontAwesomeModule,
     MatTooltipModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   exports: [
     MatButtonModule,
@@ -77,7 +81,11 @@ import { PlayerComponent } from './components/player/player.component';
     MatTooltipModule,
     ChatMessageComponent,
     MatSnackBarModule,
-    PlayerComponent
+    PlayerComponent,
+    MatDialogModule
+  ],
+  entryComponents: [
+    ConfirmDialogComponent
   ]
 })
 export class SharedModule { }

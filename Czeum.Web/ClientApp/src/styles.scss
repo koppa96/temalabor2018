@@ -42,3 +42,17 @@ fa-icon {
 simple-snack-bar button {
   color: $accent-color !important;
 }
+
+.gray-text {
+  color: gray;
+}
+
+mat-icon.not-found-icon {
+  font-size: 100px;
+  height: 100px;
+  width: 100px;
+}
+
+mat-dialog-container.mat-dialog-container {
+  border-radius: 15px;
+}

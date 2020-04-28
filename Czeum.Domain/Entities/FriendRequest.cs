@@ -9,5 +9,6 @@ namespace Czeum.Domain.Entities
         public Guid? SenderId { get; set; }
         public User Receiver { get; set; }
         public Guid? ReceiverId { get; set; }
+        public DateTime SentAt { get; set; }
     }
 }

@@ -139,7 +139,8 @@ namespace Czeum.Application.Services
             var request = new FriendRequest
             {
                 Sender = await context.Users.SingleAsync(u => u.UserName == currentUser),
-                Receiver = await context.Users.CustomFindAsync(receiverId, "No user with the given name exists.")
+                Receiver = await context.Users.CustomFindAsync(receiverId, "No user with the given name exists."),
+                SentAt = DateTime.UtcNow
             };
 
             context.Requests.Add(request);

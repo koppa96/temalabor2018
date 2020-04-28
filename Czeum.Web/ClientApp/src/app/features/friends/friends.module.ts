@@ -9,7 +9,12 @@ import { SharedModule } from '../../shared/shared.module';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [FriendsPageComponent, DetailedFriendListComponent, IncomingRequestsComponent, OutgoingRequestsComponent],
+  declarations: [
+    FriendsPageComponent,
+    DetailedFriendListComponent,
+    IncomingRequestsComponent,
+    OutgoingRequestsComponent
+  ],
   imports: [
     CommonModule,
     FriendsRoutingModule,

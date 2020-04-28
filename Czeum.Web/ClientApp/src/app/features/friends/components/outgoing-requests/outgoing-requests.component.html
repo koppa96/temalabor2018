@@ -1,1 +1,36 @@
-<p>outgoing-requests works!</p>
+<h3>Szűrés</h3>
+<div class="d-flex align-items-center justify-content-between">
+  <mat-form-field appearance="outline" fxFlex="25%">
+    <mat-label>Felhasználónév</mat-label>
+    <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterRequests()">
+  </mat-form-field>
+  <div class="button-container">
+    <button mat-raised-button color="primary">
+      <mat-icon matPrefix>add</mat-icon>
+      ÚJ KÉRELEM KÜLDÉSE
+    </button>
+  </div>
+</div>
+<div *ngIf="!filteredRequests || filteredRequests.length === 0"
+  class="flex-grow-1 d-flex align-items-center justify-content-center gray-text">
+  <mat-icon class="not-found-icon">person_add_disabled</mat-icon>
+  <span>Jelenleg nincs {{ filterText ? 'a keresési feltételeknek megfelelő' : '' }} kimenő barátkérelmed.</span>
+</div>
+<perfect-scrollbar class="flex-grow-1" *ngIf="filteredRequests && filteredRequests.length > 0">
+  <mat-list>
+    <mat-list-item *ngFor="let request of filteredRequests">
+      <div class="h-100 w-100 d-flex align-items-center justify-content-between py-2">
+        <div class="d-flex align-items-center">
+          <mat-icon class="list-icon">perm_identity</mat-icon>
+          <div>
+            <h4>{{ request.receiverName }}</h4>
+            <p class="gray-text">Elküldve: {{ request.sentAt | date:'yyyy. MM. dd.' }}</p>
+          </div>
+        </div>
+        <button mat-icon-button matTooltip="Visszavonás" (click)="onDeleteClicked(request)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</perfect-scrollbar>

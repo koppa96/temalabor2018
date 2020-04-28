@@ -256,9 +256,9 @@ namespace Czeum.Web.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
-        public Task<List<UserDto>> GetUsernames([FromQuery] string username)
+        public Task<List<UserDto>> GetUsernames([FromQuery] string? username)
         {
-            return userManager.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower()))
+            return userManager.Users.Where(u => username == null || u.UserName.ToLower().Contains(username.ToLower()))
                 .Select(u => new UserDto { Id = u.Id, Username = u.UserName})
                 .ToListAsync();
         }
