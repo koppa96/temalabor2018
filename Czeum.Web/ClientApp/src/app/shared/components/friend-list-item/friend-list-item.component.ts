@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FriendListItem } from '../../models/friend-list.models';
+import { FriendDto } from '../../clients';
 
 @Component({
   selector: 'app-friend-list-item',
@@ -7,7 +7,7 @@ import { FriendListItem } from '../../models/friend-list.models';
   styleUrls: ['./friend-list-item.component.scss']
 })
 export class FriendListItemComponent implements OnInit {
-  @Input() friendListItem: FriendListItem;
+  @Input() friendListItem: FriendDto;
 
   constructor() { }
 

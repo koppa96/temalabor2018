@@ -1,13 +1,12 @@
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { combineLatest, Observable, Subscription } from 'rxjs';
-import { GameTypeDto, LobbyDataWrapper } from '../../../../shared/clients';
+import { LobbyDataWrapper } from '../../../../shared/clients';
 import { LobbyAccessDropdownItem, lobbyAccessDropdownItems } from '../../models/lobby-create.models';
 import { map, take } from 'rxjs/operators';
 import { AuthService } from '../../../../authentication/services/auth.service';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
 import { LobbyService } from '../../services/lobby.service';
-import { updateLobby } from '../../../../reducers/current-lobby/current-lobby-actions';
 
 @Component({
   selector: 'app-my-lobby',

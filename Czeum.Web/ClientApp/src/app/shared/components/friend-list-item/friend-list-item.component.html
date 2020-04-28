@@ -1,5 +1,5 @@
 <mat-list-item class="friend-list-item">
-  <img [ngClass]="{ 'online': friendListItem.isOnline, 'offline': !friendListItem.isOnline }" [src]="friendListItem.imageUrl" mat-list-avatar>
+  <mat-icon mat-list-icon>perm_identity</mat-icon>
   <h4 mat-line>{{ friendListItem.username }}</h4>
   <div fxLayout>
     <button mat-icon-button>

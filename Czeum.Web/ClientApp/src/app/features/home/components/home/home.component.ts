@@ -2,8 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
 import { Observable } from 'rxjs';
-import { joinSoloQueue, leaveSoloQueue } from '../../../../reducers/solo-queue/solo-queue-actions';
-import { take } from 'rxjs/operators';
 import { AchivementDto, StatisticsDto } from '../../../../shared/clients';
 
 @Component({

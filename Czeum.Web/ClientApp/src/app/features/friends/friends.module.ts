@@ -6,13 +6,15 @@ import { DetailedFriendListComponent } from './components/detailed-friend-list/d
 import { IncomingRequestsComponent } from './components/incoming-requests/incoming-requests.component';
 import { OutgoingRequestsComponent } from './components/outgoing-requests/outgoing-requests.component';
 import { SharedModule } from '../../shared/shared.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [FriendsPageComponent, DetailedFriendListComponent, IncomingRequestsComponent, OutgoingRequestsComponent],
   imports: [
     CommonModule,
     FriendsRoutingModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ]
 })
 export class FriendsModule { }

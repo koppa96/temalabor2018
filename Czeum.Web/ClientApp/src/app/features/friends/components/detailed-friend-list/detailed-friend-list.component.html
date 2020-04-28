@@ -1,1 +1,13 @@
-<p>detailed-friend-list works!</p>
+<h3>Szűrés</h3>
+<div fxLayoutGap="10px">
+  <mat-form-field appearance="outline" fxFlex="25%">
+    <mat-label>Szobanév</mat-label>
+    <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterAndSortFriends()">
+  </mat-form-field>
+  <mat-form-field appearance="outline" fxFlex="25%">
+    <mat-label>Rendezés</mat-label>
+    <mat-select [(value)]="selectedOrdering" (valueChange)="filterAndSortLobbies()">
+      <mat-option *ngFor="let ordering of orderings" [value]="ordering">{{ ordering.displayName }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

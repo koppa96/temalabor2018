@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State } from '../../../reducers';
 import { Observable } from 'rxjs';
-import { FriendListItem } from '../../models/friend-list.models';
+import { FriendDto } from '../../clients';
 
 @Component({
   selector: 'app-friends-list',
@@ -10,7 +10,7 @@ import { FriendListItem } from '../../models/friend-list.models';
   styleUrls: ['./friends-list.component.scss']
 })
 export class FriendsListComponent implements OnInit {
-  friendList$: Observable<FriendListItem[]>;
+  friendList$: Observable<FriendDto[]>;
 
   constructor(private store: Store<State>) { }
 

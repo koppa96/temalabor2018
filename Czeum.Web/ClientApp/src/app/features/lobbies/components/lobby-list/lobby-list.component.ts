@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { GameTypeDto, LobbyDataWrapper } from '../../../../shared/clients';
+import { GameTypeDto, LobbyDataWrapper, FriendDto } from '../../../../shared/clients';
 import { Store } from '@ngrx/store';
 import { AuthState, State } from '../../../../reducers';
-import { FriendListItem } from '../../../../shared/models/friend-list.models';
-import { LobbyListOrdering, lobbyListOrderings } from '../../models/lobby-list-ordering.models';
+import { lobbyListOrderings } from '../../models/lobby-list-ordering.models';
+import { Ordering } from 'src/app/shared/models/ordering.models';
 
 @Component({
   selector: 'app-lobby-list',
@@ -22,11 +22,11 @@ export class LobbyListComponent implements OnInit, OnChanges, OnDestroy {
   subscription: Subscription;
   currentLobby$: Observable<LobbyDataWrapper>;
   authState$: Observable<AuthState>;
-  friendList$: Observable<FriendListItem[]>;
+  friendList$: Observable<FriendDto[]>;
   filteredLobbies: LobbyDataWrapper[] = [];
   filterText = '';
   orderings = lobbyListOrderings;
-  selectedOrdering: LobbyListOrdering;
+  selectedOrdering: Ordering<LobbyDataWrapper>;
 
   constructor(store: Store<State>) {
     this.selectedOrdering = this.orderings[0];

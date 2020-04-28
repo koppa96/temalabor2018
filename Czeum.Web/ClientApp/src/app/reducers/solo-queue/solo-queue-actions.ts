@@ -1,5 +1,4 @@
-import {createAction, props} from '@ngrx/store';
-import {FriendListItem} from '../../shared/models/friend-list.models';
+import { createAction } from '@ngrx/store';
 
 export const joinSoloQueue = createAction('[SoloQueue] Join');
 export const leaveSoloQueue = createAction('[SoloQueue] Leave');

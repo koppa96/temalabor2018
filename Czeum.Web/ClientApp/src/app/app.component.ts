@@ -3,8 +3,11 @@ import { AuthService } from './authentication/services/auth.service';
 import { Observable } from 'rxjs';
 import { AuthState, State } from './reducers';
 import { Store } from '@ngrx/store';
-import { filter, take, takeUntil, takeWhile } from 'rxjs/operators';
+import { takeWhile } from 'rxjs/operators';
 import { HubService } from './shared/services/hub.service';
+import { FriendsService } from './shared/services/friends.service';
+import { updateFriendList, addFriend, removeFriend, updateFriend } from './reducers/friend-list/friend-list-actions';
+import { FriendDto } from './shared/clients';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +19,12 @@ export class AppComponent implements OnInit, OnDestroy {
   authState: Observable<AuthState>;
   showInitialLoading: boolean;
 
-  constructor(private authService: AuthService, private hubService: HubService) {
+  constructor(
+    private authService: AuthService,
+    private hubService: HubService,
+    private friendsService: FriendsService,
+    private store: Store<State>
+  ) {
     this.authState = this.authService.getAuthState();
   }
 
@@ -30,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
         if (!res.isHandling) {
           this.showInitialLoading = false;
           if (res.isAuthenticated) {
-            this.hubService.connect();
+            this.afterLogin();
           }
         }
       });
@@ -40,7 +48,7 @@ export class AppComponent implements OnInit, OnDestroy {
       ).subscribe(res => {
         this.showInitialLoading = false;
         if (res.isAuthenticated) {
-          this.hubService.connect();
+          this.afterLogin();
         }
       });
     }
@@ -52,8 +60,27 @@ export class AppComponent implements OnInit, OnDestroy {
     }, 60000);
   }
 
+  afterLogin() {
+    this.hubService.connect();
+    this.friendsService.getFriends().subscribe(res => {
+      this.store.dispatch(updateFriendList({ updatedList: res }));
+      this.hubService.registerCallback('FriendAdded', (friend: FriendDto) => {
+        this.store.dispatch(addFriend({ friend }));
+      });
+      this.hubService.registerCallback('FriendRemoved', (friendshipId: string) => {
+        this.store.dispatch(removeFriend({ friendshipId }));
+      });
+      this.hubService.registerCallback('FriendConnectionStateChanged', (friend: FriendDto) => {
+        this.store.dispatch(updateFriend({ friend }));
+      });
+    });
+  }
+
   async ngOnDestroy() {
     clearInterval(this.interval);
+    this.hubService.removeCallback('FriendAdded');
+    this.hubService.removeCallback('FriendRemoved');
+    this.hubService.removeCallback('FriendConnectionStateChanged');
     await this.hubService.disconnect();
   }
 }

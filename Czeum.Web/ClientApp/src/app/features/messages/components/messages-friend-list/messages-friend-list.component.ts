@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
 import { Observable } from 'rxjs';
-import { FriendListItem } from '../../../../shared/models/friend-list.models';
+import { FriendDto } from 'src/app/shared/clients';
 
 @Component({
   selector: 'app-messages-friend-list',
@@ -10,9 +10,9 @@ import { FriendListItem } from '../../../../shared/models/friend-list.models';
   styleUrls: ['./messages-friend-list.component.scss']
 })
 export class MessagesFriendListComponent implements OnInit {
-  @Output() friendSelected = new EventEmitter<FriendListItem>();
+  @Output() friendSelected = new EventEmitter<FriendDto>();
 
-  friendList$: Observable<FriendListItem[]>;
+  friendList$: Observable<FriendDto[]>;
 
   constructor(private store: Store<State>) {
     this.friendList$ = store.select(x => x.friendList);
@@ -21,7 +21,7 @@ export class MessagesFriendListComponent implements OnInit {
   ngOnInit() {
   }
 
-  getFriendStateString(friend: FriendListItem): string {
+  getFriendStateString(friend: FriendDto): string {
     const today = new Date();
     if (friend.isOnline) {
       return 'Online';
@@ -41,7 +41,7 @@ export class MessagesFriendListComponent implements OnInit {
     }
   }
 
-  selectFriend(friend: FriendListItem) {
+  selectFriend(friend: FriendDto) {
     this.friendSelected.emit(friend);
   }
 

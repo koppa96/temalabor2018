@@ -1,11 +1,7 @@
 import { LobbyDataWrapper } from '../../../shared/clients';
+import { Ordering } from 'src/app/shared/models/ordering.models';
 
-export interface LobbyListOrdering {
-  displayName: string;
-  comparator: (left: LobbyDataWrapper, right: LobbyDataWrapper) => number;
-}
-
-export const lobbyListOrderings: LobbyListOrdering[] = [
+export const lobbyListOrderings: Array<Ordering<LobbyDataWrapper>> = [
   {
     displayName: 'Legújabb elöl',
     comparator: (left, right) => {

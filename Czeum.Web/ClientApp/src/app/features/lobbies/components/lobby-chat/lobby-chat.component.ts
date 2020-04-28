@@ -13,7 +13,7 @@ import { AuthState } from '../../../../reducers';
 })
 export class LobbyChatComponent implements OnInit, AfterViewInit {
   @Input() isSending = false;
-  @Input() messages: RollList<Message> = new RollList<Message>();
+  @Input() messages = new RollList<Message>();
   @Output() newMessage = new EventEmitter<string>();
   @Output() loadMore = new EventEmitter();
 
