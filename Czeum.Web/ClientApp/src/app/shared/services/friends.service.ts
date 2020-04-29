@@ -29,6 +29,16 @@ export class FriendsService {
     );
   }
 
+  getIncomingFriendRequests(): Observable<FriendRequestDto[]> {
+    return this.friendRequestsClient.getFriendRequestsReceived().pipe(
+      tap(dtos => {
+        for (const dto of dtos) {
+          dto.sentAt = toLocalDate(dto.sentAt);
+        }
+      })
+    );
+  }
+
   sendFriendRequest(userId: string): Observable<FriendRequestDto> {
     return this.friendRequestsClient.sendFriendRequest(userId);
   }
@@ -41,8 +51,12 @@ export class FriendsService {
     return this.accountsClient.getUsernames(searchText || '');
   }
 
-  cancelRequest(requestId: string): Observable<void> {
-    return this.friendRequestsClient.cancelFriendRequest(requestId);
+  acceptRequest(requestId: string): Observable<FriendDto> {
+    return this.friendsClient.acceptRequest(requestId);
+  }
+
+  rejectRequest(requestId: string): Observable<void> {
+    return this.friendRequestsClient.rejectFriendRequest(requestId);
   }
 
 }

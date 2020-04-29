@@ -16,11 +16,11 @@
       <app-player *ngFor="let player of lobby.content.guests" [username]="player" [iconSize]="45"></app-player>
     </div>
     <div class="right-cell">
-      <button mat-raised-button color="warn" *ngIf="isCurrentLobby(lobby)" (click)="onLeaveClicked()">
+      <button mat-button color="warn" *ngIf="isCurrentLobby(lobby)" (click)="onLeaveClicked()">
         <mat-icon>exit_to_app</mat-icon>
         <span>KILÉPÉS</span>
       </button>
-      <button mat-raised-button color="primary" *ngIf="canJoin(lobby)" (click)="onJoinClicked(lobby.content.id)">
+      <button mat-button color="primary" *ngIf="canJoin(lobby)" (click)="onJoinClicked(lobby.content.id)">
         <mat-icon matPrefix>play_arrow</mat-icon>
         <span>CSATLAKOZÁS</span>
       </button>

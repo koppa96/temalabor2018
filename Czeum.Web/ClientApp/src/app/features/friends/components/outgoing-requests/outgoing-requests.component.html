@@ -5,7 +5,7 @@
     <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterRequests()">
   </mat-form-field>
   <div class="button-container">
-    <button mat-raised-button color="primary">
+    <button mat-raised-button color="primary" (click)="onNewRequestClicked()">
       <mat-icon matPrefix>add</mat-icon>
       ÚJ KÉRELEM KÜLDÉSE
     </button>
@@ -27,8 +27,9 @@
             <p class="gray-text">Elküldve: {{ request.sentAt | date:'yyyy. MM. dd.' }}</p>
           </div>
         </div>
-        <button mat-icon-button matTooltip="Visszavonás" (click)="onDeleteClicked(request)">
-          <mat-icon>close</mat-icon>
+        <button mat-button color="warn" matTooltip="Visszavonás" (click)="onDeleteClicked(request)">
+          <mat-icon matPrefix>close</mat-icon>
+          VISSZAVONÁS
         </button>
       </div>
     </mat-list-item>

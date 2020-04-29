@@ -1,0 +1,14 @@
+<h1>Új barátkérelem küldése</h1>
+<p>Kezdd el írni annak a nevét, akit fel szeretnél venni, majd válaszd ki a listából!</p>
+<mat-form-field appearance="outline" class="w-100">
+  <mat-label>Felhasználónév</mat-label>
+  <input type="text" [(ngModel)]="filterText" matInput [formControl]="selectedUser" [matAutocomplete]="auto">
+  <mat-error *ngIf="showError">Válassz egy felhasználót a küldéshez!</mat-error>
+</mat-form-field>
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+  <mat-option *ngFor="let user of filteredUsers" [value]="user">{{ user.username }}</mat-option>
+</mat-autocomplete>
+<div fxLayoutAlign="end center" fxLayoutGap="10px">
+  <button mat-button (click)="onCancel()">MÉGSE</button>
+  <button mat-raised-button color="primary" (click)="onProceed()">KÜLDÉS</button>
+</div>

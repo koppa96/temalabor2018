@@ -5,6 +5,10 @@ import { HubService } from 'src/app/shared/services/hub.service';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogResult } from 'src/app/shared/models/dialog.models';
+import { AuthService } from '../../../../authentication/services/auth.service';
+import { take } from 'rxjs/operators';
+import { NewFriendRequestDialogComponent } from '../new-friend-request-dialog/new-friend-request-dialog.component';
+import { NewRequestDialogResult } from '../../models/new-request-dialog.models';
 
 @Component({
   selector: 'app-outgoing-requests',
@@ -21,7 +25,8 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
   constructor(
     private friendsService: FriendsService,
     private hubService: HubService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -67,6 +72,31 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
           this.filterRequests();
         });
       }
+    });
+  }
+
+  onNewRequestClicked() {
+    this.authService.getAuthState().pipe(
+      take(1)
+    ).subscribe(authState => {
+      console.log(this.requests);
+      console.log(this.autocompleteContent);
+      const selectableUsers = this.autocompleteContent.filter(x => x.id !== authState.profile.userId &&
+        !this.requests.some(r => r.receiverName === x.username));
+
+      this.dialog.open(NewFriendRequestDialogComponent, {
+        data: {
+          users: selectableUsers
+        },
+        autoFocus: false
+      }).afterClosed().subscribe((result: NewRequestDialogResult) => {
+        if (result) {
+          this.friendsService.sendFriendRequest(result.selectedUser.id).subscribe(request => {
+            this.requests.push(request);
+            this.filterRequests();
+          });
+        }
+      });
     });
   }
 

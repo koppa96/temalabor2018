@@ -6,20 +6,28 @@ import { DetailedFriendListComponent } from './components/detailed-friend-list/d
 import { IncomingRequestsComponent } from './components/incoming-requests/incoming-requests.component';
 import { OutgoingRequestsComponent } from './components/outgoing-requests/outgoing-requests.component';
 import { SharedModule } from '../../shared/shared.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NewFriendRequestDialogComponent } from './components/new-friend-request-dialog/new-friend-request-dialog.component';
+import { MatAutocompleteModule } from '@angular/material';
 
 @NgModule({
   declarations: [
     FriendsPageComponent,
     DetailedFriendListComponent,
     IncomingRequestsComponent,
-    OutgoingRequestsComponent
+    OutgoingRequestsComponent,
+    NewFriendRequestDialogComponent
   ],
   imports: [
     CommonModule,
     FriendsRoutingModule,
     SharedModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
+  ],
+  entryComponents: [
+    NewFriendRequestDialogComponent
   ]
 })
 export class FriendsModule { }
