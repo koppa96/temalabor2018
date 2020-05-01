@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatchService } from '../../services/match.service';
-import { GameState, MatchStatus } from '../../../../shared/clients';
+import { GameState, GameTypeDto, MatchStatus } from '../../../../shared/clients';
 import { RollList } from '../../../../shared/models/roll-list';
 import { ObservableHub } from '../../../../shared/services/observable-hub.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-current-game-list.page',
@@ -11,17 +11,27 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./current-game-list.page.component.scss']
 })
 export class CurrentGameListPageComponent implements OnInit, OnDestroy {
-  matches: RollList<MatchStatus>;
+  matches: RollList<MatchStatus> = new RollList<MatchStatus>();
   subscription = new Subscription();
+  gameTypes: GameTypeDto[] = [];
+  matchListUpdated = new Subject();
 
-  constructor(private observableHub: ObservableHub, private matchService: MatchService) { }
+  constructor(
+    private observableHub: ObservableHub,
+    private matchService: MatchService
+  ) { }
 
   ngOnInit() {
+    this.matchService.getAvailableGameTypes().subscribe(res => {
+      this.gameTypes = res;
+    });
+
     this.matchService.getCurrentMatches(null, 25).subscribe(res => {
       this.matches = new RollList<MatchStatus>(res.data, res.hasMoreLeft);
 
       this.subscription.add(this.observableHub.matchCreated.subscribe(status => {
         this.matches.elements.splice(0, 0, status);
+        this.matchListUpdated.next();
       }));
 
       this.subscription.add(this.observableHub.receiveResult.subscribe(status => {
@@ -31,6 +41,7 @@ export class CurrentGameListPageComponent implements OnInit, OnDestroy {
         } else {
           this.matches.elements[currentIndex] = status;
         }
+        this.matchListUpdated.next();
       }));
     });
   }

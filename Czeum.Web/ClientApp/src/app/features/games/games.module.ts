@@ -9,6 +9,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { MatchService } from './services/match.service';
 import { GameListElementComponent } from './components/game-list-element/game-list-element.component';
 import { GameIconMapperService } from './services/game-icon-mapper.service';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,11 +19,12 @@ import { GameIconMapperService } from './services/game-icon-mapper.service';
     PreviousGameListComponent,
     GameListElementComponent
   ],
-  imports: [
-    CommonModule,
-    GamesRoutingModule,
-    SharedModule
-  ],
+    imports: [
+        CommonModule,
+        GamesRoutingModule,
+        SharedModule,
+        FormsModule
+    ],
   providers: [
     MatchService,
     GameIconMapperService

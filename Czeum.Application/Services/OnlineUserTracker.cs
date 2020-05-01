@@ -9,12 +9,12 @@ namespace Czeum.Application.Services
     public class OnlineUserTracker : IOnlineUserTracker
     {
         private readonly ConcurrentDictionary<string, string> users;
-        private readonly ConcurrentDictionary<string, TaskCompletionSource<bool>> leavingUsers;
+        private readonly ConcurrentDictionary<string, bool> leavingUsers;
 
         public OnlineUserTracker()
         {
             users = new ConcurrentDictionary<string, string>();
-            leavingUsers = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
+            leavingUsers = new ConcurrentDictionary<string, bool>();
         }
             
         public void PutUser(string user, string connectionId)
@@ -47,28 +47,20 @@ namespace Czeum.Application.Services
             return null;
         }
 
-        public Task<bool> WaitTimeout(string username)
+        public async Task<bool> WaitTimeout(string username)
         {
             if (leavingUsers.ContainsKey(username))
             {
                 // Ha már folyamatban van egy timeout ne csináljon semmit
-                return Task.FromResult(true);
+                return true;
             }
             
-            var completionSource = new TaskCompletionSource<bool>();
-            leavingUsers.TryAdd(username, completionSource);
+            leavingUsers.TryAdd(username, false);
+            await Task.Delay(10000);
 
-            Task.Run(async () =>
-            {
-                await Task.Delay(10000);
-                if (!completionSource.Task.IsCompleted)
-                {
-                    completionSource.SetResult(false);
-                    leavingUsers.TryRemove(username, out _);
-                }
-            });
-
-            return completionSource.Task;
+            var result = leavingUsers[username];
+            leavingUsers.TryRemove(username, out _);
+            return result;
         }
 
         public bool OnReconnect(string username)
@@ -78,8 +70,7 @@ namespace Czeum.Application.Services
                 return false;
             }
 
-            leavingUsers[username].SetResult(true);
-            leavingUsers.TryRemove(username, out _);
+            leavingUsers[username] = true;
             return true;
         }
     }

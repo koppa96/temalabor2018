@@ -1,5 +1,54 @@
+@import "src/variables";
+
 fa-icon {
-  font-size: 32px;
-  height: 32px;
-  width: 32px;
+  font-size: 45px;
+  height: 45px;
+  width: 45px;
+  margin-right: 10px;
+}
+
+.play-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  height: 35px;
+  width: 35px;
+}
+
+h4 {
+  margin: 0;
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.gray-text {
+  color: gray;
+}
+
+:host {
+  display: block;
+
+  & ::ng-deep mat-list-item.mat-list-item {
+    height: auto;
+  }
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+  }
+}
+
+.right-cell {
+  min-width: 150px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.left-cell {
+  min-width: 300px;
 }

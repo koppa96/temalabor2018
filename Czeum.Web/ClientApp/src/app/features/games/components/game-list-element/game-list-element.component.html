@@ -1,6 +1,24 @@
 <mat-list-item>
-  <div class="h-100 w-100 d-flex align-items-center">
-    <fa-icon [icon]="getIcon(data.currentBoard.gameIdentifier)"></fa-icon>
-    <h4>Játék {{ getEnemies() }} ellen</h4>
+  <div class="h-100 w-100 d-flex align-items-center justify-content-between py-2">
+    <div class="d-flex align-items-center left-cell">
+      <fa-icon [icon]="getIcon(data.currentBoard.gameIdentifier)"></fa-icon>
+      <div>
+        <div fxLayoutAlign="start center" fxLayoutGap="10px">
+          <h4>{{ getGameTypeDisplayName() }} játék</h4>
+        </div>
+        <p class="gray-text">Legutóbbi lépés: {{ getLastMoveText() }}</p>
+        <p class="gray-text">{{ getCurrentPlayerText() }}</p>
+      </div>
+    </div>
+    <div fxLayout="center center" fxLayoutGap="12px">
+      <app-player *ngFor="let player of data.players" [username]="player.username" [iconSize]="45"></app-player>
+    </div>
+    <div class="right-cell">
+      <button mat-button color="primary" (click)="onPlayClicked()" *ngIf="isInProgress()">
+        <mat-icon matPrefix>play_arrow</mat-icon>
+        <span>JÁTÉK</span>
+      </button>
+    </div>
   </div>
 </mat-list-item>
+

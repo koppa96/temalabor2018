@@ -111,7 +111,8 @@ namespace Czeum.Application.Services
                 Board = board,
                 CurrentPlayerIndex = 0,
                 IsQuickMatch = isQuickMatch,
-                CreateTime = DateTime.UtcNow
+                CreateTime = DateTime.UtcNow,
+                LastMove = DateTime.UtcNow
             };
 
             match.Users = Enumerable.Range(0, users.Count)

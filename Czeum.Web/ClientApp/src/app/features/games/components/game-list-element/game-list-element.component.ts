@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatchStatus } from '../../../../shared/clients';
+import { GameState, GameTypeDto, MatchStatus } from '../../../../shared/clients';
 import { faChessPawn, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { GameIconMapperService } from '../../services/game-icon-mapper.service';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
+import { getLastOnlineText } from '../../../../shared/services/date-utils';
 
 @Component({
   selector: 'app-game-list-element',
@@ -14,24 +15,42 @@ export class GameListElementComponent implements OnInit {
   connect4Icon = faCircle;
 
   @Input() data: MatchStatus;
-  @Input() currentUserName = 'alma';
+  @Input() currentUserName;
+  @Input() gameTypes: GameTypeDto[] = [];
 
   constructor(private gameIconMapperService: GameIconMapperService) { }
 
   ngOnInit() {
   }
 
-  getEnemies(): string {
-    const enemies = this.data.players.filter(x => x.username !== this.currentUserName);
-    let enemyNameString = enemies[enemies.length - 1].username;
-    for (let i = enemies.length - 2; i >= 0; i++) {
-      enemyNameString = enemies[i].username + ', ' + enemyNameString;
-    }
-    return enemyNameString;
-  }
-
   getIcon(gameIdentifier: number): IconDefinition {
     return this.gameIconMapperService.mapIcon(gameIdentifier);
+  }
+
+  getGameTypeDisplayName(): string {
+    const gameType = this.gameTypes.find(x => x.identifier === this.data.currentBoard.gameIdentifier);
+    if (gameType) {
+      return gameType.displayName;
+    } else {
+      return '';
+    }
+  }
+
+  getLastMoveText(): string {
+    return getLastOnlineText(this.data.lastMoveDate);
+  }
+
+  getCurrentPlayerText(): string {
+    const currentPlayer = this.data.players.find(x => x.playerIndex === this.data.currentPlayerIndex);
+    return currentPlayer.username === this.currentUserName ? 'Te következel' : `${currentPlayer.username} következik`;
+  }
+
+  isInProgress(): boolean {
+    return this.data.state === GameState.YourTurn || this.data.state === GameState.EnemyTurn;
+  }
+
+  onPlayClicked() {
+    // TODO: Redirect to game page
   }
 
 }
