@@ -2,7 +2,12 @@
   <mat-card-title class="small">Barátok</mat-card-title>
   <perfect-scrollbar>
     <mat-list fxLayout="column" fxFlex="grow">
-      <app-friend-list-item *ngFor="let friendListItem of friendList$ | async" [friendListItem]="friendListItem">
+      <app-friend-list-item
+        *ngFor="let friendListItem of friendList$ | async"
+        [friendListItem]="friendListItem"
+        [currentLobby]="currentLobby$ | async"
+        (invite)="onInvite($event)"
+        (cancelInvite)="onCancelInvite($event)">
       </app-friend-list-item>
     </mat-list>
   </perfect-scrollbar>

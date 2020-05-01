@@ -32,7 +32,7 @@ export class CurrentGameListComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.selectedOrdering = this.orderings[0];
     this.filterAndSortMatches();
-    this.matchListUpdated.subscribe(() => this.filterAndSortMatches());
+    this.subscription = this.matchListUpdated.subscribe(() => this.filterAndSortMatches());
   }
 
   ngOnChanges(changes: SimpleChanges) {

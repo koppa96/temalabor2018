@@ -2,7 +2,10 @@
   <mat-icon mat-list-icon>perm_identity</mat-icon>
   <h4 mat-line>{{ friendListItem.username }}</h4>
   <div fxLayout>
-    <button mat-icon-button>
+    <button *ngIf="isInvited()" mat-icon-button matTooltip="Meghívás visszavonása"(click)="onCancelInvite()" color="warn">
+      <mat-icon fontSet="material-icons-outlined">unsubscribe</mat-icon>
+    </button>
+    <button *ngIf="!isInvited()" [disabled]="!canInvite()" mat-icon-button matTooltip="Meghívás" (click)="onInvite()" color="primary">
       <mat-icon fontSet="material-icons-outlined">mail</mat-icon>
     </button>
     <button mat-icon-button>
