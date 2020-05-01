@@ -13,7 +13,9 @@ import { LobbyCreateDetails } from '../models/lobby-create.models';
 import { RollList } from '../../../shared/models/roll-list';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LobbyService {
 
   constructor(

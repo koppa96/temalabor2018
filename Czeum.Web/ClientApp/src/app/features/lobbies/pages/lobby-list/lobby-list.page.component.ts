@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
 import { leaveLobby } from '../../../../reducers/current-lobby/current-lobby-actions';
-import { HubService } from '../../../../shared/services/hub.service';
 import { MatSnackBar } from '@angular/material';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { ObservableHub } from '../../../../shared/services/observable-hub.service';
 
 @Component({
   templateUrl: './lobby-list.page.component.html',
@@ -18,12 +18,14 @@ export class LobbyListPageComponent implements OnInit, OnDestroy {
   lobbies: LobbyDataWrapper[] = [];
   filterEvent = new Subject<void>();
 
+  subscriptions: Subscription[] = [];
+
   constructor(
     private lobbyService: LobbyService,
     private router: Router,
     private store: Store<State>,
-    private hubService: HubService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private observableHub: ObservableHub
   ) { }
 
   ngOnInit() {
@@ -34,33 +36,34 @@ export class LobbyListPageComponent implements OnInit, OnDestroy {
     this.lobbyService.getLobbies().subscribe(res => {
       this.lobbies = res;
       console.log(this.lobbies);
-      this.hubService.registerCallback('LobbyAdded', (lobby: LobbyDataWrapper) => {
+
+      this.subscriptions.push(this.observableHub.lobbyAdded.subscribe(lobby => {
         this.lobbies.splice(0, 0, lobby);
         this.filterEvent.next();
-      });
+      }));
 
-      this.hubService.registerCallback('LobbyDeleted', (lobbyId: string) => {
+      this.subscriptions.push(this.observableHub.lobbyDeleted.subscribe(lobbyId => {
         const lobbyIndex = this.lobbies.findIndex(x => x.content.id === lobbyId);
         if (lobbyIndex !== -1) {
           this.lobbies.splice(lobbyIndex, 1);
           this.filterEvent.next();
         }
-      });
+      }));
 
-      this.hubService.registerCallback('LobbyChanged', (lobby: LobbyDataWrapper) => {
+      this.subscriptions.push(this.observableHub.lobbyChanged.subscribe(lobby => {
         const lobbyIndex = this.lobbies.findIndex(x => x.content.id === lobby.content.id);
         if (lobbyIndex !== -1) {
           this.lobbies.splice(lobbyIndex, 1, lobby);
           this.filterEvent.next();
         }
-      });
+      }));
     });
   }
 
   ngOnDestroy() {
-    this.hubService.removeCallback('LobbyAdded');
-    this.hubService.removeCallback('LobbyDeleted');
-    this.hubService.removeCallback('LobbyChanged');
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
   }
 
   joinLobby(lobbyId: string) {

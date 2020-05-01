@@ -1,13 +1,48 @@
 <h3>Szűrés</h3>
 <div fxLayoutGap="10px">
   <mat-form-field appearance="outline" fxFlex="25%">
-    <mat-label>Szobanév</mat-label>
+    <mat-label>Felhasználónév</mat-label>
     <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterAndSortFriends()">
   </mat-form-field>
   <mat-form-field appearance="outline" fxFlex="25%">
     <mat-label>Rendezés</mat-label>
-    <mat-select [(value)]="selectedOrdering" (valueChange)="filterAndSortLobbies()">
+    <mat-select [(value)]="selectedOrdering" (valueChange)="filterAndSortFriends()">
       <mat-option *ngFor="let ordering of orderings" [value]="ordering">{{ ordering.displayName }}</mat-option>
     </mat-select>
   </mat-form-field>
 </div>
+<div *ngIf="!filteredFriendList || filteredFriendList.length === 0"
+     class="flex-grow-1 d-flex align-items-center justify-content-center gray-text">
+  <mat-icon class="not-found-icon">person_add_disabled</mat-icon>
+  <span>Nincs {{ filterText ? 'a keresési feltételeknek megfelelő' : '' }} barátod barátkérelmed.</span>
+</div>
+<perfect-scrollbar class="flex-grow-1" *ngIf="filteredFriendList && filteredFriendList.length > 0">
+  <mat-list>
+    <mat-list-item *ngFor="let friend of filteredFriendList">
+      <div class="h-100 w-100 d-flex align-items-center justify-content-between py-2">
+        <div class="d-flex align-items-center">
+          <mat-icon class="list-icon">perm_identity</mat-icon>
+          <div>
+            <h4>{{ friend.username }}</h4>
+            <p *ngIf="friend.isOnline" class="gray-text">Online</p>
+            <p *ngIf="!friend.isOnline" class="gray-text">Legutóbb online: {{ getLastOnlineText(friend) }}</p>
+          </div>
+        </div>
+        <div fxLayout fxLayoutGap="10px">
+          <button mat-button color="primary" (click)="onAccept(request)">
+            <mat-icon fontSet="material-icons-outlined" matPrefix>mail</mat-icon>
+            MEGHÍVÁS
+          </button>
+          <button mat-button>
+            <mat-icon fontSet="material-icons-outlined" matPrefix>message</mat-icon>
+            ÜZENET
+          </button>
+          <button mat-button color="warn" (click)="onReject(request)">
+            <mat-icon matPrefix>delete</mat-icon>
+            TÖRLÉS
+          </button>
+        </div>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</perfect-scrollbar>

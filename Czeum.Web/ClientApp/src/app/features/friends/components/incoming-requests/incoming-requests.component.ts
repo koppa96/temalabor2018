@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FriendsService } from '../../../../shared/services/friends.service';
 import { FriendDto, FriendRequestDto } from '../../../../shared/clients';
-import { HubService } from '../../../../shared/services/hub.service';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogResult } from '../../../../shared/models/dialog.models';
+import { ObservableHub } from '../../../../shared/services/observable-hub.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-incoming-requests',
@@ -16,9 +17,11 @@ export class IncomingRequestsComponent implements OnInit, OnDestroy {
   filteredRequests: FriendRequestDto[];
   filterText = '';
 
+  subscription = new Subscription();
+
   constructor(
     private friendsService: FriendsService,
-    private hubService: HubService,
+    private observableHub: ObservableHub,
     private dialog: MatDialog
   ) { }
 
@@ -26,26 +29,25 @@ export class IncomingRequestsComponent implements OnInit, OnDestroy {
     this.friendsService.getIncomingFriendRequests().subscribe(res => {
       this.requests = res;
 
-      this.hubService.registerCallback('ReceiveRequest', (request: FriendRequestDto) => {
+      this.subscription.add(this.observableHub.receiveRequest.subscribe(request => {
         this.requests.push(request);
         this.filterRequests();
-      });
+      }));
 
-      this.hubService.registerCallback('RequestRevoked', (requestId: string) => {
+      this.subscription.add(this.observableHub.requestRevoked.subscribe(requestId => {
         const index = this.requests.findIndex(x => x.id === requestId);
         if (index !== -1) {
           this.requests.splice(index, 1);
           this.filterRequests();
         }
-      });
+      }));
 
       this.filteredRequests = this.requests;
     });
   }
 
   ngOnDestroy() {
-    this.hubService.removeCallback('ReceiveRequest');
-    this.hubService.removeCallback('RequestRevoked');
+    this.subscription.unsubscribe();
   }
 
   filterRequests() {

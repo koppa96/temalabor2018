@@ -1,9 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { LobbyDataWrapper, Message } from '../../../../shared/clients';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
-import { HubService } from '../../../../shared/services/hub.service';
 import { LobbyService } from '../../services/lobby.service';
 import { take } from 'rxjs/operators';
 import { leaveLobby, updateLobby } from '../../../../reducers/current-lobby/current-lobby-actions';
@@ -11,25 +10,24 @@ import { LobbyCreateDetails } from '../../models/lobby-create.models';
 import { RollList } from '../../../../shared/models/roll-list';
 import { LobbyChatComponent } from '../../components/lobby-chat/lobby-chat.component';
 import { Router } from '@angular/router';
+import { ObservableHub } from '../../../../shared/services/observable-hub.service';
 
 @Component({
   templateUrl: './lobby-details.page.component.html',
   styleUrls: ['./lobby-details.page.component.scss']
 })
-export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
   messages: RollList<Message>;
   currentLobby$: Observable<LobbyDataWrapper>;
   isLoading = false;
   isSending = false;
 
-  chatComponent: LobbyChatComponent;
-
-  @ViewChildren('chat')
-  chatComponents: QueryList<LobbyChatComponent>;
+  subscription: Subscription;
+  messageReceived = new Subject();
 
   constructor(
     private store: Store<State>,
-    private hubService: HubService,
+    private observableHub: ObservableHub,
     private lobbyService: LobbyService,
     private router: Router
   ) {
@@ -43,12 +41,14 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
         this.store.dispatch(leaveLobby());
       } else {
         this.store.dispatch(updateLobby({ newLobby: res }));
-        this.hubService.registerCallback('LobbyChanged', this.createLobbyChangedCallback());
-        this.hubService.registerCallback('KickedFromLobby', this.createKickCallback());
-        this.hubService.registerCallback('ReceiveLobbyMessage', this.createReceiveLobbyMessageCallback());
 
         this.lobbyService.getLobbyMessages(res.content.id, 25).subscribe(messages => {
           this.messages = messages;
+          this.subscription = this.observableHub.receiveLobbyMessage.subscribe(args => {
+            console.log(this);
+            this.messages.elements.push(args.message);
+            this.messageReceived.next();
+          });
         });
       }
       this.isLoading = false;
@@ -60,24 +60,17 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
     );
   }
 
-  ngAfterViewInit() {
-    this.chatComponents.changes.subscribe(res => {
-      this.chatComponent = res;
-    });
-  }
-
   ngOnDestroy() {
-    this.hubService.removeCallback('LobbyChanged');
-    this.hubService.removeCallback('KickedFromLobby');
-    this.hubService.removeCallback('ReceiveLobbyMessage');
+    this.subscription.unsubscribe();
   }
 
   onLobbyCreate(details: LobbyCreateDetails) {
     this.lobbyService.createLobby(details).subscribe(res => {
       this.store.dispatch(updateLobby({ newLobby: res }));
-      this.hubService.registerCallback('LobbyChanged', this.createLobbyChangedCallback());
-      this.hubService.registerCallback('KickedFromLobby', this.createKickCallback());
-      this.hubService.registerCallback('ReceiveLobbyMessage', this.createReceiveLobbyMessageCallback());
+      this.subscription = this.observableHub.receiveLobbyMessage.subscribe(args => {
+        this.messages.elements.push(args.message);
+        this.messageReceived.next();
+      });
     });
   }
 
@@ -110,44 +103,6 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy, AfterViewIn
         });
       });
     });
-  }
-
-  createLobbyChangedCallback(): (lobby: LobbyDataWrapper) => void {
-    const self = this;
-    return lobby => {
-      self.currentLobby$.pipe(
-        take(1)
-      ).subscribe(currentLobby => {
-        if (lobby.content.id === currentLobby.content.id) {
-          self.store.dispatch(updateLobby({ newLobby: lobby }));
-        }
-      });
-    };
-  }
-
-  createKickCallback(): () => void {
-    const self = this;
-    return () => {
-      self.store.dispatch(leaveLobby());
-      self.messages = new RollList<Message>();
-      self.hubService.removeCallback('LobbyChanged');
-      self.hubService.removeCallback('KickedFromLobby');
-      self.hubService.removeCallback('ReceiveLobbyMessage');
-    };
-  }
-
-  createReceiveLobbyMessageCallback(): (lobbyId: string, message: Message) => void {
-    const self = this;
-    return (lobbyId, message) => {
-      self.currentLobby$.pipe(
-        take(1)
-      ).subscribe(currentLobby => {
-        if (currentLobby.content.id === lobbyId) {
-          self.messages.elements.push(message);
-          self.chatComponent.scrollToBottom();
-        }
-      });
-    };
   }
 
   updateLobby(lobby: LobbyDataWrapper) {

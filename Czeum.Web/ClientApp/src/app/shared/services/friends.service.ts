@@ -16,7 +16,14 @@ export class FriendsService {
   ) { }
 
   getFriends(): Observable<FriendDto[]> {
-    return this.friendsClient.getFriends();
+    return this.friendsClient.getFriends().pipe(
+      tap(dtos => {
+        for (const dto of dtos) {
+          dto.lastDisconnect = toLocalDate(dto.lastDisconnect);
+          dto.registrationTime = toLocalDate(dto.registrationTime);
+        }
+      })
+    );
   }
 
   getOutgoingFriendRequests(): Observable<FriendRequestDto[]> {

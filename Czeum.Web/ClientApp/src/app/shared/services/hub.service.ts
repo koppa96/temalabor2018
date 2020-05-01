@@ -54,8 +54,12 @@ export class HubService {
     this.hubConnection.on(callbackId, callback);
   }
 
-  removeCallback(callbackId: string) {
-    this.hubConnection.off(callbackId);
+  removeCallback(callbackId: string, callback?: (...params: any[]) => void) {
+    if (callback) {
+      this.hubConnection.off(callbackId, callback);
+    } else {
+      this.hubConnection.off(callbackId);
+    }
   }
 }
 

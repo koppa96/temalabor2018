@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from './authentication/services/auth.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthState, State } from './reducers';
 import { Store } from '@ngrx/store';
-import { takeWhile } from 'rxjs/operators';
-import { HubService } from './shared/services/hub.service';
+import { take, takeWhile } from 'rxjs/operators';
 import { FriendsService } from './shared/services/friends.service';
 import { updateFriendList, addFriend, removeFriend, updateFriend } from './reducers/friend-list/friend-list-actions';
 import { FriendDto } from './shared/clients';
+import { LobbyService } from './features/lobbies/services/lobby.service';
+import { leaveLobby, updateLobby } from './reducers/current-lobby/current-lobby-actions';
+import { ObservableHub } from './shared/services/observable-hub.service';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +20,14 @@ export class AppComponent implements OnInit, OnDestroy {
   interval: any;
   authState: Observable<AuthState>;
   showInitialLoading: boolean;
+  subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
-    private hubService: HubService,
+    private observableHub: ObservableHub,
     private friendsService: FriendsService,
-    private store: Store<State>
+    private store: Store<State>,
+    private lobbyService: LobbyService
   ) {
     this.authState = this.authService.getAuthState();
   }
@@ -60,27 +64,49 @@ export class AppComponent implements OnInit, OnDestroy {
     }, 60000);
   }
 
-  afterLogin() {
-    this.hubService.connect();
+  async afterLogin() {
+    await this.observableHub.createConnection();
     this.friendsService.getFriends().subscribe(res => {
       this.store.dispatch(updateFriendList({ updatedList: res }));
-      this.hubService.registerCallback('FriendAdded', (friend: FriendDto) => {
+      this.subscription.add(this.observableHub.friendAdded.subscribe(friend => {
         this.store.dispatch(addFriend({ friend }));
-      });
-      this.hubService.registerCallback('FriendRemoved', (friendshipId: string) => {
+      }));
+      this.subscription.add(this.observableHub.friendRemoved.subscribe(friendshipId => {
         this.store.dispatch(removeFriend({ friendshipId }));
-      });
-      this.hubService.registerCallback('FriendConnectionStateChanged', (friend: FriendDto) => {
+      }));
+      this.subscription.add(this.observableHub.friendConnectionStateChanged.subscribe((friend: FriendDto) => {
         this.store.dispatch(updateFriend({ friend }));
-      });
+      }));
     });
+
+    this.lobbyService.getCurrentLobby().subscribe(
+      result => {
+        this.store.dispatch(updateLobby({ newLobby: result }));
+        this.registerLobbyCallbacks();
+      },
+      () => {
+        this.store.dispatch(leaveLobby());
+        this.registerLobbyCallbacks();
+      }
+    );
+  }
+
+  private registerLobbyCallbacks() {
+    this.subscription.add(this.observableHub.lobbyChanged.subscribe(lobby => {
+      this.store.select(x => x.currentLobby).pipe(
+        take(1)
+      ).subscribe(currentLobby => {
+        if (currentLobby && lobby.content.id === currentLobby.content.id) {
+          this.store.dispatch(updateLobby({ newLobby: lobby }));
+        }
+      });
+    }));
+
+    this.subscription.add(this.observableHub.kickedFromLobby.subscribe(() => this.store.dispatch(leaveLobby())));
   }
 
   async ngOnDestroy() {
     clearInterval(this.interval);
-    this.hubService.removeCallback('FriendAdded');
-    this.hubService.removeCallback('FriendRemoved');
-    this.hubService.removeCallback('FriendConnectionStateChanged');
-    await this.hubService.disconnect();
+    this.subscription.unsubscribe();
   }
 }

@@ -4,11 +4,12 @@ import { firstBy } from 'thenby';
 
 export const detailedFriendListOrderings: Array<Ordering<FriendDto>> = [
   {
-    displayName: 'ABC sorrendben',
-    comparator: firstBy(x => x.username)
+    displayName: 'Legutóbb online',
+    comparator: firstBy<FriendDto>(x => x.isOnline)
+      .thenBy(x => x.lastDisconnect, 'desc')
   },
   {
-    displayName: 'Legutóbb online',
-    comparator: firstBy(x => x.isOnline)
+    displayName: 'ABC sorrendben',
+    comparator: firstBy<FriendDto>(x => x.username)
   }
 ];

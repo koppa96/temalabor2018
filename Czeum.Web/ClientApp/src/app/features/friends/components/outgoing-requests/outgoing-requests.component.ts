@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FriendsService } from 'src/app/shared/services/friends.service';
 import { FriendRequestDto, UserDto } from 'src/app/shared/clients';
-import { HubService } from 'src/app/shared/services/hub.service';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogResult } from 'src/app/shared/models/dialog.models';
@@ -9,6 +8,8 @@ import { AuthService } from '../../../../authentication/services/auth.service';
 import { take } from 'rxjs/operators';
 import { NewFriendRequestDialogComponent } from '../new-friend-request-dialog/new-friend-request-dialog.component';
 import { NewRequestDialogResult } from '../../models/new-request-dialog.models';
+import { ObservableHub } from '../../../../shared/services/observable-hub.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-outgoing-requests',
@@ -22,9 +23,11 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
   autocompleteContent: UserDto[] = [];
   filterText = '';
 
+  subscription = new Subscription();
+
   constructor(
     private friendsService: FriendsService,
-    private hubService: HubService,
+    private observableHub: ObservableHub,
     private dialog: MatDialog,
     private authService: AuthService
   ) { }
@@ -33,13 +36,21 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.friendsService.getOutgoingFriendRequests().subscribe(res => {
       this.requests = res;
-      this.hubService.registerCallback('RequestRejected', (requestId: string) => {
+      this.subscription.add(this.observableHub.requestRejected.subscribe(requestId => {
         const index = this.requests.findIndex(x => x.id === requestId);
         if (index !== -1) {
           this.requests.splice(index, 1);
         }
         this.filterRequests();
-      });
+      }));
+
+      this.subscription.add(this.observableHub.friendAdded.subscribe(friend => {
+        const index = this.requests.findIndex(x => x.senderName === friend.username || x.receiverName === friend.username);
+        if (index !== -1) {
+          this.requests.splice(index, 1);
+        }
+        this.filterRequests();
+      }));
       this.isLoading = false;
       this.filterRequests();
     });
@@ -50,7 +61,7 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.hubService.removeCallback('RequestRejected');
+    this.subscription.unsubscribe();
   }
 
   filterRequests() {
