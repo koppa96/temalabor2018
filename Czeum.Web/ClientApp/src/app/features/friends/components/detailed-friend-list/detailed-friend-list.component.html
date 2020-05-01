@@ -14,7 +14,7 @@
 <div *ngIf="!filteredFriendList || filteredFriendList.length === 0"
      class="flex-grow-1 d-flex align-items-center justify-content-center gray-text">
   <mat-icon class="not-found-icon">person_add_disabled</mat-icon>
-  <span>Nincs {{ filterText ? 'a keresési feltételeknek megfelelő' : '' }} barátod barátkérelmed.</span>
+  <span>Nincs {{ filterText ? 'a keresési feltételeknek megfelelő' : '' }} barátod.</span>
 </div>
 <perfect-scrollbar class="flex-grow-1" *ngIf="filteredFriendList && filteredFriendList.length > 0">
   <mat-list>
@@ -29,16 +29,20 @@
           </div>
         </div>
         <div fxLayout fxLayoutGap="10px">
-          <button mat-button color="primary" (click)="onAccept(request)">
+          <button *ngIf="isInvited(friend) | async" mat-button color="primary" (click)="onInviteRevoked(friend)">
+            <mat-icon fontSet="material-icons-outlined" matPrefix>unsubscribe</mat-icon>
+            MEGHÍVÁS VISSZAVONÁSA
+          </button>
+          <button *ngIf="!(isInvited(friend) | async)" mat-button color="primary" (click)="onInvite(friend)" [disabled]="!(canInvite(friend) | async)">
             <mat-icon fontSet="material-icons-outlined" matPrefix>mail</mat-icon>
             MEGHÍVÁS
           </button>
-          <button mat-button>
+          <button mat-button (click)="onMessage(friend)">
             <mat-icon fontSet="material-icons-outlined" matPrefix>message</mat-icon>
             ÜZENET
           </button>
-          <button mat-button color="warn" (click)="onReject(request)">
-            <mat-icon matPrefix>delete</mat-icon>
+          <button mat-button color="warn" (click)="onDelete(friend)">
+            <mat-icon fontSet="material-icons-outlined" matPrefix>delete</mat-icon>
             TÖRLÉS
           </button>
         </div>

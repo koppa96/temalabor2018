@@ -35,6 +35,10 @@ export class NewFriendRequestDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  canProceed() {
+    return this.selectedUser && this.selectedUser.value && this.selectedUser.value.username;
+  }
+
   onProceed() {
     if (!this.selectedUser.value) {
       this.showError = true;

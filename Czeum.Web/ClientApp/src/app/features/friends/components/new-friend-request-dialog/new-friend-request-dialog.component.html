@@ -10,5 +10,5 @@
 </mat-autocomplete>
 <div fxLayoutAlign="end center" fxLayoutGap="10px">
   <button mat-button (click)="onCancel()">MÉGSE</button>
-  <button mat-raised-button color="primary" (click)="onProceed()">KÜLDÉS</button>
+  <button mat-raised-button color="primary" (click)="onProceed()" [disabled]="!canProceed()">KÜLDÉS</button>
 </div>

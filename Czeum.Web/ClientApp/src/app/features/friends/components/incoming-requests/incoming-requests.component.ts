@@ -1,11 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FriendsService } from '../../../../shared/services/friends.service';
-import { FriendDto, FriendRequestDto } from '../../../../shared/clients';
+import { FriendRequestDto } from '../../../../shared/clients';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogResult } from '../../../../shared/models/dialog.models';
 import { ObservableHub } from '../../../../shared/services/observable-hub.service';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from '../../../../reducers';
+import { addFriend } from '../../../../reducers/friend-list/friend-list-actions';
 
 @Component({
   selector: 'app-incoming-requests',
@@ -22,7 +25,8 @@ export class IncomingRequestsComponent implements OnInit, OnDestroy {
   constructor(
     private friendsService: FriendsService,
     private observableHub: ObservableHub,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private store: Store<State>
   ) { }
 
   ngOnInit() {
@@ -71,8 +75,9 @@ export class IncomingRequestsComponent implements OnInit, OnDestroy {
   }
 
   onAccept(request: FriendRequestDto) {
-    this.friendsService.acceptRequest(request.id).subscribe(() => {
+    this.friendsService.acceptRequest(request.id).subscribe(friend => {
       this.deleteRequestById(request.id);
+      this.store.dispatch(addFriend({ friend }));
     });
   }
 

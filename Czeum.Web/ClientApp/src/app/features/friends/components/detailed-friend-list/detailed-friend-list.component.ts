@@ -2,10 +2,18 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/reducers';
 import { Observable, Subscription } from 'rxjs';
-import { FriendDto } from 'src/app/shared/clients';
+import { FriendDto, LobbyDataWrapper } from 'src/app/shared/clients';
 import { detailedFriendListOrderings } from '../../models/ordering.models';
 import { Ordering } from '../../../../shared/models/ordering.models';
 import { getLastOnlineText } from '../../../../shared/services/date-utils';
+import { MatDialog } from '@angular/material';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogResult } from '../../../../shared/models/dialog.models';
+import { FriendsService } from '../../../../shared/services/friends.service';
+import { updateFriendList } from '../../../../reducers/friend-list/friend-list-actions';
+import { map, take } from 'rxjs/operators';
+import { LobbyService } from '../../../lobbies/services/lobby.service';
+import { updateLobby } from '../../../../reducers/current-lobby/current-lobby-actions';
 
 @Component({
   selector: 'app-detailed-friend-list',
@@ -21,11 +29,15 @@ export class DetailedFriendListComponent implements OnInit, OnDestroy {
   selectedOrdering: Ordering<FriendDto>;
 
   subscription: Subscription;
+  currentLobby$: Observable<LobbyDataWrapper>;
 
   constructor(
-    private store: Store<State>
+    private store: Store<State>,
+    private dialog: MatDialog,
+    private friendsService: FriendsService,
+    private lobbyService: LobbyService
   ) {
-
+    this.currentLobby$ = this.store.select(x => x.currentLobby);
   }
 
   ngOnInit() {
@@ -47,6 +59,60 @@ export class DetailedFriendListComponent implements OnInit, OnDestroy {
 
   getLastOnlineText(friend: FriendDto): string {
     return getLastOnlineText(friend.lastDisconnect);
+  }
+
+  isInvited(friend: FriendDto): Observable<boolean> {
+    return this.currentLobby$.pipe(
+      map(currentLobby => currentLobby && currentLobby.content.invitedPlayers.some(x => x === friend.username))
+    );
+  }
+
+  canInvite(friend: FriendDto): Observable<boolean> {
+    return this.currentLobby$.pipe(
+      map(currentLobby => currentLobby && !currentLobby.content.invitedPlayers.some(x => x === friend.username) &&
+        currentLobby.content.host !== friend.username && !currentLobby.content.guests.some(x => x === friend.username))
+    );
+  }
+
+  onInvite(friend: FriendDto) {
+    this.currentLobby$.pipe(
+      take(1)
+    ).subscribe(currentLobby => {
+      this.lobbyService.inviteUser(currentLobby.content.id, friend.username).subscribe(lobby => {
+        this.store.dispatch(updateLobby({ newLobby: lobby }));
+      });
+    });
+  }
+
+  onInviteRevoked(friend: FriendDto) {
+    this.currentLobby$.pipe(
+      take(1)
+    ).subscribe(currentLobby => {
+      this.lobbyService.cancelInvite(currentLobby.content.id, friend.username).subscribe(lobby => {
+        this.store.dispatch(updateLobby({ newLobby: lobby }));
+      });
+    });
+  }
+
+  onMessage(friend: FriendDto) {
+    // TODO: Redirect to messaging page
+  }
+
+  onDelete(friend: FriendDto) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Megerősítés szükséges',
+        text: `Biztosan törölni szeretnéd ${friend.username} felhasználót a barátaid közül?`,
+        autoFocus: false
+      }
+    }).afterClosed().subscribe((result: ConfirmDialogResult) => {
+      if (result && result.shouldProceed) {
+        this.friendsService.removeFriend(friend.friendshipId).subscribe(() => {
+          const newFriendList = this.friendList.filter(x => x.friendshipId !== friend.friendshipId);
+          this.store.dispatch(updateFriendList({ updatedList: newFriendList }));
+        });
+      }
+    });
   }
 
 }

@@ -35,7 +35,6 @@ export class LobbyListPageComponent implements OnInit, OnDestroy {
 
     this.lobbyService.getLobbies().subscribe(res => {
       this.lobbies = res;
-      console.log(this.lobbies);
 
       this.subscriptions.push(this.observableHub.lobbyAdded.subscribe(lobby => {
         this.lobbies.splice(0, 0, lobby);

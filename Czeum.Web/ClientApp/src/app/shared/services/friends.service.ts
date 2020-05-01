@@ -66,4 +66,7 @@ export class FriendsService {
     return this.friendRequestsClient.rejectFriendRequest(requestId);
   }
 
+  removeFriend(friendshipId: string) {
+    return this.friendsClient.removeFriend(friendshipId);
+  }
 }

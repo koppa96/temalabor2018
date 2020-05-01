@@ -76,4 +76,12 @@ export class LobbyService {
     return this.lobbiesClient.updateLobby(lobby, lobby.content.id);
   }
 
+  inviteUser(lobbyId: string, username: string): Observable<LobbyDataWrapper> {
+    return this.lobbiesClient.invitePlayer(lobbyId, username);
+  }
+
+  cancelInvite(lobbyId: string, username: string): Observable<LobbyDataWrapper> {
+    return this.lobbiesClient.cancelInvitation(lobbyId, username);
+  }
+
 }

@@ -29,9 +29,6 @@ import { LobbyListItemComponent } from './components/lobby-list-item/lobby-list-
     LobbiesRoutingModule,
     SharedModule,
     FormsModule
-  ],
-  providers: [
-    LobbyService
   ]
 })
 export class LobbiesModule { }

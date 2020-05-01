@@ -3,13 +3,14 @@ import { AuthService } from './authentication/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { AuthState, State } from './reducers';
 import { Store } from '@ngrx/store';
-import { take, takeWhile } from 'rxjs/operators';
+import { first, take, takeWhile } from 'rxjs/operators';
 import { FriendsService } from './shared/services/friends.service';
 import { updateFriendList, addFriend, removeFriend, updateFriend } from './reducers/friend-list/friend-list-actions';
 import { FriendDto } from './shared/clients';
 import { LobbyService } from './features/lobbies/services/lobby.service';
 import { leaveLobby, updateLobby } from './reducers/current-lobby/current-lobby-actions';
 import { ObservableHub } from './shared/services/observable-hub.service';
+import { toLocalDate } from './shared/services/date-utils';
 
 @Component({
   selector: 'app-root',
@@ -69,12 +70,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.friendsService.getFriends().subscribe(res => {
       this.store.dispatch(updateFriendList({ updatedList: res }));
       this.subscription.add(this.observableHub.friendAdded.subscribe(friend => {
+        friend.lastDisconnect = toLocalDate(friend.lastDisconnect);
+        friend.registrationTime = toLocalDate(friend.lastDisconnect);
         this.store.dispatch(addFriend({ friend }));
       }));
       this.subscription.add(this.observableHub.friendRemoved.subscribe(friendshipId => {
         this.store.dispatch(removeFriend({ friendshipId }));
       }));
       this.subscription.add(this.observableHub.friendConnectionStateChanged.subscribe((friend: FriendDto) => {
+        friend.lastDisconnect = toLocalDate(friend.lastDisconnect);
+        friend.registrationTime = toLocalDate(friend.lastDisconnect);
         this.store.dispatch(updateFriend({ friend }));
       }));
     });
@@ -105,7 +110,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscription.add(this.observableHub.kickedFromLobby.subscribe(() => this.store.dispatch(leaveLobby())));
   }
 
-  async ngOnDestroy() {
+  ngOnDestroy() {
     clearInterval(this.interval);
     this.subscription.unsubscribe();
   }

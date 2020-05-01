@@ -10,6 +10,8 @@ import { NewFriendRequestDialogComponent } from '../new-friend-request-dialog/ne
 import { NewRequestDialogResult } from '../../models/new-request-dialog.models';
 import { ObservableHub } from '../../../../shared/services/observable-hub.service';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from '../../../../reducers';
 
 @Component({
   selector: 'app-outgoing-requests',
@@ -29,7 +31,8 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
     private friendsService: FriendsService,
     private observableHub: ObservableHub,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private store: Store<State>
   ) { }
 
   ngOnInit() {
@@ -86,27 +89,29 @@ export class OutgoingRequestsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onNewRequestClicked() {
+  async onNewRequestClicked() {
     this.authService.getAuthState().pipe(
       take(1)
     ).subscribe(authState => {
-      console.log(this.requests);
-      console.log(this.autocompleteContent);
-      const selectableUsers = this.autocompleteContent.filter(x => x.id !== authState.profile.userId &&
-        !this.requests.some(r => r.receiverName === x.username));
+      this.store.select(x => x.friendList).pipe(
+        take(1)
+      ).subscribe(friends => {
+        const selectableUsers = this.autocompleteContent.filter(x => x.id !== authState.profile.userId &&
+          !this.requests.some(r => r.receiverName === x.username) && !friends.some(f => f.username === x.username));
 
-      this.dialog.open(NewFriendRequestDialogComponent, {
-        data: {
-          users: selectableUsers
-        },
-        autoFocus: false
-      }).afterClosed().subscribe((result: NewRequestDialogResult) => {
-        if (result) {
-          this.friendsService.sendFriendRequest(result.selectedUser.id).subscribe(request => {
-            this.requests.push(request);
-            this.filterRequests();
-          });
-        }
+        this.dialog.open(NewFriendRequestDialogComponent, {
+          data: {
+            users: selectableUsers
+          },
+          autoFocus: false
+        }).afterClosed().subscribe((result: NewRequestDialogResult) => {
+          if (result) {
+            this.friendsService.sendFriendRequest(result.selectedUser.id).subscribe(request => {
+              this.requests.push(request);
+              this.filterRequests();
+            });
+          }
+        });
       });
     });
   }

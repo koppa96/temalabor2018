@@ -30,7 +30,6 @@ export class LobbyListComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(store: Store<State>) {
     this.selectedOrdering = this.orderings[0];
-    console.log(this.orderings);
     this.currentLobby$ = store.select(x => x.currentLobby);
     this.authState$ = store.select(x => x.authState);
     this.friendList$ = store.select(x => x.friendList);

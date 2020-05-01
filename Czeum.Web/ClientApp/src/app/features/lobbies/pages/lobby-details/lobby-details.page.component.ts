@@ -45,7 +45,6 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
         this.lobbyService.getLobbyMessages(res.content.id, 25).subscribe(messages => {
           this.messages = messages;
           this.subscription = this.observableHub.receiveLobbyMessage.subscribe(args => {
-            console.log(this);
             this.messages.elements.push(args.message);
             this.messageReceived.next();
           });
@@ -61,7 +60,9 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onLobbyCreate(details: LobbyCreateDetails) {
