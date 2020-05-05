@@ -14,5 +14,6 @@ export const gameListOrderings: Ordering<MatchStatus>[] = [
   {
     displayName: 'Játéktípus szerint',
     comparator: firstBy<MatchStatus>(x => x.currentBoard.gameIdentifier)
+      .thenBy(x => x.lastMoveDate, 'desc')
   }
 ];

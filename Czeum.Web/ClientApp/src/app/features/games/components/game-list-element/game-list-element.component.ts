@@ -21,6 +21,7 @@ export class GameListElementComponent implements OnInit {
   constructor(private gameIconMapperService: GameIconMapperService) { }
 
   ngOnInit() {
+    console.log(this.data);
   }
 
   getIcon(gameIdentifier: number): IconDefinition {
@@ -43,6 +44,14 @@ export class GameListElementComponent implements OnInit {
   getCurrentPlayerText(): string {
     const currentPlayer = this.data.players.find(x => x.playerIndex === this.data.currentPlayerIndex);
     return currentPlayer.username === this.currentUserName ? 'Te következel' : `${currentPlayer.username} következik`;
+  }
+
+  getWinnerText(): string {
+    if (this.data.winner === this.currentUserName) {
+      return 'Te nyertél';
+    } else {
+      return `${this.data.winner} nyert`;
+    }
   }
 
   isInProgress(): boolean {

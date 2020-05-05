@@ -60,5 +60,10 @@ namespace Czeum.Core.GameServices.ServiceMappings
 
             return (result.Identifier, result.Value.DisplayName);
         }
+
+        public void Clear()
+        {
+            serviceMappings.Clear();
+        }
     }
 }

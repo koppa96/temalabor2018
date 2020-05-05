@@ -1,6 +1,7 @@
 ﻿using Czeum.Core.DTOs.Lobbies;
 using Czeum.Core.DTOs.Wrappers;
 using Czeum.Core.Enums;
+using Czeum.Core.GameServices.ServiceMappings;
 using Czeum.Tests.IntegrationTests.Infrastructure;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,6 +38,7 @@ namespace Czeum.Tests.IntegrationTests.Lobbies
         [TestInitialize]
         public async Task SetUpWebHost()
         {
+            GameTypeMapping.Instance.Clear();
             factory = new CzeumFactory();
             client = factory.CreateClient();
             await factory.SeedUsersAsync();

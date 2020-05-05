@@ -46,9 +46,11 @@ export class CurrentGameListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   filterAndSortMatches() {
-    this.filteredMatches = this.matches.elements
-      .filter(x => x.players.some(p => p.username.toLowerCase().includes(this.filterText.toLowerCase())))
-      .sort(this.selectedOrdering.comparator);
+    if (this.selectedOrdering) {
+      this.filteredMatches = this.matches.elements
+        .filter(x => x.players.some(p => p.username.toLowerCase().includes(this.filterText.toLowerCase())))
+        .sort(this.selectedOrdering.comparator);
+    }
   }
 
 }
