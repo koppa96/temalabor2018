@@ -1,13 +1,13 @@
-language: csharp
 os: windows
+language: node_js
+node_js:
+  - 12
 mono: none
 solution: Czeum.sln
 install:
   - choco install dotnetcore-sdk
   - choco install opencover.portable
-  - choco install nodejs-lts
   - dotnet tool install --global Codecov.Tool
-  - $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
 script:
   - dotnet restore
   - dotnet build
