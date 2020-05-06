@@ -7,6 +7,7 @@ install:
 script:
   - dotnet restore
   - dotnet build
+  - dotnet tool restore
   - dotnet tool run coverlet ./Czeum.Tests/bin/Debug/netcoreapp3.1/Czeum.Tests.dll --target "dotnet" --targetargs "test --no-build" --format opencover
   - curl -s https://codecov.io/bash > codecov
   - chmod +x codecov
