@@ -10,7 +10,7 @@ pr:
 - master
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   buildConfiguration: 'Release'
@@ -18,7 +18,7 @@ variables:
 steps:
 - task: DotNetCoreInstaller@0
   inputs:
-    version: 3.1.201
+    version: 3.1
 
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
