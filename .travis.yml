@@ -2,7 +2,12 @@ language: csharp
 mono: none
 dotnet: 3.1.201
 solution: Czeum.sln
+install:
+  - dotnet tool install --global coverlet.console
 script:
   - dotnet restore
   - dotnet build
-  - dotnet test
+  - coverlet ./Czeum.Tests/bin/Debug/netcoreapp3.1/Czeum.Tests.dll --target "dotnet" --targetargs "test --no-build" --format opencover
+  - curl -s https://codecov.io/bash > codecov
+  - chmod +x codecov
+  - ./codecov -f "coverage.opencover.xml" -t 91b144ca-11c8-4483-beb4-8dbe24c2c429
