@@ -1,14 +1,13 @@
 language: csharp
 os: windows
 mono: none
-node_js:
-  - 12
 solution: Czeum.sln
-script:
+install:
   - choco install dotnetcore-sdk
   - choco install opencover.portable
-  - refreshenv
+  - choco install nodejs-lts
   - dotnet tool install --global Codecov.Tool
+script:
   - dotnet restore
   - dotnet build
   - Opencover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:".\czeum_coverage.xml" -oldstyle
