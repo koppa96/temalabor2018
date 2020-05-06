@@ -12,4 +12,4 @@ script:
   - dotnet restore
   - dotnet build
   - Opencover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:".\czeum_coverage.xml" -oldstyle
-  - C:\ProgramData\chocolatey\lib\codecov\tools\codecov.exe -f "czeum_coverage.xml" -t 91b144ca-11c8-4483-beb4-8dbe24c2c429
+  - C:/ProgramData/chocolatey/lib/codecov/tools/codecov.exe -f "czeum_coverage.xml" -t 91b144ca-11c8-4483-beb4-8dbe24c2c429
