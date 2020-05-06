@@ -7,6 +7,7 @@ install:
   - choco install opencover.portable
   - choco install nodejs-lts
   - dotnet tool install --global Codecov.Tool
+  - $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
 script:
   - dotnet restore
   - dotnet build
