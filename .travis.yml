@@ -6,6 +6,7 @@ script:
   - choco install dotnetcore-sdk
   - choco install opencover.portable
   - choco install nodejs
+  - refreshenv
   - dotnet tool install --global Codecov.Tool
   - dotnet restore
   - dotnet build
