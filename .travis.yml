@@ -1,9 +1,9 @@
 language: csharp
 os: windows
 mono: none
-dotnet: 3.1
 solution: Czeum.sln
 script:
+  - choco install dotnetcore-sdk
   - choco install opencover.portable
   - dotnet tool install --global Codecov.Tool
   - dotnet restore
