@@ -1,8 +1,12 @@
 language: csharp
+os: windows
 mono: none
 dotnet: 3.1.201
 solution: Czeum.sln
 script:
+  - choco install opencover.portable
+  - dotnet tool install --global Codecov.Tool
   - dotnet restore
   - dotnet build
-  - dotnet test
+  - Opencover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:".\czeum_coverage.xml" -oldstyle
+  - codecov -f "czeum_coverage.xml" -t 91b144ca-11c8-4483-beb4-8dbe24c2c429
