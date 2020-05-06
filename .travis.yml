@@ -1,11 +1,12 @@
 language: csharp
 os: windows
 mono: none
+node_js:
+  - 12
 solution: Czeum.sln
 script:
   - choco install dotnetcore-sdk
   - choco install opencover.portable
-  - choco install nodejs
   - refreshenv
   - dotnet tool install --global Codecov.Tool
   - dotnet restore
