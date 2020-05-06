@@ -5,6 +5,7 @@ solution: Czeum.sln
 script:
   - choco install dotnetcore-sdk
   - choco install opencover.portable
+  - choco install nodejs
   - dotnet tool install --global Codecov.Tool
   - dotnet restore
   - dotnet build
