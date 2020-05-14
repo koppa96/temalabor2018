@@ -5,7 +5,13 @@
   <div fxFlex="30%" fxLayout="column">
     <app-notification fxFlex="35%"></app-notification>
     <div class="chat-container" fxFlex="65%">
-      <app-game-chat class="h-100 w-100"></app-game-chat>
+      <app-game-chat
+        class="h-100 w-100"
+        [currentUser]="(authState$ | async).profile"
+        [messages]="messages"
+        [isSending]="isSending"
+        (loadMore)="loadMoreMessages()"
+        (newMessage)="onMessageSending($event)"></app-game-chat>
     </div>
   </div>
 </div>

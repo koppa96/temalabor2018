@@ -87,9 +87,9 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
     this.currentLobby$.pipe(
       take(1)
     ).subscribe(lobby => {
-      this.isSending = false;
       this.lobbyService.sendMessage(lobby.content.id, newMessage).subscribe(res => {
         this.messages.elements.push(res);
+        this.isSending = false;
       });
     });
   }

@@ -14,7 +14,6 @@ export class GameChatComponent implements OnInit, AfterViewInit {
   @Input() isSending = false;
   @Input() currentUser: Profile;
   @Input() messages: RollList<Message> = new RollList<Message>();
-  @Input() messageReceived: Observable<void>;
 
   @Output() loadMore = new EventEmitter();
   @Output() newMessage = new EventEmitter<string>();
@@ -48,11 +47,6 @@ export class GameChatComponent implements OnInit, AfterViewInit {
       event.stopPropagation();
     }
     this.newMessage.emit(this.newMessageText);
-  }
-
-  scrollToBottom() {
-    if (this.scrollbar) {
-      this.scrollbar.directiveRef.scrollToBottom(0);
-    }
+    this.newMessageText = '';
   }
 }
