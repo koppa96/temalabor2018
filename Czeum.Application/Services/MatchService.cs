@@ -280,6 +280,7 @@ namespace Czeum.Application.Services
             var currentUserId = identityService.GetCurrentUserId();
             var match = await context.Matches.AsNoTracking()
                 .Include(x => x.Board)
+                .Include(x => x.Winner)
                 .Include(x => x.Users)
                     .ThenInclude(x => x.User)
                 .CustomSingleAsync(x => x.Id == matchId, "No match with the given id exists.");
