@@ -138,6 +138,9 @@ namespace Czeum.Application.Services
                         .ThenInclude(u => u.Matches)
                             .ThenInclude(um => um.Match)
                                 .ThenInclude(m => m.Board)
+                .Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                        .ThenInclude(u => u.WonMatches)
                 .CustomSingleAsync(m => m.Id == moveData.MatchId, "No match with the given id was found.");
 
             var playerIndex = match.Users.SingleOrDefault(um => um.UserId == currentUserId)?.PlayerIndex;

@@ -1,0 +1,25 @@
+<div fxLayoutAlign="start center">
+  <div fxFlex="25%">
+    <ng-container [ngSwitch]="data.gameState">
+      <mat-icon *ngSwitchCase="gameStates.Won">emoji_events</mat-icon>
+      <mat-icon *ngSwitchCase="gameStates.Draw">thumbs_up_down</mat-icon>
+      <mat-icon *ngSwitchCase="gameStates.Lost">trending_down</mat-icon>
+    </ng-container>
+  </div>
+  <div fxFlex="75%">
+    <ng-container [ngSwitch]="data.gameState">
+      <h1 *ngSwitchCase="gameStates.Won">Győztél!</h1>
+      <h1 *ngSwitchCase="gameStates.Draw">Döntentlen!</h1>
+      <h1 *ngSwitchCase="gameStates.Lost">Vesztettél!</h1>
+    </ng-container>
+    <ng-container [ngSwitch]="data.gameState">
+      <p *ngSwitchCase="gameStates.Won">A játéknak vége és te győztél. Gratulálunk!</p>
+      <p *ngSwitchCase="gameStates.Draw">A játéknak vége, de egyikőtöknek sem sikerült győznie.</p>
+      <p *ngSwitchCase="gameStates.Lost">A játéknak vége, de sajnos te vesztettél. Sok sikert legközelebb!</p>
+    </ng-container>
+    <div fxLayoutAlign="end center">
+      <button mat-raised-button color="primary" (click)="close()">BEZÁR</button>
+    </div>
+  </div>
+</div>
+

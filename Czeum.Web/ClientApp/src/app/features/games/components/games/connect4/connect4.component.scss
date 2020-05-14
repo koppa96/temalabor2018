@@ -1,3 +1,6 @@
+$board-color: #0070bf;
+$border-radius: 10px;
+
 :host {
   flex-grow: 1;
   display: flex;
@@ -5,7 +8,42 @@
 }
 
 .connect4-board {
-  width: 60vw;
-  height: 10px;
-  background: red;
+  border: 3px solid darken($board-color, 20%);
+  border-radius: $border-radius;
+  background-color: $board-color;
+  padding: 0 15px;
+
+  .connect4-row {
+    display: flex;
+    justify-content: center;
+
+    .connect4-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.4s;
+      cursor: pointer;
+
+      &.hover {
+        background-color: darken($board-color, 5%);
+      }
+
+      .connect4-circle {
+        height: 75%;
+        width: 75%;
+        border-radius: 50%;
+        background-color: gray;
+        border: 3px solid darken($board-color, 20%);
+        transition: background-color 0.4s;
+
+        &.red {
+          background-color: firebrick;
+        }
+
+        &.yellow {
+          background-color: darken(yellow, 10%);
+        }
+      }
+    }
+  }
 }

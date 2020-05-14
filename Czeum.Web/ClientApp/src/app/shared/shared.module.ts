@@ -25,6 +25,7 @@ import { ChatMessageComponent } from './components/chat-message/chat-message.com
 import { PlayerComponent } from './components/player/player.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { GameEndDialogComponent } from './components/game-end-dialog/game-end-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     FriendListItemComponent,
     ChatMessageComponent,
     PlayerComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    GameEndDialogComponent
   ],
   imports: [
     CommonModule,
@@ -85,7 +87,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDialogModule
   ],
   entryComponents: [
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    GameEndDialogComponent
   ]
 })
 export class SharedModule { }

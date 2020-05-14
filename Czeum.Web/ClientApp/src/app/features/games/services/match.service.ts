@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { GameTypeDto, MatchesClient, MatchMessagesClient, MatchStatus, Message, RollListDtoOfMatchStatus } from '../../../shared/clients';
+import {
+  GameTypeDto,
+  MatchesClient,
+  MatchMessagesClient,
+  MatchStatus,
+  Message,
+  MoveData, MoveDataWrapper,
+  RollListDtoOfMatchStatus
+} from '../../../shared/clients';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { toLocalDate } from '../../../shared/services/date-utils';
@@ -40,5 +48,12 @@ export class MatchService {
 
   sendMatchMessage(matchId: string, text: string): Observable<Message> {
     return this.matchMessagesClient.sendMessage(matchId, text);
+  }
+
+  sendMove(matchId: string, gameIdentifier: number, moveData: any): Observable<MatchStatus> {
+    return this.matchesClient.move({
+      gameIdentifier,
+      content: moveData
+    });
   }
 }

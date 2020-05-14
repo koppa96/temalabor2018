@@ -1,8 +1,52 @@
-<mat-card-title>Connect4 játék</mat-card-title>
-<div #boardContainer class="flex-grow-1">
-  <ng-container *ngIf="matchStatus">
-    <div *ngFor="let row of matchStatus.currentBoard.content.board" [ngStyle]="{ height: cellSize + 'px' }">
-      <div *ngFor="let cell of row" class="h-100" [ngStyle]="{ width: cellSize + 'px' }"></div>
+<div fxLayoutAlign="space-between center">
+  <mat-card-title>Connect4 játék</mat-card-title>
+  <div fxLayoutAlign="end center" fxLayoutGap="10px" class="gray-text" *ngIf="matchStatus" [ngSwitch]="matchStatus.state">
+    <ng-container *ngSwitchCase="gameStates.YourTurn">
+      <mat-icon>warning</mat-icon>
+      <span>Te következel!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.EnemyTurn">
+      <mat-icon>hourglass_empty</mat-icon>
+      <span>Kérjük várj amíg az ellenfeleid befejezik a lépésüket!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.Won">
+      <mat-icon>emoji_events</mat-icon>
+      <span>Megnyerted a játékot!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.Draw">
+      <mat-icon>thumbs_up_down</mat-icon>
+      <span>Ez a játék döntetlen lett!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.Lost">
+      <mat-icon>trending_down</mat-icon>
+      <span>Elvesztetted a játékot!</span>
+    </ng-container>
+  </div>
+</div>
+<div fxLayout>
+  <div fxFlex="60%">
+    <p><b>Rövid leírás:</b> Helyezz el egymás mellé vízszintesen, merőlegesen vagy átlósan 4 egyforma színű korongot az ellenfeled előtt!</p>
+  </div>
+  <div fxLayoutAlign="end center" fxLayoutGap="20px" fxFlex="40%" *ngIf="matchStatus">
+    <app-player *ngFor="let player of matchStatus.players" [username]="player.username" [iconSize]="45"></app-player>
+  </div>
+</div>
+<div #boardContainer class="flex-grow-1 d-flex justify-content-center align-items-center">
+  <div class="d-inline-block mat-elevation-z10 connect4-board" *ngIf="matchStatus">
+    <div class="connect4-row" *ngFor="let row of matchStatus.currentBoard.content.board" [ngStyle]="{ height: cellSize + 'px' }">
+      <div
+        *ngFor="let cell of row; let column = index" class="h-100 connect4-cell"
+        [ngStyle]="{ width: cellSize + 'px' }"
+        (click)="columnClicked(column)"
+        (mouseenter)="onMouseEnter(column)"
+        (mouseleave)="omMouseLeave(column)"
+        [ngClass]="{ 'hover': columnHover[column] }">
+        <div class="connect4-circle mat-elevation-z3" [ngClass]="{
+          'red': cell === connect4Items.Red,
+          'yellow': cell === connect4Items.Yellow
+        }">
+        </div>
+      </div>
     </div>
-  </ng-container>
+  </div>
 </div>
