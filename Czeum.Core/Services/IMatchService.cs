@@ -50,5 +50,6 @@ namespace Czeum.Core.Services
         /// <returns>A list of player names</returns>
         Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId);
         Task<IEnumerable<GameTypeDto>> GetAvailableGameTypesAsync();
+        Task<MatchStatus> GetMatchAsync(Guid matchId);
     }
 }

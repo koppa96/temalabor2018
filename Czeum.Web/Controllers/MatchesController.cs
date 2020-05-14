@@ -73,5 +73,14 @@ namespace Czeum.Web.Controllers
         {
             return Ok(await matchService.HandleMoveAsync(moveDataWrapper.Content));
         }
+
+        [HttpGet("{matchId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        public Task<MatchStatus> GetMatchAsync(Guid matchId)
+        {
+            return matchService.GetMatchAsync(matchId);
+        }
     }
 }

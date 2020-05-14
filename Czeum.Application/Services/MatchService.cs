@@ -271,5 +271,22 @@ namespace Czeum.Application.Services
                 DisplayName = x.DisplayName
             }));
         }
+
+        public async Task<MatchStatus> GetMatchAsync(Guid matchId)
+        {
+            var currentUserId = identityService.GetCurrentUserId();
+            var match = await context.Matches.AsNoTracking()
+                .Include(x => x.Board)
+                .Include(x => x.Users)
+                    .ThenInclude(x => x.User)
+                .CustomSingleAsync(x => x.Id == matchId, "No match with the given id exists.");
+
+            if (match.Users.All(x => x.UserId != currentUserId))
+            {
+                throw new UnauthorizedAccessException("You can not view this match.");
+            }
+
+            return matchConverter.ConvertFor(match, identityService.GetCurrentUserName());
+        }
     }
 }

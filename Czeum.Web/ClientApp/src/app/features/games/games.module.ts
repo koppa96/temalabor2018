@@ -10,6 +10,10 @@ import { MatchService } from './services/match.service';
 import { GameListElementComponent } from './components/game-list-element/game-list-element.component';
 import { GameIconMapperService } from './services/game-icon-mapper.service';
 import { FormsModule } from '@angular/forms';
+import { GameDetailsPageComponent } from './pages/game-details/game-details-page.component';
+import { ChessComponent } from './components/games/chess/chess.component';
+import { Connect4Component } from './components/games/connect4/connect4.component';
+import { GameChatComponent } from './components/game-chat/game-chat.component';
 
 @NgModule({
   declarations: [
@@ -17,17 +21,22 @@ import { FormsModule } from '@angular/forms';
     PreviousGameListPageComponent,
     CurrentGameListComponent,
     PreviousGameListComponent,
-    GameListElementComponent
+    GameListElementComponent,
+    GameDetailsPageComponent,
+    ChessComponent,
+    Connect4Component,
+    GameChatComponent
   ],
-    imports: [
-        CommonModule,
-        GamesRoutingModule,
-        SharedModule,
-        FormsModule
-    ],
+  imports: [
+    CommonModule,
+    GamesRoutingModule,
+    SharedModule,
+    FormsModule
+  ],
   providers: [
     MatchService,
     GameIconMapperService
   ]
 })
-export class GamesModule { }
+export class GamesModule {
+}

@@ -23,6 +23,10 @@
     <span class="gray-text">Nem találtunk szobát{{ filterText ? ' a megadott keresési feltételekkel.' : '.' }}</span>
   </div>
   <mat-list>
-    <app-game-list-element *ngFor="let element of filteredMatches" [data]="element" [gameTypes]="gameTypes" [currentUserName]="(authState$ | async).profile.userName"></app-game-list-element>
+    <app-game-list-element
+      *ngFor="let element of filteredMatches"
+      [data]="element" [gameTypes]="gameTypes"
+      [currentUserName]="(authState$ | async).profile.userName"
+      (playClicked)="onPlayClicked(element)"></app-game-list-element>
   </mat-list>
 </mat-card>

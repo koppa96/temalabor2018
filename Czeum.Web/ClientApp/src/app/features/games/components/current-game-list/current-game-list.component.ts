@@ -6,6 +6,7 @@ import { gameListOrderings } from '../../models/game-list-orderings';
 import { Store } from '@ngrx/store';
 import { AuthState, State } from '../../../../reducers';
 import { Observable, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-current-game-list',
@@ -25,7 +26,7 @@ export class CurrentGameListComponent implements OnInit, OnChanges, OnDestroy {
 
   subscription: Subscription;
 
-  constructor(private store: Store<State>) {
+  constructor(private store: Store<State>, private router: Router) {
     this.authState$ = store.select(x => x.authState);
   }
 
@@ -51,6 +52,10 @@ export class CurrentGameListComponent implements OnInit, OnChanges, OnDestroy {
         .filter(x => x.players.some(p => p.username.toLowerCase().includes(this.filterText.toLowerCase())))
         .sort(this.selectedOrdering.comparator);
     }
+  }
+
+  onPlayClicked(matchStatus: MatchStatus) {
+    this.router.navigate([ `/games/${matchStatus.id}/${matchStatus.currentBoard.gameIdentifier}` ]);
   }
 
 }

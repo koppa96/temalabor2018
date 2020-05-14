@@ -1,0 +1,8 @@
+<mat-card-title>Connect4 játék</mat-card-title>
+<div #boardContainer class="flex-grow-1">
+  <ng-container *ngIf="matchStatus">
+    <div *ngFor="let row of matchStatus.currentBoard.content.board" [ngStyle]="{ height: cellSize + 'px' }">
+      <div *ngFor="let cell of row" class="h-100" [ngStyle]="{ width: cellSize + 'px' }"></div>
+    </div>
+  </ng-container>
+</div>

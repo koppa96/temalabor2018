@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GameState, GameTypeDto, MatchStatus } from '../../../../shared/clients';
 import { faChessPawn, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { GameIconMapperService } from '../../services/game-icon-mapper.service';
@@ -17,6 +17,7 @@ export class GameListElementComponent implements OnInit {
   @Input() data: MatchStatus;
   @Input() currentUserName;
   @Input() gameTypes: GameTypeDto[] = [];
+  @Output() playClicked = new EventEmitter();
 
   constructor(private gameIconMapperService: GameIconMapperService) { }
 
@@ -59,7 +60,7 @@ export class GameListElementComponent implements OnInit {
   }
 
   onPlayClicked() {
-    // TODO: Redirect to game page
+    this.playClicked.emit();
   }
 
 }

@@ -1,0 +1,15 @@
+.chat-container {
+  & ::ng-deep mat-form-field {
+    .mat-form-field-wrapper {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+}
+
+.no-message-icon {
+  font-size: 80px;
+  height: 80px;
+  width: 80px;
+  margin-right: 20px;
+}
