@@ -11,14 +11,30 @@ $dark-color: #202020;
   border-radius: 10px;
 
   .chess-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s;
+
     &.black {
       background-color: $dark-color;
     }
 
+    &.piece-clicked {
+      border: 4px solid yellow;
+
+      img {
+        height: 100%;
+        width: 100%;
+      }
+    }
+
     img {
-      height: 100%;
-      width: 100%;
+      height: 85%;
+      width: 85%;
       object-fit: contain;
+
+      transition: height 0.4s, width 0.4s;
     }
   }
 }

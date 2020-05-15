@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatchStatus } from '../models/common.models';
 import { GameState } from '../../../../../shared/clients';
 import { ChessBoardData, Color, PieceType } from '../models/chess.models';
@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ObservableHub } from '../../../../../shared/services/observable-hub.service';
 import { Subscription } from 'rxjs';
 import { GameEndDialogComponent } from '../../../../../shared/components/game-end-dialog/game-end-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-chess',
@@ -17,8 +17,12 @@ import { MatDialog } from '@angular/material';
 export class ChessComponent implements OnInit, AfterViewInit {
   matchStatus: MatchStatus<ChessBoardData>;
   cellSize: number;
-  gameStates = GameState;
   cellIndices = [ 0, 1, 2, 3, 4, 5, 6, 7 ];
+  selectedPieceCoordinates: { row: number; column: number };
+
+  get currentPlayerColor() {
+    return this.matchStatus.playerIndex === 0 ? Color.White : Color.Black;
+  }
 
   subscription = new Subscription();
 
@@ -28,7 +32,9 @@ export class ChessComponent implements OnInit, AfterViewInit {
     private matchService: MatchService,
     private route: ActivatedRoute,
     private observableHub: ObservableHub,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
@@ -57,6 +63,7 @@ export class ChessComponent implements OnInit, AfterViewInit {
     const cellWidth = this.boardContainer.nativeElement.clientWidth / 8;
 
     this.cellSize = Math.min(cellHeight, cellWidth);
+    this.changeDetectorRef.detectChanges();
   }
 
   showGameEndDialogIfNeeded() {
@@ -89,6 +96,65 @@ export class ChessComponent implements OnInit, AfterViewInit {
       case PieceType.Rook: route += 'rook.png'; break;
     }
     return route;
+  }
+
+  tileClicked(row: number, column: number) {
+    if (this.matchStatus.state === GameState.YourTurn) {
+      const piece = this.matchStatus.currentBoard.content.pieceInfos.find(x => x.row === row && x.column === column);
+      if (piece) {
+        if (piece.color === this.currentPlayerColor) {
+          this.selectedPieceCoordinates = { row: piece.row, column: piece.column };
+        } else if (this.selectedPieceCoordinates) {
+          this.sendMove(row, column);
+          this.selectedPieceCoordinates = null;
+        } else {
+          this.snackBar.open(
+            'Válassz ki az egyik saját bábudat a lépéshez!',
+            'BEZÁR',
+            {
+              duration: 5000,
+              panelClass: [ 'snackbar' ]
+            }
+          );
+        }
+      } else {
+        if (this.selectedPieceCoordinates) {
+          this.sendMove(row, column);
+          this.selectedPieceCoordinates = null;
+        } else {
+          this.snackBar.open(
+            'Válassz ki az egyik saját bábudat a lépéshez!',
+            'BEZÁR',
+            {
+              duration: 5000,
+              panelClass: [ 'snackbar' ]
+            }
+          );
+        }
+      }
+    } else {
+      this.snackBar.open(
+        'Nem te következel!',
+        'BEZÁR',
+        {
+          duration: 5000,
+          panelClass: [ 'snackbar' ]
+        }
+      )
+    }
+  }
+
+  sendMove(row: number, column: number) {
+    this.matchService.sendMove(this.matchStatus.id, this.matchStatus.currentBoard.gameIdentifier, {
+      matchId: this.matchStatus.id,
+      fromRow: this.selectedPieceCoordinates.row,
+      fromColumn: this.selectedPieceCoordinates.column,
+      toRow: row,
+      toColumn: column
+    }).subscribe(result => {
+      this.matchStatus = result as any;
+      this.showGameEndDialogIfNeeded();
+    });
   }
 
 }
