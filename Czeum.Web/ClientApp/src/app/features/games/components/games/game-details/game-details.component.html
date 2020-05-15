@@ -1,0 +1,33 @@
+<div fxLayoutAlign="space-between center">
+  <mat-card-title>{{ gameTypeName }} játék</mat-card-title>
+  <div fxLayoutAlign="end center" fxLayoutGap="10px" class="gray-text" *ngIf="matchStatus" [ngSwitch]="matchStatus.state">
+    <ng-container *ngSwitchCase="gameStates.YourTurn">
+      <mat-icon>warning</mat-icon>
+      <span>Te következel!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.EnemyTurn">
+      <mat-icon>hourglass_empty</mat-icon>
+      <span>Kérjük várj amíg az ellenfeleid befejezik a lépésüket!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.Won">
+      <mat-icon>emoji_events</mat-icon>
+      <span>Megnyerted a játékot!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.Draw">
+      <mat-icon>thumbs_up_down</mat-icon>
+      <span>Ez a játék döntetlen lett!</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="gameStates.Lost">
+      <mat-icon>trending_down</mat-icon>
+      <span>Elvesztetted a játékot!</span>
+    </ng-container>
+  </div>
+</div>
+<div fxLayout>
+  <div fxFlex="60%">
+    <p><b>Rövid leírás:</b> {{ description }}</p>
+  </div>
+  <div fxLayoutAlign="end center" fxLayoutGap="20px" fxFlex="40%" *ngIf="matchStatus">
+    <app-player *ngFor="let player of matchStatus.players" [username]="player.username" [iconSize]="45"></app-player>
+  </div>
+</div>

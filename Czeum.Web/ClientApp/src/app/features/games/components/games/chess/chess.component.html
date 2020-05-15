@@ -1,1 +1,16 @@
-<p>chess works!</p>
+<app-game-details
+  [matchStatus]="matchStatus"
+  gameTypeName="Sakk"
+  description="Hozd az ellenfeled olyan helyzetbe, hogy a királya ne tudja elkerülni a leütést!">
+</app-game-details>
+<div #boardContainer class="flex-grow-1 d-flex justify-content-center align-items-center">
+  <div *ngIf="matchStatus" class="d-inline-block mat-elevation-z10 chess-board">
+    <div class="d-flex" *ngFor="let rowIndex of cellIndices" [ngStyle]="{ height: cellSize + 'px' }">
+      <div *ngFor="let columnIndex of cellIndices" [ngStyle]="{ width: cellSize + 'px' }" [ngClass]="{
+        'black': rowIndex % 2 === 0 && columnIndex % 2 === 1 || rowIndex % 2 === 1 && columnIndex % 2 === 0
+      }" class="chess-cell">
+        <img *ngIf="isPieceOnTile(rowIndex, columnIndex)" [src]="getPieceFile(rowIndex, columnIndex)">
+      </div>
+    </div>
+  </div>
+</div>

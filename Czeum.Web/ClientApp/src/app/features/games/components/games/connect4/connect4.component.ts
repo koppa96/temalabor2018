@@ -23,7 +23,6 @@ export class Connect4Component implements OnInit, OnDestroy {
   cellSize: number;
   columnHover: boolean[] = [];
   connect4Items = Connect4Item;
-  gameStates = GameState;
 
   @ViewChild('boardContainer', { static: false }) boardContainer: ElementRef<HTMLDivElement>;
 

@@ -14,6 +14,7 @@ import { GameDetailsPageComponent } from './pages/game-details/game-details-page
 import { ChessComponent } from './components/games/chess/chess.component';
 import { Connect4Component } from './components/games/connect4/connect4.component';
 import { GameChatComponent } from './components/game-chat/game-chat.component';
+import { GameDetailsComponent } from './components/games/game-details/game-details.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { GameChatComponent } from './components/game-chat/game-chat.component';
     GameDetailsPageComponent,
     ChessComponent,
     Connect4Component,
-    GameChatComponent
+    GameChatComponent,
+    GameDetailsComponent
   ],
   imports: [
     CommonModule,

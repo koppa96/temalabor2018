@@ -10,7 +10,6 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { AuthState } from '../../../../reducers';
 
 @Component({
-  selector: 'app-game-details',
   templateUrl: './game-details-page.component.html',
   styleUrls: ['./game-details-page.component.scss']
 })
