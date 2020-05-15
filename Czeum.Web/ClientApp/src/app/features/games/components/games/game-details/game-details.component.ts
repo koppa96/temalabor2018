@@ -12,6 +12,7 @@ export class GameDetailsComponent implements OnInit {
   @Input() gameTypeName: string;
   @Input() matchStatus: MatchStatus;
   @Input() description: string;
+  @Input() isSending: boolean;
 
   gameStates = GameState;
 

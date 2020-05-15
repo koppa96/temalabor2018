@@ -1,25 +1,31 @@
 <div fxLayoutAlign="space-between center">
   <mat-card-title>{{ gameTypeName }} játék</mat-card-title>
-  <div fxLayoutAlign="end center" fxLayoutGap="10px" class="gray-text" *ngIf="matchStatus" [ngSwitch]="matchStatus.state">
-    <ng-container *ngSwitchCase="gameStates.YourTurn">
-      <mat-icon>warning</mat-icon>
-      <span>Te következel!</span>
+  <div fxLayoutAlign="end center" fxLayoutGap="10px" class="gray-text" *ngIf="matchStatus">
+    <ng-container *ngIf="isSending">
+      <mat-spinner [diameter]="12"></mat-spinner>
+      <span>Lépés feldolgozása...</span>
     </ng-container>
-    <ng-container *ngSwitchCase="gameStates.EnemyTurn">
-      <mat-icon>hourglass_empty</mat-icon>
-      <span>Kérjük várj amíg az ellenfeleid befejezik a lépésüket!</span>
-    </ng-container>
-    <ng-container *ngSwitchCase="gameStates.Won">
-      <mat-icon>emoji_events</mat-icon>
-      <span>Megnyerted a játékot!</span>
-    </ng-container>
-    <ng-container *ngSwitchCase="gameStates.Draw">
-      <mat-icon>thumbs_up_down</mat-icon>
-      <span>Ez a játék döntetlen lett!</span>
-    </ng-container>
-    <ng-container *ngSwitchCase="gameStates.Lost">
-      <mat-icon>trending_down</mat-icon>
-      <span>Elvesztetted a játékot!</span>
+    <ng-container *ngIf="!isSending" [ngSwitch]="matchStatus.state">
+      <ng-container *ngSwitchCase="gameStates.YourTurn">
+        <mat-icon>warning</mat-icon>
+        <span>Te következel!</span>
+      </ng-container>
+      <ng-container *ngSwitchCase="gameStates.EnemyTurn">
+        <mat-icon>hourglass_empty</mat-icon>
+        <span>Kérjük várj amíg az ellenfeleid befejezik a lépésüket!</span>
+      </ng-container>
+      <ng-container *ngSwitchCase="gameStates.Won">
+        <mat-icon>emoji_events</mat-icon>
+        <span>Megnyerted a játékot!</span>
+      </ng-container>
+      <ng-container *ngSwitchCase="gameStates.Draw">
+        <mat-icon>thumbs_up_down</mat-icon>
+        <span>Ez a játék döntetlen lett!</span>
+      </ng-container>
+      <ng-container *ngSwitchCase="gameStates.Lost">
+        <mat-icon>trending_down</mat-icon>
+        <span>Elvesztetted a játékot!</span>
+      </ng-container>
     </ng-container>
   </div>
 </div>

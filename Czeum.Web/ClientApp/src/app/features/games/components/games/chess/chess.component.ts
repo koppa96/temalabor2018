@@ -8,6 +8,7 @@ import { ObservableHub } from '../../../../../shared/services/observable-hub.ser
 import { Subscription } from 'rxjs';
 import { GameEndDialogComponent } from '../../../../../shared/components/game-end-dialog/game-end-dialog.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chess',
@@ -15,18 +16,23 @@ import { MatDialog, MatSnackBar } from '@angular/material';
   styleUrls: ['./chess.component.scss']
 })
 export class ChessComponent implements OnInit, AfterViewInit {
+  private verticalPaddingAndBorder = 6;
+  private horizontalPaddingAndBorder = 6;
+
   matchStatus: MatchStatus<ChessBoardData>;
   cellSize: number;
-  cellIndices = [ 0, 1, 2, 3, 4, 5, 6, 7 ];
+  cellIndices: number[];
   selectedPieceCoordinates: { row: number; column: number };
+  isSending = false;
 
-  get currentPlayerColor() {
+  get currentPlayerColor(): Color {
+    console.log(this.matchStatus.playerIndex === 0 ? Color.White : Color.Black);
     return this.matchStatus.playerIndex === 0 ? Color.White : Color.Black;
   }
 
   subscription = new Subscription();
 
-  @ViewChild('boardContainer', { static: false }) boardContainer: ElementRef<HTMLDivElement>;
+  @ViewChild('boardContainer', {static: false}) boardContainer: ElementRef<HTMLDivElement>;
 
   constructor(
     private matchService: MatchService,
@@ -35,12 +41,14 @@ export class ChessComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
     private snackBar: MatSnackBar
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     const matchId = this.route.parent.snapshot.params.matchId;
     this.matchService.getMatch(matchId).subscribe(result => {
       this.matchStatus = result as any;
+      this.cellIndices = this.currentPlayerColor === Color.White ? [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0];
 
       this.subscription.add(this.observableHub.receiveResult.subscribe(moveResult => {
         this.matchStatus = moveResult as any;
@@ -59,8 +67,10 @@ export class ChessComponent implements OnInit, AfterViewInit {
   }
 
   calculateCellSize() {
-    const cellHeight = this.boardContainer.nativeElement.clientHeight / 8;
-    const cellWidth = this.boardContainer.nativeElement.clientWidth / 8;
+    const cellHeight = (this.boardContainer.nativeElement.clientHeight - this.verticalPaddingAndBorder) / 8;
+    const cellWidth = (this.boardContainer.nativeElement.clientWidth - this.horizontalPaddingAndBorder) / 8;
+
+    console.log({ height: this.boardContainer.nativeElement.clientHeight, width: this.boardContainer.nativeElement.clientWidth});
 
     this.cellSize = Math.min(cellHeight, cellWidth);
     this.changeDetectorRef.detectChanges();
@@ -88,12 +98,24 @@ export class ChessComponent implements OnInit, AfterViewInit {
     const piece = this.matchStatus.currentBoard.content.pieceInfos.find(x => x.row === row && x.column === column);
     let route = 'assets/' + (piece.color === Color.Black ? 'b_' : 'w_');
     switch (piece.type) {
-      case PieceType.Bishop: route += 'bishop.png'; break;
-      case PieceType.King: route += 'king.png'; break;
-      case PieceType.Knight: route += 'knight.png'; break;
-      case PieceType.Pawn: route += 'pawn.png'; break;
-      case PieceType.Queen: route += 'queen.png'; break;
-      case PieceType.Rook: route += 'rook.png'; break;
+      case PieceType.Bishop:
+        route += 'bishop.png';
+        break;
+      case PieceType.King:
+        route += 'king.png';
+        break;
+      case PieceType.Knight:
+        route += 'knight.png';
+        break;
+      case PieceType.Pawn:
+        route += 'pawn.png';
+        break;
+      case PieceType.Queen:
+        route += 'queen.png';
+        break;
+      case PieceType.Rook:
+        route += 'rook.png';
+        break;
     }
     return route;
   }
@@ -103,7 +125,7 @@ export class ChessComponent implements OnInit, AfterViewInit {
       const piece = this.matchStatus.currentBoard.content.pieceInfos.find(x => x.row === row && x.column === column);
       if (piece) {
         if (piece.color === this.currentPlayerColor) {
-          this.selectedPieceCoordinates = { row: piece.row, column: piece.column };
+          this.selectedPieceCoordinates = {row: piece.row, column: piece.column};
         } else if (this.selectedPieceCoordinates) {
           this.sendMove(row, column);
           this.selectedPieceCoordinates = null;
@@ -113,7 +135,7 @@ export class ChessComponent implements OnInit, AfterViewInit {
             'BEZÁR',
             {
               duration: 5000,
-              panelClass: [ 'snackbar' ]
+              panelClass: ['snackbar']
             }
           );
         }
@@ -127,7 +149,7 @@ export class ChessComponent implements OnInit, AfterViewInit {
             'BEZÁR',
             {
               duration: 5000,
-              panelClass: [ 'snackbar' ]
+              panelClass: ['snackbar']
             }
           );
         }
@@ -138,23 +160,25 @@ export class ChessComponent implements OnInit, AfterViewInit {
         'BEZÁR',
         {
           duration: 5000,
-          panelClass: [ 'snackbar' ]
+          panelClass: ['snackbar']
         }
-      )
+      );
     }
   }
 
   sendMove(row: number, column: number) {
+    this.isSending = true;
     this.matchService.sendMove(this.matchStatus.id, this.matchStatus.currentBoard.gameIdentifier, {
       matchId: this.matchStatus.id,
       fromRow: this.selectedPieceCoordinates.row,
       fromColumn: this.selectedPieceCoordinates.column,
       toRow: row,
       toColumn: column
-    }).subscribe(result => {
+    }).pipe(
+      finalize(() => this.isSending = false)
+    ).subscribe(result => {
       this.matchStatus = result as any;
       this.showGameEndDialogIfNeeded();
     });
   }
-
 }
