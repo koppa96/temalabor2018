@@ -22,7 +22,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
   isLoading = false;
   isSending = false;
 
-  subscription: Subscription;
+  subscription = new Subscription();
   messageReceived = new Subject();
 
   constructor(
@@ -44,11 +44,16 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
 
         this.lobbyService.getLobbyMessages(res.content.id, 25).subscribe(messages => {
           this.messages = messages;
-          this.subscription = this.observableHub.receiveLobbyMessage.subscribe(args => {
+          this.subscription.add(this.observableHub.receiveLobbyMessage.subscribe(args => {
             this.messages.elements.push(args.message);
             this.messageReceived.next();
-          });
+          }));
         });
+
+        this.subscription.add(this.observableHub.matchCreated.subscribe(match => {
+          this.store.dispatch(leaveLobby());
+          this.router.navigate(['games', match.id, match.currentBoard.gameIdentifier]);
+        }));
       }
       this.isLoading = false;
     },
@@ -99,7 +104,7 @@ export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
       take(1)
     ).subscribe(lobby => {
       this.lobbyService.createMatchFromLobby(lobby.content.id).subscribe(match => {
-        this.router.navigate(['/']).then(() => {
+        this.router.navigate(['games', match.id, match.currentBoard.gameIdentifier]).then(() => {
           this.store.dispatch(leaveLobby());
         });
       });
