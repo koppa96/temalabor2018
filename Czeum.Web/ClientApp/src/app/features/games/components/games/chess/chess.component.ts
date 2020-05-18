@@ -41,8 +41,8 @@ export class ChessComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
     private snackBar: MatSnackBar
-  ) {
-  }
+  ) { }
+
 
   ngOnInit() {
     const matchId = this.route.parent.snapshot.params.matchId;
