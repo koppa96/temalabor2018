@@ -1,10 +1,10 @@
 import { ActionReducerMap } from '@ngrx/store';
-import { friendListReducer } from './friend-list/friend-list-reducers';
-import { soloQueueReducer } from './solo-queue/solo-queue-reducers';
 import { Profile } from '../authentication/auth-config-models';
-import { authStateReducer, pkcsStringReducer } from './authentication/auth-reducers';
 import { LobbyDataWrapper, FriendDto } from '../shared/clients';
-import { currentLobbyReducer } from './current-lobby/current-lobby-reducers';
+import { friendListReducerFunction } from './friend-list/friend-list-reducers';
+import { soloQueueReducerFunction } from './solo-queue/solo-queue-reducers';
+import { authStateReducerFunction, pkcsStringReducerFunction } from './authentication/auth-reducers';
+import { currentLobbyReducerFunction } from './current-lobby/current-lobby-reducers';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -24,9 +24,9 @@ export interface State {
 }
 
 export const reducers: ActionReducerMap<State> = {
-  friendList: friendListReducer,
-  isQueueing: soloQueueReducer,
-  authState: authStateReducer,
-  pkceString: pkcsStringReducer,
-  currentLobby: currentLobbyReducer
+  friendList: friendListReducerFunction,
+  isQueueing: soloQueueReducerFunction,
+  authState: authStateReducerFunction,
+  pkceString: pkcsStringReducerFunction,
+  currentLobby: currentLobbyReducerFunction
 };

@@ -1,11 +1,11 @@
-import { createReducer, on } from '@ngrx/store';
+import { Action, createReducer, on } from '@ngrx/store';
 import { updateFriendList, updateFriend, addFriend, removeFriend } from './friend-list-actions';
 import { FriendDto } from 'src/app/shared/clients';
 import { firstBy } from 'thenby';
 
 export const initialState: FriendDto[] = [];
 
-export const friendListReducer = createReducer(initialState,
+const friendListReducer = createReducer(initialState,
   on(updateFriendList, (state, { updatedList }) => {
     return updatedList;
   }),
@@ -30,3 +30,7 @@ export const friendListReducer = createReducer(initialState,
   on((removeFriend), (state, { friendshipId }) => {
     return state.filter(x => x.friendshipId !== friendshipId);
   }));
+
+export function friendListReducerFunction(state: FriendDto[], action: Action) {
+  return friendListReducer(state, action);
+}
