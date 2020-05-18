@@ -4,6 +4,7 @@ import { GameState, GameTypeDto, MatchStatus } from '../../../../shared/clients'
 import { RollList } from '../../../../shared/models/roll-list';
 import { ObservableHub } from '../../../../shared/services/observable-hub.service';
 import { Subject, Subscription } from 'rxjs';
+import { toLocalDate } from '../../../../shared/services/date-utils';
 
 @Component({
   selector: 'app-current-game-list.page',
@@ -35,6 +36,8 @@ export class CurrentGameListPageComponent implements OnInit, OnDestroy {
       }));
 
       this.subscription.add(this.observableHub.receiveResult.subscribe(status => {
+        status.lastMoveDate = toLocalDate(status.lastMoveDate);
+        status.createDate = toLocalDate(status.createDate);
         const currentIndex = this.matches.elements.findIndex(x => x.id === status.id);
         if (status.state === GameState.Draw || status.state === GameState.Won || status.state === GameState.Lost) {
           this.matches.elements.splice(currentIndex, 1);

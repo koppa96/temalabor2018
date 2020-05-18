@@ -22,7 +22,6 @@ export class GameListElementComponent implements OnInit {
   constructor(private gameIconMapperService: GameIconMapperService) { }
 
   ngOnInit() {
-    console.log(this.data);
   }
 
   getIcon(gameIdentifier: number): IconDefinition {
