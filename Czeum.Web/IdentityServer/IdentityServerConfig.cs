@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Czeum.Web.IdentityServer
 {
@@ -26,6 +27,17 @@ namespace Czeum.Web.IdentityServer
                     UserClaims = { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Subject }
                 }
             };
+        }
+
+        public static IEnumerable<Client> GetClientsFromConfiguration(IConfiguration configuration)
+        {
+            var clients = configuration.GetSection("IdentityServer:Clients").GetChildren();
+            foreach (var client in clients)
+            {
+                var clientObj = new Client();
+                client.Bind(clientObj);
+                yield return clientObj;
+            }
         }
 
         public static IEnumerable<Client> GetClients()

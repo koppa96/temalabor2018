@@ -110,7 +110,7 @@ namespace Czeum.Web
                 .AddInMemoryPersistedGrants()
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
-                .AddInMemoryClients(IdentityServerConfig.GetClients())
+                .AddInMemoryClients(IdentityServerConfig.GetClientsFromConfiguration(Configuration))
                 .AddCorsPolicyService<CorsPolicyService>()
                 .AddAspNetIdentity<User>();
 
