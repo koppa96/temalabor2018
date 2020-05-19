@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Czeum.Core.DTOs.Chess;
 
@@ -115,5 +116,7 @@ namespace Czeum.ChessLogic.Pieces
 
             throw new ArgumentException($"Could not parse piece string: {str}");
         }
+
+        public abstract List<ChessMoveData> GetPossibleMoves();
     }
 }

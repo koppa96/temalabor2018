@@ -93,7 +93,7 @@ namespace Czeum.ChessLogic
             return from.Piece?.TestMove(to) ?? false;
         }
 
-        private void UndoMove(Field from, Field to)
+        public void UndoMove(Field from, Field to)
         {
             to.Piece?.UndoMove(from);
             if (hitPiece != null)
@@ -196,35 +196,10 @@ namespace Czeum.ChessLogic
 
         public List<ChessMoveData> GetPossibleMovesFor(Color color)
         {
-            hitPiece = null;
-            var myPieces = pieces.Where(p => p.Color == color).ToList();
-            var possibleMoves = new List<ChessMoveData>();
-            foreach (var piece in myPieces)
-            {
-                foreach (var field in board)
-                {
-                    if (piece.CanMoveTo(field))
-                    {
-                        var originalField = piece.Field!;
-                        TestMovePiece(originalField, field);
-                        
-                        if (IsKingSafe(color))
-                        {
-                            possibleMoves.Add(new ChessMoveData
-                            {
-                                FromRow = piece.Field!.Row,
-                                FromColumn = piece.Field!.Column,
-                                ToRow = field.Row,
-                                ToColumn = field.Column
-                            });
-                        }
-
-                        UndoMove(originalField, field);
-                    }
-                }
-            }
-
-            return possibleMoves;
+            return pieces.Where(p => p.Color == color)
+                .ToList()
+                .SelectMany(p => p.GetPossibleMoves())
+                .ToList();
         }
 
         public bool Stalemate(Color color, List<ChessMoveData> possibleMoves)

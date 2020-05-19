@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Czeum.Core.DTOs.Chess;
 
 namespace Czeum.ChessLogic.Pieces
 {
-    public class Queen : Piece
+    public class Queen : StraightLineMover
     {
         public override PieceInfo PieceInfo => new PieceInfo()
         {
@@ -28,6 +29,23 @@ namespace Czeum.ChessLogic.Pieces
                    targetField.Column == Field!.Column && Board.RouteClear(Field!, targetField) ||
                    Math.Abs(targetField.Row - Field!.Row) == Math.Abs(targetField.Column - Field!.Column) &&
                    Board.RouteClear(Field!, targetField);
+        }
+
+        public override List<ChessMoveData> GetPossibleMoves()
+        {
+            var directions = new List<Direction>
+            {
+                Direction.Above,
+                Direction.AboveRight,
+                Direction.Right,
+                Direction.BelowRight,
+                Direction.Below,
+                Direction.BelowLeft,
+                Direction.Left,
+                Direction.AboveLeft
+            };
+
+            return GetPossibleMoves(directions);
         }
     }
 }
