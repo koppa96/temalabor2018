@@ -26,12 +26,7 @@ namespace Czeum.ChessLogic.Pieces
                 return false;
             }
 
-            Field!.RemovePiece(this);
-
-            var canMove = Math.Abs(targetField.Row - Field!.Row) < 2 && Math.Abs(targetField.Column - Field!.Column) < 2 
-                   && Board.IsFieldSafe(Color, targetField) && (targetField.Empty || targetField.Piece!.Color != Color);
-
-            Field.AddPiece(this);
+            var canMove = Math.Abs(targetField.Row - Field!.Row) < 2 && Math.Abs(targetField.Column - Field!.Column) < 2;
 
             return canMove;
         }

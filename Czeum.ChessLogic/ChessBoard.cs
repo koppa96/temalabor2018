@@ -196,7 +196,8 @@ namespace Czeum.ChessLogic
 
         public List<ChessMoveData> GetPossibleMovesFor(Color color)
         {
-            var myPieces = pieces.Where(p => p.Color == color);
+            hitPiece = null;
+            var myPieces = pieces.Where(p => p.Color == color).ToList();
             var possibleMoves = new List<ChessMoveData>();
             foreach (var piece in myPieces)
             {
@@ -204,13 +205,21 @@ namespace Czeum.ChessLogic
                 {
                     if (piece.CanMoveTo(field))
                     {
-                        possibleMoves.Add(new ChessMoveData
+                        var originalField = piece.Field!;
+                        TestMovePiece(originalField, field);
+                        
+                        if (IsKingSafe(color))
                         {
-                            FromRow = piece.Field!.Row,
-                            FromColumn = piece.Field!.Column,
-                            ToRow = field.Row,
-                            ToColumn = field.Column
-                        });
+                            possibleMoves.Add(new ChessMoveData
+                            {
+                                FromRow = piece.Field!.Row,
+                                FromColumn = piece.Field!.Column,
+                                ToRow = field.Row,
+                                ToColumn = field.Column
+                            });
+                        }
+
+                        UndoMove(field, originalField);
                     }
                 }
             }
