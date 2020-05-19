@@ -292,5 +292,110 @@ namespace Czeum.Application.Services
 
             return matchConverter.ConvertFor(match, identityService.GetCurrentUserName());
         }
+
+        public async Task<MatchStatus> CallDrawAsync(Guid matchId)
+        {
+            var currentUserId = identityService.GetCurrentUserId();
+            var match = await context.Matches.Include(x => x.Users)
+                    .ThenInclude(x => x.User)
+                .Include(x => x.Board)
+                .Include(x => x.Winner)
+                .CustomSingleAsync(x => x.Id == matchId, "No match with the given id exists.");
+
+            if (match.Users.All(x => x.Id != currentUserId))
+            {
+                throw new UnauthorizedAccessException("You are not playing this match.");
+            }
+
+            if (match.State == MatchState.Finished)
+            {
+                throw new InvalidOperationException("You can not call draw in a finished match.");
+            }
+
+            var user = match.Users.Single(x => x.UserId == currentUserId);
+
+            if (user.Resigned || user.VotesForDraw)
+            {
+                throw new InvalidOperationException("You have already resigned or called draw.");
+            }
+
+            user.VotesForDraw = true;
+            if (match.Users.All(x => x.VotesForDraw))
+            {
+                match.Draw();
+            }
+
+            await context.SaveChangesAsync();
+
+            await notificationService.NotifyEachAsync(match.Users
+                .Where(um => um.UserId != currentUserId)
+                .Select(um => new KeyValuePair<string, Func<ICzeumClient, Task>>(um.User.UserName,
+                    client => client.ReceiveResult(matchConverter.ConvertFor(match, um.User.UserName)))));
+
+            return matchConverter.ConvertFor(match,
+                match.Users.Single(um => um.UserId == currentUserId).User.UserName);
+        }
+
+        public async Task<MatchStatus> ResignAsync(Guid matchId)
+        {
+            var currentUserId = identityService.GetCurrentUserId();
+            var match = await context.Matches.Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                        .ThenInclude(u => u.UserAchivements)
+                .Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                        .ThenInclude(u => u.Matches)
+                            .ThenInclude(um => um.Match)
+                                .ThenInclude(m => m.Board)
+                .Include(m => m.Users)
+                    .ThenInclude(um => um.User)
+                        .ThenInclude(u => u.WonMatches)
+                .CustomSingleAsync(m => m.Id == matchId, "No match with the given id was found.");
+
+            if (match.Users.All(x => x.Id != currentUserId))
+            {
+                throw new UnauthorizedAccessException("You are not playing this match.");
+            }
+
+            if (match.State == MatchState.Finished)
+            {
+                throw new InvalidOperationException("You can not resign in a finished match.");
+            }
+
+            var user = match.Users.Single(x => x.UserId == currentUserId);
+            if (user.Resigned)
+            {
+                throw new InvalidOperationException("You have already resigned.");
+            }
+
+            user.Resigned = true;
+
+            if (match.Users.Count(x => !x.Resigned) == 1)
+            {
+                var winner = match.Users.Single(x => !x.Resigned);
+                match.Winner = winner.User;
+                match.State = MatchState.Finished;
+            }
+
+            var unlockedAchivements = await achivementService.CheckUnlockedAchivementsAsync(match.Users.Select(x => x.User));
+            context.UserAchivements.AddRange(unlockedAchivements);
+
+            await context.SaveChangesAsync();
+
+            await notificationPersistenceService.PersistNotificationsAsync(NotificationType.AchivementUnlocked,
+                unlockedAchivements.Select(x => x.UserId));
+
+            await notificationService.NotifyEachAsync(match.Users
+                .Where(um => um.UserId != currentUserId)
+                .Select(um => new KeyValuePair<string, Func<ICzeumClient, Task>>(um.User.UserName,
+                    client => client.ReceiveResult(matchConverter.ConvertFor(match, um.User.UserName)))));
+
+            await notificationService.NotifyEachAsync(unlockedAchivements
+                .Select(x => new KeyValuePair<string, Func<ICzeumClient, Task>>(x.User.UserName,
+                    client => client.AchivementUnlocked(mapper.Map<AchivementDto>(x)))));
+
+            return matchConverter.ConvertFor(match,
+                match.Users.Single(um => um.UserId == currentUserId).User.UserName);
+        }
     }
 }

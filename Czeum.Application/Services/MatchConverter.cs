@@ -30,7 +30,7 @@ namespace Czeum.Application.Services
                 CurrentPlayerIndex = match.CurrentPlayerIndex,
                 PlayerIndex = match.Users.Single(u => u.User.UserName == user).PlayerIndex,
                 CurrentBoard = mapper.Map<MoveResultWrapper>(converter.Convert(match.Board)),
-                Players = match.Users.Select(um => new Player { Username = um.User.UserName, PlayerIndex = um.PlayerIndex }),
+                Players = match.Users.Select(um => new Player { Username = um.User.UserName, PlayerIndex = um.PlayerIndex, VotesForDraw = um.VotesForDraw, Resigned = um.Resigned }),
                 State = ConvertState(match, user),
                 Winner = match.Winner?.UserName,
                 CreateDate = match.CreateTime,

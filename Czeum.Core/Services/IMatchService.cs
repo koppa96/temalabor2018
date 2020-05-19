@@ -51,5 +51,7 @@ namespace Czeum.Core.Services
         Task<IEnumerable<string>> GetOthersInMatchAsync(Guid matchId);
         Task<IEnumerable<GameTypeDto>> GetAvailableGameTypesAsync();
         Task<MatchStatus> GetMatchAsync(Guid matchId);
+        Task<MatchStatus> CallDrawAsync(Guid matchId);
+        Task<MatchStatus> ResignAsync(Guid matchId);
     }
 }

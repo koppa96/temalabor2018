@@ -10,5 +10,7 @@ namespace Czeum.Domain.Entities
         public Match Match { get; set; }
         public Guid? MatchId { get; set; }
         public int PlayerIndex { get; set; }
+        public bool VotesForDraw { get; set; }
+        public bool Resigned { get; set; }
     }
 }

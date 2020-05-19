@@ -74,6 +74,24 @@ namespace Czeum.Web.Controllers
             return Ok(await matchService.HandleMoveAsync(moveDataWrapper.Content));
         }
 
+        [HttpPost("{matchId}/call-draw")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        public Task<MatchStatus> VoteForDraw(Guid matchId)
+        {
+            return matchService.CallDrawAsync(matchId);
+        }
+
+        [HttpPost("{matchId}/resign")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        public Task<MatchStatus> Resign(Guid matchId)
+        {
+            return matchService.ResignAsync(matchId);
+        }
+
         [HttpGet("{matchId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
