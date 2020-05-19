@@ -17,7 +17,7 @@ import { ObservableHub } from '../../../../shared/services/observable-hub.servic
   styleUrls: ['./lobby-details.page.component.scss']
 })
 export class LobbyDetailsPageComponent implements OnInit, OnDestroy {
-  messages: RollList<Message>;
+  messages: RollList<Message> = new RollList<Message>();
   currentLobby$: Observable<LobbyDataWrapper>;
   isLoading = false;
   isSending = false;
