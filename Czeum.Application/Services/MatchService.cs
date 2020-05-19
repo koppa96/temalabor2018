@@ -223,7 +223,7 @@ namespace Czeum.Application.Services
         private async Task<RollListDto<MatchStatus>> GetRollListByState(MatchState matchState, Guid? oldestId, int count)
         {
             var currentUserName = identityService.GetCurrentUserName();
-            Expression<Func<Match, bool>> filter = x => x.State == matchState;
+            Expression<Func<Match, bool>> filter = x => x.State == matchState && x.Users.Any(u => u.User.UserName == currentUserName);
             if (oldestId.HasValue)
             {
                 var oldest = await context.Matches.CustomFindAsync(oldestId, "No such match.");
