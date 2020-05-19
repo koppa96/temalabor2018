@@ -219,7 +219,7 @@ namespace Czeum.ChessLogic
                             });
                         }
 
-                        UndoMove(field, originalField);
+                        UndoMove(originalField, field);
                     }
                 }
             }
