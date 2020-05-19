@@ -47,10 +47,12 @@ export class LobbyChatComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.scrollbars.changes.subscribe((components: QueryList<PerfectScrollbarComponent>) => {
-      this.scrollbar = components.first;
-      this.scrollbar.directiveRef.scrollToBottom(0);
-    });
+    this.subscription.add(this.scrollbars.changes.subscribe((components: QueryList<PerfectScrollbarComponent>) => {
+      if (components.first) {
+        this.scrollbar = components.first;
+        this.scrollbar.directiveRef.scrollToBottom(0);
+      }
+    }));
   }
 
   ngOnDestroy() {

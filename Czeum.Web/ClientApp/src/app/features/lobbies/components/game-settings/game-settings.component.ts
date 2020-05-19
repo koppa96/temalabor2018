@@ -17,7 +17,10 @@ export class GameSettingsComponent implements OnInit {
   constructor(private store: Store<State>) {
     this.settings$ = this.store.select(x => x.currentLobby).pipe(
       map(lobby => {
-        return (lobby.content as any).settings;
+        if (lobby) {
+          return (lobby.content as any).settings;
+        }
+        return null;
       })
     );
   }

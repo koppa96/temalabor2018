@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../authentication/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-welcome',
@@ -17,14 +18,14 @@ export class WelcomePageComponent implements OnInit {
     const params = new URLSearchParams();
     params.append('returnUrl', window.location.href);
 
-    window.location.href = 'https://localhost:5001/Account/Register?' + params.toString();
+    window.location.href = environment.apiBaseUrl + '/Account/Register?' + params.toString();
   }
 
   redirectToPasswordReset() {
     const params = new URLSearchParams();
     params.append('returnUrl', window.location.href);
 
-    window.location.href = 'https://localhost:5001/Account/GetPasswordReset?' + params.toString();
+    window.location.href = environment.apiBaseUrl + '/Account/GetPasswordReset?' + params.toString();
   }
 
   redirectToResendConfirmationEmail() {
@@ -32,7 +33,7 @@ export class WelcomePageComponent implements OnInit {
     params.append('returnUrl', window.location.href);
     params.append('resend', 'true');
 
-    window.location.href = 'https://localhost:5001/Account/ConfirmEmail?' + params.toString();
+    window.location.href = environment.apiBaseUrl + '/Account/ConfirmEmail?' + params.toString();
   }
 
   redirectToLogin() {
