@@ -46,7 +46,7 @@ namespace Czeum.ChessLogic.Pieces
                         continue;
                     }
 
-                    if (currentField.Row + i > 0 && currentField.Row + i < 8 && currentField.Column + j > 0 && currentField.Column + j < 8)
+                    if (currentField.Row + i >= 0 && currentField.Row + i < 8 && currentField.Column + j >= 0 && currentField.Column + j < 8)
                     {
                         var targetField = Board[currentField.Row + i, currentField.Column + j];
                         if (targetField.Empty || targetField.Piece!.Color != Color)

@@ -55,12 +55,14 @@ namespace Czeum.Tests.UnitTests.ChessLogic.PieceTest
             board.AddPieceToTheGame(rook, board[0, 3]);
             board.AddPieceToTheGame(enemyRook, board[0, 5]);
 
-            Assert.IsFalse(king.Move(board[4, 5]));
-            Assert.IsFalse(king.Move(board[5, 5]));
-            Assert.IsFalse(king.Move(board[3, 5]));
+            king.Move(board[4, 5]);
+            Assert.IsFalse(board.IsKingSafe(Color.White));
 
-            Assert.IsTrue(king.Move(board[4, 3]));
-            Assert.IsTrue(king.Move(board[3, 3]));
+            king.Move(board[4, 4]);
+            Assert.IsTrue(board.IsKingSafe(Color.White));
+
+            king.Move(board[4, 3]);
+            Assert.IsTrue(board.IsKingSafe(Color.White));;
         }
 
         [TestMethod]
@@ -69,8 +71,12 @@ namespace Czeum.Tests.UnitTests.ChessLogic.PieceTest
             var enemyRook = new Rook(board, Color.Black);
             board.AddPieceToTheGame(enemyRook, board[3, 4]);
 
-            Assert.IsFalse(king.Move(board[5, 4]));
+            king.Move(board[5, 4]);
+            Assert.IsFalse(board.IsKingSafe(Color.White));
+
+            king.Move(board[4, 4]);
             Assert.IsTrue(king.Move(board[3, 4]));
+            Assert.IsTrue(board.IsKingSafe(Color.White));
         }
     }
 }
