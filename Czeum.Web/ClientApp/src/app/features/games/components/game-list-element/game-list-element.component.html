@@ -9,17 +9,18 @@
         <p class="gray-text" *ngIf="isInProgress()">Legutóbbi lépés: {{ getLastMoveText() }}</p>
         <p class="gray-text" *ngIf="!isInProgress()">Befejezve: {{ getLastMoveText() }}</p>
         <p class="gray-text" *ngIf="isInProgress()">{{ getCurrentPlayerText() }}</p>
+        <p class="gray-text" *ngIf="!isInProgress()">{{ getWinnerText() }}</p>
       </div>
     </div>
     <div fxLayout="center center" fxLayoutGap="12px">
       <app-player *ngFor="let player of data.players" [username]="player.username" [iconSize]="45"></app-player>
     </div>
     <div class="right-cell">
-      <button mat-button color="primary" (click)="onPlayClicked()" *ngIf="isInProgress()">
-        <mat-icon matPrefix>play_arrow</mat-icon>
-        <span>JÁTÉK</span>
+      <button mat-button color="primary" (click)="onPlayClicked()">
+        <mat-icon matPrefix>visibility</mat-icon>
+        <span *ngIf="isInProgress()">JÁTÉK</span>
+        <span *ngIf="!isInProgress()">MEGTEKINTÉS</span>
       </button>
-      <span *ngIf="!isInProgress()">{{ getWinnerText() }}</span>
     </div>
   </div>
 </mat-list-item>

@@ -20,13 +20,15 @@
   </div>
   <div class="flex-grow-1 d-flex align-items-center justify-content-center" *ngIf="filteredMatches.length === 0">
     <mat-icon class="not-found-icon gray-text mr-3">cloud_off</mat-icon>
-    <span class="gray-text">Nem találtunk szobát{{ filterText ? ' a megadott keresési feltételekkel.' : '.' }}</span>
+    <span class="gray-text">Nem találtunk meccset{{ filterText ? ' a megadott keresési feltételekkel.' : '.' }}</span>
   </div>
-  <mat-list>
-    <app-game-list-element
-      *ngFor="let element of filteredMatches"
-      [data]="element" [gameTypes]="gameTypes"
-      [currentUserName]="(authState$ | async).profile.userName"
-      (playClicked)="onPlayClicked(element)"></app-game-list-element>
-  </mat-list>
+  <perfect-scrollbar class="flex-grow-1">
+    <mat-list>
+      <app-game-list-element
+        *ngFor="let element of filteredMatches"
+        [data]="element" [gameTypes]="gameTypes"
+        [currentUserName]="(authState$ | async).profile.userName"
+        (playClicked)="onPlayClicked(element)"></app-game-list-element>
+    </mat-list>
+  </perfect-scrollbar>
 </mat-card>

@@ -1,3 +1,34 @@
 <mat-card class="mat-elevation-z10 h-100 w-100" fxLayout="column">
   <mat-card-title>Korábbi játékok</mat-card-title>
+  <h3>Szűrés</h3>
+  <div fxLayoutGap="10px">
+    <mat-form-field appearance="outline" fxFlex="25%">
+      <mat-label>Ellenfél neve</mat-label>
+      <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterAndSortMatches()">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25%">
+      <mat-label>Rendezés</mat-label>
+      <mat-select [(value)]="selectedOrdering" (valueChange)="filterAndSortMatches()">
+        <mat-option *ngFor="let ordering of orderings" [value]="ordering">{{ ordering.displayName }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="d-flex justify-content-between list-header">
+    <h4 class="d-inline-block header-left-cell column-title">Játék adatai</h4>
+    <h4 class="column-title">Játékosok</h4>
+    <div class="header-right-cell"></div>
+  </div>
+  <div class="flex-grow-1 d-flex align-items-center justify-content-center" *ngIf="filteredMatches.length === 0">
+    <mat-icon class="not-found-icon gray-text mr-3">cloud_off</mat-icon>
+    <span class="gray-text">Nem találtunk meccset{{ filterText ? ' a megadott keresési feltételekkel.' : '.' }}</span>
+  </div>
+  <perfect-scrollbar class="flex-grow-1">
+    <mat-list>
+      <app-game-list-element
+        *ngFor="let element of filteredMatches"
+        [data]="element" [gameTypes]="gameTypes"
+        [currentUserName]="(authState$ | async).profile.userName"
+        (playClicked)="onPlayClicked(element)"></app-game-list-element>
+    </mat-list>
+  </perfect-scrollbar>
 </mat-card>

@@ -1,0 +1,27 @@
+app-game-list-element:not(:last-child) {
+  border-bottom: 1px solid lightgray;
+}
+
+.list-header {
+  padding: 0 16px;
+  border-bottom: 1px solid lightgray;
+
+  .header-right-cell {
+    min-width: 150px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .header-left-cell {
+    min-width: 300px;
+  }
+
+  .column-title {
+    margin: 0;
+  }
+}
+
+mat-list {
+  padding-top: 0;
+}

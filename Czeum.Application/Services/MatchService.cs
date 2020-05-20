@@ -241,6 +241,7 @@ namespace Czeum.Application.Services
                     .Include(x => x.Board)
                     .Include(x => x.Users)
                         .ThenInclude(x => x.User)
+                    .Include(x => x.Winner)
                     .Where(filter)
                     .OrderByDescending(x => x.LastMove)
                     .Take(count)

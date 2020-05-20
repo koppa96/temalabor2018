@@ -32,6 +32,17 @@ export class MatchService {
     );
   }
 
+  getPreviousMatches(oldestId: string | null, count: number): Observable<RollListDtoOfMatchStatus> {
+    return this.matchesClient.getFinishedMatches(oldestId || '', count).pipe(
+      tap(dto => {
+        for (const element of dto.data) {
+          element.createDate = toLocalDate(element.createDate);
+          element.lastMoveDate = toLocalDate(element.lastMoveDate);
+        }
+      })
+    );
+  }
+
   getAvailableGameTypes(): Observable<GameTypeDto[]> {
     return this.matchesClient.getGameTypes();
   }
