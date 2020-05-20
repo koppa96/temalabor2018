@@ -7,7 +7,7 @@
         *ngIf="isQueuing | async"
         [hideDelete]="true"></app-notification-list-item>
       <app-notification-list-item
-        *ngFor="let notification of notifications"
+        *ngFor="let notification of (notifications$ | async)"
         [notification]="notification"
         (deleteRequested)="deleteRequested(notification)"></app-notification-list-item>
     </mat-list>

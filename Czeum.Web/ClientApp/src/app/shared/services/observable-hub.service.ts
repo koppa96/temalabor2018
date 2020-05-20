@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HubService } from './hub.service';
 import { Subject } from 'rxjs';
-import { AchivementDto, FriendDto, FriendRequestDto, LobbyDataWrapper, MatchStatus, Message } from '../clients';
+import { AchivementDto, FriendDto, FriendRequestDto, LobbyDataWrapper, MatchStatus, Message, NotificationDto } from '../clients';
 import { MessageReceivedArgs } from '../models/signalr.models';
 
 @Injectable({
@@ -33,6 +33,8 @@ export class ObservableHub {
   private mReceiveMatchMessage = new Subject<MessageReceivedArgs>();
   private mReceiveLobbyMessage = new Subject<MessageReceivedArgs>();
 
+  private mNotificationReceived = new Subject<NotificationDto>();
+
   // --- Observables ---
   // Games
   get receiveResult() { return this.mReceiveResult.asObservable(); }
@@ -58,6 +60,8 @@ export class ObservableHub {
   get receiveDirectMessage() { return this.mReceiveDirectMessage.asObservable(); }
   get receiveMatchMessage() { return this.mReceiveMatchMessage.asObservable(); }
   get receiveLobbyMessage() { return this.mReceiveLobbyMessage.asObservable(); }
+
+  get notificationReceived() { return this.mNotificationReceived.asObservable(); }
 
   constructor(private hubService: HubService) {}
 
@@ -102,6 +106,10 @@ export class ObservableHub {
         message
       });
     });
+
+    this.hubService.registerCallback('NotificationReceived', (notification: NotificationDto) => {
+      this.mNotificationReceived.next(notification);
+    });
   }
 
   disconnect(): Promise<void> {
@@ -125,6 +133,8 @@ export class ObservableHub {
     this.hubService.removeCallback('ReceiveDirectMessage');
     this.hubService.removeCallback('ReceiveMatchMessage');
     this.hubService.removeCallback('ReceiveLobbyMessage');
+
+    this.hubService.removeCallback('NotificationReceived');
 
     return this.hubService.disconnect();
   }

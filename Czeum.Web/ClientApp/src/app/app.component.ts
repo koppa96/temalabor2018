@@ -11,6 +11,8 @@ import { LobbyService } from './features/lobbies/services/lobby.service';
 import { leaveLobby, updateLobby } from './reducers/current-lobby/current-lobby-actions';
 import { ObservableHub } from './shared/services/observable-hub.service';
 import { toLocalDate } from './shared/services/date-utils';
+import { NotificationService } from './shared/services/notification.service';
+import { newNotification, updateNotificationList } from './reducers/notifications/notifications-actions';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +30,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private observableHub: ObservableHub,
     private friendsService: FriendsService,
     private store: Store<State>,
-    private lobbyService: LobbyService
+    private lobbyService: LobbyService,
+    private notificationService: NotificationService
   ) {
     this.authState = this.authService.getAuthState();
   }
@@ -81,6 +84,14 @@ export class AppComponent implements OnInit, OnDestroy {
         friend.lastDisconnect = toLocalDate(friend.lastDisconnect);
         friend.registrationTime = toLocalDate(friend.lastDisconnect);
         this.store.dispatch(updateFriend({ friend }));
+      }));
+    });
+
+    this.notificationService.getNotifications().subscribe(result => {
+      this.store.dispatch(updateNotificationList({ notifications: result }));
+
+      this.subscription.add(this.observableHub.notificationReceived.subscribe(notification => {
+        this.store.dispatch(newNotification({ notification }));
       }));
     });
 

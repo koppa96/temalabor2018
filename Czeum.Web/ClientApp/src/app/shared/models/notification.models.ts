@@ -9,6 +9,7 @@ export interface NotificationActions {
 }
 
 export interface INotification {
+  id: string;
   icon: string;
   text: string;
   data?: any;
@@ -16,12 +17,14 @@ export interface INotification {
 }
 
 export class Notification implements INotification {
+  id: string;
   icon: string;
   text: string;
   data?: any;
   actions?: NotificationActions;
 
   constructor(content: INotification) {
+    this.id = content.id;
     this.icon = content.icon;
     this.text = content.text;
     this.data = content.data;
@@ -43,6 +46,7 @@ export class Notification implements INotification {
 
 export const mockNotifications: Notification[] = [
   new Notification({
+    id: '',
     icon: 'person_add',
     text: 'xyz123 barátkérelmet küldött.',
     data: 'friend-request-id',
@@ -58,6 +62,7 @@ export const mockNotifications: Notification[] = [
     }
   }),
   new Notification({
+    id: '',
     icon: 'mail_outline',
     text: '__TheLegend27__ meghívott, hogy csatlakozz a játékához.',
     data: 'lobby-id',
@@ -73,10 +78,12 @@ export const mockNotifications: Notification[] = [
     }
   }),
   new Notification({
+    id: '',
     icon: 'warning',
     text: 'user123 megbökött, mert régóta nem léptél!'
   }),
   new Notification({
+    id: '',
     icon: 'person_add',
     text: 'gipsz.jakab elfogadta a barátkérelmed.'
   })
