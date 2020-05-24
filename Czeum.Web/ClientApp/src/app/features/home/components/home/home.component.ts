@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
 import { Observable } from 'rxjs';
@@ -12,6 +12,8 @@ import { AchivementDto, StatisticsDto } from '../../../../shared/clients';
 export class HomeComponent implements OnInit {
   @Input() statistics: StatisticsDto;
   @Input() achivements: AchivementDto[];
+  @Output() achivementStarred = new EventEmitter<AchivementDto>();
+  @Output() achivementUnstarred = new EventEmitter<AchivementDto>();
 
   username = 'Példa Pál';
   isQueuing: Observable<boolean>;

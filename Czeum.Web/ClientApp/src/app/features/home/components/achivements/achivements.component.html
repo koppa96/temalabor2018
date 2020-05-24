@@ -14,7 +14,7 @@
       <div class="achivement-title" mat-line>{{ achivement.title }}</div>
       <div mat-line>{{ achivement.description }}</div>
       <div class="achivement-unlocked-at" mat-line>Feloldva: {{ achivement.unlockedAt | date:'yyyy. MM. dd.' }}</div>
-      <button mat-icon-button>
+      <button mat-icon-button (click)="achivementStarClicked(achivement)">
         <mat-icon *ngIf="achivement.isStarred">star</mat-icon>
         <mat-icon *ngIf="!achivement.isStarred">star_border</mat-icon>
       </button>

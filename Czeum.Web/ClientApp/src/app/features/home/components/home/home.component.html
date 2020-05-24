@@ -4,7 +4,13 @@
     <app-quick-actions></app-quick-actions>
     <div fxLayout>
       <app-statistics class="pr-3" [statistics]="statistics" fxFlex="50%"></app-statistics>
-      <app-achivements class="pl-3" [achivements]="achivements" fxFlex="50%"></app-achivements>
+      <app-achivements
+        class="pl-3"
+        [achivements]="achivements"
+        fxFlex="50%"
+        (achivementStarred)="achivementStarred.emit($event)"
+        (achivementUnstarred)="achivementUnstarred.emit($event)"
+      ></app-achivements>
     </div>
   </perfect-scrollbar>
 </mat-card>
