@@ -44,11 +44,9 @@ export class IncomingRequestsComponent implements OnInit, OnDestroy {
     this.filterText.valueChanges.subscribe(value => this.filterText$.next(value));
     this.filteredRequests$ = combineLatest([this.requests$, this.filterText$]).pipe(
       map(([requests, filterText]) => {
-        return requests.filter(x => x.receiverName.toLowerCase().includes(filterText.toLowerCase()));
+        return requests.filter(x => x.senderName.toLowerCase().includes(filterText.toLowerCase()));
       })
     );
-
-    this.filteredRequests$.subscribe(console.log);
   }
 
   ngOnInit() {
