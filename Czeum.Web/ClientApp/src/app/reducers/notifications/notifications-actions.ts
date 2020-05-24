@@ -9,3 +9,6 @@ export const newNotification = createAction('[Notifications] NewNotification',
 
 export const deleteNotification = createAction('[Notifications] DeleteNotification',
   props<{ id: string }>());
+
+export const deleteIncomingFriendRequestNotification = createAction('[Notifications] DeleteIncomingFriendRequestNotification',
+  props<{ requestId: string }>());

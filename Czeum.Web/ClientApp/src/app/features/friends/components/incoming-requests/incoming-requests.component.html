@@ -2,17 +2,17 @@
 <div class="d-flex align-items-center justify-content-between">
   <mat-form-field appearance="outline" fxFlex="25%">
     <mat-label>Felhasználónév</mat-label>
-    <input autocomplete="off" matInput [(ngModel)]="filterText" (ngModelChange)="filterRequests()">
+    <input autocomplete="off" matInput [formControl]="filterText">
   </mat-form-field>
 </div>
-<div *ngIf="!filteredRequests || filteredRequests.length === 0"
+<div *ngIf="(filteredRequests$ | async).length === 0"
      class="flex-grow-1 d-flex align-items-center justify-content-center gray-text">
   <mat-icon class="not-found-icon">person_add_disabled</mat-icon>
-  <span>Jelenleg nincs {{ filterText ? 'a keresési feltételeknek megfelelő' : '' }} bejövő barátkérelmed.</span>
+  <span>Jelenleg nincs {{ filterText.value ? 'a keresési feltételeknek megfelelő' : '' }} bejövő barátkérelmed.</span>
 </div>
-<perfect-scrollbar class="flex-grow-1" *ngIf="filteredRequests && filteredRequests.length > 0">
+<perfect-scrollbar class="flex-grow-1" *ngIf="(filteredRequests$ | async).length > 0">
   <mat-list>
-    <mat-list-item *ngFor="let request of filteredRequests">
+    <mat-list-item *ngFor="let request of filteredRequests$ | async">
       <div class="h-100 w-100 d-flex align-items-center justify-content-between py-2">
         <div class="d-flex align-items-center">
           <mat-icon class="list-icon">perm_identity</mat-icon>

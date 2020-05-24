@@ -2,10 +2,13 @@
 using Czeum.DAL;
 using Czeum.Domain.Entities;
 using Czeum.Domain.Services;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -75,6 +78,21 @@ namespace Czeum.Application.Services
                     )
                 )
             );
+        }
+
+        public async Task RemoveNotificationsOf(Guid receiverId, Func<Notification, bool> predicate)
+        {
+            var userWithNotifications = await context.Users.Include(x => x.ReceivedNotifications)
+                .SingleAsync(x => x.Id == receiverId);
+
+            var notificationsToRemove = userWithNotifications.ReceivedNotifications.Where(predicate)
+                .ToList();
+
+            context.Notifications.RemoveRange(notificationsToRemove);
+            await context.SaveChangesAsync();
+
+            await Task.WhenAll(notificationsToRemove.Select(x => notificationService.NotifyAsync(userWithNotifications.UserName,
+                client => client.NotificationCanceled(x.Id))));
         }
     }
 }

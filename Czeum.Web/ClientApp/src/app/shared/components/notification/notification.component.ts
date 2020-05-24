@@ -11,6 +11,9 @@ import { FriendsService } from '../../services/friends.service';
 import { addFriend } from '../../../reducers/friend-list/friend-list-actions';
 import { LobbyService } from '../../../features/lobbies/services/lobby.service';
 import { updateLobby } from '../../../reducers/current-lobby/current-lobby-actions';
+import { deleteNotification } from '../../../reducers/notifications/notifications-actions';
+import { NotificationService } from '../../services/notification.service';
+import { removeIncomingFriendRequest } from '../../../reducers/friend-list/incoming-friend-requests-actions';
 
 @Component({
   selector: 'app-notification',
@@ -38,7 +41,8 @@ export class NotificationComponent implements OnInit {
     private store: Store<State>,
     private router: Router,
     private friendsService: FriendsService,
-    private lobbyService: LobbyService
+    private lobbyService: LobbyService,
+    private notificationService: NotificationService
   ) {
     this.isQueuing = this.store.select(x => x.isQueueing);
     this.notifications$ = this.store.select(x => x.notifications).pipe(
@@ -75,13 +79,22 @@ export class NotificationComponent implements OnInit {
                     action: (requestId: string) => {
                       this.friendsService.acceptRequest(requestId).subscribe(result => {
                         this.store.dispatch(addFriend({ friend: result }));
+                        this.store.dispatch(removeIncomingFriendRequest({ requestId }));
+                        this.notificationService.deleteNotification(x.id).subscribe(() => {
+                          this.store.dispatch(deleteNotification({ id: x.id }));
+                        });
                       });
                     }
                   },
                   secondary: {
                     name: 'ELUTASÍTÁS',
                     action: (requestId: string) => {
-                      this.friendsService.rejectRequest(requestId).subscribe();
+                      this.friendsService.rejectRequest(requestId).subscribe(() => {
+                        this.store.dispatch(removeIncomingFriendRequest({ requestId }));
+                        this.notificationService.deleteNotification(x.id).subscribe(() => {
+                          this.store.dispatch(deleteNotification({ id: x.id }));
+                        });
+                      });
                     }
                   }
                 }
@@ -116,11 +129,12 @@ export class NotificationComponent implements OnInit {
   }
 
   ngOnInit() {
-
   }
 
   deleteRequested(notification: Notification) {
-    alert('Ez veszélyes!');
+    this.notificationService.deleteNotification(notification.id).subscribe(() => {
+      this.store.dispatch(deleteNotification({ id: notification.id }));
+    });
   }
 
 }

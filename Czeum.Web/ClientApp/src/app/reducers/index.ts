@@ -1,11 +1,12 @@
 import { ActionReducerMap } from '@ngrx/store';
 import { Profile } from '../authentication/auth-config-models';
-import { LobbyDataWrapper, FriendDto, NotificationDto } from '../shared/clients';
+import { LobbyDataWrapper, FriendDto, NotificationDto, FriendRequestDto } from '../shared/clients';
 import { friendListReducerFunction } from './friend-list/friend-list-reducers';
 import { soloQueueReducerFunction } from './solo-queue/solo-queue-reducers';
 import { authStateReducerFunction, pkcsStringReducerFunction } from './authentication/auth-reducers';
 import { currentLobbyReducerFunction } from './current-lobby/current-lobby-reducers';
 import { notificationsReducerFunction } from './notifications/notifications-reducers';
+import { incomingFriendRequestReducerFunction } from './friend-list/incoming-friend-requests-reducers';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -23,6 +24,7 @@ export interface State {
   pkceString: string;
   currentLobby: LobbyDataWrapper;
   notifications: NotificationDto[];
+  incomingFriendRequests: FriendRequestDto[];
 }
 
 export const reducers: ActionReducerMap<State> = {
@@ -31,5 +33,6 @@ export const reducers: ActionReducerMap<State> = {
   authState: authStateReducerFunction,
   pkceString: pkcsStringReducerFunction,
   currentLobby: currentLobbyReducerFunction,
-  notifications: notificationsReducerFunction
+  notifications: notificationsReducerFunction,
+  incomingFriendRequests: incomingFriendRequestReducerFunction
 };

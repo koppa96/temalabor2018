@@ -34,6 +34,7 @@ export class ObservableHub {
   private mReceiveLobbyMessage = new Subject<MessageReceivedArgs>();
 
   private mNotificationReceived = new Subject<NotificationDto>();
+  private mNotificationCanceled = new Subject<string>();
 
   // --- Observables ---
   // Games
@@ -62,6 +63,7 @@ export class ObservableHub {
   get receiveLobbyMessage() { return this.mReceiveLobbyMessage.asObservable(); }
 
   get notificationReceived() { return this.mNotificationReceived.asObservable(); }
+  get notificationCanceled() { return this.mNotificationCanceled.asObservable(); }
 
   constructor(private hubService: HubService) {}
 
@@ -110,6 +112,10 @@ export class ObservableHub {
     this.hubService.registerCallback('NotificationReceived', (notification: NotificationDto) => {
       this.mNotificationReceived.next(notification);
     });
+
+    this.hubService.registerCallback('NotificationCanceled', (id: string) => {
+      this.mNotificationCanceled.next(id);
+    });
   }
 
   disconnect(): Promise<void> {
@@ -135,6 +141,7 @@ export class ObservableHub {
     this.hubService.removeCallback('ReceiveLobbyMessage');
 
     this.hubService.removeCallback('NotificationReceived');
+    this.hubService.removeCallback('NotificationCanceled');
 
     return this.hubService.disconnect();
   }

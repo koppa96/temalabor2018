@@ -92,8 +92,8 @@ namespace Czeum.Application.Services
                 }));
 
             await notificationPersistenceService.PersistNotificationAsync(NotificationType.FriendRequestAccepted,
-                request.Receiver.Id,
-                request.Sender.Id);
+                request.Sender.Id,
+                request.Receiver.Id);
             
             return new FriendDto
             {
@@ -190,6 +190,9 @@ namespace Czeum.Application.Services
             await context.SaveChangesAsync();
             await notificationService.NotifyAsync(request.Receiver.UserName,
                 client => client.RequestRevoked(requestId));
+
+            await notificationPersistenceService.RemoveNotificationsOf(request.ReceiverId!.Value,
+                x => x.Type == NotificationType.FriendRequestReceived && x.Data == requestId);
         }
 
         public async Task<IEnumerable<FriendRequestDto>> GetRequestsSentAsync()
