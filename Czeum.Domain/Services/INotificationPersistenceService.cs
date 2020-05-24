@@ -12,5 +12,6 @@ namespace Czeum.Domain.Services
         Task PersistNotificationAsync(NotificationType notificationType, Guid receiverId, Guid? sender = null, Guid? data = null);
         Task PersistNotificationsAsync(NotificationType notificationType, IEnumerable<Guid> receiverIds, Guid? sender = null, Guid? data = null);
         Task RemoveNotificationsOf(Guid receiverId, Func<Notification, bool> predicate);
+        Task RemoveNotificationsOf(IEnumerable<Guid> receiverIds, Func<Notification, bool> predicate);
     }
 }

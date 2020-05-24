@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LobbyService } from '../../services/lobby.service';
-import { GameTypeDto, LobbyDataWrapper } from '../../../../shared/clients';
+import { GameTypeDto, LobbyDataWrapper, NotificationType } from '../../../../shared/clients';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../reducers';
@@ -8,6 +8,10 @@ import { leaveLobby } from '../../../../reducers/current-lobby/current-lobby-act
 import { MatSnackBar } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { ObservableHub } from '../../../../shared/services/observable-hub.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
+import { take } from 'rxjs/operators';
+import { deleteNotification } from '../../../../reducers/notifications/notifications-actions';
+import { not } from 'rxjs/internal-compatibility';
 
 @Component({
   templateUrl: './lobby-list.page.component.html',
@@ -25,7 +29,8 @@ export class LobbyListPageComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<State>,
     private snackBar: MatSnackBar,
-    private observableHub: ObservableHub
+    private observableHub: ObservableHub,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -68,6 +73,16 @@ export class LobbyListPageComponent implements OnInit, OnDestroy {
   joinLobby(lobbyId: string) {
     this.lobbyService.joinLobby(lobbyId).subscribe(
       () => {
+        this.store.select(x => x.notifications).pipe(
+          take(1)
+        ).subscribe(notifications => {
+          const notification = notifications.find(x => x.type === NotificationType.InviteReceived && x.data === lobbyId);
+          if (notification) {
+            this.notificationService.deleteNotification(notification.id).subscribe(() => {
+              this.store.dispatch(deleteNotification({ id: notification.id }));
+            });
+          }
+        });
         this.router.navigate(['/lobbies/mine']);
       },
       () => {

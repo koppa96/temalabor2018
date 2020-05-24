@@ -94,5 +94,24 @@ namespace Czeum.Application.Services
             await Task.WhenAll(notificationsToRemove.Select(x => notificationService.NotifyAsync(userWithNotifications.UserName,
                 client => client.NotificationCanceled(x.Id))));
         }
+
+        public async Task RemoveNotificationsOf(IEnumerable<Guid> receiverIds, Func<Notification, bool> predicate)
+        {
+            var usersWithNotifications = await context.Users.Include(x => x.ReceivedNotifications)
+                .Where(x => receiverIds.ToList().Contains(x.Id))
+                .ToListAsync();
+
+            foreach (var user in usersWithNotifications)
+            {
+                var notificationsToRemove = user.ReceivedNotifications.Where(predicate)
+                    .ToList();
+
+                context.Notifications.RemoveRange(notificationsToRemove);
+                await Task.WhenAll(notificationsToRemove.Select(x => notificationService.NotifyAsync(user.UserName,
+                    client => client.NotificationCanceled(x.Id))));
+            }
+
+            await context.SaveChangesAsync();
+        }
     }
 }

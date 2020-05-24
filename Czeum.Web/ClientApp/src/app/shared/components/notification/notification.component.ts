@@ -56,7 +56,12 @@ export class NotificationComponent implements OnInit {
                 actions: {
                   primary: {
                     name: 'MEGTEKINTÉS',
-                    action: () => { this.router.navigate(['/home']); }
+                    action: () => {
+                      this.notificationService.deleteNotification(x.id).subscribe(() => {
+                        this.store.dispatch(deleteNotification({ id: x.id }));
+                      });
+                      this.router.navigate(['/home']);
+                    }
                   }
                 }
               });
@@ -110,6 +115,10 @@ export class NotificationComponent implements OnInit {
                     action: (lobbyId: string) => {
                       this.lobbyService.joinLobby(lobbyId).subscribe(lobby => {
                         this.store.dispatch(updateLobby({ newLobby: lobby }));
+                        this.router.navigate(['/lobbies/mine']);
+                        this.notificationService.deleteNotification(x.id).subscribe(() => {
+                          this.store.dispatch(deleteNotification({ id: x.id }));
+                        });
                       });
                     }
                   }

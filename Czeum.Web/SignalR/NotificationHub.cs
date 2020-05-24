@@ -66,14 +66,6 @@ namespace Czeum.Web.SignalR
             if (lobby != null)
             {
                 await lobbyService.DisconnectPlayerFromLobby(Context.UserIdentifier);
-                if (await lobbyService.LobbyExists(lobby.Id))
-                {
-                    await Clients.All.LobbyChanged(await lobbyService.GetLobby(lobby.Id));
-                }
-                else
-                {
-                    await Clients.All.LobbyDeleted(lobby.Id);
-                }
             }
 
             soloQueueService.LeaveSoloQueue(Context.UserIdentifier);

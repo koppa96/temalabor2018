@@ -90,7 +90,12 @@ namespace Czeum.Application.Services
                 {
                     lobbyStorage.RemoveLobby(currentLobby.Id);
                     await notificationService.NotifyAllAsync(client => client.LobbyDeleted(currentLobby.Id));
-                }
+					var invitedUsers = await context.Users.Where(x => currentLobby.InvitedPlayers.Contains(x.UserName))
+						.ToListAsync();
+
+					await notificationPersistenceService.RemoveNotificationsOf(invitedUsers.Select(x => x.Id),
+						x => x.Type == NotificationType.InviteReceived && x.Data == currentLobby.Id);
+				}
                 else
                 {
 	                await notificationService.NotifyAllAsync(client =>
@@ -251,13 +256,12 @@ namespace Czeum.Application.Services
 			await notificationService.NotifyAllExceptAsync(identityService.GetCurrentUserName(),
 				client => client.LobbyChanged(wrapper));
 
+			var invitedUser = await context.Users.CustomSingleAsync(x => x.UserName == player, "No such player found.");
+			await notificationPersistenceService.RemoveNotificationsOf(invitedUser.Id,
+				x => x.Type == NotificationType.InviteReceived && x.Data == lobbyId);
+
 			return wrapper;
         }
-
-		public void RemoveLobby(Guid id)
-		{
-			lobbyStorage.RemoveLobby(id);
-		}
 
 		public Task<IEnumerable<string>> GetOthersInLobby(Guid lobbyId)
 		{
