@@ -17,9 +17,14 @@
     </div>
     <div class="right-cell">
       <button mat-button color="primary" (click)="onPlayClicked()">
-        <mat-icon matPrefix>visibility</mat-icon>
-        <span *ngIf="isInProgress()">JÁTÉK</span>
-        <span *ngIf="!isInProgress()">MEGTEKINTÉS</span>
+        <ng-container *ngIf="isInProgress()">
+          <mat-icon>play_arrow</mat-icon>
+          <span>JÁTÉK</span>
+        </ng-container>
+        <ng-container *ngIf="!isInProgress()">
+          <mat-icon matPrefix>visibility</mat-icon>
+          <span *ngIf="!isInProgress()">MEGTEKINTÉS</span>
+        </ng-container>
       </button>
     </div>
   </div>

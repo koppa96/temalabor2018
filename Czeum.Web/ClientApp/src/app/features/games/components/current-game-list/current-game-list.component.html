@@ -29,6 +29,9 @@
         [data]="element" [gameTypes]="gameTypes"
         [currentUserName]="(authState$ | async).profile.userName"
         (playClicked)="onPlayClicked(element)"></app-game-list-element>
+      <div *ngIf="matches.hasMore && filteredMatches.length > 0" fxLayoutAlign="center center">
+        <button mat-button color="primary" (click)="loadMore.emit()">TOVÁBBIAK BETÖLTÉSE</button>
+      </div>
     </mat-list>
   </perfect-scrollbar>
 </mat-card>

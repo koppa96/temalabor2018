@@ -32,6 +32,7 @@ p {
 
 :host {
   display: block;
+  transition: background-color 0.4s;
 
   & ::ng-deep mat-list-item.mat-list-item {
     height: auto;

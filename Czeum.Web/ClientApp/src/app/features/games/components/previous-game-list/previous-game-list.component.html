@@ -30,5 +30,8 @@
         [currentUserName]="(authState$ | async).profile.userName"
         (playClicked)="onPlayClicked(element)"></app-game-list-element>
     </mat-list>
+    <div *ngIf="matches.hasMore && filteredMatches.length > 0" fxLayoutAlign="center center">
+      <button mat-button color="primary" (click)="loadMore.emit()">TOVÁBBIAK BETÖLTÉSE</button>
+    </div>
   </perfect-scrollbar>
 </mat-card>

@@ -39,6 +39,14 @@ export class PreviousGameListPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  onLoadMore() {
+    const oldestId = this.matches.elements[this.matches.elements.length - 1].id;
+    this.matchService.getPreviousMatches(oldestId, 25).subscribe(res => {
+      this.matches.hasMore = res.hasMoreLeft;
+      this.matches.elements = this.matches.elements.concat(res.data);
+    });
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { GameState, GameTypeDto, MatchStatus } from '../../../../shared/clients';
 import { RollList } from '../../../../shared/models/roll-list';
 import { Ordering } from '../../../../shared/models/ordering.models';
@@ -17,6 +17,7 @@ export class CurrentGameListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() matches: RollList<MatchStatus> = new RollList<MatchStatus>();
   @Input() gameTypes: GameTypeDto[] = [];
   @Input() matchListUpdated: Observable<void>;
+  @Output() loadMore = new EventEmitter();
 
   filterText = '';
   filteredMatches: MatchStatus[];
