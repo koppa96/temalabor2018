@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Notification, mockNotifications } from '../../models/notification.models';
+import { Notification } from '../../models/notification.models';
 import { Store } from '@ngrx/store';
 import { State } from '../../../reducers';
 import { Observable } from 'rxjs';
@@ -22,7 +22,6 @@ import { removeIncomingFriendRequest } from '../../../reducers/friend-list/incom
 })
 export class NotificationComponent implements OnInit {
   isQueuing: Observable<boolean>;
-  notifications: Notification[] = mockNotifications;
   notifications$: Observable<Notification[]>;
 
   queueNotification: Notification = new Notification({

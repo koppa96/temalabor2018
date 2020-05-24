@@ -1,6 +1,10 @@
 <mat-card class="h-100 w-100 mat-elevation-z10" fxLayout="column">
   <mat-card-title class="small">Barátok</mat-card-title>
-  <perfect-scrollbar>
+  <div *ngIf="(friendList$ | async).length === 0" fxFlex="grow" fxLayoutAlign="center center" class="gray-text">
+    <mat-icon class="no-friends">person_add_disabled</mat-icon>
+    <span>Még nincsenek barátaid.</span>
+  </div>
+  <perfect-scrollbar *ngIf="(friendList$ | async).length > 0" fxFlex="grow">
     <mat-list fxLayout="column" fxFlex="grow">
       <app-friend-list-item
         *ngFor="let friendListItem of friendList$ | async"

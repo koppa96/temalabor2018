@@ -1690,6 +1690,130 @@ export class MatchesClient {
     return _observableOf<MatchStatus>(<any>null);
   }
 
+  voteForDraw(matchId: string): Observable<MatchStatus> {
+    let url_ = this.baseUrl + "/api/matches/{matchId}/call-draw";
+    if (matchId === undefined || matchId === null)
+      throw new Error("The parameter 'matchId' must be defined.");
+    url_ = url_.replace("{matchId}", encodeURIComponent("" + matchId));
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ : any = {
+      observe: "response",
+      responseType: "blob",
+      headers: new HttpHeaders({
+        "Accept": "application/json"
+      })
+    };
+
+    return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+      return this.processVoteForDraw(response_);
+    })).pipe(_observableCatch((response_: any) => {
+      if (response_ instanceof HttpResponseBase) {
+        try {
+          return this.processVoteForDraw(<any>response_);
+        } catch (e) {
+          return <Observable<MatchStatus>><any>_observableThrow(e);
+        }
+      } else
+        return <Observable<MatchStatus>><any>_observableThrow(response_);
+    }));
+  }
+
+  protected processVoteForDraw(response: HttpResponseBase): Observable<MatchStatus> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse ? response.body :
+        (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+    let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result200: any = null;
+        result200 = _responseText === "" ? null : <MatchStatus>JSON.parse(_responseText, this.jsonParseReviver);
+        return _observableOf(result200);
+      }));
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result401: any = null;
+        result401 = _responseText === "" ? null : <ProblemDetails>JSON.parse(_responseText, this.jsonParseReviver);
+        return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+      }));
+    } else if (status === 403) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result403: any = null;
+        result403 = _responseText === "" ? null : <ProblemDetails>JSON.parse(_responseText, this.jsonParseReviver);
+        return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+      }));
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+      }));
+    }
+    return _observableOf<MatchStatus>(<any>null);
+  }
+
+  resign(matchId: string): Observable<MatchStatus> {
+    let url_ = this.baseUrl + "/api/matches/{matchId}/resign";
+    if (matchId === undefined || matchId === null)
+      throw new Error("The parameter 'matchId' must be defined.");
+    url_ = url_.replace("{matchId}", encodeURIComponent("" + matchId));
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ : any = {
+      observe: "response",
+      responseType: "blob",
+      headers: new HttpHeaders({
+        "Accept": "application/json"
+      })
+    };
+
+    return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+      return this.processResign(response_);
+    })).pipe(_observableCatch((response_: any) => {
+      if (response_ instanceof HttpResponseBase) {
+        try {
+          return this.processResign(<any>response_);
+        } catch (e) {
+          return <Observable<MatchStatus>><any>_observableThrow(e);
+        }
+      } else
+        return <Observable<MatchStatus>><any>_observableThrow(response_);
+    }));
+  }
+
+  protected processResign(response: HttpResponseBase): Observable<MatchStatus> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse ? response.body :
+        (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+    let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result200: any = null;
+        result200 = _responseText === "" ? null : <MatchStatus>JSON.parse(_responseText, this.jsonParseReviver);
+        return _observableOf(result200);
+      }));
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result401: any = null;
+        result401 = _responseText === "" ? null : <ProblemDetails>JSON.parse(_responseText, this.jsonParseReviver);
+        return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+      }));
+    } else if (status === 403) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result403: any = null;
+        result403 = _responseText === "" ? null : <ProblemDetails>JSON.parse(_responseText, this.jsonParseReviver);
+        return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+      }));
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+      }));
+    }
+    return _observableOf<MatchStatus>(<any>null);
+  }
+
   getMatch(matchId: string): Observable<MatchStatus> {
     let url_ = this.baseUrl + "/api/matches/{matchId}";
     if (matchId === undefined || matchId === null)
@@ -3047,6 +3171,8 @@ export interface MatchStatus {
 export interface Player {
   username?: string | undefined;
   playerIndex: number;
+  votesForDraw: boolean;
+  resigned: boolean;
 }
 
 export interface WrapperOfIMoveResult {
@@ -3089,7 +3215,7 @@ export interface NotificationDto {
   id: string;
   type: NotificationType;
   senderUserName?: string | undefined;
-  data: string;
+  data?: string | undefined;
 }
 
 export enum NotificationType {

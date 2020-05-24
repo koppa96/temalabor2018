@@ -15,6 +15,7 @@ import { ChessComponent } from './components/games/chess/chess.component';
 import { Connect4Component } from './components/games/connect4/connect4.component';
 import { GameChatComponent } from './components/game-chat/game-chat.component';
 import { GameDetailsComponent } from './components/games/game-details/game-details.component';
+import { InCheckDialogComponent } from './components/games/dialogs/in-check-dialog/in-check-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { GameDetailsComponent } from './components/games/game-details/game-detai
     ChessComponent,
     Connect4Component,
     GameChatComponent,
-    GameDetailsComponent
+    GameDetailsComponent,
+    InCheckDialogComponent
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,9 @@ import { GameDetailsComponent } from './components/games/game-details/game-detai
   providers: [
     MatchService,
     GameIconMapperService
+  ],
+  entryComponents: [
+    InCheckDialogComponent
   ]
 })
 export class GamesModule {

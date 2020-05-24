@@ -67,4 +67,12 @@ export class MatchService {
       content: moveData
     });
   }
+
+  resign(matchId: string): Observable<MatchStatus> {
+    return this.matchesClient.resign(matchId);
+  }
+
+  voteForDraw(matchId: string): Observable<MatchStatus> {
+    return this.matchesClient.voteForDraw(matchId);
+  }
 }

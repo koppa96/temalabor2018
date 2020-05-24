@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { GameEndDialogComponent } from '../../../../../shared/components/game-end-dialog/game-end-dialog.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { finalize } from 'rxjs/operators';
+import { InCheckDialogComponent } from '../dialogs/in-check-dialog/in-check-dialog.component';
 
 @Component({
   selector: 'app-chess',
@@ -49,10 +50,12 @@ export class ChessComponent implements OnInit, AfterViewInit {
     this.matchService.getMatch(matchId).subscribe(result => {
       this.matchStatus = result as any;
       this.cellIndices = this.currentPlayerColor === Color.White ? [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0];
+      this.showInCheckDialogIfNeeded();
 
       this.subscription.add(this.observableHub.receiveResult.subscribe(moveResult => {
         this.matchStatus = moveResult as any;
         this.showGameEndDialogIfNeeded();
+        this.showInCheckDialogIfNeeded();
       }));
     });
   }
@@ -70,8 +73,6 @@ export class ChessComponent implements OnInit, AfterViewInit {
     const cellHeight = (this.boardContainer.nativeElement.clientHeight - this.verticalPaddingAndBorder) / 8;
     const cellWidth = (this.boardContainer.nativeElement.clientWidth - this.horizontalPaddingAndBorder) / 8;
 
-    console.log({ height: this.boardContainer.nativeElement.clientHeight, width: this.boardContainer.nativeElement.clientWidth});
-
     this.cellSize = Math.min(cellHeight, cellWidth);
     this.changeDetectorRef.detectChanges();
   }
@@ -84,6 +85,17 @@ export class ChessComponent implements OnInit, AfterViewInit {
         data: {
           gameState: this.matchStatus.state
         },
+        autoFocus: false,
+        width: '700px'
+      });
+    }
+  }
+
+  showInCheckDialogIfNeeded() {
+    if (this.matchStatus.state === GameState.YourTurn &&
+      (this.currentPlayerColor === Color.White && this.matchStatus.currentBoard.content.whiteKingInCheck ||
+      this.currentPlayerColor === Color.Black && this.matchStatus.currentBoard.content.blackKingInCheck)) {
+      this.dialog.open(InCheckDialogComponent, {
         autoFocus: false,
         width: '700px'
       });
@@ -176,9 +188,32 @@ export class ChessComponent implements OnInit, AfterViewInit {
       toColumn: column
     }).pipe(
       finalize(() => this.isSending = false)
-    ).subscribe(result => {
-      this.matchStatus = result as any;
-      this.showGameEndDialogIfNeeded();
-    });
+    ).subscribe(
+      result => {
+        this.matchStatus = result as any;
+        this.showGameEndDialogIfNeeded();
+      },
+      (err: any) => {
+        if (err.Detail === 'Invalid move.') {
+          this.snackBar.open(
+            'Szabálytalan lépés. Ez a bábu nem léphet ide!',
+            'BEZÁR',
+            {
+              duration: 5000,
+              panelClass: ['snackbar']
+            }
+          );
+        } else if (err.Detail === 'This move would put the king in check.') {
+          this.snackBar.open(
+            'Szabálytalan lépés. A király sakkba kerülne!',
+            'BEZÁR',
+            {
+              duration: 5000,
+              panelClass: ['snackbar']
+            }
+          );
+        }
+      }
+    );
   }
 }

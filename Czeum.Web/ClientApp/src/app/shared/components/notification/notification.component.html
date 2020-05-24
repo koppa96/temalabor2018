@@ -1,6 +1,10 @@
 <mat-card class="h-100 w-100 mat-elevation-z10" fxLayout="column">
   <mat-card-title class="small">Értesítések</mat-card-title>
-  <perfect-scrollbar>
+  <div *ngIf="(notifications$ | async).length === 0" fxFlex="grow" fxLayoutAlign="center center" class="gray-text">
+    <mat-icon class="no-notification">notifications_off</mat-icon>
+    <span>Nincsenek értesítéseid.</span>
+  </div>
+  <perfect-scrollbar *ngIf="(notifications$ | async).length > 0" fxFlex="grow">
     <mat-list fxLayout="column" fxFlex="grow">
       <app-notification-list-item
         [notification]="queueNotification"
